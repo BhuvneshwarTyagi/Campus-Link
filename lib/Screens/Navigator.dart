@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:page_transition/page_transition.dart';
 import '../Database/database.dart';
+import '../Registration/Basic.dart';
 import 'Assignments.dart';
 import 'Attendance.dart';
 import 'Filters.dart';
@@ -27,16 +28,58 @@ class _NeviState extends State<Nevi> {
   ];
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
+      drawerEnableOpenDragGesture: true,
+      drawer: Drawer(
+
+        //width: size.width*0.8,
+        backgroundColor: Colors.blueGrey,
+        child: ListView(
+          // Important: Remove any padding from the ListView.
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text('Drawer Header'),
+            ),
+            ListTile(
+              title: const Text('Add Subject'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  PageTransition(
+                    child: const basicDetails(),
+                    type: PageTransitionType.rightToLeftJoined,
+                    duration: const Duration(milliseconds: 350),
+                    childCurrent: const Nevi(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              title: const Text('Item 2'),
+              onTap: () {
+                // Update the state of the app.
+                // ...
+              },
+            ),
+          ],
+        ),
+      ),
       appBar: AppBar(
+        leading: Builder(builder: (context) =>
+            IconButton(
+              icon: const Icon(Icons.menu_outlined),
+              onPressed: () => Scaffold.of(context).openDrawer(),
+            ),),
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-              onPressed: () async {
-                tecloc=await database().getloc();
-                active_Student_loc.clear();
-                active_student_email.clear();
-                await Navigator.push(
+              onPressed: () {
+                Navigator.push(
                   context,
                   PageTransition(
                     child: const Filters(),

@@ -1,4 +1,5 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inapp_notifications/flutter_inapp_notifications.dart';
@@ -18,9 +19,9 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   String errorString="";
   bool hide =true;
-  final _key = GlobalKey<FormState>();
   final TextEditingController email = TextEditingController();
   final TextEditingController password = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
   final textStyle = GoogleFonts.alegreya(fontSize: 28, fontWeight: FontWeight.w900,color: Colors.amber,
       shadows: <Shadow>[
         const Shadow(
@@ -120,14 +121,63 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           )
                         ],
                       ),
-                      child: TextFormField(
-                          validator: (value) {
-                            if (value!.contains('@')) {
-                              return null;
-                            } else {
-                              return 'Please enter a valid email address';
-                            }
-                          },
+                      child: TextField(
+                          controller: nameController,
+                          obscureText: false,
+                          enableSuggestions: true,
+                          autocorrect: true,
+                          cursorColor: Colors.amber,
+                          style: TextStyle(color: Colors.white.withOpacity(0.9)),
+                          decoration: InputDecoration(
+                              suffixIcon: IconButton(
+                                onPressed: (){
+                                  setState(() {
+                                    nameController.clear();
+                                  });
+                                },
+                                icon: const Icon(
+                                  Icons.clear_outlined,
+                                  color: Colors.amber,
+                                ),
+                              ),
+                              prefixIcon: const Icon(
+                                Icons.person_outline,
+                                color: Colors.amber,
+                              ),
+                              label: const Text("Your Name"),
+                              labelStyle: TextStyle(
+                                  color: Colors.white.withOpacity(0.9)),
+                              filled: true,
+                              floatingLabelBehavior: FloatingLabelBehavior.never,
+                              fillColor: Colors.black26.withOpacity(0.9),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30.0),
+                                  borderSide: const BorderSide(
+                                      width: 0, style: BorderStyle.none)
+                              )
+                          ),
+                          keyboardType: TextInputType.emailAddress),
+                    ),
+                    SizedBox(
+                      height: MediaQuery
+                          .of(context)
+                          .size
+                          .height * 0.03,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.all(Radius.circular(30)),
+                        border: Border.all(color: Colors.amber,),
+                        boxShadow: const [
+                          BoxShadow(
+                              blurRadius: 20,
+                              blurStyle: BlurStyle.outer,
+                              color: Colors.amberAccent,
+                              offset: Offset(1, 1)
+                          )
+                        ],
+                      ),
+                      child: TextField(
                           controller: email,
                           obscureText: false,
                           enableSuggestions: true,
@@ -147,7 +197,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 ),
                               ),
                               prefixIcon: const Icon(
-                                Icons.person_outline,
+                                Icons.mail_outline_outlined,
                                 color: Colors.amber,
                               ),
                               label: const Text("Enter Email"),
@@ -184,14 +234,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           )
                         ],
                       ),
-                      child: TextFormField(
-                          validator: (value) {
-                            if (value.toString().length <6) {
-                              return ('Minimum Password length is six');
-                            } else {
-                              return null;
-                            }
-                          },
+                      child: TextField(
                           controller: password,
                           obscureText: hide,
                           enableSuggestions: false,
@@ -250,57 +293,82 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         borderRadius: BorderRadius.circular(90),),
                       child: ElevatedButton(
                         onPressed: () async{
-                            String temp = await signin(email.text.trim(), password.text.trim());
-                            if(temp=='1'){
+                            if(nameController.text.trim().isNotEmpty){
+                              String temp = await signin(email.text.trim(), password.text.trim());
+                              if(temp=='1'){
+                                InAppNotifications.instance
+                                  ..titleFontSize = 14.0
+                                  ..descriptionFontSize = 14.0
+                                  ..textColor = Colors.black
+                                  ..backgroundColor = const Color.fromRGBO(150, 150, 150, 1)
+                                  ..shadow = true
+                                  ..animationStyle = InAppNotificationsAnimationStyle.scale;
+                                InAppNotifications.show(
+                                    title: 'Successfull',
+                                    duration: const Duration(seconds: 2),
+                                    description: 'Your account is created successfuly',
+                                    leading: const Icon(
+                                      Icons.error_outline_outlined,
+                                      color: Colors.red,
+                                      size: 55,
+                                    )
+                                );
+                                await FirebaseFirestore.instance.collection("Teachers").doc(email.text.trim()).update({
+                                  "Email" : email.text.trim(),
+                                  "Name" : nameController.text.trim()
+                                });
+                                Navigator.push(
+                                  context,
+                                  PageTransition(
+                                    child: const basicDetails(),
+                                    type: PageTransitionType.rightToLeftJoined,
+                                    duration: const Duration(milliseconds: 350),
+                                    childCurrent: const SignUpScreen(),
+                                  ),
+                                );
+                              }
+
+
+                              else{
+                                InAppNotifications.instance
+                                  ..titleFontSize = 14.0
+                                  ..descriptionFontSize = 14.0
+                                  ..textColor = Colors.black
+                                  ..backgroundColor = const Color.fromRGBO(150, 150, 150, 1)
+                                  ..shadow = true
+                                  ..animationStyle = InAppNotificationsAnimationStyle.scale;
+                                InAppNotifications.show(
+                                    title: 'Failed',
+                                    duration: const Duration(seconds: 2),
+                                    description: temp,
+                                    leading: const Icon(
+                                      Icons.error_outline_outlined,
+                                      color: Colors.red,
+                                      size: 55,
+                                    )
+                                );
+                              }
+                            }
+                            else{
                               InAppNotifications.instance
                                 ..titleFontSize = 14.0
                                 ..descriptionFontSize = 14.0
                                 ..textColor = Colors.black
-                                ..backgroundColor = const Color.fromRGBO(150, 150, 150, 1)
+                                ..backgroundColor =
+                                const Color.fromRGBO(150, 150, 150, 1)
                                 ..shadow = true
-                                ..animationStyle = InAppNotificationsAnimationStyle.scale;
+                                ..animationStyle =
+                                    InAppNotificationsAnimationStyle.scale;
                               InAppNotifications.show(
-                                  title: 'Successfull',
+                                  title: 'Failed',
                                   duration: const Duration(seconds: 2),
-                                  description: 'Your account is created successfuly',
+                                  description: "Name can not be empty",
                                   leading: const Icon(
                                     Icons.error_outline_outlined,
                                     color: Colors.red,
                                     size: 55,
-                                  )
-                              );
-                              Navigator.push(
-                                context,
-                                PageTransition(
-                                  child: const basicDetails(),
-                                  type: PageTransitionType.rightToLeftJoined,
-                                  duration: const Duration(milliseconds: 350),
-                                  childCurrent: const SignUpScreen(),
-                                ),
-                              );
+                                  ));
                             }
-
-
-                          else{
-                            InAppNotifications.instance
-                              ..titleFontSize = 14.0
-                              ..descriptionFontSize = 14.0
-                              ..textColor = Colors.black
-                              ..backgroundColor = const Color.fromRGBO(150, 150, 150, 1)
-                              ..shadow = true
-                              ..animationStyle = InAppNotificationsAnimationStyle.scale;
-                            InAppNotifications.show(
-                                title: 'Failed',
-                                duration: const Duration(seconds: 2),
-                                description: temp,
-                                leading: const Icon(
-                                  Icons.error_outline_outlined,
-                                  color: Colors.red,
-                                  size: 55,
-                                )
-                            );
-                          }
-
 
                         },
                         style: ElevatedButton.styleFrom(

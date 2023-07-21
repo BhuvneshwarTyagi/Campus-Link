@@ -107,7 +107,7 @@ class _AttendanceState extends State<Attendance> {
                 ),
               ),
             ),
-            body: subject.length < 1
+            body: subject.isEmpty
                 ? const Center(
                     child: Text(
                       "Please apply filter to take attendance",

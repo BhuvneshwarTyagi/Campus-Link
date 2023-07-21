@@ -1,3 +1,4 @@
+import 'package:campus_link_teachers/Registration/Basic.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inapp_notifications/flutter_inapp_notifications.dart';
