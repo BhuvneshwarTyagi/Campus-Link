@@ -467,155 +467,159 @@ class _AttendanceState extends State<Attendance> {
                                                 },
                                               ),
                                             ),
-                                            ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                  backgroundColor: Colors
-                                                      .black
-                                                      .withOpacity(0.5),
-                                                  elevation: 0,
-                                                  shape:
-                                                  ContinuousRectangleBorder(
-                                                      borderRadius:
-                                                      BorderRadius
-                                                          .circular(
-                                                          20)),
-                                                  side: const BorderSide(
-                                                      color: Colors.white,
-                                                      width: 1)),
-                                              onPressed: () async {
-                                                await FirebaseFirestore
-                                                    .instance
-                                                    .collection("Students")
-                                                    .where("University", isEqualTo: university_filter)
-                                                    .where("College", isEqualTo: college_filter)
-                                                    .where("Course", isEqualTo: course_filter)
-                                                    .where("Branch", isEqualTo: branch_filter)
-                                                    .where("Year", isEqualTo: year_filter)
-                                                    .where("Section", isEqualTo: section_filter)
-                                                    .where("Subject", arrayContains: subject_filter)
-                                                    .where("Active", isEqualTo: true)
-                                                    .get()
-                                                    .then((value) =>
-                                                    value.docs.forEach((element) async {
-                                                          await FirebaseFirestore
-                                                              .instance
-                                                              .collection("Students")
-                                                              .doc(element
-                                                              .data()["Email"]).update({
-                                                            "$subject_filter-total-lectures": FieldValue.increment(1)
-                                                          });
-                                                        }));
-                                                setState(() {
-                                                  marked_email =
-                                                      marked_email
-                                                          .toSet()
-                                                          .toList();
-                                                  all_email=all_email.toSet().toList();
-                                                });
-                                                all_email.forEach(
-                                                        (element) async {
-                                                          if(marked_email.contains(element)){
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                gradient: const LinearGradient(
+                                                  colors: [
+                                                    Colors.blue,
+                                                    Colors.purpleAccent
+                                                  ]
+                                                ),
+                                                borderRadius: const BorderRadius.all(Radius.circular(15)),
+                                                border: Border.all(
+                                                  color: Colors.black,
+                                                  width: 1.5
+                                                )
+                                              ),
+                                              child: InkWell(
+                                                onTap: () async {
+                                                  await FirebaseFirestore
+                                                      .instance
+                                                      .collection("Students")
+                                                      .where("University", isEqualTo: university_filter)
+                                                      .where("College", isEqualTo: college_filter)
+                                                      .where("Course", isEqualTo: course_filter)
+                                                      .where("Branch", isEqualTo: branch_filter)
+                                                      .where("Year", isEqualTo: year_filter)
+                                                      .where("Section", isEqualTo: section_filter)
+                                                      .where("Subject", arrayContains: subject_filter)
+                                                      .where("Active", isEqualTo: true)
+                                                      .get()
+                                                      .then((value) =>
+                                                      value.docs.forEach((element) async {
                                                             await FirebaseFirestore
                                                                 .instance
                                                                 .collection("Students")
-                                                                .doc(element)
-                                                                .update(
-                                                                {
-                                                                  "Active": false,
-                                                                  "Location": reset_pos
-                                                                });
-                                                            var token;
-                                                            await FirebaseFirestore.instance.collection("Students").doc(element).get().then((value) => token=value.data()?["token"]);
+                                                                .doc(element
+                                                                .data()["Email"]).update({
+                                                              "$subject_filter-total-lectures": FieldValue.increment(1)
+                                                            });
+                                                          }));
+                                                  setState(() {
+                                                    marked_email =
+                                                        marked_email
+                                                            .toSet()
+                                                            .toList();
+                                                    all_email=all_email.toSet().toList();
+                                                  });
+                                                  all_email.forEach(
+                                                          (element) async {
+                                                            if(marked_email.contains(element)){
+                                                              await FirebaseFirestore
+                                                                  .instance
+                                                                  .collection("Students")
+                                                                  .doc(element)
+                                                                  .update(
+                                                                  {
+                                                                    "Active": false,
+                                                                    "Location": reset_pos
+                                                                  });
+                                                              var token;
+                                                              await FirebaseFirestore.instance.collection("Students").doc(element).get().then((value) => token=value.data()?["token"]);
 
-                                                            final docref = await FirebaseFirestore.instance
-                                                                .collection("Students")
-                                                                .doc(element)
-                                                                .collection("Attendance")
-                                                                .doc("$subject_filter-${DateTime.now().month}")
-                                                                .get();
+                                                              final docref = await FirebaseFirestore.instance
+                                                                  .collection("Students")
+                                                                  .doc(element)
+                                                                  .collection("Attendance")
+                                                                  .doc("$subject_filter-${DateTime.now().month}")
+                                                                  .get();
 
-                                                            docref.data() == null
-                                                                ?
-                                                            await FirebaseFirestore
-                                                                .instance
-                                                                .collection("Students")
-                                                                .doc(element)
-                                                                .collection("Attendance")
-                                                                .doc("$subject_filter-${DateTime.now().month}")
-                                                                .set({
-                                                              "${DateTime.now().day}": FieldValue.arrayUnion([DateTime.timestamp()]),
-                                                              "count_attendance": FieldValue.increment(1)
-                                                            })
-                                                                :
-                                                            await FirebaseFirestore
-                                                                .instance
-                                                                .collection("Students")
-                                                                .doc(element)
-                                                                .collection("Attendance")
-                                                                .doc("$subject_filter-${DateTime.now().month}")
-                                                                .update(
-                                                                {
-                                                                  "${DateTime.now().day}": FieldValue.arrayUnion([DateTime.timestamp()]),
-                                                                  "count_attendance": FieldValue.increment(1)
-                                                                });
-                                                            sendPushMessage(token, "Attendance marked", subject_filter);
-                                                            marked_email.remove(element);
+                                                              docref.data() == null
+                                                                  ?
+                                                              await FirebaseFirestore
+                                                                  .instance
+                                                                  .collection("Students")
+                                                                  .doc(element)
+                                                                  .collection("Attendance")
+                                                                  .doc("$subject_filter-${DateTime.now().month}")
+                                                                  .set({
+                                                                "${DateTime.now().day}": FieldValue.arrayUnion([DateTime.timestamp()]),
+                                                                "count_attendance": FieldValue.increment(1)
+                                                              })
+                                                                  :
+                                                              await FirebaseFirestore
+                                                                  .instance
+                                                                  .collection("Students")
+                                                                  .doc(element)
+                                                                  .collection("Attendance")
+                                                                  .doc("$subject_filter-${DateTime.now().month}")
+                                                                  .update(
+                                                                  {
+                                                                    "${DateTime.now().day}": FieldValue.arrayUnion([DateTime.timestamp()]),
+                                                                    "count_attendance": FieldValue.increment(1)
+                                                                  });
+                                                              sendPushMessage(token, "Attendance marked", subject_filter);
+                                                              marked_email.remove(element);
+                                                            }
+                                                            else{
+                                                              await FirebaseFirestore
+                                                                  .instance
+                                                                  .collection("Students")
+                                                                  .doc(element)
+                                                                  .update(
+                                                                  {
+                                                                    "Active": false,
+                                                                    "Location": reset_pos
+                                                                  });
+                                                              var token;
+                                                              await FirebaseFirestore.instance.collection("Students").doc(element).get().then((value) => token=value.data()?["token"]);
+
+                                                              final docref = await FirebaseFirestore.instance
+                                                                  .collection("Students")
+                                                                  .doc(element)
+                                                                  .collection("Attendance")
+                                                                  .doc("$subject_filter-${DateTime.now().month}")
+                                                                  .get();
+
+                                                              docref.data() == null
+                                                                  ?
+                                                              await FirebaseFirestore
+                                                                  .instance
+                                                                  .collection("Students")
+                                                                  .doc(element)
+                                                                  .collection("Attendance")
+                                                                  .doc("$subject_filter-${DateTime.now().month}")
+                                                                  .set({
+                                                                "${DateTime.now().day}": FieldValue.arrayUnion([""]),
+                                                                "count_attendance": FieldValue.increment(1)
+                                                              })
+                                                                  :
+                                                              await FirebaseFirestore
+                                                                  .instance
+                                                                  .collection("Students")
+                                                                  .doc(element)
+                                                                  .collection("Attendance")
+                                                                  .doc("$subject_filter-${DateTime.now().month}")
+                                                                  .update(
+                                                                  {
+                                                                    "${DateTime.now().day}": FieldValue.arrayUnion([""]),
+                                                                    "count_attendance": FieldValue.increment(1)
+                                                                  });
+                                                              sendPushMessage(token, "Attendance Missed", subject_filter);
+                                                              marked_email.remove(element);
+                                                            }
                                                           }
-                                                          else{
-                                                            await FirebaseFirestore
-                                                                .instance
-                                                                .collection("Students")
-                                                                .doc(element)
-                                                                .update(
-                                                                {
-                                                                  "Active": false,
-                                                                  "Location": reset_pos
-                                                                });
-                                                            var token;
-                                                            await FirebaseFirestore.instance.collection("Students").doc(element).get().then((value) => token=value.data()?["token"]);
-
-                                                            final docref = await FirebaseFirestore.instance
-                                                                .collection("Students")
-                                                                .doc(element)
-                                                                .collection("Attendance")
-                                                                .doc("$subject_filter-${DateTime.now().month}")
-                                                                .get();
-
-                                                            docref.data() == null
-                                                                ?
-                                                            await FirebaseFirestore
-                                                                .instance
-                                                                .collection("Students")
-                                                                .doc(element)
-                                                                .collection("Attendance")
-                                                                .doc("$subject_filter-${DateTime.now().month}")
-                                                                .set({
-                                                              "${DateTime.now().day}": FieldValue.arrayUnion([""]),
-                                                              "count_attendance": FieldValue.increment(1)
-                                                            })
-                                                                :
-                                                            await FirebaseFirestore
-                                                                .instance
-                                                                .collection("Students")
-                                                                .doc(element)
-                                                                .collection("Attendance")
-                                                                .doc("$subject_filter-${DateTime.now().month}")
-                                                                .update(
-                                                                {
-                                                                  "${DateTime.now().day}": FieldValue.arrayUnion([""]),
-                                                                  "count_attendance": FieldValue.increment(1)
-                                                                });
-                                                            sendPushMessage(token, "Attendance Missed", subject_filter);
-                                                            marked_email.remove(element);
-                                                          }
-                                                        }
-                                                    );
-                                              },
-                                              child: AutoSizeText(
-                                                "Mark Attendance",
-                                                style: GoogleFonts.exo(
-                                                    fontSize: 18,
-                                                    color: Colors.white),
+                                                      );
+                                                },
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: AutoSizeText(
+                                                    "Mark Attendance ✔",
+                                                    style: GoogleFonts.exo(
+                                                        fontSize: 18,
+                                                        color: Colors.black),
+                                                  ),
+                                                ),
                                               ),
                                             ),
                                           ],

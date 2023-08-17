@@ -74,471 +74,497 @@ class _SubjectState extends State<Subject> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          leading: BackButton(
+          iconTheme: const IconThemeData(color: Colors.black),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new,),
             onPressed: () {
               Navigator.pop(context);
             },
-            color: Colors.white,
           ),
           elevation: 0,
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                bottomRight: Radius.circular(30),
-                bottomLeft: Radius.circular(30),
-              )
-          ),
+          // shape: const RoundedRectangleBorder(
+          //     borderRadius: BorderRadius.only(
+          //       bottomRight: Radius.circular(30),
+          //       bottomLeft: Radius.circular(30),
+          //     )
+          // ),
           backgroundColor: Colors.black26,
           centerTitle: true,
           title: AutoSizeText(
             "Download Attendance",
-            style: GoogleFonts.gfsDidot(fontSize: size.height*0.03, color: Colors.white),
+            style: GoogleFonts.gfsDidot(fontSize: size.height*0.03, color: Colors.black),
           ),
         ),
         body: loading?
         const CircularProgressIndicator()
             :
-        Column(
+        Stack(
           children: [
             SizedBox(
-              height: size.height*0.8,
-              child: FileManager(
-                  controller: controller,
-                  builder: (context, snapshot) {
-                    final List<FileSystemEntity> entities = snapshot;
-                    return ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 0),
-                      itemCount: entities.length,
-                      itemBuilder: (context, index) {
-                        FileSystemEntity entity = entities[index];
-                        print(".........Entity: $entity");
-                        return Padding(
-                          padding:  const EdgeInsets.only(top:8.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  Colors.black.withOpacity(0.7),
-                                  Colors.black38
-                                ]
-                              ),
-                              borderRadius: const BorderRadius.all(Radius.circular(15)),
-
-                            ),
-                            child: Card(
-                              elevation: 40,
-                              shape:  const RoundedRectangleBorder(
-                                  side: BorderSide(
-                                    color: Colors.white,
-                                    width: 1.5,
-                                  ),
-                                  borderRadius: BorderRadius.all(Radius.circular(15))
-
-                              ),
-                              color: Colors.transparent,
-                              child: ListTile(
-                                leading: FileManager.isFile(entity)
-                                    ?  Icon(Icons.feed_outlined,color: Colors.white,size: size.height*0.042)
-                                    :  Icon(Icons.folder,color: Colors.white,size: size.height*0.042),
-                                title: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    AutoSizeText(
-                                      FileManager.basename(
-                                      entity,
-                                      showFileExtension: true,
-                                    ),
-                                     style: GoogleFonts.exo(
-                                       color: Colors.white,
-                                       fontSize: 17,
-                                       fontWeight: FontWeight.w500
-
-                                     ),
-                                    ),
-                                    Row(
+              height: size.height*0.9,
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: size.height*0.85,
+                    child: FileManager(
+                        controller: controller,
+                        builder: (context, snapshot) {
+                          final List<FileSystemEntity> entities = snapshot;
+                          return ListView.builder(
+                            padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 0),
+                            itemCount: entities.length,
+                            itemBuilder: (context, index) {
+                              FileSystemEntity entity = entities[index];
+                              print(".........Entity: $entity");
+                              return Padding(
+                                padding:  const EdgeInsets.only(top:8.0),
+                                child: Container(
+                                  // decoration: BoxDecoration(
+                                  //   gradient: LinearGradient(
+                                  //     colors: [
+                                  //       Colors.black.withOpacity(0.7),
+                                  //       Colors.black38
+                                  //     ]
+                                  //   ),
+                                  //   borderRadius: const BorderRadius.all(Radius.circular(15)),
+                                  //
+                                  // ),
+                                  child: Card(
+                                    elevation: 0,
+                                    // shape:  const RoundedRectangleBorder(
+                                    //     side: BorderSide(
+                                    //       color: Colors.white,
+                                    //       width: 1.5,
+                                    //     ),
+                                    //     borderRadius: BorderRadius.all(Radius.circular(15))
+                                    //
+                                    // ),
+                                    color: Colors.transparent,
+                                    child: Column(
                                       children: [
-                                        IconButton(
-                                            onPressed: () async {
-                                              await Share.shareXFiles([XFile(entity.path)], text: '${widget.course} ${widget.uni} ${widget.year} (${widget.section}) ${widget.subject} Attendance Sheet');
-                                              },
-                                            icon: const Icon(Icons.share,color: Colors.white,)),
-                                        IconButton(
-                                            onPressed: () async {
-                                              await File(entity.path).delete();
-                                              setState(() {});
-                                            },
-                                            icon: const Icon(Icons.delete_outline,color: Colors.white,)),
+                                        ListTile(
+                                          leading: FileManager.isFile(entity)
+                                              ?
+                                          SizedBox(
+                                            height: size.height*0.06,
+                                              child: const Image(image: AssetImage("assets/images/excel.png"),fit: BoxFit.contain,))
+                                              :  Icon(Icons.folder,color: Colors.white,size: size.height*0.042),
+                                          title: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              AutoSizeText(
+                                                FileManager.basename(
+                                                entity,
+                                                showFileExtension: true,
+                                              ),
+                                               style: GoogleFonts.exo(
+                                                 color: Colors.black,
+                                                 fontSize: 17,
+                                                 fontWeight: FontWeight.w500
+
+                                               ),
+                                              ),
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.end,
+                                                children: [
+                                                  IconButton(
+                                                      onPressed: () async {
+                                                        await Share.shareXFiles([XFile(entity.path)], text: '${widget.course} ${widget.uni} ${widget.year} (${widget.section}) ${widget.subject} Attendance Sheet');
+                                                        },
+                                                      icon: const Icon(Icons.share,color: Colors.black,)),
+                                                  IconButton(
+                                                      onPressed: () async {
+                                                        await File(entity.path).delete();
+                                                        setState(() {});
+                                                      },
+                                                      icon: const Icon(Icons.delete_outline,color: Colors.black,)),
+                                                ],
+                                              ),
+
+                                            ],
+                                          ),
+                                          subtitle: subtitle(entity),
+                                          onTap: () async {
+                                            OpenFile.open(entity.path);
+                                            if (FileManager.isDirectory(entity)) {
+                                              // open the folder
+                                              controller.openDirectory(entity);
+
+                                              // delete a folder
+                                              // await entity.delete(recursive: true);
+
+                                              // rename a folder
+                                              // await entity.rename("newPath");
+
+                                              // Check weather folder exists
+                                              // entity.exists();
+
+                                              // get date of file
+                                              // DateTime date = (await entity.stat()).modified;
+                                            } else {
+                                              // delete a file
+                                              // await entity.delete();
+
+                                              // rename a file
+                                              // await entity.rename("newPath");
+
+                                              // Check weather file exists
+                                              // entity.exists();
+
+                                              // get date of file
+                                              // DateTime date = (await entity.stat()).modified;
+
+                                              // get the size of the file
+                                              // int size = (await entity.stat()).size;
+                                            }
+                                          },
+                                        ),
+                                        const Divider(
+                                          height: 2,
+                                          color: Colors.black87,
+                                          indent: 5,
+                                          endIndent: 5,
+                                          thickness: 2,
+                                        )
                                       ],
                                     ),
-
-                                  ],
-                                ),
-                                subtitle: subtitle(entity),
-                                onTap: () async {
-                                  OpenFile.open(entity.path);
-                                  if (FileManager.isDirectory(entity)) {
-                                    // open the folder
-                                    controller.openDirectory(entity);
-
-                                    // delete a folder
-                                    // await entity.delete(recursive: true);
-
-                                    // rename a folder
-                                    // await entity.rename("newPath");
-
-                                    // Check weather folder exists
-                                    // entity.exists();
-
-                                    // get date of file
-                                    // DateTime date = (await entity.stat()).modified;
-                                  } else {
-                                    // delete a file
-                                    // await entity.delete();
-
-                                    // rename a file
-                                    // await entity.rename("newPath");
-
-                                    // Check weather file exists
-                                    // entity.exists();
-
-                                    // get date of file
-                                    // DateTime date = (await entity.stat()).modified;
-
-                                    // get the size of the file
-                                    // int size = (await entity.stat()).size;
-                                  }
-                                },
-                              ),
-                            ),
-                          ),
-                        );
-                      },);}),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                color: Colors.transparent,
-                width: MediaQuery.of(context).size.width,
-                height: size.height * 0.05,
-                padding: EdgeInsets.only(
-                  right: MediaQuery.of(context).size.width * 0.05,
-                  bottom: MediaQuery.of(context).size.height * 0.01,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15)),
-                          elevation: 20,
-                          backgroundColor: Colors.black12),
-                      onPressed: () {
-                        showModalBottomSheet(
-                          isDismissible: true,
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(50),
-                                topRight: Radius.circular(50)
-                            ),
-                          ),
-                          context: context,
-                          builder: (context) {
-                            return StatefulBuilder(builder: (context, setState) {
-                              return SingleChildScrollView(
-                                child: Container(
-                                  padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
-                                  height: size.height * 0.34,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      SizedBox(
-                                        height: size.height * 0.01,
-                                      ),
-                                      SizedBox(
-                                        height: size.height*0.2,
-                                        width: size.width,
-                                        child: Column(
-                                          mainAxisAlignment:  MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                              children: [
-                                                Text(
-                                                  "From :",
-                                                  style: GoogleFonts.exo(
-                                                      fontSize: 18,
-                                                      color: Colors.black,
-                                                      fontWeight: FontWeight.w500
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  width: size.width * 0.42,
-                                                  child: TextField(
-                                                    controller: start_date_controller,
-                                                    onTap: () async {
-                                                      final startdate = await _selectDate(context);
-                                                      setState(() {
-                                                        print(startdate.toString());
-                                                        start_date_controller.text =
-                                                            startdate.toString().substring(0, 10);
-                                                      });
-                                                    },
-                                                    keyboardType: TextInputType.none,
-                                                    cursorColor: Colors.black,
-                                                    decoration: InputDecoration(
-                                                        focusedBorder: const OutlineInputBorder(
-                                                            borderRadius:
-                                                            BorderRadius.all(Radius.circular(15)),
-                                                            borderSide: BorderSide(
-                                                              color: Colors.black,
-                                                            )),
-                                                        hintText: "Start Date",
-                                                        prefixIcon: Icon(Icons.date_range,
-                                                            color: Colors.black54,
-                                                            size: size.height * 0.03),
-                                                        fillColor: Colors.transparent,
-                                                        enabledBorder: const OutlineInputBorder(
-                                                            borderRadius:
-                                                            BorderRadius.all(Radius.circular(15)),
-                                                            borderSide: BorderSide(
-                                                              color: Colors.black,
-                                                            ))),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                              children: [
-                                                Text(
-                                                  "      To :",
-                                                  style: GoogleFonts.exo(
-                                                      fontSize: 18,
-                                                      color: Colors.black, fontWeight: FontWeight.w500),
-                                                ),
-                                                SizedBox(
-                                                  width: size.width * 0.42,
-                                                  child: TextField(
-                                                    controller: end_date_controller,
-                                                    cursorColor: Colors.black,
-                                                    onTap: () async {
-                                                      final enddate = await _selectDate(context);
-                                                      setState(() {
-                                                        print(enddate.toString());
-                                                        end_date_controller.text =
-                                                            enddate.toString().substring(0, 10);
-                                                      });
-                                                    },
-                                                    keyboardType: TextInputType.none,
-                                                    decoration: InputDecoration(
-                                                        focusedBorder: const OutlineInputBorder(
-                                                            borderRadius:
-                                                            BorderRadius.all(Radius.circular(15)),
-                                                            borderSide: BorderSide(
-                                                              color: Colors.black,
-                                                            )),
-                                                        hintText: "End Date",
-                                                        prefixIcon: Icon(Icons.date_range,
-                                                            color: Colors.black54,
-                                                            size: size.height * 0.03),
-                                                        fillColor: Colors.transparent,
-                                                        enabledBorder: const OutlineInputBorder(
-                                                            borderRadius:
-                                                            BorderRadius.all(Radius.circular(15)),
-                                                            borderSide: BorderSide(color: Colors.black))),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: size.height * 0.01,
-                                      ),
-
-                                      ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(15)),
-                                            elevation: 20,
-                                            backgroundColor: Colors.black12),
-                                        onPressed: () async {
-                                          List<dynamic> email=[];
-                                          Map<String,String> roll={};
-                                          Map<String,String> name={};
-                                          var excel = Excel.createExcel();
-                                          Sheet sheetObject = excel["${start_date_controller.text.trim().split("-")[2]} ${months[int.parse(start_date_controller.text.trim().split("-")[1])-1]}-${end_date_controller.text.trim().split("-")[2]} ${months[int.parse(end_date_controller.text.trim().split("-")[1])-1]}"];
-                                          List<dynamic> initialrow=[];
-                                          initialrow.add("Name");
-                                          initialrow.add("Roll Number");
-                                          if(start_date_controller.text.trim().split("-")[1]==end_date_controller.text.trim().split("-")[1]){
-                                            int start=int.parse(start_date_controller.text.trim().split("-")[2]);
-                                            int end=int.parse(end_date_controller.text.trim().split("-")[2]);
-                                            String month=months[int.parse(start_date_controller.text.trim().split("-")[1])-1];
-                                            for(int i=start;i<=end;i++){
-                                              initialrow.add("$i $month");
-                                            }
-                                          }
-                                          else{
-                                            int start=int.parse(start_date_controller.text.trim().split("-")[2]);
-                                            int end=database().getDaysInMonth(int.parse(start_date_controller.text.trim().split("-")[0]), int.parse(start_date_controller.text.trim().split("-")[1]));
-                                            String month=months[int.parse(start_date_controller.text.trim().split("-")[1])-1];
-                                            for(int i=start;i<=end;i++){
-                                              initialrow.add("$i $month");
-                                            }
-                                            start=1;
-                                            end=int.parse(end_date_controller.text.trim().split("-")[2]);
-                                            month=months[int.parse(end_date_controller.text.trim().split("-")[1])-1];
-                                            for(int i=start;i<=end;i++){
-                                              initialrow.add("$i $month");
-                                            }
-
-                                          }
-                                          initialrow.add("Total");
-                                          initialrow.add("Out of");
-                                          initialrow.add("Percentage");
-                                          sheetObject.appendRow(initialrow);
-                                          await  FirebaseFirestore
-                                              .instance
-                                              .collection("Students")
-                                              .where("University", isEqualTo: widget.uni)
-                                              .where("College", isEqualTo: widget.clg)
-                                              .where("Course", isEqualTo: widget.course)
-                                              .where("Branch", isEqualTo: widget.branch)
-                                              .where("Year", isEqualTo: widget.year)
-                                              .where("Section", isEqualTo: widget.section)
-                                              .where("Subject", arrayContains: widget.subject)
-                                              .where("Name",isNull: false)
-                                              .orderBy("Name")
-                                              .get()
-                                              .then((value) =>
-                                              value.docs.forEach((element) {
-                                                email.add(element.data()["Email"]);
-                                                roll[element.data()["Email"]]=element.data()["Rollnumber"];
-                                                name[element.data()["Email"]]=element.data()["Name"];
-                                              })
-                                          );
-                                          print(roll);
-                                          print(name);
-                                          for (var element in email){
-                                            print(element);
-                                            int outof=0;
-                                            int total=0;
-                                            List<dynamic> count=[];
-                                            count.add(name[element]);
-                                            count.add(roll[element]);
-                                            var doc = await  FirebaseFirestore.instance.collection("Students").doc(element).collection('Attendance').doc("${widget.subject}-${startDate.month}").get();
-
-
-                                            print(doc.data()!["0"]);
-
-                                            if(start_date_controller.text.trim().split("-")[1]==end_date_controller.text.trim().split("-")[1]){
-                                              int start= int.parse(start_date_controller.text.trim().split('-')[2]);
-                                              int end= int.parse(end_date_controller.text.trim().split('-')[2]);
-                                              for(int i=start;i<=end;i++){
-                                                int countP=0;
-                                                if(doc.data()?["$i"] !=null){
-                                                  List<dynamic> attendance=doc.data()!["$i"];
-                                                  for(var temp in attendance){
-                                                    if(temp!=""){
-                                                      countP++;
-                                                      total++;
-                                                    }
-                                                  }
-                                                  count.add(countP);
-                                                  outof = outof + int.parse("${doc.data()?["$i"].length}");
-                                                }
-                                                else{
-                                                  count.add(0);
-                                                }
-                                                print(countP);
-                                                print(total);
-                                              }
-                                            }
-                                            else{
-                                              int start=int.parse(start_date_controller.text.trim().split("-")[2]);
-                                              int end=database().getDaysInMonth(int.parse(start_date_controller.text.trim().split("-")[0]), int.parse(start_date_controller.text.trim().split("-")[1]));
-                                              for(int i=start;i<=end;i++){
-                                                int countP=0;
-                                                if(doc.data()?["$i"] !=null){
-                                                  List<dynamic> attendance=doc.data()!["$i"];
-                                                  for(var temp in attendance){
-                                                    if(temp!=""){
-                                                      countP++;
-                                                      total++;
-                                                    }
-                                                  }
-                                                  count.add(countP);
-                                                  outof = outof + int.parse("${doc.data()?["$i"].length}");
-                                                }
-                                                else{
-                                                  count.add(0);
-                                                }
-
-                                              }
-                                              start=1;
-                                              end=int.parse(end_date_controller.text.trim().split("-")[2]);
-                                              for(int i=start;i<=end;i++){
-                                                int countP=0;
-                                                if(doc.data()?["$i"] !=null){
-                                                  List<dynamic> attendance=doc.data()!["$i"];
-                                                  for(var temp in attendance){
-                                                    if(temp!=""){
-                                                      countP++;
-                                                      total++;
-                                                    }
-                                                  }
-                                                  count.add(countP);
-                                                  outof = outof + int.parse("${doc.data()?["$i"].length}");
-                                                }
-                                                else{
-                                                  count.add(0);
-                                                }
-
-                                              }
-                                            }
-
-                                            count.add(total);
-                                            count.add(outof);
-                                            count.add("${(total/outof)*100}%");
-
-                                            print(".......$count........");
-                                            await sheetObject.appendRow(count);//row++;
-                                          }
-                                          var fileBytes = excel.save();
-                                          print(fileBytes);
-                                          print(start_date_controller.text);
-                                          var fileName="${start_date_controller.text.trim().split("-")[2]} ${months[int.parse(start_date_controller.text.trim().split("-")[1])-1]}-${end_date_controller.text.trim().split("-")[2]} ${months[int.parse(end_date_controller.text.trim().split("-")[1])-1]}.xls";
-                                          Directory? path = await getExternalStorageDirectory();
-                                          print(path?.path);
-                                          File(join('${controller.getCurrentPath}/$fileName'))..create(recursive: true)..writeAsBytes(fileBytes!).whenComplete((){ Navigator.pop(context);
-
-                                          setState((){
-
-                                          });
-                                          });
-                                        },
-                                        child: Text(
-                                          "Create Attendance Sheet",
-                                          style: GoogleFonts.exo(
-                                              color: Colors.black, fontWeight: FontWeight.w500),
-                                        ),
-                                      ),
-                                    ],
                                   ),
                                 ),
                               );
-                            },);
-                          },).whenComplete(() => setState((){}));
-                      },
-                      child: Text(
-                        "Download",
-                        style: GoogleFonts.exo(
-                            color: Colors.black, fontWeight: FontWeight.w500),
+                            },);}),
+                  ),
+                  SizedBox(
+                    height: size.height*0.03,
+                  )
+                ],
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Container(
+                margin: EdgeInsets.all(8),
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.deepPurple,
+                      Colors.purpleAccent
+                    ]
+                  ),
+                  borderRadius:  BorderRadius.all(Radius.circular(15))
+                ),
+                height: size.height * 0.048,
+                width: size.width*0.3,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15)),
+                      elevation: 20,
+                      backgroundColor: Colors.black12),
+                  onPressed: () {
+                    showModalBottomSheet(
+                      isDismissible: true,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(50),
+                            topRight: Radius.circular(50)
+                        ),
                       ),
-                    )
-                  ],
+                      context: context,
+                      builder: (context) {
+                        return StatefulBuilder(builder: (context, setState) {
+                          return SingleChildScrollView(
+                            child: Container(
+                              padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
+                              height: size.height * 0.34,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    height: size.height * 0.01,
+                                  ),
+                                  SizedBox(
+                                    height: size.height*0.2,
+                                    width: size.width,
+                                    child: Column(
+                                      mainAxisAlignment:  MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            Text(
+                                              "From :",
+                                              style: GoogleFonts.exo(
+                                                  fontSize: 18,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w500
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: size.width * 0.42,
+                                              child: TextField(
+                                                controller: start_date_controller,
+                                                onTap: () async {
+                                                  final startdate = await _selectDate(context);
+                                                  setState(() {
+                                                    print(startdate.toString());
+                                                    start_date_controller.text =
+                                                        startdate.toString().substring(0, 10);
+                                                  });
+                                                },
+                                                keyboardType: TextInputType.none,
+                                                cursorColor: Colors.black,
+                                                decoration: InputDecoration(
+                                                    focusedBorder: const OutlineInputBorder(
+                                                        borderRadius:
+                                                        BorderRadius.all(Radius.circular(15)),
+                                                        borderSide: BorderSide(
+                                                          color: Colors.black,
+                                                        )),
+                                                    hintText: "Start Date",
+                                                    prefixIcon: Icon(Icons.date_range,
+                                                        color: Colors.black54,
+                                                        size: size.height * 0.03),
+                                                    fillColor: Colors.transparent,
+                                                    enabledBorder: const OutlineInputBorder(
+                                                        borderRadius:
+                                                        BorderRadius.all(Radius.circular(15)),
+                                                        borderSide: BorderSide(
+                                                          color: Colors.black,
+                                                        ))),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            Text(
+                                              "      To :",
+                                              style: GoogleFonts.exo(
+                                                  fontSize: 18,
+                                                  color: Colors.black, fontWeight: FontWeight.w500),
+                                            ),
+                                            SizedBox(
+                                              width: size.width * 0.42,
+                                              child: TextField(
+                                                controller: end_date_controller,
+                                                cursorColor: Colors.black,
+                                                onTap: () async {
+                                                  final enddate = await _selectDate(context);
+                                                  setState(() {
+                                                    print(enddate.toString());
+                                                    end_date_controller.text =
+                                                        enddate.toString().substring(0, 10);
+                                                  });
+                                                },
+                                                keyboardType: TextInputType.none,
+                                                decoration: InputDecoration(
+                                                    focusedBorder: const OutlineInputBorder(
+                                                        borderRadius:
+                                                        BorderRadius.all(Radius.circular(15)),
+                                                        borderSide: BorderSide(
+                                                          color: Colors.black,
+                                                        )),
+                                                    hintText: "End Date",
+                                                    prefixIcon: Icon(Icons.date_range,
+                                                        color: Colors.black54,
+                                                        size: size.height * 0.03),
+                                                    fillColor: Colors.transparent,
+                                                    enabledBorder: const OutlineInputBorder(
+                                                        borderRadius:
+                                                        BorderRadius.all(Radius.circular(15)),
+                                                        borderSide: BorderSide(color: Colors.black))),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: size.height * 0.01,
+                                  ),
+
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(15)),
+                                        elevation: 20,
+                                        backgroundColor: Colors.black12),
+                                    onPressed: () async {
+                                      List<dynamic> email=[];
+                                      Map<String,String> roll={};
+                                      Map<String,String> name={};
+                                      var excel = Excel.createExcel();
+                                      Sheet sheetObject = excel["${start_date_controller.text.trim().split("-")[2]} ${months[int.parse(start_date_controller.text.trim().split("-")[1])-1]}-${end_date_controller.text.trim().split("-")[2]} ${months[int.parse(end_date_controller.text.trim().split("-")[1])-1]}"];
+                                      List<dynamic> initialrow=[];
+                                      initialrow.add("Name");
+                                      initialrow.add("Roll Number");
+                                      if(start_date_controller.text.trim().split("-")[1]==end_date_controller.text.trim().split("-")[1]){
+                                        int start=int.parse(start_date_controller.text.trim().split("-")[2]);
+                                        int end=int.parse(end_date_controller.text.trim().split("-")[2]);
+                                        String month=months[int.parse(start_date_controller.text.trim().split("-")[1])-1];
+                                        for(int i=start;i<=end;i++){
+                                          initialrow.add("$i $month");
+                                        }
+                                      }
+                                      else{
+                                        int start=int.parse(start_date_controller.text.trim().split("-")[2]);
+                                        int end=database().getDaysInMonth(int.parse(start_date_controller.text.trim().split("-")[0]), int.parse(start_date_controller.text.trim().split("-")[1]));
+                                        String month=months[int.parse(start_date_controller.text.trim().split("-")[1])-1];
+                                        for(int i=start;i<=end;i++){
+                                          initialrow.add("$i $month");
+                                        }
+                                        start=1;
+                                        end=int.parse(end_date_controller.text.trim().split("-")[2]);
+                                        month=months[int.parse(end_date_controller.text.trim().split("-")[1])-1];
+                                        for(int i=start;i<=end;i++){
+                                          initialrow.add("$i $month");
+                                        }
+
+                                      }
+                                      initialrow.add("Total");
+                                      initialrow.add("Out of");
+                                      initialrow.add("Percentage");
+                                      sheetObject.appendRow(initialrow);
+                                      await  FirebaseFirestore
+                                          .instance
+                                          .collection("Students")
+                                          .where("University", isEqualTo: widget.uni)
+                                          .where("College", isEqualTo: widget.clg)
+                                          .where("Course", isEqualTo: widget.course)
+                                          .where("Branch", isEqualTo: widget.branch)
+                                          .where("Year", isEqualTo: widget.year)
+                                          .where("Section", isEqualTo: widget.section)
+                                          .where("Subject", arrayContains: widget.subject)
+                                          .where("Name",isNull: false)
+                                          .orderBy("Name")
+                                          .get()
+                                          .then((value) =>
+                                          value.docs.forEach((element) {
+                                            email.add(element.data()["Email"]);
+                                            roll[element.data()["Email"]]=element.data()["Rollnumber"];
+                                            name[element.data()["Email"]]=element.data()["Name"];
+                                          })
+                                      );
+                                      print(roll);
+                                      print(name);
+                                      for (var element in email){
+                                        print(element);
+                                        int outof=0;
+                                        int total=0;
+                                        List<dynamic> count=[];
+                                        count.add(name[element]);
+                                        count.add(roll[element]);
+                                        var doc = await  FirebaseFirestore.instance.collection("Students").doc(element).collection('Attendance').doc("${widget.subject}-${startDate.month}").get();
+
+
+                                        print(doc.data()!["0"]);
+
+                                        if(start_date_controller.text.trim().split("-")[1]==end_date_controller.text.trim().split("-")[1]){
+                                          int start= int.parse(start_date_controller.text.trim().split('-')[2]);
+                                          int end= int.parse(end_date_controller.text.trim().split('-')[2]);
+                                          for(int i=start;i<=end;i++){
+                                            int countP=0;
+                                            if(doc.data()?["$i"] !=null){
+                                              List<dynamic> attendance=doc.data()!["$i"];
+                                              for(var temp in attendance){
+                                                if(temp!=""){
+                                                  countP++;
+                                                  total++;
+                                                }
+                                              }
+                                              count.add(countP);
+                                              outof = outof + int.parse("${doc.data()?["$i"].length}");
+                                            }
+                                            else{
+                                              count.add(0);
+                                            }
+                                            print(countP);
+                                            print(total);
+                                          }
+                                        }
+                                        else{
+                                          int start=int.parse(start_date_controller.text.trim().split("-")[2]);
+                                          int end=database().getDaysInMonth(int.parse(start_date_controller.text.trim().split("-")[0]), int.parse(start_date_controller.text.trim().split("-")[1]));
+                                          for(int i=start;i<=end;i++){
+                                            int countP=0;
+                                            if(doc.data()?["$i"] !=null){
+                                              List<dynamic> attendance=doc.data()!["$i"];
+                                              for(var temp in attendance){
+                                                if(temp!=""){
+                                                  countP++;
+                                                  total++;
+                                                }
+                                              }
+                                              count.add(countP);
+                                              outof = outof + int.parse("${doc.data()?["$i"].length}");
+                                            }
+                                            else{
+                                              count.add(0);
+                                            }
+
+                                          }
+                                          start=1;
+                                          end=int.parse(end_date_controller.text.trim().split("-")[2]);
+                                          for(int i=start;i<=end;i++){
+                                            int countP=0;
+                                            if(doc.data()?["$i"] !=null){
+                                              List<dynamic> attendance=doc.data()!["$i"];
+                                              for(var temp in attendance){
+                                                if(temp!=""){
+                                                  countP++;
+                                                  total++;
+                                                }
+                                              }
+                                              count.add(countP);
+                                              outof = outof + int.parse("${doc.data()?["$i"].length}");
+                                            }
+                                            else{
+                                              count.add(0);
+                                            }
+
+                                          }
+                                        }
+
+                                        count.add(total);
+                                        count.add(outof);
+                                        count.add("${(total/outof)*100}%");
+
+                                        print(".......$count........");
+                                        await sheetObject.appendRow(count);//row++;
+                                      }
+                                      var fileBytes = excel.save();
+                                      print(fileBytes);
+                                      print(start_date_controller.text);
+                                      var fileName="${start_date_controller.text.trim().split("-")[2]} ${months[int.parse(start_date_controller.text.trim().split("-")[1])-1]}-${end_date_controller.text.trim().split("-")[2]} ${months[int.parse(end_date_controller.text.trim().split("-")[1])-1]}.xls";
+                                      Directory? path = await getExternalStorageDirectory();
+                                      print(path?.path);
+                                      File(join('${controller.getCurrentPath}/$fileName'))..create(recursive: true)..writeAsBytes(fileBytes!).whenComplete((){ Navigator.pop(context);
+
+                                      setState((){
+
+                                      });
+                                      });
+                                    },
+                                    child: Text(
+                                      "Create Attendance Sheet",
+                                      style: GoogleFonts.exo(
+                                          color: Colors.black, fontWeight: FontWeight.w500),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },);
+                      },).whenComplete(() => setState((){}));
+                  },
+                  child: Text(
+                    "Download",
+                    style: GoogleFonts.exo(
+                        color: Colors.black, fontWeight: FontWeight.w500),
+                  ),
                 ),
               ),
             ),

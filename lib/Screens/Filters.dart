@@ -69,15 +69,26 @@ class _FiltersState extends State<Filters> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          backgroundColor: Colors.black12,
-          elevation: 0,
-          automaticallyImplyLeading: true,
-          title: const Text("Filters"),
-          titleTextStyle: GoogleFonts.gfsDidot(
-              color: Colors.black,
-              fontWeight: FontWeight.w500,
-              fontSize: MediaQuery.of(context).size.height * 0.035),
           iconTheme: const IconThemeData(color: Colors.black),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new,),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          elevation: 0,
+          // shape: const RoundedRectangleBorder(
+          //     borderRadius: BorderRadius.only(
+          //       bottomRight: Radius.circular(30),
+          //       bottomLeft: Radius.circular(30),
+          //     )
+          // ),
+          backgroundColor: Colors.black26,
+          centerTitle: true,
+          title: AutoSizeText(
+            "Filter",
+            style: GoogleFonts.gfsDidot(fontSize: size.height*0.05, color: Colors.black),
+          ),
         ),
         bottomNavigationBar: Container(
           color: Colors.transparent,

@@ -1,19 +1,12 @@
 import 'dart:io';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:campus_link_teachers/Constraints.dart';
 import 'package:campus_link_teachers/Screens/subject_attendace.dart';
 import 'package:campus_link_teachers/push_notification/Storage_permission.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:excel/excel.dart';
-import 'package:file_manager/file_manager.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-
-import 'Navigator.dart';
 
 class Download_attendance extends StatefulWidget {
   const Download_attendance({Key? key}) : super(key: key);
@@ -88,232 +81,234 @@ class _Download_attendanceState extends State<Download_attendance> {
     Size size = MediaQuery.of(context).size;
     return university_list!.isEmpty
         ? const Center(child: CircularProgressIndicator())
-        : Scaffold(
-            backgroundColor: Colors.deepPurple.shade300,
-            appBar: AppBar(
-              leading: BackButton(
-                onPressed: () {
-                  setState(() {
-                    curr_filder.clear();
-                        Navigator.push(
-                          context,
-                          PageTransition(
-                            child: const Nevi(),
-                            type: PageTransitionType.topToBottom,
-                            duration: const Duration(milliseconds: 400),
-                            alignment: Alignment.center,
-                            childCurrent: const Download_attendance(),
-                          ),
-                        );
-                  });
-                },
-                //color: Colors.white,
-              ),
-              elevation: 0,
-              backgroundColor: Colors.deepPurple.shade300,
-              centerTitle: true,
-              title: AutoSizeText(
-                "Download Attendance",
-                style: GoogleFonts.gfsDidot(fontSize: size.height*0.03, color: Colors.white),
-              ),
-            ),
-            body:SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Column(
-                children: [
-                  Container(
-                    height: size.height*0.08,
-                    color: Colors.transparent,
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          IconButton(
-                              onPressed: (){
-                                setState(() {
-                                  current_page=0;
-                                  curr_filder.clear();
-                                });
-                                Page_controller.animateToPage(current_page,
-                                    duration: const Duration(milliseconds: 400),
-                                    curve: Curves.linear);
-                              },
-                              icon: Icon(Icons.folder),color: Colors.white,iconSize: size.height*0.04),
-                          Icon(Icons.navigate_next,color: Colors.white,size: size.height*0.03,),
-                          SizedBox(
-                            width: size.width,
-                            height: size.height*0.05,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: curr_filder.length,
-                              itemBuilder: (context, index) {
-                                return Row(
+        :
+    Scaffold(
+      backgroundColor: Colors.deepPurple.shade300,
+      appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.black),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new,),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        elevation: 0,
+        // shape: const RoundedRectangleBorder(
+        //     borderRadius: BorderRadius.only(
+        //       bottomRight: Radius.circular(30),
+        //       bottomLeft: Radius.circular(30),
+        //     )
+        // ),
+        backgroundColor: Colors.transparent,
+        centerTitle: true,
+        title: AutoSizeText(
+          "Download Attendance",
+          style: GoogleFonts.gfsDidot(fontSize: size.height*0.03, color: Colors.black),
+        ),
+      ),
+      body:Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  height: size.height*0.07,
+                  width: size.width*0.96,
+                  color: Colors.transparent,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      IconButton(
+                          onPressed: (){
+                            setState(() {
+                              current_page=0;
+                              curr_filder.clear();
+                            });
+                            Page_controller.animateToPage(current_page,
+                                duration: const Duration(milliseconds: 400),
+                                curve: Curves.linear);
+                          },
+                          icon: const Icon(Icons.folder),color: Colors.amber,iconSize: size.height*0.04),
+                      SizedBox(
+                        width: size.width*0.84,
+                        height: size.height*0.08,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: curr_filder.length,
+                          itemBuilder: (context, index) {
+                            print(curr_filder[index]+"h");
+                            return InkWell(
+                                onTap: (){
+                              setState(() {
+                                current_page=index;
+                                curr_filder.removeRange(index,curr_filder.length);
+                              });
+                              Page_controller.animateToPage(current_page,
+                                  duration: const Duration(milliseconds: 400),
+                                  curve: Curves.linear);
+                            },
+                                child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    TextButton(onPressed: (){
+                                    AutoSizeText(
+                                      " > ",
+                                      style: GoogleFonts.exo(
+                                        fontSize: size.width*0.04,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600
+                                      ),
+                                    ),
+                                    AutoSizeText(
+                                      curr_filder[index].split(" ")[0],
+                                      style: GoogleFonts.exo(
+                                        fontSize: size.width*0.03,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w500
+                                      ),
+                                      softWrap: true,
+                                      maxLines: 1,
+                                    ),
+                                  ],
+                                ));
+
+                        },),
+                      )
+                    ],
+                  ),
+                ),
+                Container(
+                  height: size.height*0.816,
+                  decoration: BoxDecoration(
+
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        // Colors.black,
+                        // Colors.deepPurple,
+                        // Colors.purpleAccent
+                        const Color.fromRGBO(86, 149, 178, 1),
+
+                        const Color.fromRGBO(68, 174, 218, 1),
+                        //Color.fromRGBO(118, 78, 232, 1),
+                        Colors.deepPurple.shade300
+                      ],
+                    ),
+                    border: const Border(
+                      top: BorderSide(
+                        color: Colors.black,
+                        width: 2.0,
+                      ),
+
+                    ),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.only(top: size.height*0.005),
+                    child: PageView(
+                      controller: Page_controller,
+                      physics: const NeverScrollableScrollPhysics(),
+                      onPageChanged: (index) {
+                        setState(() {
+                          current_page = index;
+                        });
+                      },
+                      children: [
+                        SizedBox(
+                          height: size.height * 1,
+                          width: size.width * 1,
+                          child: ListView.builder(
+                            itemCount: university_list?.length,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: const EdgeInsets.all(3.0),
+                                child: Card(
+                                  elevation: 0,
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    onTap: () {
+                                      print("Yess");
                                       setState(() {
-                                        current_page=index;
-                                        curr_filder.removeRange(index,curr_filder.length);
+                                        uni_index = index;
+                                        fetch_college();
+                                        current_page = index + 1;
+                                        currentuni = university_list?[index];
+                                        curr_filder.add(currentuni);
                                       });
                                       Page_controller.animateToPage(current_page,
                                           duration: const Duration(milliseconds: 400),
                                           curve: Curves.linear);
                                     },
-                                        child: AutoSizeText(
-                                          curr_filder[index],
-                                          style: GoogleFonts.exo(
-                                            fontSize: 15,
-                                            color: Colors.white,
+                                    child: SizedBox(
+                                      width: size.width*1,
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              SizedBox(
+                                                width: size.width * 0.05,
+                                              ),
+                                              SizedBox(
+                                                  height: size.height * 0.08,
+                                                  width: size.width * 0.1,
+                                                  child: Icon(Icons.folder,size: size.height*0.05,color: Colors.amber,)),
+                                              SizedBox(
+                                                width: size.width * 0.05,
+                                              ),
+                                              AutoSizeText(
+                                                university_list?[index],
+                                                style: GoogleFonts.exo(
+                                                    fontSize: 14,
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.w500),
+                                              )
+                                            ],
                                           ),
-                                        )),
-                                    Icon(Icons.navigate_next,color: Colors.white,size: size.height*0.03,),
-                                  ],
-                                );
-
-                            },),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                  Container(
-                    height: size.height*1,
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(30),
-                          topRight: Radius.circular(30)
-                      ),
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          // Colors.black,
-                          // Colors.deepPurple,
-                          // Colors.purpleAccent
-                          const Color.fromRGBO(86, 149, 178, 1),
-
-                          const Color.fromRGBO(68, 174, 218, 1),
-                          //Color.fromRGBO(118, 78, 232, 1),
-                          Colors.deepPurple.shade300
-                        ],
-                      ),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.only(top: size.height*0.02),
-                      child: PageView(
-                        controller: Page_controller,
-                        physics: const NeverScrollableScrollPhysics(),
-                        onPageChanged: (index) {
-                          setState(() {
-                            current_page = index;
-                          });
-                        },
-                        children: [
-                          SizedBox(
-                            height: size.height * 1,
-                            width: size.width * 1,
-                            child: SizedBox(
-                              child: ListView.builder(
-                                itemCount: university_list?.length,
-                                itemBuilder: (context, index) {
-                                  return Padding(
-                                    padding: EdgeInsets.all(3.0),
-                                    child: Card(
-                                      elevation: 40,
-                                      shape:  const RoundedRectangleBorder(
-                                          side: BorderSide(
-                                            color: Colors.white,
-                                            width:2,
-                                          ),
-                                          borderRadius: BorderRadius.all(Radius.circular(25))
-
+                                          const Divider(
+                                            height: 2,
+                                            color: Colors.black87,
+                                            indent: 5,
+                                            endIndent: 5,
+                                            thickness: 2,
+                                          )
+                                        ],
                                       ),
-                                      color: Colors.lightBlueAccent,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          height: size.height * 1,
+                          width: size.width * 1,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: size.height*0.78,
+                                child: ListView.builder(
+                                  itemCount: clg_list?.length,
+                                  itemBuilder: (context, index) {
+                                    return Card(
+                                      elevation: 0,
+
+                                      color: Colors.transparent,
                                       child: InkWell(
                                         onTap: () {
-                                          print("Yess");
                                           setState(() {
-                                            uni_index = index;
-                                            fetch_college();
-                                            current_page = index + 1;
-                                            currentuni = university_list?[index];
-                                            curr_filder.add(currentuni);
+                                            clgIndex = index;
+                                            fetch_course();
+                                            current_page += 1;
+                                            currentclg = clg_list?[index];
+                                            curr_filder.add(currentclg);
                                           });
                                           Page_controller.animateToPage(current_page,
                                               duration: const Duration(milliseconds: 400),
                                               curve: Curves.linear);
                                         },
-                                        child: SizedBox(
-                                          width: size.width*1,
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  SizedBox(
-                                                    width: size.width * 0.05,
-                                                  ),
-                                                  SizedBox(
-                                                      height: size.height * 0.08,
-                                                      width: size.width * 0.1,
-                                                      child: Icon(Icons.folder,size: size.height*0.05,color: Colors.white,)),
-                                                  SizedBox(
-                                                    width: size.width * 0.05,
-                                                  ),
-                                                  AutoSizeText(
-                                                    university_list?[index],
-                                                    style: GoogleFonts.exo(
-                                                        fontSize: 14,
-                                                        color: Colors.white,
-                                                        fontWeight: FontWeight.w600),
-                                                  )
-                                                ],
-                                              ),
-
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: size.height * 1,
-                            width: size.width * 1,
-                            child: SizedBox(
-                              child: ListView.builder(
-                                itemCount: clg_list?.length,
-                                itemBuilder: (context, index) {
-                                  return Card(
-                                    elevation: 40,
-                                    shape:  const RoundedRectangleBorder(
-                                        side: BorderSide(
-                                          color: Colors.white,
-                                          width:3,
-                                        ),
-                                        borderRadius: BorderRadius.all(Radius.circular(25))
-
-                                    ),
-                                    color: Colors.lightBlueAccent,
-                                    child: InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          clgIndex = index;
-                                          fetch_course();
-                                          current_page += 1;
-                                          currentclg = clg_list?[index];
-                                          curr_filder.add(currentclg);
-                                        });
-                                        Page_controller.animateToPage(current_page,
-                                            duration: const Duration(milliseconds: 400),
-                                            curve: Curves.linear);
-                                      },
-                                      child: Container(
                                         child: Column(
                                           mainAxisAlignment: MainAxisAlignment.start,
                                           children: [
@@ -325,376 +320,369 @@ class _Download_attendanceState extends State<Download_attendance> {
                                                 SizedBox(
                                                     height: size.height * 0.08,
                                                     width: size.width * 0.1,
-                                                    child: Icon(Icons.folder,size: size.height*0.05,color: Colors.white,)),
+                                                    child: Icon(Icons.folder,size: size.height*0.05,color: Colors.amber,)),
                                                 SizedBox(
                                                   width: size.width * 0.05,
                                                 ),
                                                 AutoSizeText(
                                                   clg_list?[index],
                                                   style: GoogleFonts.exo(
-                                                      fontSize: 14,
-                                                      color: Colors.white,                                              fontWeight: FontWeight.w600),
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black,
+                                                  ),
                                                 )
                                               ],
                                             ),
-
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: size.height * 1,
-                            width: size.width * 1,
-                            child: SizedBox(
-                              child: ListView.builder(
-                                itemCount: course_list?.length,
-                                itemBuilder: (context, index) {
-                                  return Card(
-                                    elevation: 40,
-                                    shape:  const RoundedRectangleBorder(
-                                        side: BorderSide(
-                                          color: Colors.white,
-                                          width:3,
-                                        ),
-                                        borderRadius: BorderRadius.all(Radius.circular(25))
-
-                                    ),
-                                    color: Colors.lightBlueAccent,
-                                    child: InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          courseIndex = index;
-                                          fetch_branch();
-                                          currentcourse = course_list?[index];
-                                          current_page += 1;
-                                          curr_filder.add(currentcourse);
-                                        });
-                                        Page_controller.animateToPage(current_page,
-                                            duration: const Duration(milliseconds: 400),
-                                            curve: Curves.linear);
-                                      },
-                                      child: Container(
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                SizedBox(
-                                                  width: size.width * 0.05,
-                                                ),
-                                                SizedBox(
-                                                    height: size.height * 0.08,
-                                                    width: size.width * 0.1,
-                                                    child: Icon(Icons.folder,size: size.height*0.05,color: Colors.white,)),
-                                                SizedBox(
-                                                  width: size.width * 0.05,
-                                                ),
-                                                AutoSizeText(
-                                                  course_list?[index],
-                                                  style: GoogleFonts.exo(
-                                                      fontSize: 14,
-                                                      color: Colors.white,
-                                                      fontWeight: FontWeight.w600),
-                                                )
-                                              ],
-                                            ),
-
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: size.height * 1,
-                            width: size.width * 1,
-                            child: SizedBox(
-                              child: ListView.builder(
-                                itemCount: branch_list?.length,
-                                itemBuilder: (context, index) {
-                                  return Card(
-                                    elevation: 40,
-                                    shape:  const RoundedRectangleBorder(
-                                        side: BorderSide(
-                                          color: Colors.white,
-                                          width:3,
-                                        ),
-                                        borderRadius: BorderRadius.all(Radius.circular(25))
-
-                                    ),
-                                    color: Colors.lightBlueAccent,
-                                    child: InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          branchIndex = index;
-                                          fetch_year();
-                                          currentbranch = branch_list?[index];
-                                          current_page += 1;
-                                          curr_filder.add(currentbranch);
-                                        });
-                                        Page_controller.animateToPage(current_page,
-                                            duration: const Duration(milliseconds: 400),
-                                            curve: Curves.linear);
-                                      },
-                                      child: Container(
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                SizedBox(
-                                                  width: size.width * 0.05,
-                                                ),
-                                                SizedBox(
-                                                    height: size.height * 0.08,
-                                                    width: size.width * 0.1,
-                                                    child: Icon(Icons.folder,size: size.height*0.05,color: Colors.white,)),
-                                                SizedBox(
-                                                  width: size.width * 0.05,
-                                                ),
-                                                AutoSizeText(
-                                                  branch_list?[index],
-                                                  style: GoogleFonts.exo(
-                                                      fontSize: 14,
-                                                      color: Colors.white,
-                                                      fontWeight: FontWeight.w600),
-                                                )
-                                              ],
-                                            ),
-
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: size.height * 1,
-                            width: size.width * 1,
-                            child: SizedBox(
-                              child: ListView.builder(
-                                itemCount: year_list?.length,
-                                itemBuilder: (context, index) {
-                                  return Card(
-                                    elevation: 40,
-                                    shape:  const RoundedRectangleBorder(
-                                        side: BorderSide(
-                                          color: Colors.white,
-                                          width:3,
-                                        ),
-                                        borderRadius: BorderRadius.all(Radius.circular(25))
-
-                                    ),
-                                    color: Colors.lightBlueAccent,
-                                    child: InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          yearIndex = index;
-                                          fetch_Section();
-                                          current_page += 1;
-                                          currentyear = year_list?[index];
-                                          curr_filder.add(currentyear);
-                                        });
-                                        Page_controller.animateToPage(current_page,
-                                            duration: const Duration(milliseconds: 400),
-                                            curve: Curves.linear);
-                                      },
-                                      child: Container(
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                SizedBox(
-                                                  width: size.width * 0.05,
-                                                ),
-                                                SizedBox(
-                                                    height: size.height * 0.08,
-                                                    width: size.width * 0.1,
-                                                    child: Icon(Icons.folder,size: size.height*0.05,color: Colors.white,)),
-                                                SizedBox(
-                                                  width: size.width * 0.05,
-                                                ),
-                                                AutoSizeText(
-                                                  "Year - ${year_list?[index]}",
-                                                  style: GoogleFonts.exo(
-                                                      fontSize: 14,
-                                                      color: Colors.white,
-                                                      fontWeight: FontWeight.w600),
-                                                )
-                                              ],
-                                            ),
-
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: size.height * 1,
-                            width: size.width * 1,
-                            child: SizedBox(
-                              child: ListView.builder(
-                                itemCount: section_list?.length,
-                                itemBuilder: (context, index) {
-                                  return Card(
-                                    elevation: 40,
-                                    shape:  const RoundedRectangleBorder(
-                                        side: BorderSide(
-                                          color: Colors.white,
-                                          width:3,
-                                        ),
-                                        borderRadius: BorderRadius.all(Radius.circular(25))
-
-                                    ),
-                                    color: Colors.lightBlueAccent,
-                                    child: InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          sectionIndex = index;
-                                          current_page += 1;
-                                          fetch_Subjects();
-                                          currentsection = section_list?[index];
-                                          curr_filder.add(currentsection);
-                                        });
-                                        Page_controller.animateToPage(current_page,
-                                            duration: const Duration(milliseconds: 400),
-                                            curve: Curves.linear);
-                                      },
-                                      child: Container(
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                SizedBox(
-                                                  width: size.width * 0.05,
-                                                ),
-                                                SizedBox(
-                                                    height: size.height * 0.08,
-                                                    width: size.width * 0.1,
-                                                    child: Icon(Icons.folder,size: size.height*0.05,color: Colors.white,)),
-                                                SizedBox(
-                                                  width: size.width * 0.05,
-                                                ),
-                                                AutoSizeText(
-                                                  "Section - ${section_list?[index]}",
-                                                  style: GoogleFonts.exo(
-                                                      fontSize: 14,
-                                                      color: Colors.white,
-                                                      fontWeight: FontWeight.w600),
-                                                )
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: size.height * 1,
-                            width: size.width * 1,
-                            child: SizedBox(
-                              child: ListView.builder(
-                                itemCount: subject_list?.length,
-                                itemBuilder: (context, index) {
-                                  return Card(
-                                    elevation: 40,
-                                    shape:  const RoundedRectangleBorder(
-                                        side: BorderSide(
-                                          color: Colors.white,
-                                          width:3,
-                                        ),
-                                        borderRadius: BorderRadius.all(Radius.circular(25))
-
-                                    ),
-                                    color: Colors.lightBlueAccent,
-                                    child: InkWell(
-                                      onTap: () async {
-
-                                        setState(() {
-                                          subjectIndex = index;
-                                          currentsubject = subject_list?[index];
-                                          curr_filder.add(currentsubject);
-                                        });
-                                        Directory? path = await getExternalStorageDirectory();
-                                        print(path?.path);
-                                        await checkFileExist("${path?.path}/$currentuni/$currentclg/$currentcourse/$currentbranch/$currentyear/$currentsection/$currentsubject/");
-                                        Navigator.push(
-                                            context,
-                                            PageTransition(
-                                                childCurrent: const Download_attendance(),
-                                                child: Subject(
-                                                  uni: currentuni,
-                                                  clg: currentclg,
-                                                  course: currentcourse,
-                                                  branch: currentbranch,
-                                                  section: currentsection,
-                                                  subject: currentsubject,
-                                                  year: currentyear,
-                                                ),
-                                                type:
-                                                PageTransitionType.rightToLeftJoined));
-                                      },
-                                      child: Container(
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                SizedBox(
-                                                  width: size.width * 0.05,
-                                                ),
-                                                SizedBox(
-                                                    height: size.height * 0.08,
-                                                    width: size.width * 0.1,
-                                                    child: Icon(Icons.folder,size: size.height*0.05,color: Colors.white,)),
-                                                SizedBox(
-                                                  width: size.width * 0.05,
-                                                ),
-                                                AutoSizeText(
-                                                  subject_list?[index],
-                                                  style: GoogleFonts.exo(
-                                                      fontSize: 14,
-                                                      color: Colors.white,
-                                                      fontWeight: FontWeight.w600),
-                                                )
-                                              ],
+                                            const Divider(
+                                              height: 2,
+                                              color: Colors.black87,
+                                              indent: 5,
+                                              endIndent: 5,
+                                              thickness: 2,
                                             )
                                           ],
                                         ),
                                       ),
-                                    ),
-                                  );
-                                },
+                                    );
+                                  },
+                                ),
                               ),
+
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: size.height * 1,
+                          width: size.width * 1,
+                          child: SizedBox(
+                            child: ListView.builder(
+                              itemCount: course_list?.length,
+                              itemBuilder: (context, index) {
+                                return Card(
+                                  elevation: 0,
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        courseIndex = index;
+                                        fetch_branch();
+                                        currentcourse = course_list?[index];
+                                        current_page += 1;
+                                        curr_filder.add(currentcourse);
+                                      });
+                                      Page_controller.animateToPage(current_page,
+                                          duration: const Duration(milliseconds: 400),
+                                          curve: Curves.linear);
+                                    },
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            SizedBox(
+                                              width: size.width * 0.05,
+                                            ),
+                                            SizedBox(
+                                                height: size.height * 0.08,
+                                                width: size.width * 0.1,
+                                                child: Icon(Icons.folder,size: size.height*0.05,color: Colors.amber,)),
+                                            SizedBox(
+                                              width: size.width * 0.05,
+                                            ),
+                                            AutoSizeText(
+                                              course_list?[index],
+                                              style: GoogleFonts.exo(
+                                                  fontSize: 14,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w500),
+                                            )
+                                          ],
+                                        ),
+                                        const Divider(
+                                          height: 2,
+                                          color: Colors.black87,
+                                          indent: 5,
+                                          endIndent: 5,
+                                          thickness: 2,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                        SizedBox(
+                          height: size.height * 1,
+                          width: size.width * 1,
+                          child: SizedBox(
+                            child: ListView.builder(
+                              itemCount: branch_list?.length,
+                              itemBuilder: (context, index) {
+                                return Card(
+                                  elevation: 0,
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        branchIndex = index;
+                                        fetch_year();
+                                        currentbranch = branch_list?[index];
+                                        current_page += 1;
+                                        curr_filder.add(currentbranch);
+                                      });
+                                      Page_controller.animateToPage(current_page,
+                                          duration: const Duration(milliseconds: 400),
+                                          curve: Curves.linear);
+                                    },
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            SizedBox(
+                                              width: size.width * 0.05,
+                                            ),
+                                            SizedBox(
+                                                height: size.height * 0.08,
+                                                width: size.width * 0.1,
+                                                child: Icon(Icons.folder,size: size.height*0.05,color: Colors.amber,)),
+                                            SizedBox(
+                                              width: size.width * 0.05,
+                                            ),
+                                            AutoSizeText(
+                                              branch_list?[index],
+                                              style: GoogleFonts.exo(
+                                                  fontSize: 14,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w500),
+                                            )
+                                          ],
+                                        ),
+                                        const Divider(
+                                          height: 2,
+                                          color: Colors.black87,
+                                          indent: 5,
+                                          endIndent: 5,
+                                          thickness: 2,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: size.height * 1,
+                          width: size.width * 1,
+                          child: SizedBox(
+                            child: ListView.builder(
+                              itemCount: year_list?.length,
+                              itemBuilder: (context, index) {
+                                return Card(
+                                  elevation: 0,
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        yearIndex = index;
+                                        fetch_Section();
+                                        current_page += 1;
+                                        currentyear = year_list?[index];
+                                        curr_filder.add(currentyear);
+                                      });
+                                      Page_controller.animateToPage(current_page,
+                                          duration: const Duration(milliseconds: 400),
+                                          curve: Curves.linear);
+                                    },
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            SizedBox(
+                                              width: size.width * 0.05,
+                                            ),
+                                            SizedBox(
+                                                height: size.height * 0.08,
+                                                width: size.width * 0.1,
+                                                child: Icon(Icons.folder,size: size.height*0.05,color: Colors.amber,)),
+                                            SizedBox(
+                                              width: size.width * 0.05,
+                                            ),
+                                            AutoSizeText(
+                                              "Year - ${year_list?[index]}",
+                                              style: GoogleFonts.exo(
+                                                  fontSize: 14,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w600),
+                                            )
+                                          ],
+                                        ),
+                                        const Divider(
+                                          height: 2,
+                                          color: Colors.black87,
+                                          indent: 5,
+                                          endIndent: 5,
+                                          thickness: 2,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: size.height * 1,
+                          width: size.width * 1,
+                          child: SizedBox(
+                            child: ListView.builder(
+                              itemCount: section_list?.length,
+                              itemBuilder: (context, index) {
+                                return Card(
+                                  elevation: 0,
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        sectionIndex = index;
+                                        current_page += 1;
+                                        fetch_Subjects();
+                                        currentsection = section_list?[index];
+                                        curr_filder.add(currentsection);
+                                      });
+                                      Page_controller.animateToPage(current_page,
+                                          duration: const Duration(milliseconds: 400),
+                                          curve: Curves.linear);
+                                    },
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            SizedBox(
+                                              width: size.width * 0.05,
+                                            ),
+                                            SizedBox(
+                                                height: size.height * 0.08,
+                                                width: size.width * 0.1,
+                                                child: Icon(Icons.folder,size: size.height*0.05,color: Colors.amber,)),
+                                            SizedBox(
+                                              width: size.width * 0.05,
+                                            ),
+                                            AutoSizeText(
+                                              "Section - ${section_list?[index]}",
+                                              style: GoogleFonts.exo(
+                                                  fontSize: 14,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w500),
+                                            )
+                                          ],
+                                        ),
+                                        const Divider(
+                                          height: 2,
+                                          color: Colors.black87,
+                                          indent: 5,
+                                          endIndent: 5,
+                                          thickness: 2,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: size.height * 1,
+                          width: size.width * 1,
+                          child: SizedBox(
+                            child: ListView.builder(
+                              itemCount: subject_list?.length,
+                              itemBuilder: (context, index) {
+                                return Card(
+                                  elevation: 0,
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    onTap: () async {
+
+                                      setState(() {
+                                        subjectIndex = index;
+                                        currentsubject = subject_list?[index];
+                                        curr_filder.add(currentsubject);
+                                        curr_filder=curr_filder.toSet().toList();
+                                      });
+                                      Directory? path = await getExternalStorageDirectory();
+                                      print(path?.path);
+                                      await checkFileExist("${path?.path}/$currentuni/$currentclg/$currentcourse/$currentbranch/$currentyear/$currentsection/$currentsubject/")
+                                          .whenComplete(() => Navigator.push(
+                                          context,
+                                          PageTransition(
+                                              childCurrent: const Download_attendance(),
+                                              child: Subject(
+                                                uni: currentuni,
+                                                clg: currentclg,
+                                                course: currentcourse,
+                                                branch: currentbranch,
+                                                section: currentsection,
+                                                subject: currentsubject,
+                                                year: currentyear,
+                                              ),
+                                              type:
+                                              PageTransitionType.rightToLeftJoined)));
+
+                                    },
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            SizedBox(
+                                              width: size.width * 0.05,
+                                            ),
+                                            SizedBox(
+                                                height: size.height * 0.08,
+                                                width: size.width * 0.1,
+                                                child: Icon(Icons.folder,size: size.height*0.05,color: Colors.amber,)),
+                                            SizedBox(
+                                              width: size.width * 0.05,
+                                            ),
+                                            AutoSizeText(
+                                              subject_list?[index],
+                                              style: GoogleFonts.exo(
+                                                  fontSize: 14,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w500),
+                                            )
+                                          ],
+                                        ),
+                                        const Divider(
+                                          height: 2,
+                                          color: Colors.black87,
+                                          indent: 5,
+                                          endIndent: 5,
+                                          thickness: 2,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  )
-                ],
-              ),
+                  ),
+                )
+              ],
             ),
           );
   }

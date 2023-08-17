@@ -171,13 +171,13 @@ class _NeviState extends State<Nevi> {
               icon: const Icon(Icons.filter_list_alt),
             )
           ],
-          iconTheme: const IconThemeData(color: Colors.white),
+          iconTheme: const IconThemeData(color: Colors.black),
           backgroundColor: Colors.black38,
           titleTextStyle: GoogleFonts.gfsDidot(
-              color: Colors.white,
+              color: Colors.black,
               //const Color.fromRGBO(150, 150, 150, 1),
               fontWeight: FontWeight.w500,
-              fontSize: MediaQuery.of(context).size.height * 0.03),
+              fontSize: MediaQuery.of(context).size.height * 0.04),
           title: const Text('Campus Link'),
         ),
         bottomNavigationBar: Container(
@@ -272,14 +272,7 @@ class _NeviState extends State<Nevi> {
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
                 onTap: () {
-                  setState(() {
-                    index = 2;
-                    note_size = size.width * 0.07;
-                    mark_size = size.width * 0.07;
-                    attendence_size = size.width * 0.10;
-                    performance_size = size.width * 0.07;
-                    assigment_size = size.width * 0.07;
-                  });
+
                   showDialog(
                     context: context,
                     builder: (context) {
@@ -289,7 +282,7 @@ class _NeviState extends State<Nevi> {
                           height: subject_filter.isEmpty?
                               size.height*0.2
                               :
-                          size.height*0.6,
+                          size.height*0.65,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(30),
                             color: Colors.black,
@@ -372,9 +365,6 @@ class _NeviState extends State<Nevi> {
                                         elevation: 20,
                                         backgroundColor: Colors.white10),
                                     onPressed: () {
-                                      setState(() {
-                                         subject_filter = '';
-                                      });
                                       Navigator.pop(context);
                                     },
                                     child: Text(
