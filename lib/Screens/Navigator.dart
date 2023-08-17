@@ -181,14 +181,14 @@ class _NeviState extends State<Nevi> {
           title: const Text('Campus Link'),
         ),
         bottomNavigationBar: Container(
-          height: size.height * 0.07,
+          height: size.height * 0.08,
           padding: EdgeInsets.only(top: size.height * 0.01),
           decoration: const BoxDecoration(
               color: Colors.black38,
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(50), topRight: Radius.circular(50))),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               InkWell(
@@ -225,13 +225,7 @@ class _NeviState extends State<Nevi> {
                       SizedBox(
                         height: size.height * 0.01,
                       ),
-                      AutoSizeText(
-                        "Assignment",
-                        style: GoogleFonts.exo(
-                            fontSize: size.width * 0.003,
-                            color: navHeading,
-                            fontWeight: FontWeight.w500),
-                      )
+
                     ],
                   ),
                 ),
@@ -270,13 +264,6 @@ class _NeviState extends State<Nevi> {
                       SizedBox(
                         height: size.height * 0.01,
                       ),
-                      AutoSizeText(
-                        "Notes",
-                        style: GoogleFonts.exo(
-                            fontSize: size.width * 0.003,
-                            color: navHeading,
-                            fontWeight: FontWeight.w500),
-                      )
                     ],
                   ),
                 ),
@@ -285,6 +272,14 @@ class _NeviState extends State<Nevi> {
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
                 onTap: () {
+                  setState(() {
+                    index = 2;
+                    note_size = size.width * 0.07;
+                    mark_size = size.width * 0.07;
+                    attendence_size = size.width * 0.10;
+                    performance_size = size.width * 0.07;
+                    assigment_size = size.width * 0.07;
+                  });
                   showDialog(
                     context: context,
                     builder: (context) {
@@ -292,7 +287,7 @@ class _NeviState extends State<Nevi> {
                         child: Container(
                           width: size.width*0.7,
                           height: subject_filter.isEmpty?
-                              size.height*0.14
+                              size.height*0.2
                               :
                           size.height*0.6,
                           decoration: BoxDecoration(
@@ -300,10 +295,13 @@ class _NeviState extends State<Nevi> {
                             color: Colors.black,
                             border: Border.all(color: Colors.white,width: 2)
                           ),
-                          padding: EdgeInsets.all(12),
+                          padding: const EdgeInsets.all(12),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
+                               SizedBox(
+                                height: size.height*0.02,
+                              ),
                               AutoSizeText(
                                 "Do you want to take attendance?",
                                 style: GoogleFonts.exo(color: Colors.white),
@@ -313,7 +311,9 @@ class _NeviState extends State<Nevi> {
                               ),
 
                               subject_filter.isEmpty?
-                                  const SizedBox():
+                                   SizedBox(
+                                    height: size.height*0,
+                                  ):
                                   Column(
                                     children: [
                                       AutoSizeText(
@@ -358,7 +358,7 @@ class _NeviState extends State<Nevi> {
                                         style: GoogleFonts.exo(color: Colors.white),
                                       ),],
                                   ),
-                              SizedBox(
+                               SizedBox(
                                 height: size.height*0.02,
                               ),
                               Row(
@@ -372,6 +372,9 @@ class _NeviState extends State<Nevi> {
                                         elevation: 20,
                                         backgroundColor: Colors.white10),
                                     onPressed: () {
+                                      setState(() {
+                                         subject_filter = '';
+                                      });
                                       Navigator.pop(context);
                                     },
                                     child: Text(
@@ -454,13 +457,7 @@ class _NeviState extends State<Nevi> {
                       SizedBox(
                         height: size.height * 0.01,
                       ),
-                      AutoSizeText(
-                        "Attendance",
-                        style: GoogleFonts.exo(
-                            fontSize: size.width * 0.003,
-                            color: navHeading,
-                            fontWeight: FontWeight.w500),
-                      )
+
                     ],
                   ),
                 ),
@@ -499,13 +496,7 @@ class _NeviState extends State<Nevi> {
                       SizedBox(
                         height: size.height * 0.01,
                       ),
-                      AutoSizeText(
-                        "Marks",
-                        style: GoogleFonts.exo(
-                            fontSize: size.width * 0.003,
-                            color: navHeading,
-                            fontWeight: FontWeight.w500),
-                      )
+
                     ],
                   ),
                 ),
@@ -545,13 +536,7 @@ class _NeviState extends State<Nevi> {
                       SizedBox(
                         height: size.height * 0.01,
                       ),
-                      AutoSizeText(
-                        "Performance",
-                        style: GoogleFonts.exo(
-                            fontSize: size.width * 0.003,
-                            color: navHeading,
-                            fontWeight: FontWeight.w500),
-                      )
+
                     ],
                   ),
                 ),

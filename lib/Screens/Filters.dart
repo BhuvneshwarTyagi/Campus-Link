@@ -137,596 +137,565 @@ class _FiltersState extends State<Filters> {
             ],
           ),
         ),
-        body: Container(
-          padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
-          height: size.height*0.95,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Container(
-              //   decoration: BoxDecoration(
-              //     border: Border(
-              //       bottom: BorderSide(
-              //           color: const Color.fromRGBO(60, 60, 60, 1),
-              //           width: MediaQuery.of(context).size.width * 0.008),
-              //     ),
-              //   ),
-              //   child: Row(
-              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //     children: [
-              //       Text(
-              //         "Filters",
-              //         style: GoogleFonts.openSans(color: Colors.black, fontSize: 18),
-              //       ),
-              //       ElevatedButton(
-              //         style: ElevatedButton.styleFrom(
-              //           backgroundColor: const Color.fromRGBO(28, 28, 28, 1),
-              //           padding: EdgeInsets.only(
-              //             right: MediaQuery.of(context).size.width * 0.01,
-              //           ),
-              //         ),
-              //         onPressed: () {
-              //           Navigator.pop(context);
-              //         },
-              //         child: Text(
-              //           "Close",
-              //           style: GoogleFonts.openSans(
-              //             color: const Color.fromRGBO(150, 150, 150, 1),
-              //           ),
-              //         ),
-              //       )
-              //     ],
-              //   ),
-              // ),
-              SizedBox(
-                height: size.height*0.01,
-              ),
-              Padding(
-                padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
-                child: AutoSizeText(
-                  "Range",
-                  style: GoogleFonts.exo(
-                      fontSize: 18,
-                      color: headingcolor,
-                      fontWeight: FontWeight.w600),
+        body: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Container(
+            padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
+            //height: size.height*0.95,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+
+                SizedBox(
+                  height: size.height*0.01,
                 ),
-              ),
-              Slider(
-                activeColor: Colors.deepPurple.shade400,
-                inactiveColor: Colors.black26,
-                divisions: 6,
-                label: "$_value",
-                min: 4,
-                  max: 10,
-                  value: _value,
-                  onChanged: (value){
-                  setState(() {
-                    _value=value;
-                    range=value;
-                  });
-                  }
-              ),
-              SizedBox(
-                height: size.height*0.01,
-              ),
-              SizedBox(
-                height: size.height * 0.71,
-                width: size.width,
-                child: StreamBuilder(
-                  stream: FirebaseFirestore.instance
-                      .collection("Teachers")
-                      .doc(FirebaseAuth.instance.currentUser!.email)
-                      .collection("Teachings")
-                      .doc("Teachings")
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    university_list = snapshot.data?.data()?["University"];
+                Padding(
+                  padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
+                  child: AutoSizeText(
+                    "Range",
+                    style: GoogleFonts.exo(
+                        fontSize: 18,
+                        color: headingcolor,
+                        fontWeight: FontWeight.w600),
+                  ),
+                ),
+                Slider(
+                  activeColor: Colors.deepPurple.shade400,
+                  inactiveColor: Colors.black26,
+                  divisions: 6,
+                  label: "$_value",
+                  min: 4,
+                    max: 10,
+                    value: _value,
+                    onChanged: (value){
+                    setState(() {
+                      _value=value;
+                      range=value;
+                    });
+                    }
+                ),
+                SizedBox(
+                  height: size.height*0.01,
+                ),
+                SizedBox(
+                  height: size.height * 0.71,
+                  width: size.width,
+                  child: StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection("Teachers")
+                        .doc(FirebaseAuth.instance.currentUser!.email)
+                        .collection("Teachings")
+                        .doc("Teachings")
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      university_list = snapshot.data?.data()?["University"];
 
-                    if (!snapshot.hasData || university_list!.isEmpty) {
-                      return Center(
-                        child: CircularProgressIndicator(
-                          color: dotcolor,
-                        ),
-                      );
-                    } else {
-                      return SizedBox(
-                        height: size.height * 0.8,
-                        child: SingleChildScrollView(
-                          controller: _controller,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
-                                child: AutoSizeText(
-                                  "University",
-                                  style: GoogleFonts.exo(
-                                      fontSize: 18,
-                                      color: headingcolor,
-                                      fontWeight: FontWeight.w600),
+                      if (!snapshot.hasData || university_list!.isEmpty) {
+                        return Center(
+                          child: CircularProgressIndicator(
+                            color: dotcolor,
+                          ),
+                        );
+                      } else {
+                        return SizedBox(
+                          height: size.height * 0.8,
+                          child: SingleChildScrollView(
+                            controller: _controller,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
+                                  child: AutoSizeText(
+                                    "University",
+                                    style: GoogleFonts.exo(
+                                        fontSize: 18,
+                                        color: headingcolor,
+                                        fontWeight: FontWeight.w600),
+                                  ),
                                 ),
-                              ),
-                              AnimatedContainer(
-                                duration: const Duration(milliseconds: 300),
-                                height: size.height * 0.08 * university_list!.length,
-                                width: size.width,
-                                color: Colors.transparent,
-                                child: Column(
-                                  children: [
-                                    Expanded(
-                                      child: ListView.builder(
-                                        physics: const NeverScrollableScrollPhysics(),
-                                        itemCount: university_list?.length,
-                                        itemBuilder:
-                                            (BuildContext context, int index) {
-                                          return ListTile(
-                                            splashColor: Colors.transparent,
+                                AnimatedContainer(
+                                  duration: const Duration(milliseconds: 300),
+                                  height: size.height * 0.08 * university_list!.length,
+                                  width: size.width,
+                                  color: Colors.transparent,
+                                  child: Column(
+                                    children: [
+                                      Expanded(
+                                        child: ListView.builder(
+                                          physics: const NeverScrollableScrollPhysics(),
+                                          itemCount: university_list?.length,
+                                          itemBuilder:
+                                              (BuildContext context, int index) {
+                                            return ListTile(
+                                              splashColor: Colors.transparent,
 
-                                            onTap: () => setState(
-                                              () {
-                                                uni_index=index;
-                                                currentuni = university_list?[index];
-                                                clg_list = snapshot.data?.data()?["College-$uni_index"];
-                                                _controller.animateTo(
-                                                    _controller.position.maxScrollExtent,
-                                                    duration: const Duration(milliseconds: 100),
-                                                    curve: Curves.linear,
-                                                );
-
-                                                course_list = [];
-                                                branch_list = [];
-                                                year_list = [];
-                                                section_list = [];
-                                                subject_list = [];
-
-                                                currentclg = "";
-                                                currentcourse = "";
-                                                currentbranch = "";
-                                                currentyear = "";
-                                                currentsection = "";
-                                                currentsubject = "";
-                                              },
-                                            ),
-                                            title: Text(university_list?[index]),
-                                            titleTextStyle: GoogleFonts.exo(
-                                              color: optioncolor,
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w500
-                                            ),
-                                            leading: Radio(
-                                              activeColor: dotcolor,
-                                              value: university_list?[index],
-                                              groupValue: currentuni,
-                                              onChanged: (value) {
-                                                setState(
-                                                  () {
-
-                                                  },
-                                                );
-                                              },
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ), // University
-                              Padding(
-                                padding: EdgeInsets.all(
-                                    MediaQuery.of(context).size.width * 0.02),
-                                child: AutoSizeText(
-                                  "Colleges",
-                                  style: GoogleFonts.exo(
-                                      fontSize: 18,
-                                      color: headingcolor,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              ),
-                              AnimatedContainer(
-                                height: size.height * 0.08 * clg_list!.length,
-                                width: size.width,
-                                color: Colors.transparent,
-                                duration: const Duration(milliseconds: 300),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      child: ListView.builder(
-                                        itemCount: clg_list?.length,
-                                        physics: const NeverScrollableScrollPhysics(),
-                                        itemBuilder:
-                                            (BuildContext context, int index) {
-                                          return ListTile(
-                                            onTap: () => setState(
-                                              () {
-                                                clgIndex=index;
-                                                currentclg = clg_list?[index];
-                                                course_list = snapshot.data?.data()?["Course-$uni_index$clgIndex"];
-                                                _controller.animateTo(
-                                                    _controller
-                                                        .position.maxScrollExtent,
-                                                    duration: const Duration(
-                                                        milliseconds: 100),
-                                                    curve: Curves.linear);
-
-                                                branch_list = [];
-                                                year_list = [];
-                                                section_list = [];
-                                                subject_list = [];
-                                                currentcourse = "";
-                                                currentbranch = "";
-                                                currentyear = "";
-                                                currentsection = "";
-                                                currentsubject = "";
-                                              },
-                                            ),
-                                            title: Text(clg_list?[index]),
-                                            titleTextStyle: GoogleFonts.exo(
-                                                color: optioncolor,
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w500
-                                            ),
-                                            leading: Radio(
-                                              activeColor: dotcolor,
-                                              value: clg_list?[index],
-                                              groupValue: currentclg,
-                                              onChanged: (value) {
-                                                setState(
-                                                  () {
-                                                  },
-                                                );
-                                              },
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ), // College
-                              Padding(
-                                padding: EdgeInsets.all(
-                                    MediaQuery.of(context).size.width * 0.02),
-                                child: AutoSizeText(
-                                  "Course",
-                                  style: GoogleFonts.exo(
-                                      fontSize: 18,
-                                      color: headingcolor,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              ),
-                              AnimatedContainer(
-                                duration: const Duration(milliseconds: 300),
-                                height: size.height * 0.08 * course_list!.length,
-                                width: size.width,
-                                color: Colors.transparent,
-                                child: Column(
-                                  children: [
-                                    Expanded(
-                                      child: ListView.builder(
-                                        itemCount: course_list?.length,
-                                        physics: const NeverScrollableScrollPhysics(),
-                                        itemBuilder:
-                                            (BuildContext context, int index) {
-                                          return ListTile(
-                                            onTap: () {
-                                              setState(
+                                              onTap: () => setState(
                                                 () {
-                                                  courseIndex = index;
-                                                  branch_list = snapshot.data?.data()?["Branch-$uni_index$clgIndex$courseIndex"];
-                                                  currentcourse = course_list![index];
+                                                  uni_index=index;
+                                                  currentuni = university_list?[index];
+                                                  clg_list = snapshot.data?.data()?["College-$uni_index"];
                                                   _controller.animateTo(
-                                                    _controller.position.maxScrollExtent,
-                                                    duration: const Duration(milliseconds: 100),
-                                                    curve: Curves.linear,
-
+                                                      _controller.position.maxScrollExtent,
+                                                      duration: const Duration(milliseconds: 100),
+                                                      curve: Curves.linear,
                                                   );
+
+                                                  course_list = [];
+                                                  branch_list = [];
                                                   year_list = [];
                                                   section_list = [];
                                                   subject_list = [];
+
+                                                  currentclg = "";
+                                                  currentcourse = "";
                                                   currentbranch = "";
                                                   currentyear = "";
                                                   currentsection = "";
                                                   currentsubject = "";
-
                                                 },
-                                              );
-                                            },
-                                            title: Text(course_list?[index]),
-
-                                            titleTextStyle: GoogleFonts.exo(
+                                              ),
+                                              title: Text(university_list?[index]),
+                                              titleTextStyle: GoogleFonts.exo(
                                                 color: optioncolor,
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.w500
-                                            ),
-                                            leading: Radio(
-                                              activeColor: dotcolor,
-                                              value: course_list?[index],
-                                              groupValue: currentcourse,
-                                              onChanged: (value) {
+                                              ),
+                                              leading: Radio(
+                                                activeColor: dotcolor,
+                                                value: university_list?[index],
+                                                groupValue: currentuni,
+                                                onChanged: (value) {
+                                                  setState(
+                                                    () {
+
+                                                    },
+                                                  );
+                                                },
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ), // University
+                                Padding(
+                                  padding: EdgeInsets.all(
+                                      MediaQuery.of(context).size.width * 0.02),
+                                  child: AutoSizeText(
+                                    "Colleges",
+                                    style: GoogleFonts.exo(
+                                        fontSize: 18,
+                                        color: headingcolor,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ),
+                                AnimatedContainer(
+                                  height: size.height * 0.08 * clg_list!.length,
+                                  width: size.width,
+                                  color: Colors.transparent,
+                                  duration: const Duration(milliseconds: 300),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: ListView.builder(
+                                          itemCount: clg_list?.length,
+                                          physics: const NeverScrollableScrollPhysics(),
+                                          itemBuilder:
+                                              (BuildContext context, int index) {
+                                            return ListTile(
+                                              onTap: () => setState(
+                                                () {
+                                                  clgIndex=index;
+                                                  currentclg = clg_list?[index];
+                                                  course_list = snapshot.data?.data()?["Course-$uni_index$clgIndex"];
+                                                  _controller.animateTo(
+                                                      _controller
+                                                          .position.maxScrollExtent,
+                                                      duration: const Duration(
+                                                          milliseconds: 100),
+                                                      curve: Curves.linear);
+
+                                                  branch_list = [];
+                                                  year_list = [];
+                                                  section_list = [];
+                                                  subject_list = [];
+                                                  currentcourse = "";
+                                                  currentbranch = "";
+                                                  currentyear = "";
+                                                  currentsection = "";
+                                                  currentsubject = "";
+                                                },
+                                              ),
+                                              title: Text(clg_list?[index]),
+                                              titleTextStyle: GoogleFonts.exo(
+                                                  color: optioncolor,
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w500
+                                              ),
+                                              leading: Radio(
+                                                activeColor: dotcolor,
+                                                value: clg_list?[index],
+                                                groupValue: currentclg,
+                                                onChanged: (value) {
+                                                  setState(
+                                                    () {
+                                                    },
+                                                  );
+                                                },
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ), // College
+                                Padding(
+                                  padding: EdgeInsets.all(
+                                      MediaQuery.of(context).size.width * 0.02),
+                                  child: AutoSizeText(
+                                    "Course",
+                                    style: GoogleFonts.exo(
+                                        fontSize: 18,
+                                        color: headingcolor,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ),
+                                AnimatedContainer(
+                                  duration: const Duration(milliseconds: 300),
+                                  height: size.height * 0.08 * course_list!.length,
+                                  width: size.width,
+                                  color: Colors.transparent,
+                                  child: Column(
+                                    children: [
+                                      Expanded(
+                                        child: ListView.builder(
+                                          itemCount: course_list?.length,
+                                          physics: const NeverScrollableScrollPhysics(),
+                                          itemBuilder:
+                                              (BuildContext context, int index) {
+                                            return ListTile(
+                                              onTap: () {
                                                 setState(
                                                   () {
+                                                    courseIndex = index;
+                                                    branch_list = snapshot.data?.data()?["Branch-$uni_index$clgIndex$courseIndex"];
+                                                    currentcourse = course_list![index];
+                                                    _controller.animateTo(
+                                                      _controller.position.maxScrollExtent,
+                                                      duration: const Duration(milliseconds: 100),
+                                                      curve: Curves.linear,
+
+                                                    );
+                                                    year_list = [];
+                                                    section_list = [];
+                                                    subject_list = [];
+                                                    currentbranch = "";
+                                                    currentyear = "";
+                                                    currentsection = "";
+                                                    currentsubject = "";
 
                                                   },
                                                 );
                                               },
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.all(
-                                    MediaQuery.of(context).size.width * 0.02),
-                                child: AutoSizeText(
-                                  "Branch",
-                                  style: GoogleFonts.exo(
-                                      fontSize: 18,
-                                      color: headingcolor,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              ),
-                              AnimatedContainer(
-                                duration: const Duration(milliseconds: 300),
-                                height: size.height * 0.08 * branch_list!.length,
-                                width: size.width,
-                                color: Colors.transparent,
-                                child: Column(
-                                  children: [
-                                    Expanded(
-                                      child: ListView.builder(
-                                        itemCount: branch_list?.length,
-                                        physics: const NeverScrollableScrollPhysics(),
-                                        itemBuilder:
-                                            (BuildContext context, int index) {
-                                          return ListTile(
-                                            onTap: () {
-                                              setState(() {
-                                                branchIndex = index;
-                                                year_list = snapshot.data!.data()!["Year-$uni_index$clgIndex$courseIndex$branchIndex"];
-                                                currentbranch = branch_list![index];
-                                                _controller.animateTo(
-                                                  _controller.position.maxScrollExtent,
-                                                  duration: const Duration(milliseconds: 100),
-                                                  curve: Curves.linear,
-                                                );
-                                                section_list = [];
-                                                subject_list = [];
-                                                currentyear = "";
-                                                currentsection = "";
-                                                currentsubject = "";
-                                              });
-                                            },
-                                            title: Text(branch_list?[index]),
-                                            titleTextStyle: GoogleFonts.exo(
-                                                color: optioncolor,
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w500
-                                            ),
-                                            leading: Radio(
-                                              activeColor: dotcolor,
-                                              value: branch_list?[index],
-                                              groupValue: currentbranch,
-                                              onChanged: (value) {
-                                                setState(
-                                                  () {
-                                                  },
-                                                );
-                                              },
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.all(
-                                    MediaQuery.of(context).size.width * 0.02),
-                                child: AutoSizeText(
-                                  "Year",
-                                  style: GoogleFonts.exo(
-                                      fontSize: 18,
-                                      color: headingcolor,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              ),
-                              AnimatedContainer(
-                                duration: const Duration(milliseconds: 300),
-                                height: size.height * 0.08 * year_list!.length,
-                                width: size.width,
-                                color: Colors.transparent,
-                                child: Column(
-                                  children: [
-                                    Expanded(
-                                      child: ListView.builder(
-                                        itemCount: year_list?.length,
-                                        physics: const NeverScrollableScrollPhysics(),
-                                        itemBuilder: (BuildContext context, int index) {
-                                          return ListTile(
-                                            onTap: () {
-                                              setState(() {
-                                                yearIndex = index;
-                                                section_list = snapshot.data!.data()!["Section-$uni_index$clgIndex$courseIndex$branchIndex$yearIndex"];
-                                                currentyear = year_list![index];
-                                                _controller.animateTo(
-                                                  _controller.position.maxScrollExtent,
-                                                  duration: const Duration(milliseconds: 100),
-                                                  curve: Curves.linear,
-                                                );
-                                                subject_list = [];
-                                                currentsection="";
-                                                currentsubject = "";
-                                              });
-                                            },
-                                            title: Text(year_list?[index]),
-                                            titleTextStyle: GoogleFonts.exo(
-                                                color: optioncolor,
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w500
-                                            ),
-                                            leading: Radio(
-                                              activeColor: dotcolor,
-                                              value: year_list?[index],
-                                              groupValue: currentyear,
-                                              onChanged: (value) {
-                                                setState(
-                                                      () {
-                                                        yearIndex = index;
-                                                        section_list = snapshot.data!.data()!["Section-$yearIndex"];
-                                                        currentyear = value;
-                                                        _controller.animateTo(
-                                                          _controller.position.maxScrollExtent,
-                                                          duration: const Duration(milliseconds: 100),
-                                                          curve: Curves.linear,
-                                                        );
-                                                        currentsection = "";
-                                                        currentsubject = "";
-                                                  },
-                                                );
-                                              },
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.all(
-                                    MediaQuery.of(context).size.width * 0.02),
-                                child: AutoSizeText(
-                                  "Section",
-                                  style: GoogleFonts.exo(
-                                      fontSize: 18,
-                                      color: headingcolor,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              ),
-                              AnimatedContainer(
-                                duration: const Duration(milliseconds: 300),
-                                height: size.height * 0.08 * section_list!.length,
-                                width: size.width,
-                                color: Colors.transparent,
-                                child: Column(
-                                  children: [
-                                    Expanded(
-                                      child: ListView.builder(
-                                        itemCount: section_list?.length,
-                                        physics: const NeverScrollableScrollPhysics(),
-                                        itemBuilder: (BuildContext context, int index) {
-                                          return ListTile(
-                                            onTap: () {
-                                              setState(() {
-                                                currentsection = section_list![index];
-                                                sectionIndex = index;
-                                                subject_list = snapshot.data!.data()!["Subject-$uni_index$clgIndex$courseIndex$branchIndex$yearIndex$sectionIndex"];
+                                              title: Text(course_list?[index]),
 
-                                                _controller.animateTo(
-                                                  _controller.position.maxScrollExtent,
-                                                  duration: const Duration(milliseconds: 100),
-                                                  curve: Curves.linear,
-                                                );
-                                                currentsubject = "";
-                                              });
-                                            },
-                                            title: Text(section_list?[index]),
-                                            titleTextStyle: GoogleFonts.exo(
-                                                color: optioncolor,
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w500
-                                            ),
-                                            leading: Radio(
-                                              activeColor: dotcolor,
-                                              value: section_list![index],
-                                              groupValue: currentsection,
-                                              onChanged: (value) {
-                                                setState(
-                                                      () {},
-                                                );
-                                              },
-                                            ),
-                                          );
-                                        },
+                                              titleTextStyle: GoogleFonts.exo(
+                                                  color: optioncolor,
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w500
+                                              ),
+                                              leading: Radio(
+                                                activeColor: dotcolor,
+                                                value: course_list?[index],
+                                                groupValue: currentcourse,
+                                                onChanged: (value) {
+                                                  setState(
+                                                    () {
+
+                                                    },
+                                                  );
+                                                },
+                                              ),
+                                            );
+                                          },
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.all(
-                                    MediaQuery.of(context).size.width * 0.02),
-                                child: AutoSizeText(
-                                  "Subject",
-                                  style: GoogleFonts.exo(
-                                      fontSize: 18,
-                                      color: headingcolor,
-                                      fontWeight: FontWeight.w600),
+                                Padding(
+                                  padding: EdgeInsets.all(
+                                      MediaQuery.of(context).size.width * 0.02),
+                                  child: AutoSizeText(
+                                    "Branch",
+                                    style: GoogleFonts.exo(
+                                        fontSize: 18,
+                                        color: headingcolor,
+                                        fontWeight: FontWeight.w600),
+                                  ),
                                 ),
-                              ),
-                              AnimatedContainer(
-                                duration: const Duration(milliseconds: 300),
-                                height: size.height * 0.08 * subject_list!.length,
-                                width: size.width,
-                                color: Colors.transparent,
-                                child: Column(
-                                  children: [
-                                    Expanded(
-                                      child: ListView.builder(
-                                        itemCount: subject_list?.length,
-                                        physics: const NeverScrollableScrollPhysics(),
-                                        itemBuilder:
-                                            (BuildContext context, int index) {
-                                          return ListTile(
-                                            onTap: () {
-                                              setState(() {
-                                                currentsubject = subject_list![index];
-                                                subjectIndex = index;
-                                                _controller.animateTo(
-                                                  _controller.position.maxScrollExtent,
-                                                  duration: const Duration(milliseconds: 100),
-                                                  curve: Curves.linear,
-                                                );
-                                              });
-                                            },
-                                            title: Text(subject_list?[index]),
-                                            titleTextStyle: GoogleFonts.exo(
-                                                color: optioncolor,
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w400
-                                            ),
-                                            leading: Radio(
-                                              activeColor: dotcolor,
-                                              value: subject_list?[index],
-                                              groupValue: currentsubject,
-                                              onChanged: (value) {
-                                                setState(
-                                                      () {},
-                                                );
+                                AnimatedContainer(
+                                  duration: const Duration(milliseconds: 300),
+                                  height: size.height * 0.08 * branch_list!.length,
+                                  width: size.width,
+                                  color: Colors.transparent,
+                                  child: Column(
+                                    children: [
+                                      Expanded(
+                                        child: ListView.builder(
+                                          itemCount: branch_list?.length,
+                                          physics: const NeverScrollableScrollPhysics(),
+                                          itemBuilder:
+                                              (BuildContext context, int index) {
+                                            return ListTile(
+                                              onTap: () {
+                                                setState(() {
+                                                  branchIndex = index;
+                                                  year_list = snapshot.data!.data()!["Year-$uni_index$clgIndex$courseIndex$branchIndex"];
+                                                  currentbranch = branch_list![index];
+                                                  _controller.animateTo(
+                                                    _controller.position.maxScrollExtent,
+                                                    duration: const Duration(milliseconds: 100),
+                                                    curve: Curves.linear,
+                                                  );
+                                                  section_list = [];
+                                                  subject_list = [];
+                                                  currentyear = "";
+                                                  currentsection = "";
+                                                  currentsubject = "";
+                                                });
                                               },
-                                            ),
-                                          );
-                                        },
+                                              title: Text(branch_list?[index]),
+                                              titleTextStyle: GoogleFonts.exo(
+                                                  color: optioncolor,
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w500
+                                              ),
+                                              leading: Radio(
+                                                activeColor: dotcolor,
+                                                value: branch_list?[index],
+                                                groupValue: currentbranch,
+                                                onChanged: (value) {
+                                                  setState(
+                                                    () {
+                                                    },
+                                                  );
+                                                },
+                                              ),
+                                            );
+                                          },
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),//Course
-                            ],
+                                Padding(
+                                  padding: EdgeInsets.all(
+                                      MediaQuery.of(context).size.width * 0.02),
+                                  child: AutoSizeText(
+                                    "Year",
+                                    style: GoogleFonts.exo(
+                                        fontSize: 18,
+                                        color: headingcolor,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ),
+                                AnimatedContainer(
+                                  duration: const Duration(milliseconds: 300),
+                                  height: size.height * 0.08 * year_list!.length,
+                                  width: size.width,
+                                  color: Colors.transparent,
+                                  child: Column(
+                                    children: [
+                                      Expanded(
+                                        child: ListView.builder(
+                                          itemCount: year_list?.length,
+                                          physics: const NeverScrollableScrollPhysics(),
+                                          itemBuilder: (BuildContext context, int index) {
+                                            return ListTile(
+                                              onTap: () {
+                                                setState(() {
+                                                  yearIndex = index;
+                                                  section_list = snapshot.data!.data()!["Section-$uni_index$clgIndex$courseIndex$branchIndex$yearIndex"];
+                                                  currentyear = year_list![index];
+                                                  _controller.animateTo(
+                                                    _controller.position.maxScrollExtent,
+                                                    duration: const Duration(milliseconds: 100),
+                                                    curve: Curves.linear,
+                                                  );
+                                                  subject_list = [];
+                                                  currentsection="";
+                                                  currentsubject = "";
+                                                });
+                                              },
+                                              title: Text(year_list?[index]),
+                                              titleTextStyle: GoogleFonts.exo(
+                                                  color: optioncolor,
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w500
+                                              ),
+                                              leading: Radio(
+                                                activeColor: dotcolor,
+                                                value: year_list?[index],
+                                                groupValue: currentyear,
+                                                onChanged: (value) {
+                                                  setState(
+                                                        () {
+                                                          yearIndex = index;
+                                                          section_list = snapshot.data!.data()!["Section-$yearIndex"];
+                                                          currentyear = value;
+                                                          _controller.animateTo(
+                                                            _controller.position.maxScrollExtent,
+                                                            duration: const Duration(milliseconds: 100),
+                                                            curve: Curves.linear,
+                                                          );
+                                                          currentsection = "";
+                                                          currentsubject = "";
+                                                    },
+                                                  );
+                                                },
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(
+                                      MediaQuery.of(context).size.width * 0.02),
+                                  child: AutoSizeText(
+                                    "Section",
+                                    style: GoogleFonts.exo(
+                                        fontSize: 18,
+                                        color: headingcolor,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ),
+                                AnimatedContainer(
+                                  duration: const Duration(milliseconds: 300),
+                                  height: size.height * 0.08 * section_list!.length,
+                                  width: size.width,
+                                  color: Colors.transparent,
+                                  child: Column(
+                                    children: [
+                                      Expanded(
+                                        child: ListView.builder(
+                                          itemCount: section_list?.length,
+                                          physics: const NeverScrollableScrollPhysics(),
+                                          itemBuilder: (BuildContext context, int index) {
+                                            return ListTile(
+                                              onTap: () {
+                                                setState(() {
+                                                  currentsection = section_list![index];
+                                                  sectionIndex = index;
+                                                  subject_list = snapshot.data!.data()!["Subject-$uni_index$clgIndex$courseIndex$branchIndex$yearIndex$sectionIndex"];
+
+                                                  _controller.animateTo(
+                                                    _controller.position.maxScrollExtent,
+                                                    duration: const Duration(milliseconds: 100),
+                                                    curve: Curves.linear,
+                                                  );
+                                                  currentsubject = "";
+                                                });
+                                              },
+                                              title: Text(section_list?[index]),
+                                              titleTextStyle: GoogleFonts.exo(
+                                                  color: optioncolor,
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w500
+                                              ),
+                                              leading: Radio(
+                                                activeColor: dotcolor,
+                                                value: section_list![index],
+                                                groupValue: currentsection,
+                                                onChanged: (value) {
+                                                  setState(
+                                                        () {},
+                                                  );
+                                                },
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(
+                                      MediaQuery.of(context).size.width * 0.02),
+                                  child: AutoSizeText(
+                                    "Subject",
+                                    style: GoogleFonts.exo(
+                                        fontSize: 18,
+                                        color: headingcolor,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ),
+                                AnimatedContainer(
+                                  duration: const Duration(milliseconds: 300),
+                                  height: size.height * 0.08 * subject_list!.length,
+                                  width: size.width,
+                                  color: Colors.transparent,
+                                  child: Column(
+                                    children: [
+                                      Expanded(
+                                        child: ListView.builder(
+                                          itemCount: subject_list?.length,
+                                          physics: const NeverScrollableScrollPhysics(),
+                                          itemBuilder:
+                                              (BuildContext context, int index) {
+                                            return ListTile(
+                                              onTap: () {
+                                                setState(() {
+                                                  currentsubject = subject_list![index];
+                                                  subjectIndex = index;
+                                                  _controller.animateTo(
+                                                    _controller.position.maxScrollExtent,
+                                                    duration: const Duration(milliseconds: 100),
+                                                    curve: Curves.linear,
+                                                  );
+                                                });
+                                              },
+                                              title: Text(subject_list?[index]),
+                                              titleTextStyle: GoogleFonts.exo(
+                                                  color: optioncolor,
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w400
+                                              ),
+                                              leading: Radio(
+                                                activeColor: dotcolor,
+                                                value: subject_list?[index],
+                                                groupValue: currentsubject,
+                                                onChanged: (value) {
+                                                  setState(
+                                                        () {},
+                                                  );
+                                                },
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),//Course
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    }
-                  },
+                        );
+                      }
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
