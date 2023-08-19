@@ -112,7 +112,7 @@ class _Download_attendanceState extends State<Download_attendance> {
               children: [
                 Container(
                   height: size.height*0.07,
-                  width: size.width*0.96,
+                  width: size.width*1,
                   color: Colors.transparent,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
