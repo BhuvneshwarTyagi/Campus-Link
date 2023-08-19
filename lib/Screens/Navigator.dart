@@ -456,14 +456,152 @@ class _NeviState extends State<Nevi> {
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
                 onTap: () {
-                  setState(() {
-                    index = 4;
-                    mark_size = size.width * 0.10;
-                    assigment_size = size.width * 0.07;
-                    attendence_size = size.width * 0.07;
-                    performance_size = size.width * 0.07;
-                    note_size = size.width * 0.07;
-                  });
+
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return Center(
+                        child: Container(
+                          width: size.width*0.7,
+                          height: subject_filter.isEmpty?
+                          size.height*0.2
+                              :
+                          size.height*0.63,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              color: Colors.black,
+                              border: Border.all(color: Colors.white,width: 2)
+                          ),
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: size.height*0.02,
+                              ),
+                              AutoSizeText(
+                                "What Do You Want To Do?",
+                                style: GoogleFonts.exo(color: Colors.white),
+                              ),
+                              SizedBox(
+                                height: size.height*0.01,
+                              ),
+
+                              subject_filter.isEmpty?
+                              SizedBox(
+                                height: size.height*0,
+                              ):
+                              Column(
+                                children: [
+                                  AutoSizeText(
+                                    "Please check your filter",
+                                    style: GoogleFonts.exo(color: Colors.white),
+                                  ),
+                                  SizedBox(
+                                    height: size.height*0.01,
+                                  ),
+                                  AutoSizeText(
+                                    "$university_filter",
+                                    style: GoogleFonts.exo(color: Colors.white),
+                                  ),
+                                  const Icon(Icons.arrow_drop_down_outlined,color: Colors.white),
+                                  AutoSizeText(
+                                    "$college_filter",
+                                    style: GoogleFonts.exo(color: Colors.white),
+                                  ),
+                                  const Icon(Icons.arrow_drop_down_outlined,color: Colors.white),
+                                  AutoSizeText(
+                                    "$course_filter",
+                                    style: GoogleFonts.exo(color: Colors.white),
+                                  ),
+                                  const Icon(Icons.arrow_drop_down_outlined,color: Colors.white),
+                                  AutoSizeText(
+                                    "$branch_filter",
+                                    style: GoogleFonts.exo(color: Colors.white),
+                                  ),
+                                  const Icon(Icons.arrow_drop_down_outlined,color: Colors.white),
+                                  AutoSizeText(
+                                    "Year: $year_filter",
+                                    style: GoogleFonts.exo(color: Colors.white),
+                                  ),
+                                  const Icon(Icons.arrow_drop_down_outlined,color: Colors.white),
+                                  AutoSizeText(
+                                    "Section: $section_filter",
+                                    style: GoogleFonts.exo(color: Colors.white),
+                                  ),
+                                  const Icon(Icons.arrow_drop_down_outlined,color: Colors.white),
+                                  AutoSizeText(
+                                    "$subject_filter",
+                                    style: GoogleFonts.exo(color: Colors.white),
+                                  ),],
+                              ),
+                              SizedBox(
+                                height: size.height*0.02,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                            BorderRadius.circular(15)),
+                                        elevation: 20,
+                                        backgroundColor: Colors.white10),
+                                    onPressed: () {
+
+                                      setState(() {
+                                        upload_marks=false;
+                                        index=4;
+                                        mark_size = size.width * 0.10;
+                                        assigment_size = size.width * 0.07;
+                                        attendence_size = size.width * 0.07;
+                                        performance_size = size.width * 0.07;
+                                        note_size = size.width * 0.07;
+
+                                      });
+                                      Navigator.pop(context);
+                                    },
+                                    child: AutoSizeText(
+                                      "View Marks",
+                                      style: GoogleFonts.exo(color: Colors.white),
+                                    ),
+                                  ),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                            BorderRadius.circular(15)),
+                                        elevation: 20,
+                                        backgroundColor: Colors.white10),
+                                    onPressed: () async {
+                                      setState(() {
+                                        index = 4;
+                                        upload_marks=true;
+                                        mark_size = size.width * 0.10;
+                                        assigment_size = size.width * 0.07;
+                                        attendence_size = size.width * 0.07;
+                                        performance_size = size.width * 0.07;
+                                        note_size = size.width * 0.07;
+                                      });
+                                      Navigator.pop(context);
+
+                                    },
+                                    child: Text(
+                                      "Upload Marks",
+                                      style: GoogleFonts.exo(color: Colors.white),
+                                    ),
+                                  )
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+
+
                 },
                 child: SizedBox(
                   width: mark_size + size.width * 0.11,

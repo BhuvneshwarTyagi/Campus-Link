@@ -16,6 +16,9 @@ class Sessional extends StatefulWidget {
 
 class _SessionalState extends State<Sessional> {
 
+  int  _height = 0;
+  int flage =0;
+
   final _st=GoogleFonts.exo(
     fontSize: 18,
     fontWeight: FontWeight.w600,
@@ -31,6 +34,8 @@ class _SessionalState extends State<Sessional> {
 
   List<String>all_email=["abc@gmail.com"];
 
+  List<double>height_list=[0.11,0.11,0.11];
+
  @override
   void initState() {
     // TODO: implement initState
@@ -40,9 +45,22 @@ class _SessionalState extends State<Sessional> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return  Scaffold(
+    return subject_filter.isEmpty
+        ?
+        Center(
+          child: AutoSizeText(
+            "Please Apply Filter",
+            style: _st,
+          ),
+        )
+        :
+        upload_marks
+            ?
+      Scaffold(
       backgroundColor: Colors.transparent,
-      body: SingleChildScrollView(
+      body: all_email.length>1
+        ?
+          SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Column(
           children: [
@@ -74,12 +92,13 @@ class _SessionalState extends State<Sessional> {
                           fillColor: Colors.transparent,
                           filled: true,
                           hintStyle: _st,
+                          suffixIcon: Icon(Icons.arrow_drop_down,color: Colors.black,size: size.height*0.04,),
                           focusedBorder: OutlineInputBorder(
                             borderSide: const BorderSide(
                               width: 3,
                               color: Colors.black,
                             ),
-                            borderRadius: BorderRadius.circular(30),
+                            borderRadius: BorderRadius.circular(10),
                           ),
                           focusColor: Colors.transparent,
                           disabledBorder: OutlineInputBorder(
@@ -87,14 +106,14 @@ class _SessionalState extends State<Sessional> {
                               width: 3,
                               color: Colors.black,
                             ),
-                            borderRadius: BorderRadius.circular(30),
+                            borderRadius: BorderRadius.circular(10),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderSide: const BorderSide(
                               width: 3,
                               color: Colors.black,
                             ),
-                            borderRadius: BorderRadius.circular(30),
+                            borderRadius: BorderRadius.circular(10),
                           )),
                       onSuggestionTap: (value) {
                         FocusScope.of(context).unfocus();
@@ -115,11 +134,11 @@ class _SessionalState extends State<Sessional> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
-                    width: size.width*0.4,
+                    width: size.width*0.35,
                     height: size.height*0.06,
                     decoration:  BoxDecoration(
                         color: Colors.transparent,
-                        borderRadius: BorderRadius.all(Radius.circular(40)),
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
                         border: Border.all(
                             color: Colors.black,
                             width: 3
@@ -130,6 +149,7 @@ class _SessionalState extends State<Sessional> {
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
                         hintText: "Max Marks",
+                        hintStyle: _st,
                         contentPadding: EdgeInsets.only(left: size.width*0.02),
                         helperStyle: _st,
                       ),
@@ -237,6 +257,7 @@ class _SessionalState extends State<Sessional> {
                                  ),
                                  Row(
                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                   crossAxisAlignment: CrossAxisAlignment.center,
                                    children: [
                                      AutoSizeText(
                                        "Marks   :    ",
@@ -315,9 +336,18 @@ class _SessionalState extends State<Sessional> {
                                             maxLines: 1,),
                                         ),
                                        ),
-                                     )
+                                     ),
+                                     IconButton(onPressed: (){
+                                       setState(() {
+                                         //marks_controller.removeAt(index);
+                                         all_email.remove(snapshot.data?.docs[index]["Email"]);
+                                       });
+                                     },
+                                         icon: Icon(Icons.delete,color: Colors.black,size: size.height*0.045,))
+
                                    ],
                                  ),
+
                                ],
                              ),
                            ),
@@ -336,7 +366,283 @@ class _SessionalState extends State<Sessional> {
           ],
         ),
       )
-    );
+          :
+           Center(child: AutoSizeText(
+            "Marks uploaded",
+             style: _st,
+          ))
+    )
+            :
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          body: StreamBuilder(
+            stream:FirebaseFirestore.instance
+                .collection("Students")
+                .where("University", isEqualTo: university_filter)
+                .where("College", isEqualTo: college_filter)
+                .where("Course", isEqualTo: course_filter)
+                .where("Branch", isEqualTo: branch_filter)
+                .where("Year", isEqualTo: year_filter)
+                .where("Section", isEqualTo: section_filter)
+                .where("Subject", arrayContains: subject_filter)
+                .where("Name",isNull: false)
+                .orderBy("Name")
+                .snapshots() ,
+            builder: (context, snapshot) {
+            return  snapshot.hasData
+                ?
+              ListView.builder(
+              scrollDirection: Axis.vertical,
+              itemCount: snapshot.data?.size,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: EdgeInsets.all(size.height*0.007),
+                  child: InkWell(
+                    onTap: () {
+                      setState(() {
+                        if(height_list[index]==0.11) {
+                          height_list[index] = 0.28;
+                        }
+                        else{
+                          height_list[index]=0.11;
+                        }
+                    });
+                          },
+                    child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        height: size.height*height_list[index],
+                        decoration: const BoxDecoration(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.all(Radius.circular(20))
+                        ),
+                        child: Card(
+                          color: Colors.lightBlueAccent,
+                          elevation: 50,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(20))
+                          ),
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.vertical,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  height: size.height*0.011,
+                                ),
+                                height_list[index]==0.11
+                                ?
+                                Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
+                                    children: [
+                                      CircleAvatar(
+                                        backgroundColor: Colors.white,
+                                        radius: 30,
+                                        // backgroundColor: Colors.teal.shade300,
+                                        child: AutoSizeText(
+                                          snapshot.data!.docs[index]["Name"].toString().trim().substring(0,1),
+                                          style: GoogleFonts.exo(
+                                              fontSize: size.height * 0.05,
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.black
+                                          ),
+                                        ),
+                                      ),
+                                      Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          AutoSizeText(
+                                            snapshot.data?.docs[index]["Name"],
+                                            style: GoogleFonts.exo(
+                                                color: Colors.black,
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                          AutoSizeText(
+                                            snapshot.data?.docs[index]["Rollnumber"],
+                                            style: GoogleFonts.exo(
+                                                color: Colors.black,
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w600),
+                                          )
+                                        ],
+                                      )
+                                    ])
+                                    :
+                                    Column(
+                                      children: [
+                                        Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+
+                                            children: [
+                                              CircleAvatar(
+                                                  backgroundColor: Colors.white,
+                                                  radius: 30,
+                                                  // backgroundColor: Colors.teal.shade300,
+                                                  child:  AutoSizeText(
+                                                    snapshot.data!.docs[index]["Name"].toString().trim().substring(0,1),
+                                                    style: GoogleFonts.exo(
+                                                        fontSize: size.height * 0.05,
+                                                        fontWeight: FontWeight.w600,
+                                                        color: Colors.black
+                                                    ),
+                                                  )
+                                              ),
+                                              Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  AutoSizeText(
+                                                    snapshot.data?.docs[index]["Name"],
+                                                    style: GoogleFonts.exo(
+                                                        color: Colors.black,
+                                                        fontSize: 20,
+                                                        fontWeight: FontWeight.w600),
+                                                  ),
+                                                  AutoSizeText(
+                                                    snapshot.data?.docs[index]["Rollnumber"],
+                                                    style: GoogleFonts.exo(
+                                                        color: Colors.black,
+                                                        fontSize: 20,
+                                                        fontWeight: FontWeight.w600),
+                                                  )
+                                                ],
+                                              )
+                                            ]),
+                                        SizedBox(height: size.height*0.026),
+                                        Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            AutoSizeText(
+                                              "Subject      ",
+                                              style: GoogleFonts.exo(
+                                                  fontSize: size.height * 0.03,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.white70),
+                                            ),
+                                            AutoSizeText(
+                                              "S-1  ",
+                                              style: GoogleFonts.exo(
+                                                  fontSize: size.height * 0.03,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.white70),
+                                            ),
+                                            AutoSizeText(
+                                              "S-2  ",
+                                              style: GoogleFonts.exo(
+                                                  fontSize: size.height * 0.03,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.white70
+                                              ),
+                                            ),
+                                            AutoSizeText(
+                                              "S-3  ",
+                                              style: GoogleFonts.exo(
+                                                  fontSize: size.height * 0.03,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.white70
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: size.height*0.02,),
+                                        Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                          children: [
+                                            Container(
+                                              height: size.height*0.05,
+                                              width: size.width*0.3,
+                                              child: Center(
+                                                child: AutoSizeText(
+                                                  subject_filter,
+                                                  style: GoogleFonts.exo(
+                                                      fontSize: size.height * 0.03,
+                                                      fontWeight: FontWeight.w600,
+                                                      color: Colors.white70),
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(color: Colors.white),
+                                                  borderRadius: BorderRadius.circular(5)
+
+                                              ),
+                                              height: size.height*0.04,
+                                              width: size.width*0.12,
+                                              child: Center(
+                                                child: AutoSizeText(
+                                                  snapshot.data?.docs[index]["S-1-$subject_filter"],
+                                                  style: GoogleFonts.exo(
+                                                      fontSize: size.height * 0.03,
+                                                      fontWeight: FontWeight.w600,
+                                                      color: Colors.white70
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(color: Colors.white),
+                                                  borderRadius: BorderRadius.circular(5)
+                                              ),
+                                              height: size.height*0.04,
+                                              width: size.width*0.12,
+                                              child: Center(
+                                                child: AutoSizeText(
+                                                  "0",
+                                                  style: GoogleFonts.exo(
+                                                      fontSize: size.height * 0.03,
+                                                      fontWeight: FontWeight.w600,
+                                                      color: Colors.white70
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(color: Colors.white),
+                                                  borderRadius: BorderRadius.circular(5)
+                                              ),
+                                              height: size.height*0.04,
+                                              width: size.width*0.12,
+                                              child: Center(
+                                                child: AutoSizeText(
+                                                  "0",
+                                                  style: GoogleFonts.exo(
+                                                      fontSize: size.height * 0.03,
+                                                      fontWeight: FontWeight.w600,
+                                                      color: Colors.white70
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+
+                                      ],
+                                    )
+
+                              ],
+                            ),
+                          )
+                        )
+                    ),
+                  ),
+                );
+              },
+            )
+                :
+            Center(
+              child: AutoSizeText(
+                "Please Apply Filter",
+                style: _st,
+              ),
+            );
+          },)
+        );
   }
   Future<void> fetch_all_email() async {
     CollectionReference _collectionRef =
