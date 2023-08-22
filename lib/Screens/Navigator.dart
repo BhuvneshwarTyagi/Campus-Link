@@ -789,5 +789,10 @@ class _NeviState extends State<Nevi> {
         .update({
       'Token': token,
     });
+    for(var element in usermodel["Message_channels"]){
+      await FirebaseFirestore.instance.collection("Messages").doc(element).update({
+        "Token": FieldValue.arrayUnion([token])
+      });
+    }
   }
 }

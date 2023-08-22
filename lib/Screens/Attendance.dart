@@ -644,7 +644,6 @@ class _AttendanceState extends State<Attendance> {
   }
 
 
-
   bool distance_filter(double lat, double long, String Email)  {
     bool out = true;
     print("$tecloc");

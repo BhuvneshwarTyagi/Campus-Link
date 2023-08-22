@@ -1,3 +1,4 @@
+import 'package:campus_link_teachers/Constraints.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -572,6 +573,28 @@ class _basicDetailsState extends State<basicDetails> {
                         secController.text.isNotEmpty &&
                         subjectController.text.isNotEmpty) {
                       try {
+                        await FirebaseFirestore.instance.collection("Messages").doc(
+                          "${universityController.text.trim().split(" ")[0]} "
+                              "${clgController.text.trim().split(" ")[0]} "
+                              "${courseController.text.trim().split(" ")[0]} "
+                              "${branchController.text.trim().split(" ")[0]} "
+                              "${yearController.text.trim().split(" ")[0]} "
+                              "${secController.text.trim().split(" ")[0]} "
+                              "${subjectController.text.trim().split(" ")[0]}"
+                        ).set({
+                          "Messages" : [],
+                          "Token" : FieldValue.arrayUnion([usermodel["Token"]])
+                        });
+                        await FirebaseFirestore.instance.collection("Teachers").doc(usermodel["Email"]).update({
+                          "Message_channels" : FieldValue.arrayUnion(["${universityController.text.trim().split(" ")[0]} "
+                              "${clgController.text.trim().split(" ")[0]} "
+                              "${courseController.text.trim().split(" ")[0]} "
+                              "${branchController.text.trim().split(" ")[0]} "
+                              "${yearController.text.trim().split(" ")[0]} "
+                              "${secController.text.trim().split(" ")[0]} "
+                              "${subjectController.text.trim().split(" ")[0]}"
+                          ])
+                        });
                         await FirebaseFirestore.instance.collection("Teacher_record").doc("Email").update({
                           "Email":[FirebaseAuth.instance.currentUser!.email]
                         });

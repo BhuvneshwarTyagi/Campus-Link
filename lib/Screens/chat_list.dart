@@ -1,4 +1,8 @@
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../Constraints.dart';
 import 'chat.dart';
 
 class chatsystem extends StatefulWidget {
@@ -11,35 +15,47 @@ class chatsystem extends StatefulWidget {
 class _chatsystemState extends State<chatsystem> {
   @override
   Widget build(BuildContext context) {
+    Size size=MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: const Color.fromRGBO(63, 63, 63,1),
-
+        backgroundColor: const Color.fromRGBO(63, 63, 63,1),
+        leadingWidth: size.width*0.07,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new),
+          onPressed: (){
+            Navigator.pop(context);
+          },
+        ),
         title: const Text("Campus Link"),
       ),
-      body: SizedBox(
-        child: ListView.builder(
-            itemCount: 5,
-            itemBuilder: (context, index) {
-              return InkWell(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const chat_page(),
-                      ));
-                },
-                child: Container(
-                  height: 90,
-                  decoration: const BoxDecoration(
-                      color: Colors.white,
-                      border: Border(
-                          bottom: BorderSide(color: Colors.black, width: 1))),
-                  child: const Row(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: 15, right: 20),
-                        child: CircleAvatar(
+      body: StreamBuilder(
+          stream: FirebaseFirestore.instance.collection("Teachers").doc(usermodel["Email"]).snapshots(),
+        builder: (context, snapshot) {
+          return
+            snapshot.hasData
+              ?
+            ListView.builder(
+              itemCount: snapshot.data?.data()!["Message_channels"].length,
+              itemBuilder: (context, index) {
+                return InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => chat_page(channel: snapshot.data?.data()!["Message_channels"][index]),
+                        ));
+                  },
+                  child: Container(
+                    height: 90,
+                    decoration: const BoxDecoration(
+                        color: Colors.white,
+                        border: Border(
+                            bottom: BorderSide(color: Colors.black, width: 1))),
+                    padding: EdgeInsets.all(size.width*0.02),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const CircleAvatar(
                           backgroundColor: Color.fromRGBO(86, 149, 178, 1),
                           radius: 30,
 
@@ -48,19 +64,29 @@ class _chatsystemState extends State<chatsystem> {
 
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 28),
-                        child: Text("Priyanka",
-                          style: TextStyle(color: Colors.black,fontSize: 20),
-                        ),
-                      )
-                    ],
+                        SizedBox(width: size.width*0.03),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            AutoSizeText("${snapshot.data?.data()!["Message_channels"][index]}",
+                              style: GoogleFonts.poppins(color: Colors.black,fontSize: 18),
+                            ),
+                            SizedBox(
+                              height: size.height*0.03,
+                            )
+                          ],
+                        )
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
-        ),
+                );
+              },
+            )
+                :
+                const Center(
+                  child: CircularProgressIndicator(),
+                );
+        },
       ),
     );
   }
