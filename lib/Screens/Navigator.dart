@@ -16,6 +16,7 @@ import 'Filters.dart';
 import 'Notes.dart';
 import 'Performance.dart';
 import 'Sessional.dart';
+import 'chat_list.dart';
 import 'download_attendance.dart';
 
 class Nevi extends StatefulWidget {
@@ -155,6 +156,21 @@ class _NeviState extends State<Nevi> {
           ),
           automaticallyImplyLeading: false,
           actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  PageTransition(
+                    child: const chatsystem(),
+                    type: PageTransitionType.bottomToTopJoined,
+                    duration: const Duration(milliseconds: 200),
+                    alignment: Alignment.bottomCenter,
+                    childCurrent: const Nevi(),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.send_outlined),
+            ),
             IconButton(
               onPressed: () {
                 Navigator.push(

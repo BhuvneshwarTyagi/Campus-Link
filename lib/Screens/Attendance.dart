@@ -650,7 +650,7 @@ class _AttendanceState extends State<Attendance> {
     print("$tecloc");
     final temp=Geolocator.distanceBetween(double.parse(tecloc.latitude.toStringAsPrecision(21)),double.parse(tecloc.longitude.toStringAsPrecision(21)), lat, long) ;
     print(temp);
-    temp< range +10
+    temp < range +10
         ? marked_email.add(Email)
         : out = false;
     marked_email = marked_email.toSet().toList();
