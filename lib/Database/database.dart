@@ -111,7 +111,7 @@ class database {
     ];
     return daysInMonth[month - 1];
   }
-  void sendPushMessage(String token, String body, String title) async {
+  void sendPushMessage(String token, String body, String title,String channel) async {
     try {
       print("Send $token");
       await http.post(
@@ -128,6 +128,7 @@ class database {
             'status': "done",
             'body': body,
             'title': title,
+            'channel':channel
           },
           "apns": {
             "headers": {"apns-priority": "5"},

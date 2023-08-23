@@ -88,9 +88,9 @@ class _chat_pageState extends State<chat_page> {
                        ,
                        message[index]["UID"]==usermodel["Email"]
                            ?
-                       bubble("${message[index]["text"]}", "${message[index]["Stamp"]}", true)
+                       bubble("${message[index]["text"]}","${message[index]["Name"]}", message[index]["Stamp"].toDate(), true,size)
                            :
-                       bubble("${message[index]["text"]}", "${message[index]["Stamp"]}", false)
+                       bubble("${message[index]["text"]}","${message[index]["Name"]}", message[index]["Stamp"].toDate(), false,size)
                      ],
                    );
                },
@@ -176,7 +176,7 @@ class _chat_pageState extends State<chat_page> {
                       for(var element in tokens){
                         element.toString() != usermodel["Token"]
                             ?
-                        database().sendPushMessage(element, messageController.text.trim(), "New Message")
+                        database().sendPushMessage(element, messageController.text.trim(), "New Message",widget.channel)
                             :
                         null;
                       }
@@ -219,14 +219,108 @@ class _chat_pageState extends State<chat_page> {
       ],
     );
   }
-  Widget bubble(String text, String stamp,bool sender){
+  Widget bubble(String text,String name, DateTime stamp,bool sender,Size size){
     
-    return BubbleSpecialThree(
-      text: text,
-      isSender: sender,
-      textStyle: GoogleFonts.poppins(
-      color: Colors.black
-    ),
+    return Align(
+      alignment: sender ?
+      Alignment.centerRight
+          :
+      Alignment.centerLeft,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisAlignment: sender ?
+        MainAxisAlignment.end
+            :
+        MainAxisAlignment.start
+        ,
+        children: [
+
+          sender
+              ?
+          const SizedBox()
+              :
+          Row(
+          children: [
+            SizedBox(width: size.width*0.02),
+            CircleAvatar(
+              radius: size.width*0.045,
+            ),
+          ],
+        ),
+
+          Container(
+            width: text.length>23
+                ?
+            size.width*0.028* 25
+                :
+            name.length>=text.length
+                ?
+            size.width*0.037*name.length
+                :
+            size.width*0.035*text.length
+            ,
+            margin: EdgeInsets.symmetric(horizontal:  sender? size.width*0.03 : size.width*0.01,vertical: size.height*0.01),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topRight: sender ?
+                    const Radius.circular(30)
+                    :
+                    const Radius.circular(0),
+                topLeft: !sender ?
+                const Radius.circular(30)
+                    :
+                const Radius.circular(0),
+                bottomLeft: sender ?
+                const Radius.circular(30)
+                    :
+                const Radius.circular(0),
+                bottomRight: !sender ?
+                const Radius.circular(30)
+                    :
+                const Radius.circular(0),
+              )
+            ),
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  child: AutoSizeText(name,
+                    style: GoogleFonts.poppins(
+                        color: Colors.black,
+                        fontSize: size.width*0.028,
+                        fontWeight: FontWeight.w600
+                  ),),
+                ),
+                SizedBox(
+                  width: size.width*0.92,
+                  child: AutoSizeText(
+                    text,
+                    style: GoogleFonts.poppins(
+                    color: Colors.black.withOpacity(0.75),
+                      fontSize: size.width*0.04,
+                      fontWeight: FontWeight.w400
+                  ),
+                  ),
+                ),
+                SizedBox(
+                  width: size.width*0.92,
+                  child: AutoSizeText(
+                    "${stamp.hour}:${stamp.minute<10 ? "0" : ""}${stamp.minute} ${stamp.hour<12 ? "am" : "pm"}",
+                    style: GoogleFonts.poppins(
+                        color: Colors.black.withOpacity(0.8),
+                        fontSize: size.width*0.022,
+                        fontWeight: FontWeight.w400
+                    ),
+                    textAlign: TextAlign.right,
+                  ),
+                )
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
   Widget date(DateTime date){
