@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../Constraints.dart';
+import 'background_image.dart';
 import 'chat.dart';
 
 class chatsystem extends StatefulWidget {
@@ -26,68 +27,191 @@ class _chatsystemState extends State<chatsystem> {
             Navigator.pop(context);
           },
         ),
-        title: const Text("Campus Link"),
-      ),
-      body: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection("Teachers").doc(usermodel["Email"]).snapshots(),
-        builder: (context, snapshot) {
-          return
-            snapshot.hasData
-              ?
-            ListView.builder(
-              itemCount: snapshot.data?.data()!["Message_channels"].length,
-              itemBuilder: (context, index) {
-                return InkWell(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => chat_page(channel: snapshot.data?.data()!["Message_channels"][index]),
-                        ));
-                  },
-                  child: Container(
-                    height: 90,
-                    decoration: const BoxDecoration(
-                        color: Colors.white,
-                        border: Border(
-                            bottom: BorderSide(color: Colors.black, width: 1))),
-                    padding: EdgeInsets.all(size.width*0.02),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const CircleAvatar(
-                          backgroundColor: Color.fromRGBO(86, 149, 178, 1),
-                          radius: 30,
+        title: const Text("Chats"),
+        actions: <Widget> [
 
-                          child: Text("P",
-                            style: TextStyle(color: Colors.black,fontSize: 30),
+          PopupMenuButton(
+            icon: Icon(Icons.more_vert,size: size.height*0.04,),
+            itemBuilder: (context) {
 
-                          ),
-                        ),
-                        SizedBox(width: size.width*0.03),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            AutoSizeText("${snapshot.data?.data()!["Message_channels"][index]}",
-                              style: GoogleFonts.poppins(color: Colors.black,fontSize: 18),
+              return[
+                PopupMenuItem(
+                    child:TextButton(
+                        onPressed: (){
+
+                        }, child:const Text("Search",style: TextStyle(color: Colors.black),))),
+                PopupMenuItem(
+                    child: StreamBuilder(
+                      stream: FirebaseFirestore.instance.collection("Messages").doc(usermodel["Message_channels"][0]).snapshots(),
+                      builder: (context, snapshot) {
+                        return snapshot.hasData
+                            ?
+                        TextButton(
+                          onPressed: (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>Background_image(groupimage: snapshot.data!.data()!["image_URL"], channel: usermodel["Message_channels"][0],),
                             ),
-                            SizedBox(
-                              height: size.height*0.03,
-                            )
-                          ],
+                            );
+
+                          },
+                          child:const Text("Wallpaper",style: TextStyle(color: Colors.black),
+                          ),
                         )
-                      ],
+                            :
+                        CircleAvatar(
+                          backgroundColor: const Color.fromRGBO(86, 149, 178, 1),
+                          radius: size.width*0.07,
+                          child: const CircularProgressIndicator(),
+                        );
+                      },
                     ),
+                ),
+
+              ];
+            },)
+        ],
+      ),
+      body: ListView.builder(
+        itemCount: usermodel["Message_channels"].length,
+        itemBuilder: (context, index) {
+          return InkWell(
+            onTap: () async {
+              // int count=0;
+              // await FirebaseFirestore
+              //     .instance
+              //     .collection("Messages")
+              //     .doc(usermodel["Message_channels"][index])
+              //     .get().then((value){
+              //    count=value.data()!["Messages"].length;
+              // });
+              // Map<String,int> map = {"Readed_count": count};
+              // await FirebaseFirestore
+              //     .instance
+              //     .collection("Messages")
+              //     .doc(usermodel["Message_channels"][index])
+              //     .update({
+              //   usermodel["Email"].toString().split("@")[0] : map
+              // })
+              //     .whenComplete(() => Navigator.push(
+              //     context,
+              //     MaterialPageRoute(
+              //       builder: (context) => chat_page(channel: usermodel["Message_channels"][index]),
+              //     ),
+              // ),
+              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => chat_page(channel: usermodel["Message_channels"][index]),
+                ),
+              );
+            },
+            child: Container(
+              height: size.height*0.1,
+              decoration: const BoxDecoration(
+                  color: Colors.white,
+                  border: Border(bottom: BorderSide(color: Colors.black, width: 1))),
+              padding: EdgeInsets.all(size.width*0.02),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  StreamBuilder(
+                    stream: FirebaseFirestore.instance.collection("Messages").doc(usermodel["Message_channels"][index]).snapshots(),
+                    builder: (context, snapshot) {
+                      return snapshot.hasData
+                          ?
+                      CircleAvatar(
+                        backgroundColor: const Color.fromRGBO(86, 149, 178, 1),
+                        radius: size.width*0.07,
+                        backgroundImage: NetworkImage(snapshot.data!.data()!["image_URL"]),
+                      )
+                          :
+                      CircleAvatar(
+                        backgroundColor: const Color.fromRGBO(86, 149, 178, 1),
+                        radius: size.width*0.07,
+                        child: const CircularProgressIndicator(),
+                      );
+                    },
                   ),
-                );
-              },
-            )
-                :
-                const Center(
-                  child: CircularProgressIndicator(),
-                );
+
+                  SizedBox(width: size.width*0.03),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AutoSizeText("${usermodel["Message_channels"][index]}",
+                        style: GoogleFonts.poppins(color: Colors.black,fontSize: size.width*0.045,fontWeight: FontWeight.w500),
+                      ),
+                      StreamBuilder(
+                        stream: FirebaseFirestore.instance.collection("Messages").doc(usermodel["Message_channels"][index]).snapshots(),
+                        builder: (context, snapshot2) {
+                          int count=0;
+                          snapshot2.hasData
+                              ?
+                             count= snapshot2.data?.data()!["Messages"].length-snapshot2.data?.data()![usermodel["Email"].toString().split("@")[0]]["Read_Count"]-1
+                              :
+                          null;
+
+                          return snapshot2.hasData
+                              ?
+                          Row(
+                            children: [
+                              SizedBox(
+                                width: size.width*0.7,
+                                child: AutoSizeText("${snapshot2.data?.data()!["Messages"][snapshot2.data?.data()!["Messages"].length-1]["Name"]}: ${snapshot2.data?.data()!["Messages"][snapshot2.data?.data()!["Messages"].length-1]["text"].length <25 ? snapshot2.data?.data()!["Messages"][snapshot2.data?.data()!["Messages"].length-1]["text"] : snapshot2.data?.data()!["Messages"][snapshot2.data?.data()!["Messages"].length-1]["text"].toString().substring(0,25)}",
+                                  style: GoogleFonts.poppins(
+                                      color: Colors.black.withOpacity(0.80),
+                                      fontSize: size.width*0.035,
+                                    fontWeight: FontWeight.w400
+                                  ),
+                                  textAlign: TextAlign.left,
+                                ),
+                              ),
+                              count>0
+                                  ?
+                              CircleAvatar(
+                                radius: size.width*0.03,
+                                backgroundColor: Colors.green,
+                                child: AutoSizeText("$count",
+                                  style: GoogleFonts.poppins(
+                                      color: Colors.white,
+                                      fontSize: size.width*0.035,
+                                    fontWeight: FontWeight.w400
+                                  ),
+                                  textAlign: TextAlign.left,
+                                ),
+                              )
+                                  :
+                              const SizedBox(),
+                            ],
+                          )
+                              :
+                          SizedBox(
+                            height: size.height*0.03,
+                          );
+                        },
+                      )
+                    ],
+                  )
+                ],
+              ),
+            ),
+          );
         },
       ),
     );
   }
+  // counting(List<dynamic> a,DateTime b,int c,int d){
+  //   int count=0;
+  //   print(".............b:     ${b.toString().split(".")[0]}");
+  //   print(".............b:     $b");
+  //    DateTime user_stamp=DateTime.parse(b.toString().split(".")[0]);
+  //    print('.............$user_stamp');
+  //   for(int i=c;i<d;i++){
+  //      DateTime msg_stamp=DateTime.parse(a[i]["Stamp"].toString().split(".")[0]);
+  //     if(user_stamp.isBefore(msg_stamp)){
+  //       count++;
+  //     }
+  //   }
+  //   return count;
+  // }
 }

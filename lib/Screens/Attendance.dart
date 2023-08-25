@@ -525,7 +525,7 @@ class _AttendanceState extends State<Attendance> {
                                                                     "Location": reset_pos
                                                                   });
                                                               var token;
-                                                              await FirebaseFirestore.instance.collection("Students").doc(element).get().then((value) => token=value.data()?["token"]);
+                                                              await FirebaseFirestore.instance.collection("Students").doc(element).get().then((value) => token=value.data()?["Token"]);
 
                                                               final docref = await FirebaseFirestore.instance
                                                                   .collection("Students")
@@ -572,7 +572,7 @@ class _AttendanceState extends State<Attendance> {
                                                                     "Location": reset_pos
                                                                   });
                                                               var token;
-                                                              await FirebaseFirestore.instance.collection("Students").doc(element).get().then((value) => token=value.data()?["token"]);
+                                                              await FirebaseFirestore.instance.collection("Students").doc(element).get().then((value) => token=value.data()?["Token"]);
 
                                                               final docref = await FirebaseFirestore.instance
                                                                   .collection("Students")

@@ -62,7 +62,7 @@ class _NeviState extends State<Nevi> {
           .get()
           .then((value) {
         value.docs.forEach((element) {
-          sendPushMessage(element.data()['token'], "Attendance Initialized",
+          sendPushMessage(element.data()['Token'], "Attendance Initialized",
               subject_filter);
         });
       });

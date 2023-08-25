@@ -38,6 +38,8 @@ dependencies:
   google_fonts: ^4.0.3
   connectivity_plus: ^3.0.3
   page_transition: ^2.0.9
+  image_picker: ^1.0.2
+  swipe_to: ^1.0.2
   flutter_inapp_notifications: ^0.0.3
   excel: ^2.1.0
   curved_navigation_bar: ^1.0.3

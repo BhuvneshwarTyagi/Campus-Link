@@ -18,7 +18,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   final _key = GlobalKey<FormState>();
   final TextEditingController _email=TextEditingController();
   final auth =FirebaseAuth.instance;
-  final _textStyle = GoogleFonts.alegreya(fontSize: 28, fontWeight: FontWeight.w900,color: Colors.amber,
+  final _textStyle = GoogleFonts.alegreya(fontSize: 28, fontWeight: FontWeight.w900,color: Colors.white54,
     shadows: <Shadow>[
       const Shadow(
         offset: Offset(1, 1),
@@ -33,12 +33,19 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       body: Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage("assets/images/bg-image.png"),
-              fit: BoxFit.cover
-          ),
-        ),
+    decoration: BoxDecoration(
+    gradient: LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+    const Color.fromRGBO(86, 149, 178, 1),
+    // Color.fromRGBO(86, 149, 178, 1),
+    const Color.fromRGBO(68, 174, 218, 1),
+    //Color.fromRGBO(118, 78, 232, 1),
+    Colors.deepPurple.shade300
+    ],
+    ),
+    ),
 
         child: SingleChildScrollView(
             padding: EdgeInsets.fromLTRB(
@@ -60,12 +67,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: Regcon,
-                  border: Border.all(color: Colors.amber),
+                  border: Border.all(color: Colors.black),
                   boxShadow: const [
                     BoxShadow(
                         blurRadius: 60,
                         blurStyle: BlurStyle.outer,
-                        color: Colors.amberAccent,
+                        color: Colors.black54,
                         offset: Offset(1, 1)
                     )
                   ],
@@ -106,12 +113,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       Container(
                         decoration: BoxDecoration(
                           borderRadius: const BorderRadius.all(Radius.circular(30)),
-                          border: Border.all(color: Colors.amber,),
+                          border: Border.all(color: Colors.black,),
                           boxShadow: const [
                             BoxShadow(
                                 blurRadius: 20,
                                 blurStyle: BlurStyle.outer,
-                                color: Colors.amberAccent,
+                                color: Colors.black54,
                                 offset: Offset(1, 1)
                             )
                           ],
@@ -128,7 +135,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             obscureText: false,
                             enableSuggestions: true,
                             autocorrect: true,
-                            cursorColor: Colors.amber,
+                            cursorColor: Colors.white,
                             style: TextStyle(color: Colors.white.withOpacity(0.9)),
                             decoration: InputDecoration(
                                 suffixIcon: IconButton(
@@ -139,12 +146,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                   },
                                   icon: const Icon(
                                     Icons.clear_outlined,
-                                    color: Colors.amber,
+                                    color: Colors.white,
                                   ),
                                 ),
                                 prefixIcon: const Icon(
                                   Icons.person_outline,
-                                  color: Colors.amber,
+                                  color: Colors.white,
                                 ),
                                 label: const Text("Enter email"),
                                 labelStyle: TextStyle(
@@ -177,9 +184,16 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               ),
               Container(
                 width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height*0.06,
+                height: MediaQuery.of(context).size.height*0.07,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(90),),
+                    gradient:const LinearGradient(
+                      begin: Alignment.centerLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Colors.blue, Colors.purpleAccent],
+                    ),
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(color: Colors.black54,width: 2)
+                ),
                  child: ElevatedButton(
                   onPressed: () async{
                     if (_key.currentState!.validate())
@@ -219,8 +233,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   },
                   style: ElevatedButton.styleFrom(
                      shape: const StadiumBorder(),
-                  backgroundColor: Colors.amber,
-                  shadowColor: Colors.amberAccent,
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.black54,
                   elevation: 30
 
               ),
@@ -241,7 +255,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text("Go to Sign In Page ?", style: TextStyle(
-              color: Colors.amberAccent,
+              color: Colors.black,
             fontWeight: FontWeight.w400)
               ,),
             TextButton(
@@ -250,13 +264,13 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 Navigator.pop(context);
               },
               child: const Text("Sign In", style: TextStyle(
-                  color: Colors.amber,
+                  color: Colors.black,
                   fontWeight: FontWeight.bold,
                   shadows: [
                   Shadow(
                   blurRadius: 30,
                   offset: Offset(3, 3),
-                  color: Colors.amberAccent
+                  color: Colors.black54
               )
                   ]
               )

@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../Constraints.dart';
+import '../Database/database.dart';
 import '../Registration/Verify Email.dart';
 import 'Navigator.dart';
 
@@ -39,7 +40,7 @@ class _MainPageState extends State<MainPage> {
         } else if (snapshot.connectionState == ConnectionState.active && snapshot.hasData)
         {
           if(FirebaseAuth.instance.currentUser!.emailVerified){
-            fetchuser();
+            database().fetchuser();
             return const Nevi();
           }
           else{
@@ -53,10 +54,5 @@ class _MainPageState extends State<MainPage> {
 
     );
   }
-  Future<void> fetchuser() async {
-    await FirebaseFirestore.instance.collection("Teachers").doc(FirebaseAuth.instance.currentUser!.email).get().then((value){
-      usermodel=value.data()!;
-    }).whenComplete(() => print(usermodel));
 
-  }
 }

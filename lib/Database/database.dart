@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -24,7 +25,12 @@ List months = [
 
 
 class database {
+  Future<void> fetchuser() async {
+    await FirebaseFirestore.instance.collection("Teachers").doc(FirebaseAuth.instance.currentUser!.email).get().then((value){
+      usermodel=value.data()!;
+    }).whenComplete(() => print(usermodel));
 
+  }
   Future signOut() async {
     try {
       return FirebaseAuth.instance.signOut();

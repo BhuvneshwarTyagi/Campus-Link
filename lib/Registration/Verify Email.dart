@@ -19,12 +19,19 @@ class _VerifyState extends State<Verify> {
           padding: EdgeInsets.all(MediaQuery.of(context).size.width*0.01),
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage("assets/images/bg-image.png"),
-                fit: BoxFit.cover
-            ),
-          ),
+    decoration: BoxDecoration(
+    gradient: LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+    const Color.fromRGBO(86, 149, 178, 1),
+    // Color.fromRGBO(86, 149, 178, 1),
+    const Color.fromRGBO(68, 174, 218, 1),
+    //Color.fromRGBO(118, 78, 232, 1),
+    Colors.deepPurple.shade300
+    ],
+    ),
+    ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -46,7 +53,7 @@ class _VerifyState extends State<Verify> {
                     .size
                     .height * 0.4,
               ),
-              const CircularProgressIndicator(color: Colors.green),
+              const CircularProgressIndicator(color: Colors.black),
               SizedBox(
                 height: MediaQuery
                     .of(context)

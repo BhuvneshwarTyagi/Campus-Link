@@ -573,17 +573,64 @@ class _basicDetailsState extends State<basicDetails> {
                         secController.text.isNotEmpty &&
                         subjectController.text.isNotEmpty) {
                       try {
-                        await FirebaseFirestore.instance.collection("Messages").doc(
-                          "${universityController.text.trim().split(" ")[0]} "
+                        Map<String,int> map = {"Readed_count": 0};
+                        await FirebaseFirestore.instance.collection("Chat_Channels").doc("Channels").get().then((value) async {
+                          List<dynamic> channel=value.data()!["Channels"];
+                          channel.contains(
+                              "${universityController.text.trim().split(" ")[0]} "
                               "${clgController.text.trim().split(" ")[0]} "
                               "${courseController.text.trim().split(" ")[0]} "
                               "${branchController.text.trim().split(" ")[0]} "
                               "${yearController.text.trim().split(" ")[0]} "
                               "${secController.text.trim().split(" ")[0]} "
                               "${subjectController.text.trim().split(" ")[0]}"
-                        ).set({
-                          "Messages" : [],
-                          "Token" : FieldValue.arrayUnion([usermodel["Token"]])
+                          )
+                              ?
+                          await FirebaseFirestore.instance.collection("Messages").doc(
+                              "${universityController.text.trim().split(" ")[0]} "
+                                  "${clgController.text.trim().split(" ")[0]} "
+                                  "${courseController.text.trim().split(" ")[0]} "
+                                  "${branchController.text.trim().split(" ")[0]} "
+                                  "${yearController.text.trim().split(" ")[0]} "
+                                  "${secController.text.trim().split(" ")[0]} "
+                                  "${subjectController.text.trim().split(" ")[0]}"
+                          ).update({
+                            "Messages" : FieldValue.arrayUnion([{"Name": usermodel["Name"],"text":"Hello" , "UID": usermodel["Email"],"Stamp": DateTime.now(),"Image": usermodel["Profile_URL"]}]),
+                            "Token" : FieldValue.arrayUnion([usermodel["Token"]]),
+                            "Admins" : FieldValue.arrayUnion(["${usermodel["Email"]}"]),
+                            "Members" : FieldValue.arrayUnion(["${usermodel["Email"]}"]),
+                            usermodel["Email"].toString().split("@")[0] : map,
+                          })
+                              :
+                          await FirebaseFirestore.instance.collection("Messages").doc(
+                              "${universityController.text.trim().split(" ")[0]} "
+                                  "${clgController.text.trim().split(" ")[0]} "
+                                  "${courseController.text.trim().split(" ")[0]} "
+                                  "${branchController.text.trim().split(" ")[0]} "
+                                  "${yearController.text.trim().split(" ")[0]} "
+                                  "${secController.text.trim().split(" ")[0]} "
+                                  "${subjectController.text.trim().split(" ")[0]}"
+                          ).set({
+                            "Messages" : [{"Name": usermodel["Name"],"text":"Hello" , "UID": usermodel["Email"],"Stamp": DateTime.now(),"Image": usermodel["Profile_URL"]}],
+                            "Token" : FieldValue.arrayUnion([usermodel["Token"]]),
+                            "Admins" : FieldValue.arrayUnion(["${usermodel["Email"]}"]),
+                            "Members" : FieldValue.arrayUnion(["${usermodel["Email"]}"]),
+                            usermodel["Email"].toString().split("@")[0] : map,
+                            "image_URL" : "null"
+                          });
+                        });
+
+
+                        await FirebaseFirestore.instance.collection("Chat_Channels").doc("Channels").update({
+                          "Channels": FieldValue.arrayUnion([
+                            "${universityController.text.trim().split(" ")[0]} "
+                                "${clgController.text.trim().split(" ")[0]} "
+                                "${courseController.text.trim().split(" ")[0]} "
+                                "${branchController.text.trim().split(" ")[0]} "
+                                "${yearController.text.trim().split(" ")[0]} "
+                                "${secController.text.trim().split(" ")[0]} "
+                                "${subjectController.text.trim().split(" ")[0]}"
+                          ])
                         });
                         await FirebaseFirestore.instance.collection("Teachers").doc(usermodel["Email"]).update({
                           "Message_channels" : FieldValue.arrayUnion(["${universityController.text.trim().split(" ")[0]} "
@@ -762,7 +809,8 @@ class _basicDetailsState extends State<basicDetails> {
                               size: 55,
                             ));
                       }
-                    } else {
+                    }
+                    else {
                       InAppNotifications.instance
                         ..titleFontSize = 14.0
                         ..descriptionFontSize = 14.0

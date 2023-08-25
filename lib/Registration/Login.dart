@@ -25,7 +25,7 @@ class _SignInScreenState extends State<SignInScreen> {
   final _textStyle = GoogleFonts.alegreya(
     fontSize: 28,
     fontWeight: FontWeight.w900,
-    color: Colors.amber,
+    color: Colors.white54,
     shadows: <Shadow>[
       const Shadow(
         offset: Offset(1, 1),
@@ -41,12 +41,19 @@ class _SignInScreenState extends State<SignInScreen> {
         body: Container(
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage("assets/images/bg-image.png"),
-          fit: BoxFit.cover,
-        ),
-      ),
+    decoration: BoxDecoration(
+    gradient: LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+    const Color.fromRGBO(86, 149, 178, 1),
+    // Color.fromRGBO(86, 149, 178, 1),
+    const Color.fromRGBO(68, 174, 218, 1),
+    //Color.fromRGBO(118, 78, 232, 1),
+    Colors.deepPurple.shade300
+    ],
+    ),
+    ),
       child: SingleChildScrollView(
         padding: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width * 0.04,
             0, MediaQuery.of(context).size.width * 0.04, 0),
@@ -61,12 +68,12 @@ class _SignInScreenState extends State<SignInScreen> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Regcon,
-                border: Border.all(color: Colors.amber),
+                border: Border.all(color: Colors.black),
                 boxShadow: const [
                   BoxShadow(
                       blurRadius: 60,
                       blurStyle: BlurStyle.outer,
-                      color: Colors.amberAccent,
+                      color: Colors.black54,
                       offset: Offset(1, 1))
                 ],
                 image: const DecorationImage(
@@ -91,13 +98,13 @@ class _SignInScreenState extends State<SignInScreen> {
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(30)),
                 border: Border.all(
-                  color: Colors.amber,
+                  color: Colors.black,
                 ),
                 boxShadow: const [
                   BoxShadow(
                       blurRadius: 20,
                       blurStyle: BlurStyle.outer,
-                      color: Colors.amberAccent,
+                      color: Colors.black,
                       offset: Offset(1, 1))
                 ],
               ),
@@ -106,7 +113,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   obscureText: false,
                   enableSuggestions: true,
                   autocorrect: true,
-                  cursorColor: Colors.amber,
+                  cursorColor: Colors.white,
                   style: TextStyle(color: Colors.white.withOpacity(0.9)),
                   decoration: InputDecoration(
                       suffixIcon: IconButton(
@@ -117,19 +124,19 @@ class _SignInScreenState extends State<SignInScreen> {
                         },
                         icon: const Icon(
                           Icons.clear_outlined,
-                          color: Colors.amber,
+                          color: Colors.white,
                         ),
                       ),
                       prefixIcon: const Icon(
                         Icons.person_outline,
-                        color: Colors.amber,
+                        color: Colors.white,
                       ),
                       label: const Text("Enter Email"),
                       labelStyle:
                           TextStyle(color: Colors.white.withOpacity(0.9)),
                       filled: true,
                       floatingLabelBehavior: FloatingLabelBehavior.never,
-                      fillColor: Colors.black26.withOpacity(0.9),
+                      fillColor: Colors.black26.withOpacity(0.7),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30.0),
                           borderSide: const BorderSide(
@@ -143,13 +150,13 @@ class _SignInScreenState extends State<SignInScreen> {
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(30)),
                 border: Border.all(
-                  color: Colors.amber,
+                  color: Colors.black,
                 ),
                 boxShadow: const [
                   BoxShadow(
                       blurRadius: 20,
                       blurStyle: BlurStyle.outer,
-                      color: Colors.amberAccent,
+                      color: Colors.black54,
                       offset: Offset(1, 1))
                 ],
               ),
@@ -158,7 +165,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   obscureText: hide,
                   enableSuggestions: false,
                   autocorrect: false,
-                  cursorColor: Colors.amber,
+                  cursorColor: Colors.white,
                   style: TextStyle(color: Colors.white.withOpacity(0.9)),
                   decoration: InputDecoration(
                       suffixIcon: hide
@@ -170,7 +177,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               },
                               icon: const Icon(
                                 Icons.visibility_off_outlined,
-                                color: Colors.amber,
+                                color: Colors.white,
                               ))
                           : IconButton(
                               onPressed: () {
@@ -180,18 +187,18 @@ class _SignInScreenState extends State<SignInScreen> {
                               },
                               icon: const Icon(
                                 Icons.visibility_outlined,
-                                color: Colors.amber,
+                                color: Colors.white,
                               )),
                       prefixIcon: const Icon(
                         Icons.lock_outline,
-                        color: Colors.amber,
+                        color: Colors.white,
                       ),
                       label: const Text("Enter Password"),
                       labelStyle:
                           TextStyle(color: Colors.white.withOpacity(0.9)),
                       filled: true,
                       floatingLabelBehavior: FloatingLabelBehavior.never,
-                      fillColor: Colors.black26.withOpacity(0.9),
+                      fillColor: Colors.black26.withOpacity(0.7),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30.0),
                           borderSide: const BorderSide(
@@ -201,9 +208,15 @@ class _SignInScreenState extends State<SignInScreen> {
             SizedBox(height: MediaQuery.of(context).size.height * 0.03),
             Container(
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.06,
+              height: MediaQuery.of(context).size.height * 0.07,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(90),
+                  gradient:const LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Colors.blue, Colors.purpleAccent],
+                  ),
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(color: Colors.black54,width: 2)
               ),
               child: ElevatedButton(
                 onPressed: () async {
@@ -270,8 +283,8 @@ class _SignInScreenState extends State<SignInScreen> {
                 },
                 style: ElevatedButton.styleFrom(
                     shape: const StadiumBorder(),
-                    backgroundColor: Colors.amber,
-                    shadowColor: Colors.amberAccent,
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.black,
                     elevation: 30),
                 child: const Text(
                   "LOG IN",
@@ -297,14 +310,14 @@ class _SignInScreenState extends State<SignInScreen> {
                   },
                   child: const Text("Forgot Password ?",
                       style: TextStyle(
-                          color: Colors.amber,
+                          color: Colors.black,
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                           shadows: [
                             Shadow(
                                 blurRadius: 30,
                                 offset: Offset(3, 3),
-                                color: Colors.amberAccent)
+                                color: Colors.black)
                           ])),
                 )
               ],
@@ -324,7 +337,7 @@ class _SignInScreenState extends State<SignInScreen> {
           "Don't have account?",
           style: TextStyle(
             fontWeight: FontWeight.w400,
-            color: Colors.amberAccent,
+            color: Colors.black,
           ),
         ),
         TextButton(
@@ -342,13 +355,13 @@ class _SignInScreenState extends State<SignInScreen> {
           child: Text(
             "Sign Up",
             style: GoogleFonts.openSans(
-              color: Colors.amber,
+              color: Colors.black,
               fontWeight: FontWeight.bold,
               shadows: [
                 const Shadow(
                     blurRadius: 30,
                     offset: Offset(3, 3),
-                    color: Colors.amberAccent)
+                    color: Colors.black)
               ],
             ),
           ),

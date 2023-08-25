@@ -175,7 +175,7 @@ class _MyAppState extends State<MyApp> {
       color: const Color.fromRGBO(213, 97, 132, 1),
       theme: ThemeData(),
       debugShowCheckedModeBanner: false,
-      home: Checkconnection(),
+       home: Checkconnection(),
       builder: InAppNotifications.init(),
     );
   }

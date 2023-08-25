@@ -22,7 +22,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController email = TextEditingController();
   final TextEditingController password = TextEditingController();
   final TextEditingController nameController = TextEditingController();
-  final textStyle = GoogleFonts.alegreya(fontSize: 28, fontWeight: FontWeight.w900,color: Colors.amber,
+  final textStyle = GoogleFonts.alegreya(fontSize: 28, fontWeight: FontWeight.w900,color: Colors.white54,
       shadows: <Shadow>[
         const Shadow(
           offset: Offset(1, 1),
@@ -38,12 +38,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage("assets/images/bg-image.png"),
-                fit: BoxFit.cover
-            ),
-          ),
+    decoration: BoxDecoration(
+    gradient: LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+    const Color.fromRGBO(86, 149, 178, 1),
+    // Color.fromRGBO(86, 149, 178, 1),
+    const Color.fromRGBO(68, 174, 218, 1),
+    //Color.fromRGBO(118, 78, 232, 1),
+    Colors.deepPurple.shade300
+    ],
+    ),
+    ),
           child: SingleChildScrollView(
             padding: EdgeInsets.fromLTRB(
                 MediaQuery.of(context).size.width * 0.04,
@@ -65,12 +72,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: Regcon,
-                      border: Border.all(color: Colors.amber),
+                      border: Border.all(color: Colors.black),
                       boxShadow: const [
                         BoxShadow(
                             blurRadius: 60,
                             blurStyle: BlurStyle.outer,
-                            color: Colors.amberAccent,
+                            color: Colors.black54,
                             offset: Offset(1, 1)
                         )
                       ],
@@ -111,12 +118,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     Container(
                       decoration: BoxDecoration(
                         borderRadius: const BorderRadius.all(Radius.circular(30)),
-                        border: Border.all(color: Colors.amber,),
+                        border: Border.all(color: Colors.black,),
                         boxShadow: const [
                           BoxShadow(
                               blurRadius: 20,
                               blurStyle: BlurStyle.outer,
-                              color: Colors.amberAccent,
+                              color: Colors.black54,
                               offset: Offset(1, 1)
                           )
                         ],
@@ -126,7 +133,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           obscureText: false,
                           enableSuggestions: true,
                           autocorrect: true,
-                          cursorColor: Colors.amber,
+                          cursorColor: Colors.white,
                           style: TextStyle(color: Colors.white.withOpacity(0.9)),
                           decoration: InputDecoration(
                               suffixIcon: IconButton(
@@ -137,19 +144,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 },
                                 icon: const Icon(
                                   Icons.clear_outlined,
-                                  color: Colors.amber,
+                                  color: Colors.white,
                                 ),
                               ),
                               prefixIcon: const Icon(
                                 Icons.person_outline,
-                                color: Colors.amber,
+                                color: Colors.white,
                               ),
                               label: const Text("Your Name"),
                               labelStyle: TextStyle(
                                   color: Colors.white.withOpacity(0.9)),
                               filled: true,
                               floatingLabelBehavior: FloatingLabelBehavior.never,
-                              fillColor: Colors.black26.withOpacity(0.9),
+                              fillColor: Colors.black26.withOpacity(0.7),
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(30.0),
                                   borderSide: const BorderSide(
@@ -167,12 +174,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     Container(
                       decoration: BoxDecoration(
                         borderRadius: const BorderRadius.all(Radius.circular(30)),
-                        border: Border.all(color: Colors.amber,),
+                        border: Border.all(color: Colors.black,),
                         boxShadow: const [
                           BoxShadow(
                               blurRadius: 20,
                               blurStyle: BlurStyle.outer,
-                              color: Colors.amberAccent,
+                              color: Colors.black54,
                               offset: Offset(1, 1)
                           )
                         ],
@@ -182,7 +189,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           obscureText: false,
                           enableSuggestions: true,
                           autocorrect: true,
-                          cursorColor: Colors.amber,
+                          cursorColor: Colors.white,
                           style: TextStyle(color: Colors.white.withOpacity(0.9)),
                           decoration: InputDecoration(
                               suffixIcon: IconButton(
@@ -193,19 +200,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 },
                                 icon: const Icon(
                                   Icons.clear_outlined,
-                                  color: Colors.amber,
+                                  color: Colors.white,
                                 ),
                               ),
                               prefixIcon: const Icon(
                                 Icons.mail_outline_outlined,
-                                color: Colors.amber,
+                                color: Colors.white,
                               ),
                               label: const Text("Enter Email"),
                               labelStyle: TextStyle(
                                   color: Colors.white.withOpacity(0.9)),
                               filled: true,
                               floatingLabelBehavior: FloatingLabelBehavior.never,
-                              fillColor: Colors.black26.withOpacity(0.9),
+                              fillColor: Colors.black26.withOpacity(0.7),
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(30.0),
                                   borderSide: const BorderSide(
@@ -224,12 +231,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     Container(
                       decoration: BoxDecoration(
                         borderRadius: const BorderRadius.all(Radius.circular(30)),
-                        border: Border.all(color: Colors.amber,),
+                        border: Border.all(color: Colors.black,),
                         boxShadow: const [
                           BoxShadow(
                               blurRadius: 20,
                               blurStyle: BlurStyle.outer,
-                              color: Colors.amberAccent,
+                              color: Colors.black54,
                               offset: Offset(1, 1)
                           )
                         ],
@@ -239,7 +246,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           obscureText: hide,
                           enableSuggestions: false,
                           autocorrect: false,
-                          cursorColor: Colors.amber,
+                          cursorColor: Colors.white,
                           style: TextStyle(color: Colors.white.withOpacity(0.9)),
                           decoration: InputDecoration(
                               suffixIcon: hide
@@ -250,7 +257,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 });
                               }, icon: const Icon(
                                 Icons.visibility_off_outlined,
-                                color: Colors.amber,
+                                color: Colors.white,
                               ))
                                   :
                               IconButton(onPressed: (){
@@ -259,19 +266,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 });
                               }, icon: const Icon(
                                 Icons.visibility_outlined,
-                                color: Colors.amber,
+                                color: Colors.white,
                               )),
 
                               prefixIcon: const Icon(
                                 Icons.lock_outline,
-                                color: Colors.amber,
+                                color: Colors.white,
                               ),
                               label: const Text("Enter Password"),
                               labelStyle: TextStyle(
                                   color: Colors.white.withOpacity(0.9)),
                               filled: true,
                               floatingLabelBehavior: FloatingLabelBehavior.never,
-                              fillColor: Colors.black26.withOpacity(0.9),
+                              fillColor: Colors.black26.withOpacity(0.7),
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(30.0),
                                   borderSide: const BorderSide(
@@ -288,9 +295,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     Container(
                       width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height*0.06,
+                      height: MediaQuery.of(context).size.height*0.07,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(90),),
+                          gradient:const LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.bottomRight,
+                            colors: [Colors.blue, Colors.purpleAccent],
+                          ),
+                          borderRadius: BorderRadius.circular(30),
+                          border: Border.all(color: Colors.black54,width: 2)
+                      ),
                       child: ElevatedButton(
                         onPressed: () async{
                             if(nameController.text.trim().isNotEmpty){
@@ -315,7 +329,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 );
                                 await FirebaseFirestore.instance.collection("Teachers").doc(email.text.trim()).set({
                                   "Email" : email.text.trim(),
-                                  "Name" : nameController.text.trim()
+                                  "Name" : nameController.text.trim(),
+                                  "bg" : "bg-1.jpg"
                                 });
                                 await FirebaseFirestore.instance.collection("Teachers").doc(email.text.trim()).collection("Teachings").doc("Teachings").set({}).whenComplete(() => Navigator.push(
                                   context,
@@ -374,8 +389,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         },
                         style: ElevatedButton.styleFrom(
                           shape: const StadiumBorder(),
-                          backgroundColor: Colors.amber,
-                          shadowColor: Colors.amberAccent,
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.black54,
                           elevation: 30
 
                         ),
@@ -408,7 +423,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       children: [
         const Text("Already have an account?", style: TextStyle(
           fontWeight: FontWeight.w400,
-          color: Colors.amberAccent,)
+          color: Colors.black,)
           ,),
         TextButton(
 
@@ -416,13 +431,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
             Navigator.pop(context);
           },
           child: const Text("Sign In", style: TextStyle(
-              color: Colors.amber,
+              color: Colors.black,
               fontWeight: FontWeight.bold,
             shadows: [
               Shadow(
                 blurRadius: 30,
                 offset: Offset(3, 3),
-                color: Colors.amberAccent
+                color: Colors.black54
               )
             ]
           )
