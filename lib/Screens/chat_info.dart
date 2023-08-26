@@ -26,6 +26,7 @@ class _Chat_InfoState extends State<Chat_Info> {
   Widget build(BuildContext context) {
     Size size=MediaQuery.of(context).size;
     return Scaffold(
+      primary: false,
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.black54,
@@ -60,13 +61,16 @@ class _Chat_InfoState extends State<Chat_Info> {
                         radius: size.height*0.07,
                         backgroundColor: Colors.blueAccent,
                         backgroundImage: NetworkImage(widget.url),
-                        child: AutoSizeText(widget.channel.split(" ")[6]),
+                        child:widget.url==null?
+                        AutoSizeText(widget.channel.split(" ")[6])
+                        :
+                          null
                     ),
                       Positioned(
                         bottom: -5,
-                        left: 35,
+                        left: size.width*0.19,
                         child: IconButton(
-                          icon: Icon(Icons.camera_enhance,size:size.height*0.03 ,color: Colors.white,),
+                          icon: Icon(Icons.camera_enhance,size:size.height*0.04 ,color: Colors.white,),
                           onPressed: () async {
 
                             ImagePicker imagePicker=ImagePicker();
@@ -102,7 +106,7 @@ class _Chat_InfoState extends State<Chat_Info> {
                     ],
                   ),
                   SizedBox(
-                    height: size.height*0.02,
+                    height: size.height*0.018,
                   ),
                   AutoSizeText(
                       widget.channel,
@@ -127,75 +131,79 @@ class _Chat_InfoState extends State<Chat_Info> {
 
 
                   ),
-                  SizedBox(
-                    height: size.height*0.02,
-                  ),
+
                 ],
               ),
             ),
             SizedBox(
-              height: size.height*0.02,
+              height: size.height*0.01,
             ),
 
             Container(
-              height: size.height*0.2,
+              height: size.height*0.1,
               width: size.width,
               decoration: const BoxDecoration(
 
                 color: Colors.black12
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                 TextButton(
-                  onPressed: (){
-                  },
-                     child:  AutoSizeText(
-                   "Add group description",
-                   style: GoogleFonts.exo(
-                   color: Colors.indigo,
-                     fontSize: 18,
-                     fontWeight: FontWeight.w600
-                 ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: size.height*0.01,
+                    ),
+                   AutoSizeText(
+                     "About Group",
+                     style: GoogleFonts.exo(
+                     color: Colors.indigo,
+                   fontSize: 18,
+                   fontWeight: FontWeight.w600
+                   ),
 
-                 )
-
-                 ),
-                  AutoSizeText(
-                    "Created by  Priyanka, 25/08/2023",
-                    style:GoogleFonts.exo(
-                      fontSize: size.height*0.018,
-                    ) ,
-                  )
-                ],
+                   ),
+                    SizedBox(
+                      height: size.height*0.01,
+                    ),
+                    AutoSizeText(
+                      "Created by  Priyanka, 25/08/2023",
+                      style:GoogleFonts.exo(
+                        fontSize: size.height*0.018,
+                      ) ,
+                    )
+                  ],
+                ),
               ),
             ),
             SizedBox(
-              height: size.height*0.02,
+              height: size.height*0.01,
             ),
             Container(
-              height: size.height*0.5,
+              height: size.height,
               decoration: const BoxDecoration(
 
                   color: Colors.black12
               ),
               child:  Column(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      AutoSizeText(
-                        "   ${widget.membersCount} participants",
-                        style: GoogleFonts.exo(
-                            color: Colors.black,
-                            fontSize: size.height*0.02,
-                            fontWeight:FontWeight.w400
-                        ),
+                  SizedBox(
+                    height:size.height*0.05,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        AutoSizeText(
+                          "   ${widget.membersCount} participants",
+                          style: GoogleFonts.exo(
+                              color: Colors.black,
+                              fontSize: size.height*0.02,
+                              fontWeight:FontWeight.w400
+                          ),
 
 
-                      ),
-                      IconButton(onPressed: (){}, icon: const Icon(Icons.search))
-                    ],
+                        )
+                      ],
+                    ),
                   ),
                   SizedBox(
                     height: size.height*0.4,
@@ -203,6 +211,7 @@ class _Chat_InfoState extends State<Chat_Info> {
                       stream: FirebaseFirestore.instance.collection("Messages").doc(widget.channel).snapshots(),
                       builder: (context, snapshot) {
                         return ListView.builder(
+
                           itemCount: snapshot.data?.data()!["Members"].length,
                           itemBuilder: (context, index) {
                           return StreamBuilder(
@@ -211,10 +220,11 @@ class _Chat_InfoState extends State<Chat_Info> {
                               return snapshot2.hasData
                                   ?
                               Padding(
-                                padding:  EdgeInsets.all(size.height*0.005),
+                                padding:  EdgeInsets.all(size.height*0.009),
                                 child: SizedBox(
                                   height: size.height*0.06,
                                        child: Row(
+
                                          children: [
                                            CircleAvatar(
                                              radius: size.width*0.07,
@@ -231,6 +241,9 @@ class _Chat_InfoState extends State<Chat_Info> {
                                              ),
 
 
+                                           ),
+                                           SizedBox(
+                                             width: size.width*0.02,
                                            ),
                                            Column(
                                              mainAxisAlignment: MainAxisAlignment.center,
@@ -251,7 +264,34 @@ class _Chat_InfoState extends State<Chat_Info> {
                                                  ),
                                                ),
                                              ],
+                                           ),
+                                           SizedBox(
+                                             width: size.width*0.18,
+                                           ),
+                                           snapshot.data?.data()!["Members"][index]["Post"]=="Teachers"
+                                           ?
+                                           Container(
+                                             height: size.height*0.03,
+                                             width: size.width*0.22,
+                                             decoration: BoxDecoration(
+                                                 shape: BoxShape.rectangle,
+                                                 border: Border.all(
+                                                     color: Colors.black,
+                                                     width: 1
+                                                 )
+                                             ),
+                                             child: Center(
+                                               child: AutoSizeText(
+                                                 "Group Admin",
+                                                 style: GoogleFonts.exo(
+                                                     fontSize: size.height*0.016,
+                                                     fontWeight: FontWeight.w600
+                                                 ),
+                                               ),
+                                             ),
                                            )
+                                           :
+                                           const SizedBox(),
                                          ],
                                        ),
                                 ),

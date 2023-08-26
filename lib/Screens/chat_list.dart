@@ -75,6 +75,44 @@ class _chatsystemState extends State<chatsystem> {
         itemBuilder: (context, index) {
           return InkWell(
             onTap: () async {
+             /* dynamic map={};
+              await FirebaseFirestore.instance
+                  .collection("Messages")
+                  .doc(usermodel["Message_channels"][index]).get().then((value) {
+                     map=value.data()?[usermodel["Email"].toString().split("@")[0]];
+              }).whenComplete(() async {
+                await FirebaseFirestore.instance
+                    .collection("Messages")
+                    .doc(usermodel["Message_channels"][index])
+                    .update({
+                  usermodel["Email"]
+                      .toString()
+                      .split("@")[0]: {
+                    "Last_Active": map["Last_Active"],
+                    "Read_Count": map["Read_Count"],
+                    "Active":true,
+                  }
+                });
+              }).whenComplete(() {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => chat_page(channel: usermodel["Message_channels"][index]),
+                  ),
+                );
+              });
+*/
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => chat_page(channel: usermodel["Message_channels"][index]),
+                ),
+              );
+
+
+
+
+              
               // int count=0;
               // await FirebaseFirestore
               //     .instance
@@ -98,12 +136,7 @@ class _chatsystemState extends State<chatsystem> {
               //     ),
               // ),
               // );
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => chat_page(channel: usermodel["Message_channels"][index]),
-                ),
-              );
+
             },
             child: Container(
               height: size.height*0.1,

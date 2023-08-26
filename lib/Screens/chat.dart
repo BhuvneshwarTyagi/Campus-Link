@@ -368,7 +368,8 @@ class _chat_pageState extends State<chat_page> {
                                           .toString()
                                           .split("@")[0]: {
                                         "Last_Active": DateTime.now(),
-                                        "Read_Count": message.length - 1
+                                        "Read_Count": message.length - 1,
+                                        "Active":false,
                                       }
                                     });
                                   },
