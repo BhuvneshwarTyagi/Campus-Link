@@ -573,7 +573,9 @@ class _basicDetailsState extends State<basicDetails> {
                         secController.text.isNotEmpty &&
                         subjectController.text.isNotEmpty) {
                       try {
-                        Map<String,int> map = {"Readed_count": 0};
+                        Map<String,dynamic> map = {
+                          "Read_Count": 0,
+                          "Last_Active" : DateTime.now()};
                         await FirebaseFirestore.instance.collection("Chat_Channels").doc("Channels").get().then((value) async {
                           List<dynamic> channel=value.data()!["Channels"];
                           channel.contains(
@@ -598,7 +600,12 @@ class _basicDetailsState extends State<basicDetails> {
                             "Messages" : FieldValue.arrayUnion([{"Name": usermodel["Name"],"text":"Hello" , "UID": usermodel["Email"],"Stamp": DateTime.now(),"Image": usermodel["Profile_URL"]}]),
                             "Token" : FieldValue.arrayUnion([usermodel["Token"]]),
                             "Admins" : FieldValue.arrayUnion(["${usermodel["Email"]}"]),
-                            "Members" : FieldValue.arrayUnion(["${usermodel["Email"]}"]),
+                            "Members" : FieldValue.arrayUnion([
+                              {
+                                "Email ": "${usermodel["Email"]}",
+                                "Post" : "Teachers"
+                              }
+                                  ]),
                             usermodel["Email"].toString().split("@")[0] : map,
                           })
                               :
@@ -643,7 +650,7 @@ class _basicDetailsState extends State<basicDetails> {
                           ])
                         });
                         await FirebaseFirestore.instance.collection("Teacher_record").doc("Email").update({
-                          "Email":[FirebaseAuth.instance.currentUser!.email]
+                          "Email": [FirebaseAuth.instance.currentUser!.email]
                         });
                         await FirebaseFirestore.instance.collection("University").doc("University").update(
                             {

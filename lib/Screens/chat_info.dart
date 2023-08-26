@@ -10,6 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
 
+
 class Chat_Info extends StatefulWidget {
   const Chat_Info({super.key, required this.channel, required this.membersCount, required this.url});
   final String channel;
@@ -26,7 +27,17 @@ class _Chat_InfoState extends State<Chat_Info> {
     Size size=MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(),
+      appBar: AppBar(
+        backgroundColor: Colors.black54,
+        leading:
+          IconButton(
+              onPressed: (){
+                Navigator.pop(context);
+                },
+              icon: const Icon(Icons.arrow_back_ios_new)
+          )
+        ,
+      ),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Column(
@@ -36,7 +47,7 @@ class _Chat_InfoState extends State<Chat_Info> {
               decoration: const BoxDecoration(
                   color: Colors.black12
               ),
-                 height: size.height*0.7,
+                 height: size.height*0.35,
               padding: EdgeInsets.all(size.width*0.03),
               child:  Column(
                 children: [
@@ -127,12 +138,137 @@ class _Chat_InfoState extends State<Chat_Info> {
             ),
 
             Container(
-              height: size.height*0.5,
+              height: size.height*0.2,
+              width: size.width,
               decoration: const BoxDecoration(
 
                 color: Colors.black12
               ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                 TextButton(
+                  onPressed: (){
+                  },
+                     child:  AutoSizeText(
+                   "Add group description",
+                   style: GoogleFonts.exo(
+                   color: Colors.indigo,
+                     fontSize: 18,
+                     fontWeight: FontWeight.w600
+                 ),
+
+                 )
+
+                 ),
+                  AutoSizeText(
+                    "Created by  Priyanka, 25/08/2023",
+                    style:GoogleFonts.exo(
+                      fontSize: size.height*0.018,
+                    ) ,
+                  )
+                ],
+              ),
+            ),
+            SizedBox(
+              height: size.height*0.02,
+            ),
+            Container(
+              height: size.height*0.5,
+              decoration: const BoxDecoration(
+
+                  color: Colors.black12
+              ),
+              child:  Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      AutoSizeText(
+                        "   ${widget.membersCount} participants",
+                        style: GoogleFonts.exo(
+                            color: Colors.black,
+                            fontSize: size.height*0.02,
+                            fontWeight:FontWeight.w400
+                        ),
+
+
+                      ),
+                      IconButton(onPressed: (){}, icon: const Icon(Icons.search))
+                    ],
+                  ),
+                  SizedBox(
+                    height: size.height*0.4,
+                    child: StreamBuilder(
+                      stream: FirebaseFirestore.instance.collection("Messages").doc(widget.channel).snapshots(),
+                      builder: (context, snapshot) {
+                        return ListView.builder(
+                          itemCount: snapshot.data?.data()!["Members"].length,
+                          itemBuilder: (context, index) {
+                          return StreamBuilder(
+                            stream: FirebaseFirestore.instance.collection(snapshot.data?.data()!["Members"][index]["Post"]).doc(snapshot.data?.data()!["Members"][index]["Email"]).snapshots(),
+                            builder: (context, snapshot2) {
+                              return snapshot2.hasData
+                                  ?
+                              Padding(
+                                padding:  EdgeInsets.all(size.height*0.005),
+                                child: SizedBox(
+                                  height: size.height*0.06,
+                                       child: Row(
+                                         children: [
+                                           CircleAvatar(
+                                             radius: size.width*0.07,
+                                             backgroundColor: const Color.fromRGBO(86, 149, 178, 1),
+                                             child: snapshot2.data?.data()!["Profile_URL"]!=null
+                                                 ?
+                                             Image(image: NetworkImage(snapshot2.data?.data()!["Profile_URL"]))
+                                                 :
+                                             AutoSizeText( snapshot2.data?.data()!["Name"].toString().substring(0,1) ?? "A",
+                                               style: GoogleFonts.exo(
+                                                   fontSize: size.height*0.022,
+                                                   fontWeight: FontWeight.w600
+                                               ),
+                                             ),
+
+
+                                           ),
+                                           Column(
+                                             mainAxisAlignment: MainAxisAlignment.center,
+                                             crossAxisAlignment: CrossAxisAlignment.start,
+
+                                             children: [
+                                               AutoSizeText( snapshot2.data?.data()!["Name"],
+                                                 style: GoogleFonts.exo(
+                                                   fontSize: size.height*0.022,
+                                                     fontWeight: FontWeight.w600
+                                                 ),
+                                                   ),
+                                               AutoSizeText(
+                                                 "User_description",
+                                                 style: GoogleFonts.exo(
+                                                     fontSize: size.height*0.01,
+                                                   fontWeight: FontWeight.w500
+                                                 ),
+                                               ),
+                                             ],
+                                           )
+                                         ],
+                                       ),
+                                ),
+                              )
+                                  :
+                              const SizedBox()
+                              ;
+                            }
+                          );
+                        },);
+                      }
+                    ),
+                  )
+                ],
+              ),
             )
+
           ],
         ),
       ),
