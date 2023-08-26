@@ -8,6 +8,7 @@ import '../Constraints.dart';
 import '../Database/database.dart';
 import '../Registration/Verify Email.dart';
 import 'Navigator.dart';
+import 'loadingscreen.dart';
 
 
 
@@ -22,15 +23,18 @@ class MainPage extends StatefulWidget {
 
 
 class _MainPageState extends State<MainPage> {
+  bool loaded=false;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
+    fetchuser();
   }
   @override
   Widget build(BuildContext context) {
-    return  StreamBuilder<User?>(
+    return  loaded
+        ?
+    StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (_, snapshot)  {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -40,7 +44,6 @@ class _MainPageState extends State<MainPage> {
         } else if (snapshot.connectionState == ConnectionState.active && snapshot.hasData)
         {
           if(FirebaseAuth.instance.currentUser!.emailVerified){
-            database().fetchuser();
             return const Nevi();
           }
           else{
@@ -52,7 +55,19 @@ class _MainPageState extends State<MainPage> {
           return const SignInScreen();}
       },
 
-    );
+    )
+        :
+    const loading()
+    ;
   }
+  Future<void> fetchuser() async {
+    await FirebaseFirestore.instance.collection("Teachers").doc(FirebaseAuth.instance.currentUser!.email).get().then((value){
+      usermodel=value.data()!;
+    }).whenComplete((){
+      setState(() {
+        loaded=true;
+      });
+    });
 
+  }
 }

@@ -623,8 +623,9 @@ class _basicDetailsState extends State<basicDetails> {
                             "Admins" : FieldValue.arrayUnion(["${usermodel["Email"]}"]),
                             "Members" : FieldValue.arrayUnion(["${usermodel["Email"]}"]),
                             usermodel["Email"].toString().split("@")[0] : map,
-                            "image_URL" : "null"
-                          });
+                            "image_URL" : "null",
+                            "CreatedOn": {"Date" : DateTime.now(), "Name": usermodel["Name"]}
+                                });
                         });
 
 
