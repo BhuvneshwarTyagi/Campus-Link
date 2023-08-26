@@ -24,6 +24,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   bool loaded=true;
+  bool stop=false;
   @override
   void initState() {
     // TODO: implement initState
@@ -43,7 +44,12 @@ class _MainPageState extends State<MainPage> {
         } else if (snapshot.connectionState == ConnectionState.active && snapshot.hasData)
         {
           if(FirebaseAuth.instance.currentUser!.emailVerified){
+
             loaded=false;
+            stop
+            ?
+            null
+            :
             fetchuser();
             return const Nevi();
           }
@@ -66,6 +72,7 @@ class _MainPageState extends State<MainPage> {
       usermodel=value.data()!;
     }).whenComplete((){
       setState(() {
+        stop=true;
         loaded=true;
       });
     });

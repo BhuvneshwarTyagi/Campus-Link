@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:campus_link_teachers/Database/database.dart';
 import 'package:http/http.dart' as http;
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:campus_link_teachers/Constraints.dart';
@@ -558,7 +559,7 @@ class _AttendanceState extends State<Attendance> {
                                                                     "${DateTime.now().day}": FieldValue.arrayUnion([DateTime.timestamp()]),
                                                                     "count_attendance": FieldValue.increment(1)
                                                                   });
-                                                              sendPushMessage(token, "Attendance marked", subject_filter);
+                                                              database().sendPushMessage(token, "Attendance marked", subject_filter);
                                                               marked_email.remove(element);
                                                             }
                                                             else{
@@ -605,7 +606,7 @@ class _AttendanceState extends State<Attendance> {
                                                                     "${DateTime.now().day}": FieldValue.arrayUnion([""]),
                                                                     "count_attendance": FieldValue.increment(1)
                                                                   });
-                                                              sendPushMessage(token, "Attendance Missed", subject_filter);
+                                                              database().sendPushMessage(token, "Attendance Missed", subject_filter);
                                                               marked_email.remove(element);
                                                             }
                                                           }
@@ -666,36 +667,5 @@ class _AttendanceState extends State<Attendance> {
         .doc(Email)
         .update({"Active": false});
   }
-  void sendPushMessage(String token, String body, String title) async {
-    try {
-      print("Send $token");
-      await http.post(
-        Uri.parse("https://fcm.googleapis.com/fcm/send"),
-        headers: <String, String>{
-          'Content-Type': "application/json",
-          "Authorization":
-          "key=AAAAIV7WaYA:APA91bFtEFPpqZBF3z1FeRD6CmhYYrtA2EX7Y7oGCf2qjAHLKcyi15Dbd7e3Cjo3WS1rKeHCzS_07fUfUsV6jnTJ7uZiHy2z8h-CIRW9jjO2jxycobLjgrI7nVT76-mUt8Dd41psJ_oI"
-        },
-        body: jsonEncode(<String, dynamic>{
-          'priority': 'high',
-          "data": <String, dynamic>{
-            'click_action': 'FLUTTER_NOTIFICATION_CLICK',
-            'status': "done",
-            'body': body,
-            'title': title,
-          },
-          "apns": {
-            "headers": {"apns-priority": "5"},
-          },
-          "notification": <String, dynamic>{
-            'body': body,
-            'title': title,
-            'android_channel_id': "campuslink"
-          },
-          "to": token,
-          "android": {"priority": "high"},
-        }),
-      );
-    } catch (e) {}
-  }
+
 }

@@ -1,10 +1,14 @@
+
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:campus_link_teachers/Constraints.dart';
 import 'package:campus_link_teachers/Database/database.dart';
+import 'package:campus_link_teachers/Screens/Sending_Image.dart';
 import 'package:chat_bubbles/date_chips/date_chip.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:swipe_to/swipe_to.dart';
@@ -26,7 +30,7 @@ class _chat_pageState extends State<chat_page> {
   int index1 = -1;
   int replyIndex = 0;
   double replyBoxHeight = 0;
-
+  var imagePath;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -238,6 +242,10 @@ class _chat_pageState extends State<chat_page> {
                                   message[index]["Reply"] == null
                                       ? Reply = false
                                       : Reply = message[index]["Reply"];
+                                  bool Image = false;
+                                  message[index]["Image_Text"] == null
+                                      ? Image = false
+                                      : Image = message[index]["Image_Text"];
                                   return Column(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
@@ -293,8 +301,13 @@ class _chat_pageState extends State<chat_page> {
                                                             ["text"]
                                                         : "",
                                                     read,
-                                                    Reply?int.parse(
-                                                        "${message.length - message[index]["Reply_Index"] - 1}"):0
+                                                    Reply
+                                                        ?
+                                                    int.parse("${message.length - message[index]["Reply_Index"] - 1}")
+                                                        :
+                                                    0,
+                                                    Image,
+                                                    Image? message[index]["Image_Url"]:""
                                                 ),
                                               ),
                                             )
@@ -331,8 +344,11 @@ class _chat_pageState extends State<chat_page> {
                                                   false,
                                   Reply
                                       ?
-                                  int.parse(
-                                      "${message.length - message[index]["Reply_Index"] - 1}"):0,
+                                  int.parse("${message.length - message[index]["Reply_Index"] - 1}")
+                                      :
+                                  0,
+                                                  Image,
+                                                Image? message[index]["Image_Url"]:""
                                             ),
                                       )
                                     ],
@@ -347,23 +363,34 @@ class _chat_pageState extends State<chat_page> {
                         child: Container(
                           width: size.width,
                           //color: Colors.black26,
-                          padding: EdgeInsets.all(size.width * 0.01),
+                          padding: EdgeInsets.symmetric(horizontal: size.width * 0.03,vertical: size.height*0.01),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
+                              IconButton(
+                                  onPressed: () async {
+                                    ImagePicker imagePicker=ImagePicker();
+                                    print(imagePicker);
+                                    XFile? file=await imagePicker.pickImage(source: ImageSource.gallery, imageQuality: 80);
+                                    file!.path.isNotEmpty
+                                        ?
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => SendImage(imagePath: file,channel: widget.channel),))
+                                        :
+                                        null;
+                                  },
+                                  icon: Icon(Icons.image,color: Colors.white,size: size.height*0.04,)),
                               Stack(
                                   alignment: Alignment.bottomCenter,
                                   children: [
                                     AnimatedContainer(
                                       height: replyBoxHeight,
-                                      width: size.width * 0.82,
+                                      width: size.width * 0.66,
                                       decoration: const BoxDecoration(
                                           color: Colors.white70,
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(12))),
-                                      duration:
-                                          const Duration(milliseconds: 100),
+                                      duration: const Duration(milliseconds: 100),
                                       child: Stack(
                                         alignment: Alignment.topRight,
                                         children: [
@@ -426,7 +453,7 @@ class _chat_pageState extends State<chat_page> {
                                     ),
                                     SizedBox(
                                       height: size.height * 0.062,
-                                      width: size.width * 0.8,
+                                      width: size.width * 0.66,
                                       child: TextField(
                                         controller: messageController,
                                         enableSuggestions: true,
@@ -519,7 +546,6 @@ class _chat_pageState extends State<chat_page> {
                                         ).whenComplete(
                                           () async {
                                             setState(() {
-                                              messageController.clear();
                                               replyBoxHeight = 0;
                                               replyIndex = 0;
                                             });
@@ -537,12 +563,14 @@ class _chat_pageState extends State<chat_page> {
                                                       usermodel["Token"]
                                                   ? database().sendPushMessage(
                                                       element,
-                                                      messageController.text
-                                                          .trim(),
-                                                      "New Message",
-                                                      widget.channel)
+                                                      messageController.text.trim().toString(),
+                                                      widget.channel,
+                                                      )
                                                   : null;
                                             }
+                                            setState(() {
+                                              messageController.clear();
+                                            });
                                           },
                                         );
                                 },
@@ -569,28 +597,7 @@ class _chat_pageState extends State<chat_page> {
         });
   }
 
-  Widget show_date(String chatTime, BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          height: MediaQuery.of(context).size.height * 0.032,
-          width: MediaQuery.of(context).size.width * 0.28,
-          decoration: BoxDecoration(
-              color: const Color.fromRGBO(63, 63, 63, 1),
-              borderRadius: const BorderRadius.all(Radius.circular(30.0)),
-              border: Border.all(
-                  color: const Color.fromRGBO(63, 63, 63, 1), width: 1)),
-          child: Center(
-            child: AutoSizeText(
-              chatTime,
-              style: GoogleFonts.exo(fontSize: 16, color: Colors.black54),
-            ),
-          ),
-        )
-      ],
-    );
-  }
+
 
   Widget bubble(
       ItemScrollController controller,
@@ -606,7 +613,9 @@ class _chat_pageState extends State<chat_page> {
       String replyToName,
       String ReplyToText,
       bool readed,
-      int scrollindex
+      int scrollindex,
+      bool imageMsg,
+      String imageURL
       ) {
     return Align(
       alignment: sender ? Alignment.centerRight : Alignment.centerLeft,
@@ -665,6 +674,16 @@ class _chat_pageState extends State<chat_page> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: size.width*0.008,vertical: size.height*0.002),
+                  child: AutoSizeText(
+                    name,
+                    style: GoogleFonts.poppins(
+                        color: Colors.black,
+                        fontSize: size.width * 0.03,
+                        fontWeight: FontWeight.w600),
+                  ),
+                ),
                 reply
                     ?
               InkWell(
@@ -709,25 +728,38 @@ class _chat_pageState extends State<chat_page> {
                         ),
                     )
                     : const SizedBox(),
-                SizedBox(
-                  child: AutoSizeText(
-                    name,
-                    style: GoogleFonts.poppins(
-                        color: Colors.black,
-                        fontSize: size.width * 0.028,
-                        fontWeight: FontWeight.w600),
+
+
+                imageMsg ?
+                Container(
+                  width: double.maxFinite,
+                  height: size.height*0.25,
+                  margin: EdgeInsets.only(
+                    bottom: size.height * 0.01,
+                    top: size.height * 0.01,
                   ),
-                ),
+                  decoration: BoxDecoration(
+                    image: DecorationImage(image: NetworkImage(imageURL),fit: BoxFit.fill),
+                      color: Colors.black,
+                      borderRadius: const BorderRadius.all(Radius.circular(12)),
+                    border: Border.all(color: Colors.black,width: 2)
+                  ),
+                )
+                    :
+                const SizedBox(),
+                text.isNotEmpty?
                 SizedBox(
                   width: size.width * 0.92,
                   child: AutoSizeText(
                     text,
                     style: GoogleFonts.poppins(
                         color: Colors.black.withOpacity(0.75),
-                        fontSize: size.width * 0.04,
+                        fontSize: size.width * 0.037,
                         fontWeight: FontWeight.w400),
                   ),
-                ),
+                )
+                :
+                const SizedBox(),
                 SizedBox(
                   width: size.width * 0.92,
                   child: Row(
