@@ -23,12 +23,11 @@ class MainPage extends StatefulWidget {
 
 
 class _MainPageState extends State<MainPage> {
-  bool loaded=false;
+  bool loaded=true;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    fetchuser();
   }
   @override
   Widget build(BuildContext context) {
@@ -44,6 +43,8 @@ class _MainPageState extends State<MainPage> {
         } else if (snapshot.connectionState == ConnectionState.active && snapshot.hasData)
         {
           if(FirebaseAuth.instance.currentUser!.emailVerified){
+            loaded=false;
+            fetchuser();
             return const Nevi();
           }
           else{
