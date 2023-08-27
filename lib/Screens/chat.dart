@@ -2,7 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:campus_link_teachers/Constraints.dart';
 import 'package:campus_link_teachers/Database/database.dart';
 import 'package:campus_link_teachers/Screens/Image_viewer.dart';
-import 'package:campus_link_teachers/Screens/Sending_Image.dart';
+import 'package:campus_link_teachers/Screens/Sending_Media.dart';
 import 'package:chat_bubbles/date_chips/date_chip.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +11,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:swipe_to/swipe_to.dart';
+import 'Chat_tiles/User_circle_Avatar.dart';
+import 'Chat_tiles/msg_tile.dart';
 import 'chat_info.dart';
 
 class chat_page extends StatefulWidget {
@@ -507,7 +509,7 @@ class _chat_pageState extends State<chat_page> {
                                                         context, PageTransition(
                                                         childCurrent: chat_page(channel: widget.channel),
                                                           duration: Duration(milliseconds: 600),
-                                                          child: SendImage(
+                                                          child: SendMedia(
                                                               imagePath: file,
                                                               channel: widget.channel,
                                                               messageLength: message.length,
@@ -534,7 +536,7 @@ class _chat_pageState extends State<chat_page> {
                                                         context, PageTransition(
                                                           childCurrent: chat_page(channel: widget.channel),
                                                           duration: Duration(milliseconds: 600),
-                                                          child: SendImage(
+                                                          child: SendMedia(
                                                             imagePath: file,
                                                             channel: widget.channel,
                                                             messageLength: message.length,
@@ -702,232 +704,35 @@ class _chat_pageState extends State<chat_page> {
         mainAxisAlignment: sender ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
           sender
-              ? const SizedBox()
-              : Row(
-                  children: [
-                    SizedBox(width: size.width * 0.02),
-                    CircleAvatar(
-                      radius: size.width * 0.035,
-                      backgroundImage:
-                          image != "null" ? NetworkImage(image,scale: 8) : null,
-                      // backgroundColor: Colors.teal.shade300,
-                      child: image == "null"
-                          ? AutoSizeText(
-                              name.substring(0, 1),
-                              style: GoogleFonts.exo(
-                                  fontSize: size.height * 0.01,
-                                  fontWeight: FontWeight.w600),
-                            )
-                          : null,
-                    ),
-                  ],
-                ),
-          Container(
-            width: (imageMsg || reply )? size.width*0.55 : text.length > 23
-                ? size.width * 0.028 * 25
-                : name.length >= text.length
-                    ? size.width * 0.037 * name.length
-                    : size.width * 0.035 * text.length ,
-            margin: EdgeInsets.symmetric(
-                horizontal: size.width * 0.01, vertical: size.height * 0.01),
-            decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topRight: const Radius.circular(15),
-                  topLeft: const Radius.circular(15),
-                  bottomLeft: sender
-                      ? const Radius.circular(15)
-                      : const Radius.circular(0),
-                  bottomRight: !sender
-                      ? const Radius.circular(15)
-                      : const Radius.circular(0),
-                )),
-            padding: EdgeInsets.symmetric(
-                horizontal: size.height * 0.005, vertical: size.height * 0.005),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: size.width*0.015,vertical: size.height*0.002),
-                  child: AutoSizeText(
-                    name,
-                    style: GoogleFonts.poppins(
-                        color: Colors.black,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500),
-                  ),
-                ),
+              ?
+          const SizedBox()
+              :
+          UserAvatar(image: image,name: name),
 
-
-
-
-                reply
-                    ?
-              InkWell(
-                  onTap: () {
-                    print("..........${replyIndex}");
-                    scrollController.scrollTo(index: scrollindex, duration: const Duration(seconds: 1));
-                  },
-                      child: Container(
-                          width: double.maxFinite,
-                          margin: EdgeInsets.only(
-                            bottom: size.height * 0.005,
-                            top: size.height * 0.005,
-                          ),
-                          padding: EdgeInsets.all(size.height * 0.01),
-                          decoration: const BoxDecoration(
-                              color: Colors.black,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(12))),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Replyed To: $replyToName",
-                                style: GoogleFonts.exo(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 13,
-                                    color: Colors.white),
-                              ),
-                              Text(
-                                ReplyToText.toString().substring(
-                                    0,
-                                    ReplyToText.length < 120
-                                        ? ReplyToText.length
-                                        : 120),
-                                style: GoogleFonts.exo(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 13,
-                                    color: Colors.white),
-                              ),
-                            ],
-                          ),
-                        ),
-                    )
-                    : const SizedBox(),
-
-                imageMsg ?
-                InkWell(
-                  onTap: (){
-                    Navigator.push(context,
-                        PageTransition(
-                          childCurrent: chat_page(channel: widget.channel),
-                            duration: const Duration(milliseconds: 400),
-                            child: Image_viewer(url: imageURL),
-                            type: PageTransitionType.bottomToTopJoined));
-                  },
-                  child: Padding(
-                    padding:EdgeInsets.symmetric(horizontal: size.height * 0.008, vertical: size.height * 0.003),                  child: Container(
-                      width: double.maxFinite,
-                      height: size.height*0.28,
-
-                      decoration: BoxDecoration(
-                          image: DecorationImage(image: NetworkImage(imageURL),fit: BoxFit.fill),
-                          color: Colors.black,
-                          borderRadius: const BorderRadius.all(Radius.circular(12)),
-                          border: Border.all(color: Colors.black,width: 2)
-                      ),
-                    ),
-                  ),
-                )
-                    :
-                const SizedBox(),
-
-
-                videoMsg
-                    ?
-                InkWell(
-                  onTap: (){
-                    Navigator.push(context,
-                        PageTransition(
-                          childCurrent: chat_page(channel: widget.channel),
-                            duration: const Duration(milliseconds: 400),
-                            child: Image_viewer(url: videoURL),
-                            type: PageTransitionType.bottomToTopJoined));
-                  },
-                  child: Padding(
-                    padding:EdgeInsets.symmetric(horizontal: size.height * 0.008, vertical: size.height * 0.003),                  child: Container(
-                      width: double.maxFinite,
-                      height: size.height*0.28,
-
-                      decoration: BoxDecoration(
-                          image: DecorationImage(image: NetworkImage(videoThumbnailURL),fit: BoxFit.fill),
-                          color: Colors.black,
-                          borderRadius: const BorderRadius.all(Radius.circular(12)),
-                          border: Border.all(color: Colors.black,width: 2)
-                      ),
-                    ),
-                  ),
-                )
-                    :
-                const SizedBox(),
-
-
-                text.isNotEmpty
-                    ?
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: size.width*0.02,vertical: size.height*0.002),
-                  child: SelectableText(
-                    text,
-                    style: GoogleFonts.poppins(
-                        color: Colors.black.withOpacity(0.75),
-                        fontSize: size.width * 0.035,
-                        fontWeight: FontWeight.w400),
-                  ),
-                )
-                :
-                const SizedBox(),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    AutoSizeText(
-                      "${stamp.hour}:${stamp.minute < 10 ? "0" : ""}${stamp.minute} ${stamp.hour < 12 ? "am" : "pm"}",
-                      style: GoogleFonts.poppins(
-                          color: Colors.black.withOpacity(0.8),
-                          fontSize: size.width * 0.022,
-                          fontWeight: FontWeight.w400),
-                      textAlign: TextAlign.right,
-                    ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    sender
-                        ? Icon(
-                            Icons.check,
-                            color: readed
-                                ? Colors.green
-                                : Colors.black.withOpacity(0.8),
-                            size: size.width * 0.05,
-                          )
-                        : const SizedBox(),
-                  ],
-                )
-              ],
-            ),
+          MsgTile(
+            name: name,
+            channel: widget.channel,
+            replyIndex: replyIndex,
+            imageMsg: imageMsg,
+            imageURL: imageURL,
+            readed: readed,
+            reply: reply,
+            replyToName: replyToName,
+            ReplyToText: ReplyToText,
+            scrollController: controller,
+            scrollindex: scrollindex,
+            sender: sender,
+            stamp: stamp,
+            text: text,
+            videoMsg: videoMsg,
+            videoThumbnailURL: videoThumbnailURL,
+            videoURL: videoURL,
           ),
           !sender
-              ? const SizedBox()
-              : Row(
-                  children: [
-                    CircleAvatar(
-                      radius: size.width * 0.035,
-                      backgroundImage:
-                          image != "null" ? NetworkImage(image) : null,
-                      // backgroundColor: Colors.teal.shade300,
-                      child: image == "null"
-                          ? AutoSizeText(
-                              name.substring(0, 1),
-                              style: GoogleFonts.exo(
-                                  fontSize: size.height * 0.01,
-                                  fontWeight: FontWeight.w600),
-                            )
-                          : null,
-                    ),
-                    SizedBox(width: size.width * 0.02),
-                  ],
-                ),
+              ?
+          const SizedBox()
+              :
+          UserAvatar(image: image,name: name),
         ],
       ),
     );

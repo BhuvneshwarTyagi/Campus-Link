@@ -10,8 +10,8 @@ import 'package:video_thumbnail/video_thumbnail.dart';
 import '../Constraints.dart';
 import '../Database/database.dart';
 
-class SendImage extends StatefulWidget {
-  const SendImage({super.key, required this.imagePath, required this.channel, required this.messageLength, required this.replyBoxHeight, required this.replyToName, required this.replyToText, required this.replyIndex, required this.video});
+class SendMedia extends StatefulWidget {
+  const SendMedia({super.key, required this.imagePath, required this.channel, required this.messageLength, required this.replyBoxHeight, required this.replyToName, required this.replyToText, required this.replyIndex, required this.video});
   final XFile imagePath;
   final String channel;
   final int messageLength;
@@ -21,13 +21,12 @@ class SendImage extends StatefulWidget {
   final int replyIndex;
   final bool video;
   @override
-  State<SendImage> createState() => _SendImageState();
+  State<SendMedia> createState() => _SendMediaState();
 }
 
-class _SendImageState extends State<SendImage> {
+class _SendMediaState extends State<SendMedia> {
   TextEditingController messageController = TextEditingController();
   late VideoPlayerController videoPlayerController;
-  late Future<void> _initializeVideoPlayerFuture;
   @override
   void initState() {
     // TODO: implement initState
@@ -37,7 +36,6 @@ class _SendImageState extends State<SendImage> {
       print("Initialized");
     });});
     videoPlayerController.setLooping(true);
-    _initializeVideoPlayerFuture = videoPlayerController.initialize();
   }
   @override
   Widget build(BuildContext context) {
@@ -60,7 +58,6 @@ class _SendImageState extends State<SendImage> {
           Center(child: CircularProgressIndicator()),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
       appBar: AppBar(
         actions: [
           IconButton(
