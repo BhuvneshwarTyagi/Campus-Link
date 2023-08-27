@@ -3,6 +3,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:campus_link_teachers/Constraints.dart';
 import 'package:campus_link_teachers/Database/database.dart';
+import 'package:campus_link_teachers/Screens/Image_viewer.dart';
 import 'package:campus_link_teachers/Screens/Sending_Image.dart';
 import 'package:chat_bubbles/date_chips/date_chip.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -43,7 +44,12 @@ class _chat_pageState extends State<chat_page> {
           List<dynamic> message = snapshot.data?.data()!["Messages"] == null
               ? []
               : snapshot.data?.data()!["Messages"].reversed.toList();
-          int activeCount = activeStatus(snapshot);
+          int activeCount =0;
+          snapshot.hasData
+              ?
+          activeCount= activeStatus(snapshot)
+              :
+              null;
           return snapshot.hasData
               ? WillPopScope(
                   onWillPop: () async {
@@ -447,7 +453,7 @@ class _chat_pageState extends State<chat_page> {
                                       ),
                                     ),
                                     SizedBox(
-                                      height: size.height * 0.062,
+                                      //height: size.height * 0.062,
                                       width: size.width * 0.78,
                                       child: TextField(
                                         controller: messageController,
@@ -569,7 +575,7 @@ class _chat_pageState extends State<chat_page> {
                                               replyBoxHeight = 0;
                                               replyIndex = 0;
                                             });
-                                            scrollController.scrollTo(index: 0, duration: Duration(milliseconds: 200));
+                                            scrollController.scrollTo(index: 0, duration: const Duration(milliseconds: 200));
                                             List<dynamic> tokens =
                                                 await FirebaseFirestore.instance
                                                     .collection("Messages")
@@ -675,12 +681,8 @@ class _chat_pageState extends State<chat_page> {
             decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
-                  topRight: sender
-                      ? const Radius.circular(15)
-                      : const Radius.circular(15),
-                  topLeft: !sender
-                      ? const Radius.circular(15)
-                      : const Radius.circular(15),
+                  topRight: const Radius.circular(15),
+                  topLeft: const Radius.circular(15),
                   bottomLeft: sender
                       ? const Radius.circular(15)
                       : const Radius.circular(0),
@@ -753,16 +755,26 @@ class _chat_pageState extends State<chat_page> {
                     : const SizedBox(),
 
                 imageMsg ?
-                Padding(
-                  padding:EdgeInsets.symmetric(horizontal: size.height * 0.008, vertical: size.height * 0.003),                  child: Container(
-                    width: double.maxFinite,
-                    height: size.height*0.28,
+                InkWell(
+                  onTap: (){
+                    Navigator.push(context,
+                        PageTransition(
+                          childCurrent: chat_page(channel: widget.channel),
+                            duration: const Duration(milliseconds: 400),
+                            child: Image_viewer(url: imageURL),
+                            type: PageTransitionType.bottomToTopJoined));
+                  },
+                  child: Padding(
+                    padding:EdgeInsets.symmetric(horizontal: size.height * 0.008, vertical: size.height * 0.003),                  child: Container(
+                      width: double.maxFinite,
+                      height: size.height*0.28,
 
-                    decoration: BoxDecoration(
-                        image: DecorationImage(image: NetworkImage(imageURL),fit: BoxFit.fill),
-                        color: Colors.black,
-                        borderRadius: const BorderRadius.all(Radius.circular(12)),
-                        border: Border.all(color: Colors.black,width: 2)
+                      decoration: BoxDecoration(
+                          image: DecorationImage(image: NetworkImage(imageURL),fit: BoxFit.fill),
+                          color: Colors.black,
+                          borderRadius: const BorderRadius.all(Radius.circular(12)),
+                          border: Border.all(color: Colors.black,width: 2)
+                      ),
                     ),
                   ),
                 )
@@ -909,10 +921,10 @@ class _chat_pageState extends State<chat_page> {
     List<dynamic> member_list = snapshot.data?.data()!["Members"];
     for (var email in member_list) {
       if (snapshot.data!.data()![email["Email"].toString().split("@")[0]]
-                  ["Active"] !=
-              null &&
+      ["Active"] !=
+          null &&
           snapshot.data!.data()![email["Email"].toString().split("@")[0]]
-              ["Active"]) {
+          ["Active"]) {
         count++;
       }
     }

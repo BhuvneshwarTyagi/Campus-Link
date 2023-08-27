@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:campus_link_teachers/Constraints.dart';
 import 'package:campus_link_teachers/Database/database.dart';
+import 'package:campus_link_teachers/Screens/loadingscreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -220,7 +221,7 @@ class _Chat_InfoState extends State<Chat_Info> {
                           width: size.width*0.32,
                         ),
                         SizedBox(
-                          child: CupertinoSwitch(
+                          child: Switch(
                             value:!_switched ,
                               onChanged: (value) {
                                 setState(() {
@@ -283,105 +284,110 @@ class _Chat_InfoState extends State<Chat_Info> {
                     child: StreamBuilder(
                       stream: FirebaseFirestore.instance.collection("Messages").doc(widget.channel).snapshots(),
                       builder: (context, snapshot) {
-                        return ListView.builder(
+                        return snapshot.hasData
+                            ?
+                        ListView.builder(
 
                           itemCount: snapshot.data?.data()!["Members"].length,
                           itemBuilder: (context, index) {
-                          return StreamBuilder(
-                            stream: FirebaseFirestore.instance.collection(snapshot.data?.data()!["Members"][index]["Post"]).doc(snapshot.data?.data()!["Members"][index]["Email"]).snapshots(),
-                            builder: (context, snapshot2) {
-                              return snapshot2.hasData
-                                  ?
-                              Padding(
-                                padding:  EdgeInsets.all(size.height*0.009),
-                                child: SizedBox(
-                                  height: size.height*0.06,
-                                       child: Row(
-                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                         children: [
-                                           Row(
+                            return StreamBuilder(
+                                stream: FirebaseFirestore.instance.collection(snapshot.data?.data()!["Members"][index]["Post"]).doc(snapshot.data?.data()!["Members"][index]["Email"]).snapshots(),
+                                builder: (context, snapshot2) {
+                                  return snapshot2.hasData
+                                      ?
+                                  Padding(
+                                    padding:  EdgeInsets.all(size.height*0.009),
+                                    child: SizedBox(
+                                      height: size.height*0.06,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
 
-                                             children: [
-                                               CircleAvatar(
-                                                 radius: size.width*0.07,
-                                                 backgroundColor: const Color.fromRGBO(86, 149, 178, 1),
-                                                 child: snapshot2.data?.data()!["Profile_URL"]!=null
-                                                     ?
-                                                 Image(image: NetworkImage(snapshot2.data?.data()!["Profile_URL"]))
-                                                     :
-                                                 AutoSizeText( snapshot2.data?.data()!["Name"].toString().substring(0,1) ?? "A",
-                                                   style: GoogleFonts.exo(
-                                                       fontSize: size.height*0.022,
-                                                       fontWeight: FontWeight.w600
-                                                   ),
-                                                 ),
+                                            children: [
+                                              CircleAvatar(
+                                                radius: size.width*0.07,
+                                                backgroundColor: const Color.fromRGBO(86, 149, 178, 1),
+                                                child: snapshot2.data?.data()!["Profile_URL"]!=null
+                                                    ?
+                                                Image(image: NetworkImage(snapshot2.data?.data()!["Profile_URL"]))
+                                                    :
+                                                AutoSizeText( snapshot2.data?.data()!["Name"].toString().substring(0,1) ?? "A",
+                                                  style: GoogleFonts.exo(
+                                                      fontSize: size.height*0.022,
+                                                      fontWeight: FontWeight.w600
+                                                  ),
+                                                ),
 
 
-                                               ),
-                                               SizedBox(
-                                                 width: size.width*0.02,
-                                               ),
-                                               Column(
-                                                 mainAxisAlignment: MainAxisAlignment.center,
-                                                 crossAxisAlignment: CrossAxisAlignment.start,
+                                              ),
+                                              SizedBox(
+                                                width: size.width*0.02,
+                                              ),
+                                              Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
 
-                                                 children: [
-                                                   AutoSizeText( snapshot2.data?.data()!["Name"],
-                                                     style: GoogleFonts.exo(
-                                                         fontSize: size.height*0.022,
-                                                         fontWeight: FontWeight.w600
-                                                     ),
-                                                   ),
-                                                   AutoSizeText(
-                                                     "User_description",
-                                                     style: GoogleFonts.exo(
-                                                         fontSize: size.height*0.01,
-                                                         fontWeight: FontWeight.w500
-                                                     ),
-                                                   ),
-                                                 ],
-                                               ),
-                                               SizedBox(
-                                                 width: size.width*0.18,
-                                               ),
-                                             ],
-                                           ),
-                                           snapshot.data?.data()!["Admins"].contains(usermodel["Email"])
-                                           ?
-                                           Container(
-                                             height: size.height*0.03,
-                                             width: size.width*0.22,
-                                             decoration: BoxDecoration(
-                                                 shape: BoxShape.rectangle,
-                                                 borderRadius: BorderRadius.all(Radius.circular(8)),
-                                                 border: Border.all(
-                                                     color: Colors.black,
-                                                     width: 1
-                                                 ),
+                                                children: [
+                                                  AutoSizeText( snapshot2.data?.data()!["Name"],
+                                                    style: GoogleFonts.exo(
+                                                        fontSize: size.height*0.022,
+                                                        fontWeight: FontWeight.w600
+                                                    ),
+                                                  ),
+                                                  AutoSizeText(
+                                                    "User_description",
+                                                    style: GoogleFonts.exo(
+                                                        fontSize: size.height*0.01,
+                                                        fontWeight: FontWeight.w500
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(
+                                                width: size.width*0.18,
+                                              ),
+                                            ],
+                                          ),
+                                          snapshot.data?.data()!["Admins"].contains(usermodel["Email"])
+                                              ?
+                                          Container(
+                                            height: size.height*0.03,
+                                            width: size.width*0.22,
+                                            decoration: BoxDecoration(
+                                                shape: BoxShape.rectangle,
+                                                borderRadius: BorderRadius.all(Radius.circular(8)),
+                                                border: Border.all(
+                                                    color: Colors.black,
+                                                    width: 1
+                                                ),
                                                 color: Colors.black54
-                                             ),
-                                             child: Center(
-                                               child: AutoSizeText(
-                                                 "Group Admin",
-                                                 style: GoogleFonts.exo(
-                                                     fontSize: size.height*0.016,
-                                                     fontWeight: FontWeight.w600,
-                                                   color: Colors.white
-                                                 ),
-                                               ),
-                                             ),
-                                           )
-                                           :
-                                           const SizedBox(),
-                                         ],
-                                       ),
-                                ),
-                              )
-                                  :
-                              const SizedBox();
-                            }
-                          );
-                        },);
+                                            ),
+                                            child: Center(
+                                              child: AutoSizeText(
+                                                "Group Admin",
+                                                style: GoogleFonts.exo(
+                                                    fontSize: size.height*0.016,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Colors.white
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                              :
+                                          const SizedBox(),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                      :
+                                  const SizedBox();
+                                }
+                            );
+                          },)
+                            :
+                        const loading()
+                        ;
                       }
                     ),
                   )

@@ -6,6 +6,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../Constraints.dart';
+
 class NotificationServices{
   RequestPermission() async {
     PermissionStatus status = await Permission.notification.request();
@@ -97,12 +99,18 @@ class NotificationServices{
 
   void setUserState({required UserState userState}) {
     String? userId = FirebaseAuth.instance.currentUser?.uid;
-    if (userId == null) return;
+    //if (userId == null) return;
     int stateNum = Utils.stateToNum(userState);
-    FirebaseFirestore.instance.collection("Students").doc(userId).update({
-      "state": stateNum,
-      "lastSeen": DateTime.now().millisecondsSinceEpoch.toString(),
-    });
+    print("${stateNum}........${userState}");
+    for(var group in usermodel["Message_channels"]){
+      FirebaseFirestore.instance.collection("Messages").doc(group).update({
+        usermodel["Email"].toString().split("@")[0] : {
+          "Active" : false,
+          "Read_Count" : FieldValue,
+          "Last_Active": DateTime.now()
+        }
+      });
+    }
   }
 
 }
