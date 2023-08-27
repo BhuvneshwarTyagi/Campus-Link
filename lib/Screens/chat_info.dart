@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:campus_link_teachers/Constraints.dart';
 import 'package:campus_link_teachers/Database/database.dart';
+import 'package:campus_link_teachers/Screens/Media_File.dart';
+import 'package:campus_link_teachers/Screens/chat.dart';
 import 'package:campus_link_teachers/Screens/loadingscreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -10,6 +12,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:page_transition/page_transition.dart';
 
 
 
@@ -150,7 +153,7 @@ class _Chat_InfoState extends State<Chat_Info> {
             ),
 
             Container(
-              height: size.height*0.18,
+              height: size.height*0.22,
               width: size.width,
               decoration: const BoxDecoration(
 
@@ -245,6 +248,40 @@ class _Chat_InfoState extends State<Chat_Info> {
                           ),
                         ),
                       ],
+                    ),
+                    SizedBox(
+                      height: size.height*0.01,
+                    ),
+                    TextButton(onPressed: (){
+                      Navigator.push(
+                        context,
+                        PageTransition(
+                            childCurrent:Chat_Info(channel: widget.channel, membersCount: widget.membersCount, url: widget.url,),
+                            child:Media_files(channel: widget.channel,),
+                            type: PageTransitionType
+                                .rightToLeftJoined,
+                            duration: const Duration(
+                                milliseconds: 300)),
+                      );
+                    },
+                        child:Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Icon(Icons.image,color: Colors.black38,size: size.height*0.03,),
+                            SizedBox(
+                              width: size.width*0.022,
+                            ),
+                            AutoSizeText(
+                              "Show Media",
+                              style: GoogleFonts.exo(
+                                  color: Colors.indigo,
+                                  fontSize: size.height*0.02,
+                                  fontWeight: FontWeight.w600
+                              ),
+
+                            ),
+                          ],
+                        )
                     )
                   ],
                 ),

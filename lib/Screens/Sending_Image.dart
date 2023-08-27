@@ -271,7 +271,12 @@ class _SendImageState extends State<SendImage> {
                           "Video_Url" :URL,
                           "Video_ThumbNail": thumbURL
                         }
-                      ])
+                      ]),
+                      "Media_Files":FieldValue.arrayUnion([{
+                        "Video":true,
+                        "Video_Thumbnail_URL":thumbURL,
+                        "Video_URL":URL
+                      }])
                     },
                   ).whenComplete(
                         () async {
@@ -507,7 +512,11 @@ class _SendImageState extends State<SendImage> {
                             "Image_Text": true,
                             "Image_Url" : URL
                           }
-                        ])
+                        ]),
+                        "Media_Files":FieldValue.arrayUnion([{
+                          "Video":false,
+                          "Image_URL":URL
+                        }])
                       },
                     ).whenComplete(
                           () async {
