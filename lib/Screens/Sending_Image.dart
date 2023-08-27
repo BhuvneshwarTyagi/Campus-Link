@@ -163,7 +163,7 @@ class _SendImageState extends State<SendImage> {
                                 borderRadius:
                                 BorderRadius.all(
                                     Radius.circular(
-                                        12.0)),
+                                        30.0)),
                                 borderSide: BorderSide(
                                     color: Colors.black54,
                                     width: 1)),
