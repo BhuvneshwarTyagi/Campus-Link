@@ -172,8 +172,8 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      color: const Color.fromRGBO(213, 97, 132, 1),
-      theme: ThemeData(),
+      color: Colors.transparent,
+      theme: ThemeData(colorScheme: const ColorScheme.dark(),backgroundColor: Colors.transparent),
       debugShowCheckedModeBanner: false,
        home: Checkconnection(),
       builder: InAppNotifications.init(),

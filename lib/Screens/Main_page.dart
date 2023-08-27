@@ -23,17 +23,12 @@ class MainPage extends StatefulWidget {
 
 
 class _MainPageState extends State<MainPage> {
-  bool loaded=true;
-  bool stop=false;
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
+  bool loaded=false;
+
+
   @override
   Widget build(BuildContext context) {
-    return  loaded
-        ?
+    return
     StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (_, snapshot)  {
@@ -44,14 +39,17 @@ class _MainPageState extends State<MainPage> {
         } else if (snapshot.connectionState == ConnectionState.active && snapshot.hasData)
         {
           if(FirebaseAuth.instance.currentUser!.emailVerified){
+            !loaded
+                ?
+            fetchuser()
+                :
+            null;
 
-            loaded=false;
-            stop
-            ?
-            null
-            :
-            fetchuser();
-            return const Nevi();
+            return
+              loaded ?
+            const Nevi()
+                :
+            const loading(text: "Retrieving data from the server please wait",);
           }
           else{
             FirebaseAuth.instance.currentUser!.sendEmailVerification();
@@ -62,17 +60,14 @@ class _MainPageState extends State<MainPage> {
           return const SignInScreen();}
       },
 
-    )
-        :
-    const loading()
-    ;
+    );
   }
   Future<void> fetchuser() async {
     await FirebaseFirestore.instance.collection("Teachers").doc(FirebaseAuth.instance.currentUser!.email).get().then((value){
       usermodel=value.data()!;
     }).whenComplete((){
       setState(() {
-        stop=true;
+        print(usermodel);
         loaded=true;
       });
     });

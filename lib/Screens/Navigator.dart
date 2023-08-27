@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:campus_link_teachers/Screens/loadingscreen.dart';
 import 'package:http/http.dart' as http;
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:campus_link_teachers/Constraints.dart';
@@ -48,7 +49,7 @@ class _NeviState extends State<Nevi> {
     super.initState();
     getToken();
   }
-  call() async {
+  Future<void> call() async {
     await database().getloc().whenComplete(() async {
       await FirebaseFirestore.instance
           .collection("Students")
@@ -288,7 +289,6 @@ class _NeviState extends State<Nevi> {
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
                 onTap: () {
-
                   showDialog(
                     context: context,
                     builder: (context) {
@@ -333,22 +333,22 @@ class _NeviState extends State<Nevi> {
                                         height: size.height*0.01,
                                       ),
                                       AutoSizeText(
-                                      "$university_filter",
+                                      university_filter,
                                       style: GoogleFonts.exo(color: Colors.white),
                                     ),
                                       const Icon(Icons.arrow_drop_down_outlined,color: Colors.white),
                                       AutoSizeText(
-                                        "$college_filter",
+                                        college_filter,
                                         style: GoogleFonts.exo(color: Colors.white),
                                       ),
                                       const Icon(Icons.arrow_drop_down_outlined,color: Colors.white),
                                       AutoSizeText(
-                                        "$course_filter",
+                                        course_filter,
                                         style: GoogleFonts.exo(color: Colors.white),
                                       ),
                                       const Icon(Icons.arrow_drop_down_outlined,color: Colors.white),
                                       AutoSizeText(
-                                        "$branch_filter",
+                                        branch_filter,
                                         style: GoogleFonts.exo(color: Colors.white),
                                       ),
                                       const Icon(Icons.arrow_drop_down_outlined,color: Colors.white),
@@ -363,7 +363,7 @@ class _NeviState extends State<Nevi> {
                                       ),
                                       const Icon(Icons.arrow_drop_down_outlined,color: Colors.white),
                                       AutoSizeText(
-                                        "$subject_filter",
+                                        subject_filter,
                                         style: GoogleFonts.exo(color: Colors.white),
                                       ),],
                                   ),
@@ -396,6 +396,17 @@ class _NeviState extends State<Nevi> {
                                         elevation: 20,
                                         backgroundColor: Colors.white10),
                                     onPressed: () async {
+                                      Navigator.push(
+                                        context,
+                                        PageTransition(
+                                          child: const loading(text: "Loading Students data from the server Please wait for a while"),
+                                          type: PageTransitionType.bottomToTopJoined,
+                                          duration: const Duration(milliseconds: 200),
+                                          alignment: Alignment.bottomCenter,
+                                          childCurrent: const Nevi(),
+                                        ),
+                                      );
+
                                       subject_filter.isEmpty
                                           ?
                                       Navigator.push(
@@ -409,21 +420,20 @@ class _NeviState extends State<Nevi> {
                                         ),
                                       )
                                           :
-                                      await database().getloc().whenComplete(() => setState(()  {
-                                        index = 2;
-                                        attendence_size = size.width * 0.10;
-                                        mark_size = size.width * 0.07;
-                                        assigment_size = size.width * 0.07;
-                                        performance_size = size.width * 0.07;
-                                        note_size = size.width * 0.07;
-                                        Navigator.pop(context);
-                                      }));
+                                      await call().whenComplete(() async {
+                                        await database().getloc().whenComplete(() => setState(()  {
+                                          index = 2;
+                                          attendence_size = size.width * 0.10;
+                                          mark_size = size.width * 0.07;
+                                          assigment_size = size.width * 0.07;
+                                          performance_size = size.width * 0.07;
+                                          note_size = size.width * 0.07;
+                                          Navigator.pop(context);
+                                          Navigator.pop(context);
+                                        }));
 
-                                      subject_filter.isEmpty
-                                          ?
-                                          null
-                                          :
-                                          call();
+                                      }
+                                      );
 
 
                                     },
@@ -685,53 +695,6 @@ class _NeviState extends State<Nevi> {
                   ),
                 ),
               ),
-
-              // IconButton(
-              //     onPressed: (){
-              //   setState(() {
-              //     index=1;
-              //     leftpos=size.width*0.25;
-              //     assigment_size=size.width*0.07;
-              //   });
-              // },
-              //     icon:  Icon(Icons.notes,
-              //         color: index==1 ? Colors.amber :Colors.white,)),
-              //
-              // TextButton(
-              //   onPressed: (){
-              //     setState(() {
-              //       index=2;
-              //       leftpos=size.width*0.44;
-              //     });
-              //   },
-              //   child: Container(
-              //     width: size.width*0.07,
-              //     height: size.height*0.07,
-              //     decoration: const BoxDecoration(
-              //       color: Colors.transparent,
-              //       image: DecorationImage(image: AssetImage("assets/images/attendance_icon.png"),fit: BoxFit.contain,
-              //     ),
-              //     ),
-              //   ),
-              // ),
-              //
-              //
-              // IconButton(onPressed: (){
-              //   setState(() {
-              //     index=3;
-              //     leftpos=size.width*0.6358;
-              //   });
-              // }, icon: Icon(Icons.pie_chart,color: index==3 ? Colors.amber :Colors.white,)),
-              // IconButton(
-              //     onPressed: (){
-              //       setState(() {
-              //         index=4;
-              //         leftpos=size.width*0.82;
-              //       }
-              //       );
-              //       },
-              //     icon: Icon(Icons.grading,color: index==4 ? Colors.amber :Colors.white,),
-              // ),
             ],
           ),
         ),

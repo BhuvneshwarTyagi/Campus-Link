@@ -423,7 +423,7 @@ class _Chat_InfoState extends State<Chat_Info> {
                             );
                           },)
                             :
-                        const loading()
+                        const loading(text: "Fetching Data from the Server Please Wait",)
                         ;
                       }
                     ),
