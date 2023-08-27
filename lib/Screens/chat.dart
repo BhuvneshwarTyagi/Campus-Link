@@ -1,5 +1,3 @@
-
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:campus_link_teachers/Constraints.dart';
 import 'package:campus_link_teachers/Database/database.dart';
@@ -238,86 +236,98 @@ class _chat_pageState extends State<chat_page> {
                         child: message.isNotEmpty
                             ?
                         ScrollablePositionedList.builder(
-                                reverse: true,
-                                scrollDirection: Axis.vertical,
+                          reverse: true,
+                          scrollDirection: Axis.vertical,
                           itemScrollController: scrollController,
-                                itemCount: message.length,
-                                itemBuilder: (context, index) {
-                                  bool read = updateReadedCount(snapshot, index);
-                                  bool Reply = false;
-                                  message[index]["Reply"] == null
-                                      ? Reply = false
-                                      : Reply = message[index]["Reply"];
-                                  bool Image = false;
-                                  message[index]["Image_Text"] == null
-                                      ? Image = false
-                                      : Image = message[index]["Image_Text"];
-                                  return Column(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      index != message.length - 1
-                                          ? message[index + 1]["Stamp"]
-                                                      .toDate()
-                                                      .day ==
-                                                  message[index]["Stamp"]
-                                                      .toDate()
-                                                      .day
-                                              ? const SizedBox()
-                                              : date(message[index]["Stamp"]
-                                                  .toDate())
-                                          : date(
-                                              message[index]["Stamp"].toDate()),
-                                      message[index]["UID"] ==
-                                              usermodel["Email"]
-                                          ? SwipeTo(
-                                              onLeftSwipe: () {
-                                                setState(() {
-                                                  replyBoxHeight =
-                                                      size.height * 0.17;
-                                                  replyIndex = index;
-                                                });
-                                              },
-                                              child: InkWell(
-                                                onLongPress: () async {
-                                                  setState(() {
-                                                    index1 = index;
-                                                    selected = !selected;
-                                                  });
-                                                },
-                                                child: bubble(
-                                                  scrollController,
-                                                    "${message[index]["text"]}",
-                                                    "${message[index]["Name"]}",
-                                                    "${message[index]["Image"]}",
-                                                    message[index]["Stamp"]
-                                                        .toDate(),
-                                                    true,
-                                                    size,
-                                                    index,
-                                                    message.length,
-                                                    Reply,
-                                                    Reply
-                                                        ? message[int.parse(
-                                                                "${message.length - message[index]["Reply_Index"] - 1}")]
-                                                            ["Name"]
-                                                        : "",
-                                                    Reply
-                                                        ? message[int.parse(
-                                                                "${message.length - message[index]["Reply_Index"] - 1}")]
-                                                            ["text"]
-                                                        : "",
-                                                    read,
-                                                    Reply
-                                                        ?
-                                                    int.parse("${message.length - message[index]["Reply_Index"] - 1}")
-                                                        :
-                                                    0,
-                                                    Image,
-                                                    Image? message[index]["Image_Url"]:""
-                                                ),
+                          itemCount: message.length,
+                          itemBuilder: (context, index) {
+
+                            bool read = updateReadedCount(snapshot, index);
+
+                            bool Reply = false;
+                            message[index]["Reply"] == null
+                                ? Reply = false
+                                : Reply = message[index]["Reply"];
+
+                            bool Image = false;
+                            message[index]["Image_Text"] == null
+                                ? Image = false
+                                : Image = message[index]["Image_Text"];
+
+                            bool Video = false;
+                            message[index]["Video_Text"] == null
+                                ? Video = false
+                                : Video = message[index]["Video_Text"];
+
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                index != message.length - 1
+                                    ?
+                                message[index + 1]["Stamp"].toDate().day == message[index]["Stamp"].toDate().day
+                                    ?
+                                const SizedBox()
+                                    :
+                                date(message[index]["Stamp"].toDate())
+                                    :
+                                date(message[index]["Stamp"].toDate()),
+
+
+                                message[index]["UID"] == usermodel["Email"]
+                                    ?
+                                SwipeTo(
+                                  onLeftSwipe: () {
+                                    setState(() {
+                                      replyBoxHeight = size.height * 0.17;
+                                      replyIndex = index;
+                                    },
+                                    );
+                                    },
+                                  child: InkWell(
+                                    onLongPress: () async {
+                                      setState(() {
+                                        index1 = index;
+                                        selected = !selected;
+                                      });
+                                      },
+                                    child: bubble(
+                                        scrollController,
+                                        "${message[index]["text"]}",
+                                        "${message[index]["Name"]}",
+                                        "${message[index]["Image"]}",
+                                        message[index]["Stamp"].toDate(),
+                                        true,
+                                        size,
+                                        index,
+                                        message.length,
+                                        Reply,
+                                        Reply
+                                            ? message[int.parse(
+                                            "${message.length - message[index]["Reply_Index"] - 1}")]
+                                        ["Name"]
+                                            : "",
+                                        Reply
+                                            ? message[int.parse(
+                                            "${message.length - message[index]["Reply_Index"] - 1}")]
+                                        ["text"]
+                                            : "",
+                                        read,
+                                        Reply
+                                            ?
+                                        int.parse("${message.length - message[index]["Reply_Index"] - 1}")
+                                            :
+                                        0,
+                                        Image,
+                                        Image? message[index]["Image_Url"]:"",
+                                        Video,
+                                        Video? message[index]["Video_Url"]: "",
+                                        Video? message[index]["Video_ThumbNail"]: ""
+
+                                    ),
                                               ),
                                             )
-                                          : SwipeTo(
+                                          :
+                                SwipeTo(
                                               onRightSwipe: () {
                                                 setState(() {
                                                   replyBoxHeight =
@@ -354,7 +364,11 @@ class _chat_pageState extends State<chat_page> {
                                       :
                                   0,
                                                   Image,
-                                                Image? message[index]["Image_Url"]:""
+                                                Image? message[index]["Image_Url"]:"",
+
+                                                  Video,
+                                                Video? message[index]["Video_Url"]: "",
+                                                Video ? message[index]["Video_ThumbNail"]: ""
                                             ),
                                       )
                                     ],
@@ -378,7 +392,7 @@ class _chat_pageState extends State<chat_page> {
                               Stack(
                                   alignment: Alignment.bottomCenter,
                                   children: [
-                                    AnimatedContainer(
+                                     AnimatedContainer(
                                       height: replyBoxHeight,
                                       width: size.width * 0.78,
                                       decoration: const BoxDecoration(
@@ -478,32 +492,67 @@ class _chat_pageState extends State<chat_page> {
                                         textAlign: TextAlign.start,
                                         style: const TextStyle(color: Colors.black, fontSize: 18),
                                         decoration: InputDecoration(
-                                          suffixIcon: IconButton(
-                                              onPressed: () async {
-                                                ImagePicker imagePicker=ImagePicker();
-                                                print(imagePicker);
-                                                XFile? file=await imagePicker.pickImage(source: ImageSource.gallery, imageQuality: 80);
-                                                file!.path.isNotEmpty
-                                                    ?
-                                                Navigator.push(
-                                                  context, PageTransition(
-                                                  childCurrent: chat_page(channel: widget.channel),
-                                                    duration: Duration(milliseconds: 600),
-                                                    child: SendImage(
-                                                        imagePath: file,
-                                                        channel: widget.channel,
-                                                        messageLength: message.length,
-                                                        replyBoxHeight: replyBoxHeight,
-                                                        replyToName: message[replyIndex]["Name"],
-                                                        replyToText: message[replyIndex]["text"].toString().substring(0,message[replyIndex]["text"].length>120?120:message[replyIndex]["text"].length),
-                                                        replyIndex: replyIndex,
-                                                    ),
-                                                    type: PageTransitionType.bottomToTopJoined),
-                                                )
-                                                    :
-                                                null;
-                                              },
-                                              icon: Icon(Icons.image,color: Colors.black,size: size.height*0.04,)),
+                                          suffixIcon: SizedBox(
+                                            width: size.width*0.25,
+                                            child: Row(
+                                              children: [
+                                                IconButton(
+                                                    onPressed: () async {
+                                                      ImagePicker imagePicker=ImagePicker();
+                                                      print(imagePicker);
+                                                      XFile? file=await imagePicker.pickImage(source: ImageSource.gallery, imageQuality: 80);
+                                                      file!.path.isNotEmpty
+                                                          ?
+                                                      Navigator.push(
+                                                        context, PageTransition(
+                                                        childCurrent: chat_page(channel: widget.channel),
+                                                          duration: Duration(milliseconds: 600),
+                                                          child: SendImage(
+                                                              imagePath: file,
+                                                              channel: widget.channel,
+                                                              messageLength: message.length,
+                                                              replyBoxHeight: replyBoxHeight,
+                                                              replyToName: message[replyIndex]["Name"],
+                                                              replyToText: message[replyIndex]["text"].toString().substring(0,message[replyIndex]["text"].length>120?120:message[replyIndex]["text"].length),
+                                                              replyIndex: replyIndex,
+                                                            video: false,
+                                                          ),
+                                                          type: PageTransitionType.bottomToTopJoined),
+                                                      )
+                                                          :
+                                                      null;
+                                                    },
+                                                    icon: Icon(Icons.image,color: Colors.black,size: size.height*0.04,)),
+                                                IconButton(
+                                                    onPressed: () async {
+                                                      ImagePicker imagePicker=ImagePicker();
+                                                      print(imagePicker);
+                                                      XFile? file=await imagePicker.pickVideo(source: ImageSource.gallery, maxDuration: const Duration(seconds: 30));
+                                                      file!.path.isNotEmpty
+                                                          ?
+                                                      Navigator.push(
+                                                        context, PageTransition(
+                                                          childCurrent: chat_page(channel: widget.channel),
+                                                          duration: Duration(milliseconds: 600),
+                                                          child: SendImage(
+                                                            imagePath: file,
+                                                            channel: widget.channel,
+                                                            messageLength: message.length,
+                                                            replyBoxHeight: replyBoxHeight,
+                                                            replyToName: message[replyIndex]["Name"],
+                                                            replyToText: message[replyIndex]["text"].toString().substring(0,message[replyIndex]["text"].length>120?120:message[replyIndex]["text"].length),
+                                                            replyIndex: replyIndex,
+                                                            video: true,
+                                                          ),
+                                                          type: PageTransitionType.bottomToTopJoined),
+                                                      )
+                                                          :
+                                                      null;
+                                                    },
+                                                    icon: Icon(Icons.video_collection,color: Colors.black,size: size.height*0.04,)),
+                                              ],
+                                            ),
+                                          ),
                                           suffixIconColor: Colors.black,
                                           fillColor: Colors.white70,
                                           filled: true,
@@ -641,8 +690,11 @@ class _chat_pageState extends State<chat_page> {
       bool readed,
       int scrollindex,
       bool imageMsg,
-      String imageURL
-      ) {
+      String imageURL,
+      bool videoMsg,
+      String videoURL,
+      String videoThumbnailURL
+      )  {
     return Align(
       alignment: sender ? Alignment.centerRight : Alignment.centerLeft,
       child: Row(
@@ -782,7 +834,37 @@ class _chat_pageState extends State<chat_page> {
                 const SizedBox(),
 
 
-                text.isNotEmpty?
+                videoMsg
+                    ?
+                InkWell(
+                  onTap: (){
+                    Navigator.push(context,
+                        PageTransition(
+                          childCurrent: chat_page(channel: widget.channel),
+                            duration: const Duration(milliseconds: 400),
+                            child: Image_viewer(url: videoURL),
+                            type: PageTransitionType.bottomToTopJoined));
+                  },
+                  child: Padding(
+                    padding:EdgeInsets.symmetric(horizontal: size.height * 0.008, vertical: size.height * 0.003),                  child: Container(
+                      width: double.maxFinite,
+                      height: size.height*0.28,
+
+                      decoration: BoxDecoration(
+                          image: DecorationImage(image: NetworkImage(videoThumbnailURL),fit: BoxFit.fill),
+                          color: Colors.black,
+                          borderRadius: const BorderRadius.all(Radius.circular(12)),
+                          border: Border.all(color: Colors.black,width: 2)
+                      ),
+                    ),
+                  ),
+                )
+                    :
+                const SizedBox(),
+
+
+                text.isNotEmpty
+                    ?
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: size.width*0.02,vertical: size.height*0.002),
                   child: SelectableText(
