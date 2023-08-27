@@ -368,28 +368,23 @@ class _chat_pageState extends State<chat_page> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              IconButton(
-                                  onPressed: () async {
-                                    ImagePicker imagePicker=ImagePicker();
-                                    print(imagePicker);
-                                    XFile? file=await imagePicker.pickImage(source: ImageSource.gallery, imageQuality: 80);
-                                    file!.path.isNotEmpty
-                                        ?
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => SendImage(imagePath: file,channel: widget.channel),))
-                                        :
-                                        null;
-                                  },
-                                  icon: Icon(Icons.image,color: Colors.white,size: size.height*0.04,)),
+
                               Stack(
                                   alignment: Alignment.bottomCenter,
                                   children: [
                                     AnimatedContainer(
                                       height: replyBoxHeight,
-                                      width: size.width * 0.66,
+                                      width: size.width * 0.78,
                                       decoration: const BoxDecoration(
                                           color: Colors.white70,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(12))),
+                                          borderRadius: BorderRadius.only(
+                                            topRight:Radius.circular(12),
+                                            topLeft:Radius.circular(12),
+                                            bottomRight:Radius.circular(30),
+                                            bottomLeft:Radius.circular(30),
+
+                                          ),
+                                      ),
                                       duration: const Duration(milliseconds: 100),
                                       child: Stack(
                                         alignment: Alignment.topRight,
@@ -453,7 +448,7 @@ class _chat_pageState extends State<chat_page> {
                                     ),
                                     SizedBox(
                                       height: size.height * 0.062,
-                                      width: size.width * 0.66,
+                                      width: size.width * 0.78,
                                       child: TextField(
                                         controller: messageController,
                                         enableSuggestions: true,
@@ -475,16 +470,41 @@ class _chat_pageState extends State<chat_page> {
                                         minLines: 1,
                                         autocorrect: true,
                                         textAlign: TextAlign.start,
-                                        style: const TextStyle(
-                                            color: Colors.black, fontSize: 18),
+                                        style: const TextStyle(color: Colors.black, fontSize: 18),
                                         decoration: InputDecoration(
+                                          suffixIcon: IconButton(
+                                              onPressed: () async {
+                                                ImagePicker imagePicker=ImagePicker();
+                                                print(imagePicker);
+                                                XFile? file=await imagePicker.pickImage(source: ImageSource.gallery, imageQuality: 80);
+                                                file!.path.isNotEmpty
+                                                    ?
+                                                Navigator.push(
+                                                  context, PageTransition(
+                                                  childCurrent: chat_page(channel: widget.channel),
+                                                    duration: Duration(milliseconds: 600),
+                                                    child: SendImage(
+                                                        imagePath: file,
+                                                        channel: widget.channel,
+                                                        messageLength: message.length,
+                                                        replyBoxHeight: replyBoxHeight,
+                                                        replyToName: message[replyIndex]["Name"],
+                                                        replyToText: message[replyIndex]["text"].toString().substring(0,message[replyIndex]["text"].length>120?120:message[replyIndex]["text"].length),
+                                                        replyIndex: replyIndex,
+                                                    ),
+                                                    type: PageTransitionType.bottomToTopJoined),
+                                                )
+                                                    :
+                                                null;
+                                              },
+                                              icon: Icon(Icons.image,color: Colors.black,size: size.height*0.04,)),
+                                          suffixIconColor: Colors.black,
                                           fillColor: Colors.white70,
                                           filled: true,
                                           hintText: "Message",
                                           hintStyle: GoogleFonts.exo(
                                             color: Colors.black54,
-                                            fontSize:
-                                                19, //height:size.height*0.0034
+                                            fontSize: 19, //height:size.height*0.0034
                                           ),
                                           contentPadding: EdgeInsets.only(
                                               left: size.width * 0),
@@ -493,7 +513,7 @@ class _chat_pageState extends State<chat_page> {
                                                   borderRadius:
                                                       BorderRadius.all(
                                                           Radius.circular(
-                                                              12.0)),
+                                                              30.0)),
                                                   borderSide: BorderSide(
                                                       color: Colors.black54,
                                                       width: 1)),
@@ -621,8 +641,7 @@ class _chat_pageState extends State<chat_page> {
       alignment: sender ? Alignment.centerRight : Alignment.centerLeft,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisAlignment:
-            sender ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: sender ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
           sender
               ? const SizedBox()
@@ -630,9 +649,9 @@ class _chat_pageState extends State<chat_page> {
                   children: [
                     SizedBox(width: size.width * 0.02),
                     CircleAvatar(
-                      radius: size.width * 0.045,
+                      radius: size.width * 0.035,
                       backgroundImage:
-                          image != "null" ? NetworkImage(image) : null,
+                          image != "null" ? NetworkImage(image,scale: 8) : null,
                       // backgroundColor: Colors.teal.shade300,
                       child: image == "null"
                           ? AutoSizeText(
@@ -646,11 +665,11 @@ class _chat_pageState extends State<chat_page> {
                   ],
                 ),
           Container(
-            width: text.length > 23
+            width: (imageMsg || reply )? size.width*0.55 : text.length > 23
                 ? size.width * 0.028 * 25
                 : name.length >= text.length
                     ? size.width * 0.037 * name.length
-                    : size.width * 0.035 * text.length,
+                    : size.width * 0.035 * text.length ,
             margin: EdgeInsets.symmetric(
                 horizontal: size.width * 0.01, vertical: size.height * 0.01),
             decoration: BoxDecoration(
@@ -670,20 +689,24 @@ class _chat_pageState extends State<chat_page> {
                       : const Radius.circular(0),
                 )),
             padding: EdgeInsets.symmetric(
-                horizontal: size.height * 0.02, vertical: size.height * 0.003),
+                horizontal: size.height * 0.005, vertical: size.height * 0.005),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: size.width*0.008,vertical: size.height*0.002),
+                  padding: EdgeInsets.symmetric(horizontal: size.width*0.015,vertical: size.height*0.002),
                   child: AutoSizeText(
                     name,
                     style: GoogleFonts.poppins(
                         color: Colors.black,
-                        fontSize: size.width * 0.03,
-                        fontWeight: FontWeight.w600),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500),
                   ),
                 ),
+
+
+
+
                 reply
                     ?
               InkWell(
@@ -694,10 +717,10 @@ class _chat_pageState extends State<chat_page> {
                       child: Container(
                           width: double.maxFinite,
                           margin: EdgeInsets.only(
-                            bottom: size.height * 0.01,
-                            top: size.height * 0.01,
+                            bottom: size.height * 0.005,
+                            top: size.height * 0.005,
                           ),
-                          padding: EdgeInsets.all(size.height * 0.008),
+                          padding: EdgeInsets.all(size.height * 0.01),
                           decoration: const BoxDecoration(
                               color: Colors.black,
                               borderRadius:
@@ -706,10 +729,10 @@ class _chat_pageState extends State<chat_page> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                replyToName,
+                                "Replyed To: $replyToName",
                                 style: GoogleFonts.exo(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 13,
                                     color: Colors.white),
                               ),
                               Text(
@@ -719,7 +742,7 @@ class _chat_pageState extends State<chat_page> {
                                         ? ReplyToText.length
                                         : 120),
                                 style: GoogleFonts.exo(
-                                    fontWeight: FontWeight.w500,
+                                    fontWeight: FontWeight.w400,
                                     fontSize: 13,
                                     color: Colors.white),
                               ),
@@ -729,64 +752,63 @@ class _chat_pageState extends State<chat_page> {
                     )
                     : const SizedBox(),
 
-
                 imageMsg ?
-                Container(
-                  width: double.maxFinite,
-                  height: size.height*0.25,
-                  margin: EdgeInsets.only(
-                    bottom: size.height * 0.01,
-                    top: size.height * 0.01,
-                  ),
-                  decoration: BoxDecoration(
-                    image: DecorationImage(image: NetworkImage(imageURL),fit: BoxFit.fill),
-                      color: Colors.black,
-                      borderRadius: const BorderRadius.all(Radius.circular(12)),
-                    border: Border.all(color: Colors.black,width: 2)
+                Padding(
+                  padding:EdgeInsets.symmetric(horizontal: size.height * 0.008, vertical: size.height * 0.003),                  child: Container(
+                    width: double.maxFinite,
+                    height: size.height*0.28,
+
+                    decoration: BoxDecoration(
+                        image: DecorationImage(image: NetworkImage(imageURL),fit: BoxFit.fill),
+                        color: Colors.black,
+                        borderRadius: const BorderRadius.all(Radius.circular(12)),
+                        border: Border.all(color: Colors.black,width: 2)
+                    ),
                   ),
                 )
                     :
                 const SizedBox(),
+
+
                 text.isNotEmpty?
-                SizedBox(
-                  width: size.width * 0.92,
-                  child: AutoSizeText(
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: size.width*0.02,vertical: size.height*0.002),
+                  child: SelectableText(
                     text,
                     style: GoogleFonts.poppins(
                         color: Colors.black.withOpacity(0.75),
-                        fontSize: size.width * 0.037,
+                        fontSize: size.width * 0.035,
                         fontWeight: FontWeight.w400),
                   ),
                 )
                 :
                 const SizedBox(),
-                SizedBox(
-                  width: size.width * 0.92,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      AutoSizeText(
-                        "${stamp.hour}:${stamp.minute < 10 ? "0" : ""}${stamp.minute} ${stamp.hour < 12 ? "am" : "pm"}",
-                        style: GoogleFonts.poppins(
-                            color: Colors.black.withOpacity(0.8),
-                            fontSize: size.width * 0.022,
-                            fontWeight: FontWeight.w400),
-                        textAlign: TextAlign.right,
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      sender
-                          ? Icon(
-                              Icons.check_circle_outline,
-                              color: readed
-                                  ? Colors.green
-                                  : Colors.black.withOpacity(0.8),
-                              size: size.width * 0.05,
-                            )
-                          : const SizedBox(),
-                    ],
-                  ),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    AutoSizeText(
+                      "${stamp.hour}:${stamp.minute < 10 ? "0" : ""}${stamp.minute} ${stamp.hour < 12 ? "am" : "pm"}",
+                      style: GoogleFonts.poppins(
+                          color: Colors.black.withOpacity(0.8),
+                          fontSize: size.width * 0.022,
+                          fontWeight: FontWeight.w400),
+                      textAlign: TextAlign.right,
+                    ),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    sender
+                        ? Icon(
+                            Icons.check,
+                            color: readed
+                                ? Colors.green
+                                : Colors.black.withOpacity(0.8),
+                            size: size.width * 0.05,
+                          )
+                        : const SizedBox(),
+                  ],
                 )
               ],
             ),
@@ -796,7 +818,7 @@ class _chat_pageState extends State<chat_page> {
               : Row(
                   children: [
                     CircleAvatar(
-                      radius: size.width * 0.045,
+                      radius: size.width * 0.035,
                       backgroundImage:
                           image != "null" ? NetworkImage(image) : null,
                       // backgroundColor: Colors.teal.shade300,
