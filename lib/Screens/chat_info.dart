@@ -5,6 +5,7 @@ import 'package:campus_link_teachers/Constraints.dart';
 import 'package:campus_link_teachers/Database/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -22,6 +23,15 @@ class Chat_Info extends StatefulWidget {
 
 
 class _Chat_InfoState extends State<Chat_Info> {
+   bool _switched=false;
+ final _notification_mute =GlobalKey();
+
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    is_mute();
+  }
   @override
   Widget build(BuildContext context) {
     Size size=MediaQuery.of(context).size;
@@ -139,7 +149,7 @@ class _Chat_InfoState extends State<Chat_Info> {
             ),
 
             Container(
-              height: size.height*0.1,
+              height: size.height*0.18,
               width: size.width,
               decoration: const BoxDecoration(
 
@@ -186,6 +196,52 @@ class _Chat_InfoState extends State<Chat_Info> {
                             :
                                 const SizedBox();
                           },
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: size.height*0.01,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Icon(Icons.notifications,color: Colors.black38,size: size.height*0.035,),
+                        SizedBox(
+                          width: size.width*0.02,
+                        ),
+                        AutoSizeText(
+                          "Mute Notifications ",
+                          style:GoogleFonts.exo(
+                              fontSize: size.height*0.019,
+                              fontWeight: FontWeight.w500
+                          ) ,
+                        ),
+                        SizedBox(
+                          width: size.width*0.32,
+                        ),
+                        SizedBox(
+                          child: CupertinoSwitch(
+                            value:!_switched ,
+                              onChanged: (value) {
+                                setState(() {
+                                  _switched=!_switched;
+                                });
+                                if(value)
+                                  {
+                                    FirebaseFirestore.instance.collection("Messages").doc(widget.channel).update({
+                                      "Token":FieldValue.arrayRemove([usermodel["Token"]]),
+                                    }).whenComplete(() => print(".................deleted........"));
+                                  }
+                                else{
+                                  FirebaseFirestore.instance.collection("Messages").doc(widget.channel).update({
+                                    "Token":FieldValue.arrayUnion([usermodel["Token"]]),
+                                  }).whenComplete(() => print(".................Added........"));
+                                }
+                              },
+                            activeColor: Colors.green,
+                            //activeTrackColor: Colors.black38,
+
+                          ),
                         ),
                       ],
                     )
@@ -322,8 +378,7 @@ class _Chat_InfoState extends State<Chat_Info> {
                                 ),
                               )
                                   :
-                              const SizedBox()
-                              ;
+                              const SizedBox();
                             }
                           );
                         },);
@@ -338,5 +393,14 @@ class _Chat_InfoState extends State<Chat_Info> {
         ),
       ),
     );
+  }
+
+  is_mute() async {
+   await  FirebaseFirestore.instance.collection("Messages").doc(widget.channel).get().then((value) {
+      setState(() {
+        _switched=value.data()?["Token"].contains(usermodel["Token"]);
+      });
+      print(".............$_switched.....");
+    });
   }
 }

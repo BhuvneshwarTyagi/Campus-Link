@@ -122,7 +122,7 @@ class _chat_pageState extends State<chat_page> {
                                       );
                                     },
                                     child: SizedBox(
-                                      width: size.width * 0.55,
+                                      width: size.width * 0.5,
                                       child: Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
