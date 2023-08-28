@@ -571,7 +571,7 @@ class _AttendanceState extends State<Attendance> {
                                                           {
                                                             "${DateTime.now().day}": FieldValue.arrayUnion([{
                                                               "Time":DateTime.timestamp(),
-                                                              "Status" : "Absent"
+                                                              "Status" : "Present"
                                                             }]),
                                                             "count_attendance": FieldValue.increment(1)
                                                           });
@@ -606,10 +606,14 @@ class _AttendanceState extends State<Attendance> {
                                                           .doc(element)
                                                           .collection("Attendance")
                                                           .doc("$subject_filter-${DateTime.now().month}")
-                                                          .set({
-                                                        "${DateTime.now().day}": FieldValue.arrayUnion([""]),
-                                                        "count_attendance": FieldValue.increment(1)
-                                                      })
+                                                          .set(
+                                                          {
+                                                            "${DateTime.now().day}": FieldValue.arrayUnion([{
+                                                              "Time":DateTime.timestamp(),
+                                                              "Status" : "Absent"
+                                                            }]),
+                                                            "count_attendance": FieldValue.increment(1)
+                                                          })
                                                           :
                                                       await FirebaseFirestore
                                                           .instance
@@ -619,7 +623,10 @@ class _AttendanceState extends State<Attendance> {
                                                           .doc("$subject_filter-${DateTime.now().month}")
                                                           .update(
                                                           {
-                                                            "${DateTime.now().day}": FieldValue.arrayUnion([""]),
+                                                            "${DateTime.now().day}": FieldValue.arrayUnion([{
+                                                              "Time":DateTime.timestamp(),
+                                                              "Status" : "Absent"
+                                                            }]),
                                                             "count_attendance": FieldValue.increment(1)
                                                           });
                                                       database().sendPushMessage(token, "Attendance Missed", subject_filter);

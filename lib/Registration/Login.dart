@@ -342,7 +342,7 @@ class _SignInScreenState extends State<SignInScreen> {
         ),
         TextButton(
           onPressed: () {
-            Navigator.push(
+            Navigator.pushReplacement(
               context,
               PageTransition(
                 child: const SignUpScreen(),

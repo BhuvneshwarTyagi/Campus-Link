@@ -11,10 +11,11 @@ class ImageTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size size=MediaQuery.of(context).size;
+    Size size = MediaQuery.of(context).size;
     return InkWell(
-      onTap: (){
-        Navigator.push(context,
+      onTap: () {
+        Navigator.push(
+            context,
             PageTransition(
                 childCurrent: chat_page(channel: channel),
                 duration: const Duration(milliseconds: 400),
@@ -22,17 +23,22 @@ class ImageTile extends StatelessWidget {
                 type: PageTransitionType.bottomToTopJoined));
       },
       child: Padding(
-        padding:EdgeInsets.symmetric(horizontal: size.height * 0.008, vertical: size.height * 0.003),                  child: Container(
-        width: double.maxFinite,
-        height: size.height*0.28,
-
-        decoration: BoxDecoration(
-            image: DecorationImage(image: NetworkImage(imageURL),fit: BoxFit.fill),
-            color: Colors.black,
-            borderRadius: const BorderRadius.all(Radius.circular(12)),
-            border: Border.all(color: Colors.black,width: 2)
+        padding: EdgeInsets.symmetric(horizontal: size.height * 0.008, vertical: size.height * 0.003),
+        child: Container(
+          width: double.maxFinite,
+          decoration: BoxDecoration(
+              // image: DecorationImage(
+              //     image: NetworkImage(imageURL), fit: BoxFit.fill),
+              color: Colors.black.withOpacity(0.5),
+              borderRadius: const BorderRadius.all(Radius.circular(12)),
+              border: Border.all(color: Colors.black, width: 2),
+          ),
+          child: Image.network(
+            imageURL,
+            fit: BoxFit.contain,
+            cacheHeight: int.parse("${double.maxFinite}")
+          ),
         ),
-      ),
       ),
     );
   }

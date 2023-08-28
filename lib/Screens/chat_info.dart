@@ -40,18 +40,7 @@ class _Chat_InfoState extends State<Chat_Info> {
   Widget build(BuildContext context) {
     Size size=MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.black54,
-        leading:
-          IconButton(
-              onPressed: (){
-                Navigator.pop(context);
-                },
-              icon: const Icon(Icons.arrow_back_ios_new)
-          )
-        ,
-      ),
+      backgroundColor: const Color.fromRGBO(5, 8, 10, 1),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Column(
@@ -59,31 +48,41 @@ class _Chat_InfoState extends State<Chat_Info> {
             Container(
               width: size.width,
               decoration: const BoxDecoration(
-                  color: Colors.black12
+
               ),
-                 height: size.height*0.35,
+                 height: size.height*0.45,
               padding: EdgeInsets.all(size.width*0.03),
               child:  Column(
                 children: [
                   SizedBox(
-                    height: size.height*0.03,
+                    height: size.height*0.018,
+                  ),
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: IconButton(
+                        onPressed: (){
+                          Navigator.pop(context);
+                        },
+                        icon: const Icon(Icons.arrow_back_ios_new,color: Colors.white,)
+                    ),
+                  ),
+                  SizedBox(
+                    height: size.height*0.032,
                   ),
                   Stack(
                     children: [
                       CircleAvatar(
-                        radius: size.height*0.07,
-                        backgroundColor: Colors.blueAccent,
-                        backgroundImage: NetworkImage(widget.url),
-                        child:widget.url==null?
-                        AutoSizeText(widget.channel.split(" ")[6])
-                        :
-                          null
+                        radius: size.height*0.08,
+                        backgroundColor: Colors.white30,
+                        //backgroundImage: NetworkImage(widget.url),
+                        child://widget.url==null?
+                        Icon(Icons.group,color:Colors.white30 ,size: size.height*0.1,)
                     ),
                       Positioned(
                         bottom: -5,
                         right: size.height*0.01,
                         child: IconButton(
-                          icon: Icon(Icons.camera_enhance,size:size.height*0.03 ,color: Colors.white,),
+                          icon: Icon(Icons.camera_enhance,size:size.height*0.04 ,color: Colors.white,),
                           onPressed: () async {
 
                             ImagePicker imagePicker=ImagePicker();
@@ -119,12 +118,12 @@ class _Chat_InfoState extends State<Chat_Info> {
                     ],
                   ),
                   SizedBox(
-                    height: size.height*0.018,
+                    height: size.height*0.04,
                   ),
                   AutoSizeText(
                       widget.channel,
-                    style: GoogleFonts.exo(
-                      color: Colors.black,
+                    style: GoogleFonts.openSans(
+                      color: Colors.white70,
                       fontSize: size.height*0.025,
                       fontWeight:FontWeight.w600
                     ),
@@ -135,9 +134,9 @@ class _Chat_InfoState extends State<Chat_Info> {
                     height: size.height*0.02,
                   ),
                   AutoSizeText(
-                    "Group : ${widget.membersCount} participants",
-                    style: GoogleFonts.exo(
-                        color: Colors.black,
+                    "Group : ${widget.membersCount} Participants",
+                    style: GoogleFonts.openSans(
+                        color: Colors.white30,
                         fontSize: size.height*0.02,
                         fontWeight:FontWeight.w600
                     ),
@@ -148,26 +147,27 @@ class _Chat_InfoState extends State<Chat_Info> {
                 ],
               ),
             ),
-            SizedBox(
-              height: size.height*0.01,
+            Container(
+              height: size.height*0.007,
+              width: size.width*1,
+              color: Colors.white10,
             ),
 
             Container(
-              height: size.height*0.22,
+              height: size.height*0.28,
               width: size.width,
               decoration: const BoxDecoration(
 
-                color: Colors.black12
               ),
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding:EdgeInsets.all(size.height*0.025),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                    AutoSizeText(
                      "About Group",
-                     style: GoogleFonts.exo(
-                     color: Colors.indigo,
+                     style: GoogleFonts.openSans(
+                     color: Colors.white70,
                    fontSize: size.height*0.024,
                    fontWeight: FontWeight.w600
                    ),
@@ -180,7 +180,8 @@ class _Chat_InfoState extends State<Chat_Info> {
                       children: [
                         AutoSizeText(
                           "Created by ",
-                          style:GoogleFonts.exo(
+                          style:GoogleFonts.openSans(
+                            color: Colors.white38,
                             fontSize: size.height*0.019,
                             fontWeight: FontWeight.w500
                           ) ,
@@ -193,6 +194,7 @@ class _Chat_InfoState extends State<Chat_Info> {
                             AutoSizeText(
                               "${snapshot.data!.data()?["CreatedOn"]["Name"]}, ${snapshot.data!.data()?["CreatedOn"]["Date"].toDate().day}/${snapshot.data!.data()?["CreatedOn"]["Date"].toDate().month}/${snapshot.data!.data()?["CreatedOn"]["Date"].toDate().year}",
                               style:GoogleFonts.exo(
+                                  color: Colors.white38,
                                   fontSize: size.height*0.019,
                                   fontWeight: FontWeight.w500
                               ) ,
@@ -204,24 +206,29 @@ class _Chat_InfoState extends State<Chat_Info> {
                       ],
                     ),
                     SizedBox(
-                      height: size.height*0.01,
+                      height: size.height*0.022,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Icon(Icons.notifications,color: Colors.black38,size: size.height*0.035,),
+                        _switched?
+
+                      Icon(Icons.notifications,color: Colors.white30,size: size.height*0.035,)
+                            :
+                        Icon(Icons.notifications_off,color: Colors.white30,size: size.height*0.035,),
                         SizedBox(
-                          width: size.width*0.02,
+                          width: size.width*0.03,
                         ),
                         AutoSizeText(
                           "Mute Notifications ",
                           style:GoogleFonts.exo(
+                              color: Colors.white38,
                               fontSize: size.height*0.019,
                               fontWeight: FontWeight.w500
                           ) ,
                         ),
                         SizedBox(
-                          width: size.width*0.32,
+                          width: size.width*0.26,
                         ),
                         SizedBox(
                           child: Switch(
@@ -242,17 +249,19 @@ class _Chat_InfoState extends State<Chat_Info> {
                                   }).whenComplete(() => print(".................Added........"));
                                 }
                               },
-                            activeColor: Colors.green,
-                            //activeTrackColor: Colors.black38,
+                            activeColor: Colors.black26,
+                            activeTrackColor: Colors.white10,
+
 
                           ),
                         ),
                       ],
                     ),
                     SizedBox(
-                      height: size.height*0.01,
+                      height: size.height*0.018,
                     ),
-                    TextButton(onPressed: (){
+                    InkWell(
+                        onTap: (){
                       Navigator.push(
                         context,
                         PageTransition(
@@ -267,14 +276,14 @@ class _Chat_InfoState extends State<Chat_Info> {
                         child:Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Icon(Icons.image,color: Colors.black38,size: size.height*0.03,),
+                            Icon(Icons.image,color: Colors.white30,size: size.height*0.035,),
                             SizedBox(
                               width: size.width*0.022,
                             ),
                             AutoSizeText(
                               "Show Media",
                               style: GoogleFonts.exo(
-                                  color: Colors.indigo,
+                                  color: Colors.white38,
                                   fontSize: size.height*0.02,
                                   fontWeight: FontWeight.w600
                               ),
@@ -287,26 +296,31 @@ class _Chat_InfoState extends State<Chat_Info> {
                 ),
               ),
             ),
-            SizedBox(
-              height: size.height*0.01,
+            Container(
+              height: size.height*0.007,
+              width: size.width*1,
+              color: Colors.white10,
             ),
             Container(
               height: size.height,
               decoration: const BoxDecoration(
-
-                  color: Colors.black12
               ),
               child:  Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    height:size.height*0.05,
+                    height: size.height*0.015,
+                  ),
+                  SizedBox(
+                    //height:size.height*0.025,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         AutoSizeText(
-                          "   ${widget.membersCount} participants",
-                          style: GoogleFonts.exo(
-                              color: Colors.black,
+                          "   ${widget.membersCount} Participants",
+                          style: GoogleFonts.openSans(
+                              color: Colors.white70,
                               fontSize: size.height*0.02,
                               fontWeight:FontWeight.w400
                           ),
@@ -339,52 +353,56 @@ class _Chat_InfoState extends State<Chat_Info> {
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Row(
-
-                                            children: [
-                                              CircleAvatar(
-                                                radius: size.width*0.07,
-                                                backgroundColor: const Color.fromRGBO(86, 149, 178, 1),
-                                                child: snapshot2.data?.data()!["Profile_URL"]!=null
-                                                    ?
-                                                Image(image: NetworkImage(snapshot2.data?.data()!["Profile_URL"]))
-                                                    :
-                                                AutoSizeText( snapshot2.data?.data()!["Name"].toString().substring(0,1) ?? "A",
-                                                  style: GoogleFonts.exo(
-                                                      fontSize: size.height*0.022,
-                                                      fontWeight: FontWeight.w600
-                                                  ),
-                                                ),
-
-
-                                              ),
-                                              SizedBox(
-                                                width: size.width*0.02,
-                                              ),
-                                              Column(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-
-                                                children: [
-                                                  AutoSizeText( snapshot2.data?.data()!["Name"],
-                                                    style: GoogleFonts.exo(
+                                          SizedBox(
+                                            width: size.width*0.72,
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              children: [
+                                                CircleAvatar(
+                                                  radius: size.width*0.07,
+                                                  backgroundColor: Colors.white10,
+                                                  child: snapshot2.data!.data()!["Profile_URL"]!=null
+                                                      ?
+                                                  Image(image: NetworkImage(snapshot2.data?.data()!["Profile_URL"]))
+                                                      :
+                                                  AutoSizeText(
+                                                    snapshot2.data?.data()!["Name"].toString().substring(0,1) ?? "A",
+                                                    style: GoogleFonts.openSans(
                                                         fontSize: size.height*0.022,
+                                                        color: Colors.white38,
                                                         fontWeight: FontWeight.w600
                                                     ),
                                                   ),
-                                                  AutoSizeText(
-                                                    "User_description",
-                                                    style: GoogleFonts.exo(
-                                                        fontSize: size.height*0.01,
-                                                        fontWeight: FontWeight.w500
+
+
+                                                ),
+                                                SizedBox(
+                                                  width: size.width*0.02,
+                                                ),
+                                                Column(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+
+                                                  children: [
+                                                    AutoSizeText( snapshot2.data?.data()!["Name"],
+                                                      style: GoogleFonts.openSans(
+                                                          color: Colors.white54,
+                                                          fontSize: size.height*0.022,
+                                                          fontWeight: FontWeight.w600
+                                                      ),
                                                     ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                width: size.width*0.18,
-                                              ),
-                                            ],
+                                                    AutoSizeText(
+                                                      "User_description",
+                                                      style: GoogleFonts.openSans(
+                                                          color: Colors.white38,
+                                                          fontSize: size.height*0.01,
+                                                          fontWeight: FontWeight.w500
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                           snapshot.data?.data()!["Admins"].contains(usermodel["Email"])
                                               ?
@@ -395,7 +413,7 @@ class _Chat_InfoState extends State<Chat_Info> {
                                                 shape: BoxShape.rectangle,
                                                 borderRadius: BorderRadius.all(Radius.circular(8)),
                                                 border: Border.all(
-                                                    color: Colors.black,
+                                                    color: Colors.white38,
                                                     width: 1
                                                 ),
                                                 color: Colors.black54
@@ -403,10 +421,10 @@ class _Chat_InfoState extends State<Chat_Info> {
                                             child: Center(
                                               child: AutoSizeText(
                                                 "Group Admin",
-                                                style: GoogleFonts.exo(
+                                                style: GoogleFonts.openSans(
+                                                    color: Colors.white38,
                                                     fontSize: size.height*0.016,
                                                     fontWeight: FontWeight.w600,
-                                                    color: Colors.white
                                                 ),
                                               ),
                                             ),

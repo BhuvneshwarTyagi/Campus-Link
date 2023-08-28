@@ -20,7 +20,6 @@ class _chatsystemState extends State<chatsystem> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(63, 63, 63,1),
-        leadingWidth: size.width*0.07,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new),
           onPressed: (){
@@ -70,30 +69,46 @@ class _chatsystemState extends State<chatsystem> {
             },)
         ],
       ),
-      body: ListView.builder(
+      body: usermodel["Message_channels"]==null || usermodel["Message_channels"].length<0
+          ?
+      Center(
+        child: Container(
+          width: size.width*0.9,
+          height: size.height*0.1,
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.circular(30)),
+            gradient: LinearGradient(
+                colors: [
+              Colors.black.withOpacity(0.1),
+              Colors.black.withOpacity(0.1),
+            ])
+          ),
+          child: Center(
+            child: AutoSizeText("Please add subject first.",style: GoogleFonts.gfsDidot(
+              color: Colors.white,
+              fontSize: size.height*0.035
+            ),)
+          ),
+        ),
+      )
+          :
+      ListView.builder(
         itemCount: usermodel["Message_channels"].length,
         itemBuilder: (context, index) {
           return InkWell(
             onTap: () async {
-             /* dynamic map={};
               await FirebaseFirestore.instance
                   .collection("Messages")
-                  .doc(usermodel["Message_channels"][index]).get().then((value) {
-                     map=value.data()?[usermodel["Email"].toString().split("@")[0]];
-              }).whenComplete(() async {
-                await FirebaseFirestore.instance
-                    .collection("Messages")
-                    .doc(usermodel["Message_channels"][index])
-                    .update({
-                  usermodel["Email"]
-                      .toString()
-                      .split("@")[0]: {
-                    "Last_Active": map["Last_Active"],
-                    "Read_Count": map["Read_Count"],
-                    "Active":true,
-                  }
-                });
-              }).whenComplete(() {
+                  .doc(usermodel["Message_channels"][index])
+                  .update({
+                usermodel["Email"]
+                    .toString()
+                    .split("@")[0]: {
+                  "Last_Active": DateTime.now(),
+                  "Read_Count": FieldValue,
+                  "Active": true,
+                }
+              }).whenComplete((){
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -101,42 +116,6 @@ class _chatsystemState extends State<chatsystem> {
                   ),
                 );
               });
-*/
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => chat_page(channel: usermodel["Message_channels"][index]),
-                ),
-              );
-
-
-
-
-              
-              // int count=0;
-              // await FirebaseFirestore
-              //     .instance
-              //     .collection("Messages")
-              //     .doc(usermodel["Message_channels"][index])
-              //     .get().then((value){
-              //    count=value.data()!["Messages"].length;
-              // });
-              // Map<String,int> map = {"Readed_count": count};
-              // await FirebaseFirestore
-              //     .instance
-              //     .collection("Messages")
-              //     .doc(usermodel["Message_channels"][index])
-              //     .update({
-              //   usermodel["Email"].toString().split("@")[0] : map
-              // })
-              //     .whenComplete(() => Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //       builder: (context) => chat_page(channel: usermodel["Message_channels"][index]),
-              //     ),
-              // ),
-              // );
-
             },
             child: Container(
               height: size.height*0.1,
@@ -180,7 +159,7 @@ class _chatsystemState extends State<chatsystem> {
                           int count=0;
                           snapshot2.hasData
                               ?
-                             count= snapshot2.data?.data()!["Messages"].length-snapshot2.data?.data()![usermodel["Email"].toString().split("@")[0]]["Read_Count"]-1
+                          count= snapshot2.data?.data()!["Messages"].length-snapshot2.data?.data()![usermodel["Email"].toString().split("@")[0]]["Read_Count"]-1
                               :
                           null;
 
@@ -194,7 +173,7 @@ class _chatsystemState extends State<chatsystem> {
                                   style: GoogleFonts.poppins(
                                       color: Colors.black.withOpacity(0.80),
                                       fontSize: size.width*0.035,
-                                    fontWeight: FontWeight.w400
+                                      fontWeight: FontWeight.w400
                                   ),
                                   textAlign: TextAlign.left,
                                 ),
@@ -208,7 +187,7 @@ class _chatsystemState extends State<chatsystem> {
                                   style: GoogleFonts.poppins(
                                       color: Colors.white,
                                       fontSize: size.width*0.035,
-                                    fontWeight: FontWeight.w400
+                                      fontWeight: FontWeight.w400
                                   ),
                                   textAlign: TextAlign.left,
                                 ),

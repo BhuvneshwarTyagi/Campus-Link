@@ -173,7 +173,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       color: Colors.transparent,
-      theme: ThemeData(colorScheme: const ColorScheme.dark(),backgroundColor: Colors.transparent),
+      //theme: ThemeData(colorScheme: const ColorScheme.dark(),backgroundColor: Colors.transparent),
       debugShowCheckedModeBanner: false,
        home: Checkconnection(),
       builder: InAppNotifications.init(),

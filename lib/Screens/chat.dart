@@ -3,6 +3,7 @@ import 'package:campus_link_teachers/Constraints.dart';
 import 'package:campus_link_teachers/Database/database.dart';
 import 'package:campus_link_teachers/Screens/Image_viewer.dart';
 import 'package:campus_link_teachers/Screens/Sending_Media.dart';
+import 'package:campus_link_teachers/Screens/loadingscreen.dart';
 import 'package:chat_bubbles/date_chips/date_chip.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -77,7 +78,6 @@ class _chat_pageState extends State<chat_page> {
                           ? AppBar(
                               elevation: 0,
                               backgroundColor: Colors.black54,
-                              leadingWidth: size.width * 0.09,
                               leading: IconButton(
                                   onPressed: () async {
                                     await FirebaseFirestore.instance
@@ -127,15 +127,13 @@ class _chat_pageState extends State<chat_page> {
                                                 milliseconds: 300)),
                                       );
                                     },
-                                    child: SizedBox(
-                                      width: size.width * 0.5,
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          AutoSizeText(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(
+                                          width: size.width * 0.49,
+                                          child: AutoSizeText(
                                             widget.channel,
                                             style: GoogleFonts.exo(
                                                 color: Colors.white,
@@ -143,16 +141,20 @@ class _chat_pageState extends State<chat_page> {
                                             maxLines: 1,
                                             minFontSize: 1,
                                           ),
-                                          AutoSizeText(
-                                            "$activeCount Online",
-                                            style: GoogleFonts.exo(
-                                                color: Colors.green,
-                                                fontSize: size.width * 0.028),
-                                            minFontSize: 1,
-                                            maxLines: 1,
-                                          ),
-                                        ],
-                                      ),
+                                        ),
+                                        activeCount>0
+                                            ?
+                                        AutoSizeText(
+                                          "$activeCount Online",
+                                          style: GoogleFonts.exo(
+                                              color: Colors.green,
+                                              fontSize: size.width * 0.028),
+                                          minFontSize: 1,
+                                          maxLines: 1,
+                                        )
+                                            :
+                                        const SizedBox(),
+                                      ],
                                     ),
                                   ),
                                 ],
@@ -205,7 +207,6 @@ class _chat_pageState extends State<chat_page> {
                           : AppBar(
                               elevation: 0,
                               backgroundColor: Colors.black54,
-                              leadingWidth: size.width * 0.09,
                               leading: IconButton(
                                 onPressed: () {
                                   setState(() {
@@ -474,20 +475,20 @@ class _chat_pageState extends State<chat_page> {
                                       child: TextField(
                                         controller: messageController,
                                         enableSuggestions: true,
-                                        onTapOutside: (event) async {
-                                          await FirebaseFirestore.instance
-                                              .collection("Messages")
-                                              .doc(widget.channel)
-                                              .update({
-                                            usermodel["Email"]
-                                                .toString()
-                                                .split("@")[0]: {
-                                              "Last_Active": DateTime.now(),
-                                              "Read_Count": message.length - 1,
-                                              "Active": true,
-                                            }
-                                          });
-                                        },
+                                        // onTapOutside: (event) async {
+                                        //   await FirebaseFirestore.instance
+                                        //       .collection("Messages")
+                                        //       .doc(widget.channel)
+                                        //       .update({
+                                        //     usermodel["Email"]
+                                        //         .toString()
+                                        //         .split("@")[0]: {
+                                        //       "Last_Active": DateTime.now(),
+                                        //       "Read_Count": message.length - 1,
+                                        //       "Active": true,
+                                        //     }
+                                        //   });
+                                        // },
                                         maxLines: 5,
                                         minLines: 1,
                                         autocorrect: true,
@@ -668,9 +669,7 @@ class _chat_pageState extends State<chat_page> {
                     ),
                   ),
                 )
-              : const Center(
-                  child: CircularProgressIndicator(),
-                );
+              : const loading(text: "Please wait Loading chat from the server");
         });
   }
 
@@ -807,9 +806,10 @@ class _chat_pageState extends State<chat_page> {
     int count = 0;
     List<dynamic> member_list = snapshot.data?.data()!["Members"];
     for (var email in member_list) {
+      print(snapshot.data!.data()![email["Email"].toString().split("@")[0]]
+      ["Active"]);
       if (snapshot.data!.data()![email["Email"].toString().split("@")[0]]
-      ["Active"] !=
-          null &&
+      ["Active"] != null &&
           snapshot.data!.data()![email["Email"].toString().split("@")[0]]
           ["Active"]) {
         count++;

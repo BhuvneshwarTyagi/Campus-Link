@@ -7,7 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 import '../Constraints.dart';
 import 'Basic.dart';
-import 'Login.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -332,15 +331,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   "Name" : nameController.text.trim(),
                                   "bg" : "bg-1.jpg"
                                 });
-                                await FirebaseFirestore.instance.collection("Teachers").doc(email.text.trim()).collection("Teachings").doc("Teachings").set({}).whenComplete(() => Navigator.push(
-                                  context,
-                                  PageTransition(
-                                    child: const basicDetails(),
-                                    type: PageTransitionType.rightToLeftJoined,
-                                    duration: const Duration(milliseconds: 350),
-                                    childCurrent: const SignUpScreen(),
-                                  ),
-                                ));
+                                await FirebaseFirestore.instance.collection("Teachers").doc(email.text.trim()).collection("Teachings").doc("Teachings").set({}).whenComplete(() => Navigator.pop(context));
 
                               }
 

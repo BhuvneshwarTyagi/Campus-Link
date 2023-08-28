@@ -466,7 +466,7 @@ class _SubjectState extends State<Subject> {
                                           int end= int.parse(end_date_controller.text.trim().split('-')[2]);
                                           for(int i=start;i<=end;i++){
                                             int countP=0;
-                                            if(doc.data()?["$i"] !=null){
+                                            if(doc.data()?["$i"]["Status"] != "Absent"){
                                               List<dynamic> attendance=doc.data()!["$i"];
                                               for(var temp in attendance){
                                                 if(temp!=""){

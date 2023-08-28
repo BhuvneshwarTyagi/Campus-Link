@@ -1,10 +1,13 @@
 import 'package:campus_link_teachers/Constraints.dart';
+import 'package:campus_link_teachers/Database/database.dart';
+import 'package:campus_link_teachers/Screens/loadingscreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inapp_notifications/flutter_inapp_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:searchfield/searchfield.dart';
 
 class basicDetails extends StatefulWidget {
@@ -573,9 +576,23 @@ class _basicDetailsState extends State<basicDetails> {
                         secController.text.isNotEmpty &&
                         subjectController.text.isNotEmpty) {
                       try {
+                        Navigator.push(context, PageTransition(
+                          duration: const Duration(milliseconds: 400),
+                          childCurrent: const basicDetails(),
+                            child: const loading(text: "Adding subject please wait"),
+                            type: PageTransitionType.bottomToTopJoined));
                         Map<String,dynamic> map = {
+                          "Active":false,
                           "Read_Count": 0,
                           "Last_Active" : DateTime.now()};
+                        var data=await FirebaseFirestore.instance.collection("Chat_Channels").doc("Channels").get();
+                        data.data()==null
+                            ?
+                        await FirebaseFirestore.instance.collection("Chat_Channels").doc("Channels").set({
+                          "Channels" : FieldValue.arrayUnion([""])
+                        })
+                            :
+                            null;
                         await FirebaseFirestore.instance.collection("Chat_Channels").doc("Channels").get().then((value) async {
                           List<dynamic> channel=value.data()!["Channels"];
                           channel.contains(
@@ -621,7 +638,12 @@ class _basicDetailsState extends State<basicDetails> {
                             "Messages" : [{"Name": usermodel["Name"],"text":"Hello" , "UID": usermodel["Email"],"Stamp": DateTime.now(),"Image": usermodel["Profile_URL"]}],
                             "Token" : FieldValue.arrayUnion([usermodel["Token"]]),
                             "Admins" : FieldValue.arrayUnion(["${usermodel["Email"]}"]),
-                            "Members" : FieldValue.arrayUnion(["${usermodel["Email"]}"]),
+                            "Members" : FieldValue.arrayUnion([
+                              {
+                                "Email ": "${usermodel["Email"]}",
+                                "Post" : "Teachers"
+                              }
+                            ]),
                             usermodel["Email"].toString().split("@")[0] : map,
                             "image_URL" : "null",
                             "CreatedOn": {"Date" : DateTime.now(), "Name": usermodel["Name"]}
@@ -651,14 +673,24 @@ class _basicDetailsState extends State<basicDetails> {
                           ])
                         });
                         await FirebaseFirestore.instance.collection("Teacher_record").doc("Email").update({
-                          "Email": [FirebaseAuth.instance.currentUser!.email]
+                          "Email": FieldValue.arrayUnion([usermodel["Email"]])
                         });
+
+                        data=await FirebaseFirestore.instance.collection("University").doc("University").get();
+
+                        data.data()==null
+                            ?
+                        await FirebaseFirestore.instance.collection("University").doc("University").set(
+                            {
+                              "University": FieldValue.arrayUnion([universityController.text.trim()])
+                            })
+                        :
                         await FirebaseFirestore.instance.collection("University").doc("University").update(
                             {
-                              "University":FieldValue.arrayUnion([universityController.text.trim()])
+                              "University": FieldValue.arrayUnion([universityController.text.trim()])
                             });
                         
-                        var data=await FirebaseFirestore.instance.collection("Colleges").doc(universityController.text.trim()).get();
+                        data=await FirebaseFirestore.instance.collection("Colleges").doc(universityController.text.trim()).get();
 
                         data.data()==null
                             ?
@@ -771,34 +803,28 @@ class _basicDetailsState extends State<basicDetails> {
                           {
                             "Subject-$uni_index$clg_index$course_index$branch_index$year_index$section_index": FieldValue.arrayUnion([subjectController.text.trim()]),
                           },
-                        ).whenComplete(() => Navigator.pop(context));
-
-
-
-                        // StreamBuilder(
-                        //    stream: FirebaseFirestore.instance.collection("Teachers").doc(FirebaseAuth.instance.currentUser!.email).snapshots(),
-                        //     builder: (context, snapshot)  {
-                        //
-                        //
-                        //      return Container();
-                        //
-                        //      },
-                        // );
-
-
-                        // await FirebaseFirestore.instance
-                        //     .collection("Teachers")
-                        //     .doc(FirebaseAuth.instance.currentUser?.email)
-                        //     .update({
-                        //   "University": [universityController.text.trim()],
-                        //   "Colleges-0": [clgController.text.trim()],
-                        //   'Course-0': [courseController.text.trim()],
-                        //   "Branch-0": [branchController.text.trim()],
-                        //   'Year-0': [yearController.text.trim()],
-                        //   "Section": [secController.text.trim()],
-                        //   "Subject": [subjectController.text.trim()]
-                        // }).whenComplete(() => FirebaseAuth.instance.signOut());
-                        // Navigator.pop(context);
+                        ).whenComplete((){
+                          InAppNotifications.instance
+                            ..titleFontSize = 35.0
+                            ..descriptionFontSize = 20.0
+                            ..textColor = Colors.black
+                            ..backgroundColor = const Color.fromRGBO(150, 150, 150, 1)
+                            ..shadow = true
+                            ..animationStyle = InAppNotificationsAnimationStyle.scale;
+                          InAppNotifications.show(
+                              title: 'Successful',
+                              duration: const Duration(seconds: 2),
+                              description: "Subject added",
+                              leading: const Icon(
+                                Icons.check,
+                                color: Colors.green,
+                                size: 55,
+                              ));
+                          database().fetchuser().whenComplete((){
+                             Navigator.pop(context);
+                             Navigator.pop(context);
+                          });
+                        });
                       } on FirebaseException catch (e) {
                         InAppNotifications.instance
                           ..titleFontSize = 35.0

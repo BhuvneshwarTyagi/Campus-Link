@@ -93,7 +93,7 @@ class _Media_filesState extends State<Media_files> {
                           radius: size.width*0.04,
                           child: Icon(Icons.play_arrow,color: Colors.white60,size: size.width*0.06,))
                           :
-                          SizedBox()
+                      const SizedBox()
                     ),
 
                   ),
