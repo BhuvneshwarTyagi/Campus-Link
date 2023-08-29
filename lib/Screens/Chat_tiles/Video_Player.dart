@@ -17,6 +17,14 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(widget.videoURL));
+    videoPlayerController.initialize().then((value) {
+      if(mounted){
+        setState(() {
+          print("Initialized");
+        });
+      }
+    });
   }
   bool playing=false;
   @override

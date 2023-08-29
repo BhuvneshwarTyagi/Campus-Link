@@ -36,7 +36,7 @@ class ImageTile extends StatelessWidget {
           child: Image.network(
             imageURL,
             fit: BoxFit.contain,
-            cacheHeight: int.parse("${double.maxFinite}")
+            cacheHeight: double.maxFinite.round()
           ),
         ),
       ),

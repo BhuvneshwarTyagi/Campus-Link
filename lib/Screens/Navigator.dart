@@ -101,11 +101,66 @@ class _NeviState extends State<Nevi> {
             // Important: Remove any padding from the ListView.
             padding: EdgeInsets.zero,
             children: [
-              const DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                ),
-                child: Text('Drawer Header'),
+              UserAccountsDrawerHeader(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
+                      colors: [
+                        Colors.black,
+                        Colors.blueAccent,
+                        Colors.purple,
+                      ],
+                    ),
+                  ),
+                  accountName: AutoSizeText(
+                    "Priyanka",
+                    style: GoogleFonts.exo(
+                        fontSize: size.height * 0.022,
+                        fontWeight: FontWeight.w600),
+                  ),
+                  accountEmail: AutoSizeText(
+                    "gupta200priyanka@gmail.com",
+                    style: GoogleFonts.exo(
+                        fontSize: size.height * 0.02,
+                        fontWeight: FontWeight.w600),
+                  ),
+                  currentAccountPicture:Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: size.height*0.2,
+
+                        backgroundImage:usermodel["Profile_URL"]!=null?
+
+                        NetworkImage(usermodel["Profile_URL"])
+                            :
+                        null,
+                        // backgroundColor: Colors.teal.shade300,
+                        child: usermodel["Profile_URL"]==null?
+                        AutoSizeText(
+                         "P",
+                          style: GoogleFonts.exo(
+                              fontSize: size.height * 0.05,
+                              fontWeight: FontWeight.w600),
+                        )
+                            :
+                        null,
+                      ),
+                      Positioned(
+                        bottom: -5,
+                        left: 35,
+                        child: IconButton(
+                          icon: Icon(Icons.camera_enhance,size:size.height*0.03 ,color: Colors.black,),
+                          onPressed: (){} ,
+                        ),
+                      )
+                    ],
+                  )
+              ),
+              ListTile(
+                leading: const Icon(Icons.home,color: Colors.black,),
+                title: const Text("Home"),
+                onTap: () {},
               ),
               ListTile(
                 leading: const Icon(Icons.add,color: Colors.black,),
@@ -134,6 +189,11 @@ class _NeviState extends State<Nevi> {
                     childCurrent: const Nevi(),
                   ),);
                 },
+              ),
+              ListTile(
+                leading: const Icon(Icons.settings,color: Colors.black),
+                title: const Text("Settings"),
+                onTap: () {},
               ),
               ListTile(
                 leading: const Icon(Icons.logout_outlined,color: Colors.black,),

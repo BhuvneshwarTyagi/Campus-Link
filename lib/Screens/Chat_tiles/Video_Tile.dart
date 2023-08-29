@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:video_player/video_player.dart';
 import '../chat.dart';
+import 'Video_Player.dart';
 
 class VideoTile extends StatefulWidget {
   const VideoTile(
@@ -23,6 +24,14 @@ class _VideoTileState extends State<VideoTile> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(widget.videoURL));
+    videoPlayerController.initialize().then((value) {
+      if(mounted){
+        setState(() {
+          print("Initialized");
+        });
+      }
+    });
   }
   bool playing=false;
   @override
@@ -32,11 +41,9 @@ class _VideoTileState extends State<VideoTile> {
       onTap: () {
         Navigator.push(
             context,
-            PageTransition(
-                childCurrent: chat_page(channel: widget.channel),
-                duration: const Duration(milliseconds: 400),
-                child: VideoTile(channel: widget.channel, videoURL: widget.videoURL, videoThumbnailURL: widget.videoThumbnailURL,),
-                type: PageTransitionType.bottomToTopJoined));
+            MaterialPageRoute(builder: (context) {
+              return VideoPlayerScreen(channel: widget.channel,videoThumbnailURL: widget.videoThumbnailURL,videoURL: widget.videoURL);
+            },));
       },
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: size.height * 0.008, vertical: size.height * 0.003),
@@ -101,13 +108,8 @@ class _VideoTileState extends State<VideoTile> {
           IconButton(
             onPressed: () {
               setState(() {
-                videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(widget.videoURL));
-                videoPlayerController.initialize().then((value) {
-                  setState(() {
-                    print("Initialized");
-                  });
-                });
-                videoPlayerController.setLooping(true);
+
+                //videoPlayerController.setLooping(true);
                 playing=true;
                 if(videoPlayerController.value.duration == videoPlayerController.value.position){
                   videoPlayerController.initialize();
