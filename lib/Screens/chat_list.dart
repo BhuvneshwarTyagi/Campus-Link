@@ -14,6 +14,7 @@ class chatsystem extends StatefulWidget {
 }
 
 class _chatsystemState extends State<chatsystem> {
+  int read_count=1;
   @override
   Widget build(BuildContext context) {
     Size size=MediaQuery.of(context).size;
@@ -105,7 +106,7 @@ class _chatsystemState extends State<chatsystem> {
                     .toString()
                     .split("@")[0]: {
                   "Last_Active": DateTime.now(),
-                  "Read_Count": FieldValue,
+                  "Read_Count": read_count,
                   "Active": true,
                 }
               }).whenComplete((){
@@ -129,6 +130,11 @@ class _chatsystemState extends State<chatsystem> {
                   StreamBuilder(
                     stream: FirebaseFirestore.instance.collection("Messages").doc(usermodel["Message_channels"][index]).snapshots(),
                     builder: (context, snapshot) {
+                      snapshot.hasData
+                          ?
+                      read_count= snapshot.data?.data()!["Messages"].length
+                      :
+                      null;
                       return snapshot.hasData
                           ?
                       CircleAvatar(
@@ -159,7 +165,7 @@ class _chatsystemState extends State<chatsystem> {
                           int count=0;
                           snapshot2.hasData
                               ?
-                          count= snapshot2.data?.data()!["Messages"].length-snapshot2.data?.data()![usermodel["Email"].toString().split("@")[0]]["Read_Count"]-1
+                          count= snapshot2.data?.data()!["Messages"].length-int.parse("${snapshot2.data?.data()![usermodel["Email"].toString().split("@")[0]]["Read_Count"]}")-1
                               :
                           null;
 

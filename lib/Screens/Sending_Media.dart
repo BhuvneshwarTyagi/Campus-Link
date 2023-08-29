@@ -2,13 +2,17 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 import '../Constraints.dart';
 import '../Database/database.dart';
+import 'chat.dart';
+import 'loadingscreen.dart';
 
 class SendMedia extends StatefulWidget {
   const SendMedia({super.key, required this.imagePath, required this.channel, required this.messageLength, required this.replyBoxHeight, required this.replyToName, required this.replyToText, required this.replyIndex, required this.video});
@@ -470,6 +474,25 @@ class _SendMediaState extends State<SendMedia> {
                     ]),
                 TextButton(
                   onPressed: () async {
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                        child: const loading(text: "Please Wait Uploading media file on server"),
+                        type: PageTransitionType.bottomToTopJoined,
+                        duration: const Duration(milliseconds: 200),
+                        alignment: Alignment.bottomCenter,
+                        childCurrent: SendMedia(
+                           replyToName: widget.replyToName,
+                          video: widget.video,
+                          channel: widget.channel,
+                          imagePath: widget.imagePath,
+                          messageLength: widget.messageLength,
+                          replyBoxHeight: widget.replyBoxHeight,
+                          replyIndex: widget.replyIndex,
+                          replyToText: widget.replyToText,
+                        ),
+                      ),
+                    );
                     Reference reference=FirebaseStorage.instance.ref();
 
                     // Create Directory into Firebase Storage
@@ -478,13 +501,39 @@ class _SendMediaState extends State<SendMedia> {
 
 
                     Reference image_folder=image_directory.child("${usermodel[widget.channel]}");
-
-                    Reference channel=image_folder.child("${DateTime.now()}");
+                    DateTime stamp=DateTime.now();
+                    Reference channel=image_folder.child("${stamp}");
 
 
                     TaskSnapshot snap= await channel.putFile(File(widget.imagePath.path));
-
                     String URL=await snap.ref.getDownloadURL();
+
+                    Directory cache=await getApplicationDocumentsDirectory();
+                    Directory target= Directory("${cache.path}/thumbnail");
+                    await target.exists()
+                        ?
+                    null
+                        :
+                    target=await target.create();
+
+                    XFile? compressed;
+                    print("........${target},    ${widget.imagePath.path}");
+                    File absolute= File("${widget.imagePath.path}");
+                     await FlutterImageCompress.compressAndGetFile(
+                        absolute.absolute.path,
+                        "${target.path}/test.jpg",
+                          quality: 1,
+                        //format: CompressFormat.png
+                      ).then((value) => compressed=value);
+                      print(compressed);
+
+                    channel=image_folder.child("Thumbnail");
+                    channel=channel.child("$stamp");
+
+
+                    snap= await channel.putFile(File(compressed!.path));
+                    print(target);
+                    String CURL=await snap.ref.getDownloadURL();
                     await FirebaseFirestore.instance
                         .collection("Messages")
                         .doc(widget.channel)
@@ -499,7 +548,7 @@ class _SendMediaState extends State<SendMedia> {
                             "text": messageController.text
                                 .trim()
                                 .toString(),
-                            "Stamp": DateTime.now(),
+                            "Stamp": stamp,
                             "Reply": widget.replyBoxHeight != 0
                                 ? true
                                 : false,
@@ -507,12 +556,13 @@ class _SendMediaState extends State<SendMedia> {
                                 widget.replyIndex -
                                 1,
                             "Image_Text": true,
-                            "Image_Url" : URL
+                            "Image_Url" : URL,
+                            "Image_Compressed" : CURL
                           }
                         ]),
                         "Media_Files":FieldValue.arrayUnion([{
                           "Video":false,
-                          "Image_URL":URL
+                          "Image_URL":URL,
                         }])
                       },
                     ).whenComplete(
@@ -527,6 +577,14 @@ class _SendMediaState extends State<SendMedia> {
                             .get()
                             .then((value) {
                           return value.data()?["Token"];
+                        }).whenComplete((){
+                          Navigator.pop(context);
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => chat_page(channel: widget.channel),
+                            ),
+                          );
                         });
                         for (var element in tokens) {
                           element.toString() !=
@@ -537,7 +595,7 @@ class _SendMediaState extends State<SendMedia> {
                               widget.channel)
                               : null;
                         }
-                        Navigator.pop(context);
+
                       },
 
                     );

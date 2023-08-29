@@ -1,7 +1,8 @@
+import 'dart:io';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:campus_link_teachers/Constraints.dart';
 import 'package:campus_link_teachers/Database/database.dart';
-import 'package:campus_link_teachers/Screens/Image_viewer.dart';
 import 'package:campus_link_teachers/Screens/Sending_Media.dart';
 import 'package:campus_link_teachers/Screens/loadingscreen.dart';
 import 'package:chat_bubbles/date_chips/date_chip.dart';
@@ -322,6 +323,7 @@ class _chat_pageState extends State<chat_page> {
                                         0,
                                         Image,
                                         Image? message[index]["Image_Url"]:"",
+                                        Image? message[index]["Image_Compressed"]:"",
                                         Video,
                                         Video? message[index]["Video_Url"]: "",
                                         Video? message[index]["Video_ThumbNail"]: ""
@@ -368,6 +370,7 @@ class _chat_pageState extends State<chat_page> {
                                   0,
                                                   Image,
                                                 Image? message[index]["Image_Url"]:"",
+                                                Image? message[index]["Image_Compressed"]:"",
 
                                                   Video,
                                                 Video? message[index]["Video_Url"]: "",
@@ -378,7 +381,8 @@ class _chat_pageState extends State<chat_page> {
                                   );
                                 },
                               )
-                            : const SizedBox(),
+                            :
+                        const SizedBox(),
                       ),
                       bottomNavigationBar: Padding(
                         padding: EdgeInsets.only(
@@ -475,20 +479,6 @@ class _chat_pageState extends State<chat_page> {
                                       child: TextField(
                                         controller: messageController,
                                         enableSuggestions: true,
-                                        // onTapOutside: (event) async {
-                                        //   await FirebaseFirestore.instance
-                                        //       .collection("Messages")
-                                        //       .doc(widget.channel)
-                                        //       .update({
-                                        //     usermodel["Email"]
-                                        //         .toString()
-                                        //         .split("@")[0]: {
-                                        //       "Last_Active": DateTime.now(),
-                                        //       "Read_Count": message.length - 1,
-                                        //       "Active": true,
-                                        //     }
-                                        //   });
-                                        // },
                                         maxLines: 5,
                                         minLines: 1,
                                         autocorrect: true,
@@ -503,7 +493,8 @@ class _chat_pageState extends State<chat_page> {
                                                     onPressed: () async {
                                                       ImagePicker imagePicker=ImagePicker();
                                                       print(imagePicker);
-                                                      XFile? file=await imagePicker.pickImage(source: ImageSource.gallery, imageQuality: 80);
+                                                      XFile? file=await imagePicker.pickImage(source: ImageSource.gallery);
+                                                      print(",,,,,,,,,,,,,${file?.path}");
                                                       file!.path.isNotEmpty
                                                           ?
                                                       Navigator.push(
@@ -692,6 +683,7 @@ class _chat_pageState extends State<chat_page> {
       int scrollindex,
       bool imageMsg,
       String imageURL,
+      String compressedURL,
       bool videoMsg,
       String videoURL,
       String videoThumbnailURL
@@ -709,6 +701,7 @@ class _chat_pageState extends State<chat_page> {
           UserAvatar(image: image,name: name),
 
           MsgTile(
+            comressedURL: compressedURL,
             name: name,
             channel: widget.channel,
             replyIndex: replyIndex,
@@ -806,14 +799,13 @@ class _chat_pageState extends State<chat_page> {
     int count = 0;
     List<dynamic> member_list = snapshot.data?.data()!["Members"];
     for (var email in member_list) {
-      print(snapshot.data!.data()![email["Email"].toString().split("@")[0]]
-      ["Active"]);
-      if (snapshot.data!.data()![email["Email"].toString().split("@")[0]]
-      ["Active"] != null &&
-          snapshot.data!.data()![email["Email"].toString().split("@")[0]]
-          ["Active"]) {
-        count++;
-      }
+      print(email);
+      // if (snapshot.data!.data()![email["Email"].toString().split("@")[0]]
+      // ["Active"] != null &&
+      //     snapshot.data!.data()![email["Email"].toString().split("@")[0]]
+      //     ["Active"]) {
+      //   count++;
+      // }
     }
     return count;
   }
