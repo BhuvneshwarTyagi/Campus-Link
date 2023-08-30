@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
@@ -217,31 +217,48 @@ class _SendMediaState extends State<SendMedia> {
                   ]),
               TextButton(
                 onPressed: () async {
+                  Navigator.push(
+                    context,
+                    PageTransition(
+                      child: const loading(text: "Please Wait Uploading media file on server"),
+                      type: PageTransitionType.bottomToTopJoined,
+                      duration: const Duration(milliseconds: 200),
+                      alignment: Alignment.bottomCenter,
+                      childCurrent: SendMedia(
+                        replyToName: widget.replyToName,
+                        video: widget.video,
+                        channel: widget.channel,
+                        imagePath: widget.imagePath,
+                        messageLength: widget.messageLength,
+                        replyBoxHeight: widget.replyBoxHeight,
+                        replyIndex: widget.replyIndex,
+                        replyToText: widget.replyToText,
+                      ),
+                    ),
+                  );
                   Reference reference=FirebaseStorage.instance.ref();
 
                   // Create Directory into Firebase Storage
 
-                  Reference image_directory=reference.child("Message_Images");
+                  Reference imageDirectory=reference.child("Message_Images");
 
 
-                  Reference image_folder=image_directory.child(widget.channel);
+                  Reference imageFolder=imageDirectory.child(widget.channel);
 
-                  Reference channel=image_folder.child("${DateTime.now()}");
+                  Reference channel=imageFolder.child("${DateTime.now()}");
 
 
                   TaskSnapshot snap= await channel.putFile(File(widget.imagePath.path));
                   String URL=await snap.ref.getDownloadURL();
-                  String path = await VideoThumbnail.thumbnailFile(video: URL,imageFormat: ImageFormat.PNG,quality: 75,maxHeight: 400,maxWidth: 400,thumbnailPath: (await getApplicationCacheDirectory()).path) ?? "";
+                  String path = await VideoThumbnail.thumbnailFile(video: URL,imageFormat: ImageFormat.PNG,quality: 1,thumbnailPath: (await getApplicationCacheDirectory()).path) ?? "";
                   reference=FirebaseStorage.instance.ref();
 
-                  // Create Directory into Firebase Storage
-
-                  image_directory=reference.child("Message_Images");
+                  imageDirectory=reference.child("Message_Images");
 
 
-                  image_folder=image_directory.child("${usermodel[widget.channel]}");
+                  imageFolder=imageDirectory.child("${usermodel[widget.channel]}");
 
-                  channel=image_directory.child("${DateTime.now()}");
+                  channel=imageDirectory.child("${DateTime.now()}");
 
                   snap= await channel.putFile(File(path));
                   String thumbURL=await snap.ref.getDownloadURL();
@@ -291,6 +308,15 @@ class _SendMediaState extends State<SendMedia> {
                           .get()
                           .then((value) {
                         return value.data()?["Token"];
+                      }).whenComplete(() {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => chat_page(channel: widget.channel),
+                          ),
+                        );
                       });
                       for (var element in tokens) {
                         element.toString() !=
@@ -301,7 +327,6 @@ class _SendMediaState extends State<SendMedia> {
                             widget.channel)
                             : null;
                       }
-                      Navigator.pop(context);
                     },
 
                   );
@@ -497,12 +522,12 @@ class _SendMediaState extends State<SendMedia> {
 
                     // Create Directory into Firebase Storage
 
-                    Reference image_directory=reference.child("Message_Images");
+                    Reference imageDirectory=reference.child("Message_Images");
 
 
-                    Reference image_folder=image_directory.child("${usermodel[widget.channel]}");
+                    Reference imageFolder=imageDirectory.child(widget.channel);
                     DateTime stamp=DateTime.now();
-                    Reference channel=image_folder.child("${stamp}");
+                    Reference channel=imageFolder.child("$stamp");
 
 
                     TaskSnapshot snap= await channel.putFile(File(widget.imagePath.path));
@@ -517,17 +542,19 @@ class _SendMediaState extends State<SendMedia> {
                     target=await target.create();
 
                     XFile? compressed;
-                    print("........${target},    ${widget.imagePath.path}");
-                    File absolute= File("${widget.imagePath.path}");
+                    print("........$target,    ${widget.imagePath.path}");
+                    File absolute= File(widget.imagePath.path);
                      await FlutterImageCompress.compressAndGetFile(
                         absolute.absolute.path,
                         "${target.path}/test.jpg",
                           quality: 1,
                         //format: CompressFormat.png
                       ).then((value) => compressed=value);
-                      print(compressed);
+                      if (kDebugMode) {
+                        print(compressed);
+                      }
 
-                    channel=image_folder.child("Thumbnail");
+                    channel=imageFolder.child("Thumbnail");
                     channel=channel.child("$stamp");
 
 
@@ -578,6 +605,7 @@ class _SendMediaState extends State<SendMedia> {
                             .then((value) {
                           return value.data()?["Token"];
                         }).whenComplete((){
+                          Navigator.pop(context);
                           Navigator.pop(context);
                           Navigator.pushReplacement(
                             context,

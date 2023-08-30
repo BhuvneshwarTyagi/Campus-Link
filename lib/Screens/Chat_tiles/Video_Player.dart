@@ -1,12 +1,11 @@
-import 'package:campus_link_teachers/Screens/Chat_tiles/Video_Tile.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPlayerScreen extends StatefulWidget {
-  const VideoPlayerScreen({super.key, required this.channel, this.videoURL, this.videoThumbnailURL});
-  final String channel;
-  final videoURL;
-  final videoThumbnailURL;
+  const VideoPlayerScreen({super.key, required this.path, required this.thumbnail});
+  final File path;
+  final File thumbnail;
   @override
   State<VideoPlayerScreen> createState() => _VideoPlayerScreenState();
 }
@@ -17,7 +16,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(widget.videoURL));
+    videoPlayerController = VideoPlayerController.file(widget.path);
     videoPlayerController.initialize().then((value) {
       if(mounted){
         setState(() {
@@ -27,97 +26,134 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     });
   }
   bool playing=false;
+  bool resume=false;
   @override
   Widget build(BuildContext context) {
     Size size=MediaQuery.of(context).size;
     return Container(
-      height: size.height,
+      height: double.minPositive,
       color: Colors.black54,
       child: Scaffold(
         backgroundColor: Colors.black,
         floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
         floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.black54,
+          backgroundColor: Colors.black87,
           onPressed: (){
             Navigator.pop(context);
             },
           child: const Icon(Icons.clear,color: Colors.white,),
         ),
-        body: Container(
-          height: size.height*1,
-          alignment: Alignment.center,
-          decoration: playing ?
-          BoxDecoration(
-              color: Colors.black,
-              borderRadius: const BorderRadius.all(Radius.circular(12)),
-              border: Border.all(color: Colors.black, width: 2))
-              :
-          BoxDecoration(
-              image: DecorationImage(
-                  image: NetworkImage(widget.videoThumbnailURL),
-                  fit: BoxFit.fill),
-              color: Colors.black,
-              borderRadius: const BorderRadius.all(Radius.circular(12)),
-              border: Border.all(color: Colors.black, width: 2)),
-          child: playing
-              ?
-          videoPlayerController.value.isInitialized
-              ?
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              AspectRatio(
-                aspectRatio: videoPlayerController.value.aspectRatio,
-                child: VideoPlayer(videoPlayerController),
-              ),
-              IconButton(
-                onPressed: () {
-                  setState(() {
-                    if(videoPlayerController.value.duration == videoPlayerController.value.position){
-                      videoPlayerController.initialize();
-                    }
-                    videoPlayerController.value.isPlaying
-                        ? videoPlayerController.pause()
-                        : videoPlayerController.play();
-                  });
-                },
-                icon: CircleAvatar(
-                  backgroundColor: Colors.black54,
-                  child: Icon(
-                    videoPlayerController.value.isPlaying ? Icons.pause : Icons.play_arrow,
-                    color: Colors.white,
-                  ),
+        body: Center(
+          child: Container(
+            width: double.maxFinite,
+            height: size.height * 0.28,
+            decoration: (playing || resume) ?
+            BoxDecoration(
+                color: Colors.black,
+                borderRadius: const BorderRadius.all(Radius.circular(12)),
+                border: Border.all(color: Colors.black, width: 2))
+                :
+            BoxDecoration(
+                image: DecorationImage(
+                    image: FileImage(widget.thumbnail),
+                    fit: BoxFit.contain),
+                color: Colors.black,
+                borderRadius: const BorderRadius.all(Radius.circular(12)),
+                border: Border.all(color: Colors.black, width: 2)),
+            child: playing
+                ?
+            Center(
+              child: SizedBox(
+                child: Container(
+                  color: Colors.transparent,
+                  height: double.maxFinite,
+                  width: double.maxFinite,
+                  child: videoPlayerController.value.isInitialized
+                      ?
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      AspectRatio(
+                        aspectRatio: videoPlayerController.value.aspectRatio,
+                        child: VideoPlayer(videoPlayerController),
+                      ),
+                      resume
+                          ?
+                      IconButton(
+                        onPressed: () async {
+                          setState(() {
+                            resume=false;
+                            if(videoPlayerController.value.duration == videoPlayerController.value.position){
+                              videoPlayerController.initialize();
+                            }
+
+                            videoPlayerController.play();
+
+                          });
+                        },
+                        icon: const CircleAvatar(
+                          backgroundColor: Colors.black54,
+                          child: Icon(Icons.play_arrow ,
+                            color: Colors.white,
+                          ),
+                        ),
+                      )
+                          :
+                      IconButton(
+                        onPressed: () {
+                          videoPlayerController.pause();
+
+                          setState(() {
+                            resume=true;
+                            if(videoPlayerController.value.duration == videoPlayerController.value.position){
+                              videoPlayerController.initialize();
+                            }
+
+                          });
+                        },
+                        icon: const CircleAvatar(
+                          backgroundColor: Colors.black54,
+                          child: Icon(
+                            Icons.pause,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                      :
+                  const Center(child: CircularProgressIndicator()),
                 ),
               ),
-            ],
-          )
-              :
-          const Center(child: CircularProgressIndicator())
-              :
-          IconButton(
-            onPressed: () {
-              setState(() {
-                playing=true;
-                videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(widget.videoURL));
-                videoPlayerController.initialize().then((value) {
-                  setState(() {
-                    print("Initialized");
-                  });
+            )
+                :
+            IconButton(
+              onPressed: () async {
+                setState(() {
+                  playing=true;
+                  //videoPlayerController.setLooping(true);
+                  resume=false;
+
                 });
-                videoPlayerController.setLooping(true);
+                videoPlayerController = VideoPlayerController.file(widget.path);
+                await videoPlayerController.initialize().then((value) {
+                  if (mounted) {
+                    setState(() {
+                      print("Initialized-------------------------------------------------");
+                      videoPlayerController.play();
+                    });
+                  }
+                });
                 if(videoPlayerController.value.duration == videoPlayerController.value.position){
                   videoPlayerController.initialize();
                 }
-                videoPlayerController.value.isPlaying
-                    ? videoPlayerController.pause()
-                    : videoPlayerController.play();
-              });
-            },
-            icon: CircleAvatar(
-              backgroundColor: Colors.black54,
-              child: Icon(
-                videoPlayerController.value.isPlaying ? Icons.pause : Icons.play_arrow,
-                color: Colors.white,
+              },
+              icon: const CircleAvatar(
+                backgroundColor: Colors.black54,
+                child: Icon(
+                  Icons.play_arrow,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),

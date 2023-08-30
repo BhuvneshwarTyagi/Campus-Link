@@ -5,7 +5,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_inapp_notifications/flutter_inapp_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'Connection.dart';
@@ -28,18 +27,15 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp().whenComplete(() async {
-    await FirebaseFirestore.instance.collection("Students").doc('bhanu68tyagi@gmail.com').update({
-      "Name":"${TimeOfDay.now().minute}"
-    });
+    // await FirebaseFirestore.instance.collection("Students").doc('bhanu68tyagi@gmail.com').update({
+    //   "Name":"${TimeOfDay.now().minute}"
+    // });
   });
 }
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  await FlutterDownloader.initialize(
-      debug: true, // optional: set to false to disable printing logs to console (default: true)
-      ignoreSsl: true // option: set to false to disable working with http links (default: false)
-  );
+
   var status = await Permission.manageExternalStorage.request();
   print(status);
 
@@ -127,9 +123,9 @@ class _MyAppState extends State<MyApp> {
       NotificationServices.display(message);
       WidgetsFlutterBinding.ensureInitialized();
       await Firebase.initializeApp().whenComplete(() async {
-        await FirebaseFirestore.instance.collection("Students").doc('bhanu68tyagi@gmail.com').update({
-          "Name":"${TimeOfDay.now().minute}"
-        });
+        // await FirebaseFirestore.instance.collection("Students").doc('bhanu68tyagi@gmail.com').update({
+        //   "Name":"${TimeOfDay.now().minute}"
+        // });
       });
 
     });
@@ -137,19 +133,20 @@ class _MyAppState extends State<MyApp> {
     FirebaseMessaging.onBackgroundMessage((message) async {
       WidgetsFlutterBinding.ensureInitialized();
       await Firebase.initializeApp().whenComplete(() async {
-        await FirebaseFirestore.instance.collection("Students").doc('bhanu68tyagi@gmail.com').update({
-          "Name":"${TimeOfDay.now().minute}"
-        });
-      });
+      //   await FirebaseFirestore.instance.collection("Students").doc('bhanu68tyagi@gmail.com').update({
+      //     "Name":"${TimeOfDay.now().minute}"
+      //   });
+      // });
     });
     // FirebaseMessaging.onMessageOpenedApp.listen((message) {
     //   //final routeFromMessage = message.data["route"];
     //
     //   //Navigator.of(context).pushNamed(routeFromMessage);
     // });
-  }
+  });
 
 
+        }
 
 
   void didChangeAppLifecycleState(AppLifecycleState state) {

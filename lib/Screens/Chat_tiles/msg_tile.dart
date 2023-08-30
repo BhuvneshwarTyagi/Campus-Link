@@ -97,7 +97,9 @@ class MsgTile extends StatelessWidget {
               ? VideoTile(
                   channel: channel,
                   videoURL: videoURL,
-                  videoThumbnailURL: videoThumbnailURL)
+                  videoThumbnailURL: videoThumbnailURL,
+            stamp: stamp,
+          )
               : const SizedBox(),
           text.isNotEmpty ? TextTile(text: text) : const SizedBox(),
 
