@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:campus_link_teachers/Registration/Login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../Constraints.dart';
-import '../Database/database.dart';
 import '../Registration/Verify Email.dart';
 import 'Navigator.dart';
 import 'loadingscreen.dart';
@@ -67,7 +67,9 @@ class _MainPageState extends State<MainPage> {
       usermodel=value.data()!;
     }).whenComplete((){
       setState(() {
-        print(usermodel);
+        if (kDebugMode) {
+          print(usermodel);
+        }
         loaded=true;
       });
     });

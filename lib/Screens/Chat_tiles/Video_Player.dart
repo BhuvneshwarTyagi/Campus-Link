@@ -31,7 +31,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   Widget build(BuildContext context) {
     Size size=MediaQuery.of(context).size;
     return Container(
-      height: double.minPositive,
+
       color: Colors.black54,
       child: Scaffold(
         backgroundColor: Colors.black,
@@ -45,8 +45,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
         ),
         body: Center(
           child: Container(
-            width: double.maxFinite,
-            height: size.height * 0.28,
+            width: size.width,
+            height: size.height,
             decoration: (playing || resume) ?
             BoxDecoration(
                 color: Colors.black,
@@ -62,70 +62,61 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                 border: Border.all(color: Colors.black, width: 2)),
             child: playing
                 ?
-            Center(
-              child: SizedBox(
-                child: Container(
-                  color: Colors.transparent,
-                  height: double.maxFinite,
-                  width: double.maxFinite,
-                  child: videoPlayerController.value.isInitialized
-                      ?
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      AspectRatio(
-                        aspectRatio: videoPlayerController.value.aspectRatio,
-                        child: VideoPlayer(videoPlayerController),
-                      ),
-                      resume
-                          ?
-                      IconButton(
-                        onPressed: () async {
-                          setState(() {
-                            resume=false;
-                            if(videoPlayerController.value.duration == videoPlayerController.value.position){
-                              videoPlayerController.initialize();
-                            }
-
-                            videoPlayerController.play();
-
-                          });
-                        },
-                        icon: const CircleAvatar(
-                          backgroundColor: Colors.black54,
-                          child: Icon(Icons.play_arrow ,
-                            color: Colors.white,
-                          ),
-                        ),
-                      )
-                          :
-                      IconButton(
-                        onPressed: () {
-                          videoPlayerController.pause();
-
-                          setState(() {
-                            resume=true;
-                            if(videoPlayerController.value.duration == videoPlayerController.value.position){
-                              videoPlayerController.initialize();
-                            }
-
-                          });
-                        },
-                        icon: const CircleAvatar(
-                          backgroundColor: Colors.black54,
-                          child: Icon(
-                            Icons.pause,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
-                      :
-                  const Center(child: CircularProgressIndicator()),
+            videoPlayerController.value.isInitialized
+                ?
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                AspectRatio(
+                  aspectRatio: videoPlayerController.value.aspectRatio,
+                  child: VideoPlayer(videoPlayerController),
                 ),
-              ),
+                resume
+                    ?
+                IconButton(
+                  onPressed: () async {
+                    setState(() {
+                      resume=false;
+                      if(videoPlayerController.value.duration == videoPlayerController.value.position){
+                        videoPlayerController.initialize();
+                      }
+
+                      videoPlayerController.play();
+
+                    });
+                  },
+                  icon: const CircleAvatar(
+                    backgroundColor: Colors.black54,
+                    child: Icon(Icons.play_arrow ,
+                      color: Colors.white,
+                    ),
+                  ),
+                )
+                    :
+                IconButton(
+                  onPressed: () {
+                    videoPlayerController.pause();
+
+                    setState(() {
+                      resume=true;
+                      if(videoPlayerController.value.duration == videoPlayerController.value.position){
+                        videoPlayerController.initialize();
+                      }
+
+                    });
+                  },
+                  icon: const CircleAvatar(
+                    backgroundColor: Colors.black54,
+                    child: Icon(
+                      Icons.pause,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
             )
+                :
+            const Center(child: CircularProgressIndicator())
                 :
             IconButton(
               onPressed: () async {

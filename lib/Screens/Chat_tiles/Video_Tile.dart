@@ -59,7 +59,7 @@ class _VideoTileState extends State<VideoTile> {
         padding: EdgeInsets.symmetric(horizontal: size.height * 0.008, vertical: size.height * 0.003),
         child: Container(
           width: double.maxFinite,
-          height: size.height * 0.28,
+          height: size.height * 0.3,
           decoration: (playing || resume) ?
           BoxDecoration(
               color: Colors.black,
@@ -69,7 +69,7 @@ class _VideoTileState extends State<VideoTile> {
           BoxDecoration(
               image: DecorationImage(
                   image: FileImage(thumbnailPath),
-                  fit: BoxFit.fill),
+                  fit: BoxFit.contain),
               color: Colors.black,
               borderRadius: const BorderRadius.all(Radius.circular(12)),
               border: Border.all(color: Colors.black, width: 2)),

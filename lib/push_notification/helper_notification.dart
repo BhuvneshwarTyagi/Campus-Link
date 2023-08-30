@@ -35,7 +35,7 @@ class NotificationServices{
     const InitializationSettings initializationSettings =
     InitializationSettings(
         android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-        iOS: IOSInitializationSettings());
+        iOS: DarwinInitializationSettings());
 
     await FirebaseMessaging.instance
         .setForegroundNotificationPresentationOptions(
@@ -60,7 +60,7 @@ class NotificationServices{
             importance: Importance.max,
             priority: Priority.high,
           ),
-          iOS: IOSNotificationDetails());
+          iOS: DarwinNotificationDetails());
 
       await _notificationsPlugin.show(
         id,
@@ -83,7 +83,7 @@ class NotificationServices{
             priority: Priority.high,
             icon: '@mipmap/ic_launcher'
         ),
-        iOS: IOSNotificationDetails());
+        iOS: DarwinNotificationDetails());
   }
 
   static void onMessage(RemoteMessage message) {

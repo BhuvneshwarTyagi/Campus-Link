@@ -5,7 +5,6 @@ import 'package:page_transition/page_transition.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-
 import '../Image_viewer.dart';
 
 class ImageTile extends StatefulWidget {
@@ -77,7 +76,7 @@ class _ImageTileState extends State<ImageTile> {
               child: ClipRect(
                 child: Container(
                   width: size.width*0.55,
-                  height: size.height*0.35,
+                  height: size.height*0.3,
                   decoration: BoxDecoration(
                     color: Colors.black,
                     borderRadius: const BorderRadius.all(Radius.circular(15)),
@@ -198,7 +197,7 @@ class _ImageTileState extends State<ImageTile> {
 
 
   downloadImage() async {
-    Directory directory = await getApplicationCacheDirectory();
+    Directory? directory = await getApplicationCacheDirectory();
     String additionalPath= "/images";
     directory = Directory("${directory.path}$additionalPath");
 
@@ -213,7 +212,7 @@ class _ImageTileState extends State<ImageTile> {
 
 
 
-    await dio.download(widget.imageURL, imagePath.path,onReceiveProgress: (count, total) {
+    await dio.download(widget.imageURL,imagePath.path,onReceiveProgress: (count, total) {
     if(count==total){
     setState(() {
       _imagePath=imagePath;
