@@ -619,7 +619,7 @@ class _basicDetailsState extends State<basicDetails> {
                             "Admins" : FieldValue.arrayUnion(["${usermodel["Email"]}"]),
                             "Members" : FieldValue.arrayUnion([
                               {
-                                "Email ": "${usermodel["Email"]}",
+                                "Email": usermodel["Email"],
                                 "Post" : "Teachers"
                               }
                                   ]),
@@ -640,7 +640,7 @@ class _basicDetailsState extends State<basicDetails> {
                             "Admins" : FieldValue.arrayUnion(["${usermodel["Email"]}"]),
                             "Members" : FieldValue.arrayUnion([
                               {
-                                "Email ": "${usermodel["Email"]}",
+                                "Email": "${usermodel["Email"]}",
                                 "Post" : "Teachers"
                               }
                             ]),

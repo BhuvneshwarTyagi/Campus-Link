@@ -2,19 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class TextTile extends StatelessWidget {
-  const TextTile({super.key, required this.text});
+  const TextTile({super.key, required this.text, required this.sender});
   final String text;
+  final bool sender;
   @override
   Widget build(BuildContext context) {
     Size size=MediaQuery.of(context).size;
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: size.width*0.02,vertical: size.height*0.002),
+      padding: EdgeInsets.fromLTRB(size.width*0.025,size.height*0.01,size.width*0.025,size.height*0.01,),
       child: SelectableText(
         text,
         style: GoogleFonts.poppins(
-            color: Colors.black.withOpacity(0.75),
-            fontSize: size.width * 0.035,
-            fontWeight: FontWeight.w400),
+            color: sender ? Colors.white:Colors.black.withOpacity(0.75),
+            fontSize:  size.width * 0.035,
+            fontWeight: FontWeight.w500),
       ),
     );
   }

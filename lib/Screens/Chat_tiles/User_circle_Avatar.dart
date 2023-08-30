@@ -12,8 +12,9 @@ class UserAvatar extends StatelessWidget {
     Size size=MediaQuery.of(context).size;
     return Row(
       children: [
+
         CircleAvatar(
-          radius: size.width * 0.035,
+          radius: size.width * 0.054,
           backgroundImage:
           image != "null" ? NetworkImage(image,scale: 8) : null,
           // backgroundColor: Colors.teal.shade300,
@@ -21,11 +22,12 @@ class UserAvatar extends StatelessWidget {
               ? AutoSizeText(
             name.substring(0, 1),
             style: GoogleFonts.exo(
-                fontSize: size.height * 0.01,
+                fontSize: size.height * 0.03,
                 fontWeight: FontWeight.w600),
           )
               : null,
         ),
+        SizedBox(width: size.width*0.02,),
       ],
     );
   }

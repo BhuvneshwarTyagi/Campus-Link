@@ -30,9 +30,9 @@ class _VideoTileState extends State<VideoTile> {
   bool downloadedThumbnail = false;
   bool downloadedVideo = false;
   bool isDownloading = false;
-  File thumbnailPath=File("");
+  File thumbnailPath = File("");
   File videoPath = File("");
-  bool resume=false;
+  bool resume = false;
   final dio = Dio();
   @override
   void initState() {
@@ -46,186 +46,185 @@ class _VideoTileState extends State<VideoTile> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return downloadedVideo ?
-    InkWell(
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) {
-              return VideoPlayerScreen(path: videoPath,thumbnail: thumbnailPath,);
-            },));
-      },
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: size.height * 0.008, vertical: size.height * 0.003),
-        child: Container(
-          width: double.maxFinite,
-          height: size.height * 0.3,
-          decoration: (playing || resume) ?
-          BoxDecoration(
-              color: Colors.black,
-              borderRadius: const BorderRadius.all(Radius.circular(12)),
-              border: Border.all(color: Colors.black, width: 2))
-              :
-          BoxDecoration(
-              image: DecorationImage(
-                  image: FileImage(thumbnailPath),
-                  fit: BoxFit.contain),
-              color: Colors.black,
-              borderRadius: const BorderRadius.all(Radius.circular(12)),
-              border: Border.all(color: Colors.black, width: 2)),
-          child: playing
-              ?
-          Center(
-            child: SizedBox(
-              child: Container(
-                color: Colors.transparent,
-                height: double.maxFinite,
-                width: double.maxFinite,
-                child: videoPlayerController.value.isInitialized
-                    ?
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    AspectRatio(
-                      aspectRatio: videoPlayerController.value.aspectRatio,
-                      child: VideoPlayer(videoPlayerController),
-                    ),
-                    resume
-                        ?
-                    IconButton(
-                      onPressed: () async {
-                        setState(() {
-                          resume=false;
-                          if(videoPlayerController.value.duration == videoPlayerController.value.position){
-                            videoPlayerController.initialize();
-                          }
-
-                          videoPlayerController.play();
-
-                        });
-                      },
-                      icon: const CircleAvatar(
-                        backgroundColor: Colors.black54,
-                        child: Icon(Icons.play_arrow ,
-                          color: Colors.white,
-                        ),
-                      ),
-                    )
-                        :
-                    IconButton(
-                      onPressed: () {
-                        videoPlayerController.pause();
-
-                        setState(() {
-                          resume=true;
-                          if(videoPlayerController.value.duration == videoPlayerController.value.position){
-                            videoPlayerController.initialize();
-                          }
-
-                        });
-                      },
-                      icon: const CircleAvatar(
-                        backgroundColor: Colors.black54,
-                        child: Icon(
-                          Icons.pause,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ],
-                )
-                    :
-                const Center(child: CircularProgressIndicator()),
-              ),
-            ),
-          )
-              :
-          IconButton(
-            onPressed: () async {
-              setState(() {
-                playing=true;
-                resume=false;
-
-              });
-              videoPlayerController = VideoPlayerController.file(videoPath);
-              await videoPlayerController.initialize().then((value) {
-                if (mounted) {
-                  setState(() {
-                    print("Initialized-------------------------------------------------");
-                    videoPlayerController.play();
-                  });
-                }
-              });
-              if(videoPlayerController.value.duration == videoPlayerController.value.position){
-                videoPlayerController.initialize();
-              }
-              videoPlayerController.setLooping(true);
-            },
-            icon: const CircleAvatar(
-              backgroundColor: Colors.black54,
-              child: Icon(
-                Icons.play_arrow,
-                color: Colors.white,
-              ),
-            ),
-          ),
+    return Column(
+      children: [
+        SizedBox(
+          height: size.height*0.01,
         ),
-      ),
-    )
-        :
-    downloadedThumbnail
-        ?
-    Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: size.height * 0.008, vertical: size.height * 0.003),
-            child: ClipRect(
-              child: Container(
-                width: size.width * 0.55,
-                height: size.height * 0.3,
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(Radius.circular(15)),
-                  image: DecorationImage(
-                    image: FileImage(thumbnailPath),
-                    fit: BoxFit.contain,
-                  ),
+        downloadedVideo
+            ? InkWell(
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) {
+                      return VideoPlayerScreen(
+                        path: videoPath,
+                        thumbnail: thumbnailPath,
+                      );
+                    },
+                  ));
+                },
+                child: Container(
+                  width: double.maxFinite,
+                  height: size.height * 0.3,
+                  decoration: (playing || resume)
+                      ? BoxDecoration(
+                          color: Colors.black,
+                          // borderRadius: const BorderRadius.all(Radius.circular(12)),
+                          border: Border.all(color: Colors.black, width: 2))
+                      : BoxDecoration(
+                          image: DecorationImage(
+                              image: FileImage(thumbnailPath),
+                              fit: BoxFit.contain),
+                          color: Colors.black,
+                          // borderRadius: const BorderRadius.only(
+                          //     bottomLeft: Radius.circular(15),
+                          //   bottomRight: Radius.circular(15),
+                          // ),
+                          border: Border.all(color: Colors.black, width: 2)),
+                  child: playing
+                      ? Container(
+                          color: Colors.transparent,
+                          height: double.maxFinite,
+                          width: double.maxFinite,
+                          child: videoPlayerController.value.isInitialized
+                              ? Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    AspectRatio(
+                                      aspectRatio: videoPlayerController
+                                          .value.aspectRatio,
+                                      child: VideoPlayer(videoPlayerController),
+                                    ),
+                                    resume
+                                        ? IconButton(
+                                            onPressed: () async {
+                                              setState(() {
+                                                resume = false;
+                                                if (videoPlayerController
+                                                        .value.duration ==
+                                                    videoPlayerController
+                                                        .value.position) {
+                                                  videoPlayerController
+                                                      .initialize();
+                                                }
+
+                                                videoPlayerController.play();
+                                              });
+                                            },
+                                            icon: const CircleAvatar(
+                                              backgroundColor: Colors.black54,
+                                              child: Icon(
+                                                Icons.play_arrow,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          )
+                                        : IconButton(
+                                            onPressed: () {
+                                              videoPlayerController.pause();
+
+                                              setState(() {
+                                                resume = true;
+                                                if (videoPlayerController
+                                                        .value.duration ==
+                                                    videoPlayerController
+                                                        .value.position) {
+                                                  videoPlayerController
+                                                      .initialize();
+                                                }
+                                              });
+                                            },
+                                            icon: const CircleAvatar(
+                                              backgroundColor: Colors.black54,
+                                              child: Icon(
+                                                Icons.pause,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                  ],
+                                )
+                              : const Center(
+                                  child: CircularProgressIndicator()),
+                        )
+                      : IconButton(
+                          onPressed: () async {
+                            setState(() {
+                              playing = true;
+                              resume = false;
+                            });
+                            videoPlayerController =
+                                VideoPlayerController.file(videoPath);
+                            await videoPlayerController
+                                .initialize()
+                                .then((value) {
+                              if (mounted) {
+                                setState(() {
+                                  print(
+                                      "Initialized-------------------------------------------------");
+                                  videoPlayerController.play();
+                                });
+                              }
+                            });
+                            if (videoPlayerController.value.duration ==
+                                videoPlayerController.value.position) {
+                              videoPlayerController.initialize();
+                            }
+                            videoPlayerController.setLooping(true);
+                          },
+                          icon: const CircleAvatar(
+                            backgroundColor: Colors.black54,
+                            child: Icon(
+                              Icons.play_arrow,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
                 ),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: x, sigmaY: y),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.all(Radius.circular(15)),
-                      color: Colors.white.withOpacity(0.0),
+              )
+            : downloadedThumbnail
+                ? ClipRect(
+                    child: Container(
+                      width: size.width * 0.55,
+                      height: size.height * 0.3,
+                      decoration: BoxDecoration(
+                        // borderRadius: const BorderRadius.all(Radius.circular(15)),
+                        image: DecorationImage(
+                          image: FileImage(thumbnailPath),
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: x, sigmaY: y),
+                        child: SizedBox(
+                          child: isDownloading
+                              ? CircularPercentIndicator(
+                                  percent: percent,
+                                  radius: size.width * 0.08,
+                                  animation: true,
+                                  animateFromLastPercent: true,
+                                  curve: accelerateEasing,
+                                  progressColor: Colors.green,
+                                  center: Text(
+                                      "${(percent * 100).toStringAsFixed(2)}%"),
+                                  footer: const Text("Downloading"),
+                                  backgroundColor: Colors.transparent,
+                                )
+                              : IconButton(
+                                  onPressed: () {
+                                    downloadVideo();
+                                    setState(() {
+                                      isDownloading = true;
+                                    });
+                                  },
+                                  icon: const Icon(Icons.download)),
+                        ),
+                      ),
                     ),
-                    child: isDownloading
-                            ?
-                    CircularPercentIndicator(
-                                percent: percent,
-                                radius: size.width * 0.08,
-                                animation: true,
-                                animateFromLastPercent: true,
-                                curve: accelerateEasing,
-                                progressColor: Colors.green,
-                                center: Text(
-                                    "${(percent * 100).toStringAsFixed(2)}%"),
-                                footer: const Text("Downloading"),
-                                backgroundColor: Colors.transparent,
-                              )
-                            :
-                    IconButton(
-                                onPressed: () {
-                                  downloadVideo();
-                                  setState(() {
-                                    isDownloading = true;
-                                  });
-                                },
-                                icon: const Icon(Icons.download)),
-                  ),
-                ),
-              ),
-            ),
-          )
-        :
-    const SizedBox();
+                  )
+                : const SizedBox(),
+      ],
+    );
   }
 
   check() async {
@@ -233,7 +232,8 @@ class _VideoTileState extends State<VideoTile> {
 
     String additionalPath = "/videos";
     String additionalPath1 = "/thumbnail";
-    thumbnailPath = File("${directory.path}$additionalPath1/${widget.stamp}.png");
+    thumbnailPath =
+        File("${directory.path}$additionalPath1/${widget.stamp}.png");
     directory = Directory("${directory.path}$additionalPath");
     videoPath = File("${directory.path}/${widget.stamp}.mp4");
     if (await videoPath.exists()) {
@@ -241,9 +241,7 @@ class _VideoTileState extends State<VideoTile> {
       setState(() {
         downloadedVideo = true;
       });
-
-    }
-    else {
+    } else {
       print("original not exist");
       directory = await getApplicationCacheDirectory();
       additionalPath = "/thumbnail";
@@ -251,8 +249,7 @@ class _VideoTileState extends State<VideoTile> {
 
       if (directory.existsSync()) {
         print("Directory exist");
-      }
-      else {
+      } else {
         print("thumbnail not exist");
         await directory.create();
       }
@@ -264,8 +261,7 @@ class _VideoTileState extends State<VideoTile> {
         setState(() {
           downloadedThumbnail = true;
         });
-      }
-      else {
+      } else {
         print("Downloading thumbnail");
         await dio.download(
           widget.videoThumbnailURL,
@@ -304,8 +300,7 @@ class _VideoTileState extends State<VideoTile> {
       onReceiveProgress: (count, total) {
         if (count == total) {
           setState(() {
-            videoPlayerController =
-                VideoPlayerController.file(_videoPath);
+            videoPlayerController = VideoPlayerController.file(_videoPath);
             videoPlayerController.initialize().then((value) {
               if (mounted) {
                 setState(() {
@@ -318,8 +313,7 @@ class _VideoTileState extends State<VideoTile> {
             y = 0;
             downloadedVideo = true;
           });
-        }
-        else {
+        } else {
           setState(() {
             isDownloading = true;
             percent = (count / total);

@@ -13,7 +13,7 @@ class ImageTile extends StatefulWidget {
       required this.channel,
       required this.imageURL,
       required this.compressedURL,
-      required this.stamp});
+      required this.stamp,});
   final String channel;
   final String imageURL;
   final String compressedURL;
@@ -49,37 +49,40 @@ class _ImageTileState extends State<ImageTile> {
     //print("build     ${imagePath}");
     return _downloaded
         ?
-    InkWell(
-      onTap: () {
-        if(downloaded){
-          Navigator.push(
-            context,
-            PageTransition(
-              child: Image_viewer(path: _imagePath),
-              type: PageTransitionType.bottomToTopJoined,
-              duration: const Duration(milliseconds: 200),
-              alignment: Alignment.bottomCenter,
-              childCurrent: ImageTile(
-                compressedURL: widget.compressedURL,
-                imageURL: widget.imageURL,
-                stamp: widget.stamp,
-                channel: widget.channel,
-              ),
-            ),
-          );
-        }
+    Column(
+      children: [
+        SizedBox(height: size.height*0.01,),
+        InkWell(
+          onTap: () {
+            if(downloaded){
+              Navigator.push(
+                context,
+                PageTransition(
+                  child: Image_viewer(path: _imagePath),
+                  type: PageTransitionType.bottomToTopJoined,
+                  duration: const Duration(milliseconds: 200),
+                  alignment: Alignment.bottomCenter,
+                  childCurrent: ImageTile(
+                    compressedURL: widget.compressedURL,
+                    imageURL: widget.imageURL,
+                    stamp: widget.stamp,
+                    channel: widget.channel,
+                  ),
+                ),
+              );
+            }
 
-      },
-          child: Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: size.height * 0.008, vertical: size.height * 0.003),
+          },
               child: ClipRect(
                 child: Container(
                   width: size.width*0.55,
                   height: size.height*0.3,
                   decoration: BoxDecoration(
                     color: Colors.black,
-                    borderRadius: const BorderRadius.all(Radius.circular(15)),
+                    // borderRadius: const BorderRadius.only(
+                    //   bottomRight: Radius.circular(30),
+                    //   bottomLeft: Radius.circular(30),
+                    // ) ,
                     image: DecorationImage(
                       image: FileImage(_imagePath),
                       fit: BoxFit.contain,
@@ -87,13 +90,10 @@ class _ImageTileState extends State<ImageTile> {
                   ),
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: x, sigmaY: y),
-                    child: Container(
+                    child: SizedBox(
                       width: size.width*0.55,
                       height: size.height*0.35,
-                      decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.all(Radius.circular(15)),
-                          color: Colors.white.withOpacity(0.0),
-                      ),
+
                       child: downloaded
                           ?
                       const SizedBox()
@@ -126,9 +126,9 @@ class _ImageTileState extends State<ImageTile> {
                   ),
                 ),
               ),
-
             ),
-        )
+      ],
+    )
         :
     const SizedBox();
   }

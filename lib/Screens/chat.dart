@@ -27,7 +27,7 @@ class chat_page extends StatefulWidget {
 class _chat_pageState extends State<chat_page> {
   TextEditingController messageController = TextEditingController();
   final ItemScrollController scrollController = ItemScrollController();
-
+  double fieldIconWidth=150;
   List<int> tick = [];
   bool selected = false;
   int index1 = -1;
@@ -75,6 +75,7 @@ class _chat_pageState extends State<chat_page> {
                             fit: BoxFit.fill)),
                     child: Scaffold(
                       backgroundColor: Colors.transparent,
+                      extendBodyBehindAppBar: true,
                       appBar: !selected
                           ? AppBar(
                               elevation: 0,
@@ -412,7 +413,7 @@ class _chat_pageState extends State<chat_page> {
 
                                           ),
                                       ),
-                                      duration: const Duration(milliseconds: 100),
+                                      duration: const Duration(milliseconds: 200),
                                       child: Stack(
                                         alignment: Alignment.topRight,
                                         children: [
@@ -474,7 +475,7 @@ class _chat_pageState extends State<chat_page> {
                                       ),
                                     ),
                                     SizedBox(
-                                      //height: size.height * 0.062,
+
                                       width: size.width * 0.78,
                                       child: TextField(
                                         controller: messageController,
@@ -482,41 +483,67 @@ class _chat_pageState extends State<chat_page> {
                                         maxLines: 5,
                                         minLines: 1,
                                         autocorrect: true,
+                                        onTap: (){
+                                          setState(() {
+                                            fieldIconWidth=size.width*0.15;
+                                          });
+                                        },
+                                        onTapOutside:  (event) {
+                                            setState(() {
+                                              fieldIconWidth=size.width*0.35;
+                                            });
+                                        },
                                         textAlign: TextAlign.start,
                                         style: const TextStyle(color: Colors.black, fontSize: 18),
                                         decoration: InputDecoration(
-                                          suffixIcon: SizedBox(
-                                            width: size.width*0.25,
+                                          suffixIcon: AnimatedContainer(
+                                            duration: const Duration(milliseconds: 200),
+                                            width: fieldIconWidth,
                                             child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.end,
                                               children: [
+                                                Transform.rotate(
+                                                  angle: 1.6,
+                                                  child: IconButton(
+                                                      onPressed: (){},
+                                                      icon: const Icon(Icons.attachment_outlined)),
+                                                ),
+                                              fieldIconWidth>=size.width*0.35
+                                                  ?
                                                 IconButton(
                                                     onPressed: () async {
                                                       ImagePicker imagePicker=ImagePicker();
                                                       print(imagePicker);
-                                                      XFile? file=await imagePicker.pickImage(source: ImageSource.gallery);
-                                                      print(",,,,,,,,,,,,,${file?.path}");
-                                                      file!.path.isNotEmpty
-                                                          ?
-                                                      Navigator.push(
-                                                        context, PageTransition(
-                                                        childCurrent: chat_page(channel: widget.channel),
-                                                          duration: Duration(milliseconds: 600),
-                                                          child: SendMedia(
-                                                              imagePath: file,
+                                                      XFile? file=await imagePicker.pickImage(source: ImageSource.gallery).then((value) {
+                                                        print(",,,,,,,,,,,,,${value?.path}");
+                                                        value!.path.isNotEmpty
+                                                            ?
+                                                        Navigator.push(
+                                                          context, PageTransition(
+                                                            childCurrent: chat_page(channel: widget.channel),
+                                                            duration: Duration(milliseconds: 600),
+                                                            child: SendMedia(
+                                                              imagePath: value,
                                                               channel: widget.channel,
                                                               messageLength: message.length,
                                                               replyBoxHeight: replyBoxHeight,
                                                               replyToName: message[replyIndex]["Name"],
                                                               replyToText: message[replyIndex]["text"].toString().substring(0,message[replyIndex]["text"].length>120?120:message[replyIndex]["text"].length),
                                                               replyIndex: replyIndex,
-                                                            video: false,
-                                                          ),
-                                                          type: PageTransitionType.bottomToTopJoined),
-                                                      )
-                                                          :
-                                                      null;
+                                                              video: false,
+                                                            ),
+                                                            type: PageTransitionType.bottomToTopJoined),
+                                                        )
+                                                            :
+                                                        null;
+                                                      });
+                                                      
                                                     },
-                                                    icon: Icon(Icons.image,color: Colors.black,size: size.height*0.04,)),
+                                                    icon: Icon(Icons.image,color: Colors.black,size: size.height*0.04,))
+                                                  :
+                                                const SizedBox(),
+                                                fieldIconWidth>=size.width*0.35
+                                                    ?
                                                 IconButton(
                                                     onPressed: () async {
                                                       ImagePicker imagePicker=ImagePicker();
@@ -543,7 +570,10 @@ class _chat_pageState extends State<chat_page> {
                                                           :
                                                       null;
                                                     },
-                                                    icon: Icon(Icons.video_collection,color: Colors.black,size: size.height*0.04,)),
+                                                    icon: Icon(Icons.video_collection,color: Colors.black,size: size.height*0.04,))
+                                                    :
+                                                const SizedBox()
+                                                ,
                                               ],
                                             ),
                                           ),
@@ -557,8 +587,7 @@ class _chat_pageState extends State<chat_page> {
                                           ),
                                           contentPadding: EdgeInsets.only(
                                               left: size.width * 0),
-                                          enabledBorder:
-                                              const OutlineInputBorder(
+                                          enabledBorder: const OutlineInputBorder(
                                                   borderRadius:
                                                       BorderRadius.all(
                                                           Radius.circular(
@@ -566,8 +595,7 @@ class _chat_pageState extends State<chat_page> {
                                                   borderSide: BorderSide(
                                                       color: Colors.black54,
                                                       width: 1)),
-                                          focusedBorder:
-                                              const OutlineInputBorder(
+                                          focusedBorder: const OutlineInputBorder(
                                                   borderRadius:
                                                       BorderRadius.all(
                                                           Radius.circular(
@@ -691,24 +719,54 @@ class _chat_pageState extends State<chat_page> {
     return Align(
       alignment: sender ? Alignment.centerRight : Alignment.centerLeft,
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: sender ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
           sender
               ?
-          const SizedBox()
+          Container(
+
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(15)),
+               gradient: LinearGradient(colors: [
+                 Colors.black.withOpacity(0.9),
+                 Colors.black.withOpacity(0.6)
+               ])
+            ),
+            padding: EdgeInsets.fromLTRB(size.width*0.03, size.height*0.01, size.width*0.03, size.height*0.01),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                AutoSizeText(
+                  "${stamp.hour}:${stamp.minute < 10 ? "0" : ""}${stamp.minute} ${stamp.hour < 12 ? "am" : "pm"}",
+                  style: GoogleFonts.poppins(
+                      color: Colors.white70.withOpacity(0.8),
+                      fontSize: size.width * 0.022,
+                      fontWeight: FontWeight.w700),
+                  textAlign: TextAlign.right,
+                ),
+                const SizedBox(
+                  width: 5,
+                ),
+                sender
+                    ? Icon(
+                  Icons.check,
+                  color: readed
+                      ? Colors.green
+                      : Colors.white.withOpacity(0.8),
+                  size: size.width * 0.04,
+                )
+                    : const SizedBox(),
+              ],
+            ),
+          )
               :
-          Row(
-            children: [
-              UserAvatar(image: image,name: name),
-              SizedBox(
-                width: size.width*0.01,
-              )
-            ],
-          ),
+          const SizedBox(),
 
           MsgTile(
             comressedURL: compressedURL,
+            image: image,
             name: name,
             channel: widget.channel,
             replyIndex: replyIndex,
@@ -729,16 +787,45 @@ class _chat_pageState extends State<chat_page> {
           ),
           !sender
               ?
-          const SizedBox()
+          Container(
+
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(15)),
+                gradient: LinearGradient(colors: [
+                  Colors.black.withOpacity(0.9),
+                  Colors.black.withOpacity(0.6)
+                ])
+            ),
+            padding: EdgeInsets.fromLTRB(size.width*0.03, size.height*0.01, size.width*0.03, size.height*0.01),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                AutoSizeText(
+                  "${stamp.hour}:${stamp.minute < 10 ? "0" : ""}${stamp.minute} ${stamp.hour < 12 ? "am" : "pm"}",
+                  style: GoogleFonts.poppins(
+                      color: Colors.white70.withOpacity(0.8),
+                      fontSize: size.width * 0.022,
+                      fontWeight: FontWeight.w700),
+                  textAlign: TextAlign.right,
+                ),
+                const SizedBox(
+                  width: 5,
+                ),
+                sender
+                    ? Icon(
+                  Icons.check,
+                  color: readed
+                      ? Colors.green
+                      : Colors.white.withOpacity(0.8),
+                  size: size.width * 0.04,
+                )
+                    : const SizedBox(),
+              ],
+            ),
+          )
               :
-          Row(
-            children: [
-              UserAvatar(image: image,name: name),
-              SizedBox(
-                width: size.width*0.01,
-              )
-            ],
-          ),
+          const SizedBox(),
         ],
       ),
     );
@@ -808,18 +895,15 @@ class _chat_pageState extends State<chat_page> {
     return out;
   }
 
-  int activeStatus(
-      AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
+  int activeStatus(AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
     int count = 0;
     List<dynamic> memberList = snapshot.data?.data()!["Members"];
-    for (var email in memberList) {
+    //print(memberList);
+    for (Map<String,dynamic> email in memberList) {
       print(email);
-      // if (snapshot.data!.data()![email["Email"].toString().split("@")[0]]
-      // ["Active"] != null &&
-      //     snapshot.data!.data()![email["Email"].toString().split("@")[0]]
-      //     ["Active"]) {
-      //   count++;
-      // }
+      if (snapshot.data?.data()![email["Email"].toString().split("@")[0]]["Active"] != null && snapshot.data?.data()![email["Email"].toString().split("@")[0]]["Active"]) {
+        count++;
+      }
     }
     return count;
   }
