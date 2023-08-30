@@ -698,7 +698,14 @@ class _chat_pageState extends State<chat_page> {
               ?
           const SizedBox()
               :
-          UserAvatar(image: image,name: name),
+          Row(
+            children: [
+              UserAvatar(image: image,name: name),
+              SizedBox(
+                width: size.width*0.01,
+              )
+            ],
+          ),
 
           MsgTile(
             comressedURL: compressedURL,
@@ -724,7 +731,14 @@ class _chat_pageState extends State<chat_page> {
               ?
           const SizedBox()
               :
-          UserAvatar(image: image,name: name),
+          Row(
+            children: [
+              UserAvatar(image: image,name: name),
+              SizedBox(
+                width: size.width*0.01,
+              )
+            ],
+          ),
         ],
       ),
     );
@@ -760,28 +774,28 @@ class _chat_pageState extends State<chat_page> {
       AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot,
       int messageIndex) {
     bool out = true;
-    List<dynamic> member_list = snapshot.data?.data()!["Members"];
-    DateTime msg_stamp = snapshot.data!
+    List<dynamic> memberList = snapshot.data?.data()!["Members"];
+    DateTime msgStamp = snapshot.data!
         .data()!["Messages"]
             [snapshot.data!.data()!["Messages"].length - messageIndex - 1]
             ["Stamp"]
         .toDate();
-    for (var email in member_list) {
-      DateTime user_stamp = snapshot.data!
+    for (var email in memberList) {
+      DateTime userStamp = snapshot.data!
           .data()![email["Email"].toString().split("@")[0]]["Last_Active"]
           .toDate();
-      print(user_stamp.hour);
-      print(msg_stamp.hour);
-      if (msg_stamp.year >= user_stamp.year &&
-          msg_stamp.month >= user_stamp.month &&
-          msg_stamp.day >= user_stamp.day &&
-          msg_stamp.hour >= user_stamp.hour &&
-          msg_stamp.minute > user_stamp.minute) {
+      print(userStamp.hour);
+      print(msgStamp.hour);
+      if (msgStamp.year >= userStamp.year &&
+          msgStamp.month >= userStamp.month &&
+          msgStamp.day >= userStamp.day &&
+          msgStamp.hour >= userStamp.hour &&
+          msgStamp.minute > userStamp.minute) {
         print(email);
         out = false;
         break;
       } else {
-        if (msg_stamp.day > user_stamp.day) {
+        if (msgStamp.day > userStamp.day) {
           out = false;
           break;
         } else {
@@ -797,8 +811,8 @@ class _chat_pageState extends State<chat_page> {
   int activeStatus(
       AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
     int count = 0;
-    List<dynamic> member_list = snapshot.data?.data()!["Members"];
-    for (var email in member_list) {
+    List<dynamic> memberList = snapshot.data?.data()!["Members"];
+    for (var email in memberList) {
       print(email);
       // if (snapshot.data!.data()![email["Email"].toString().split("@")[0]]
       // ["Active"] != null &&

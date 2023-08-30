@@ -12,7 +12,6 @@ class UserAvatar extends StatelessWidget {
     Size size=MediaQuery.of(context).size;
     return Row(
       children: [
-        SizedBox(width: size.width * 0.02),
         CircleAvatar(
           radius: size.width * 0.035,
           backgroundImage:

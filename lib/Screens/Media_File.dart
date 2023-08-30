@@ -50,20 +50,20 @@ class _Media_filesState extends State<Media_files> {
               itemBuilder:(context, index) {
                 return InkWell(
                   onTap: (){
-                    snapshot.data!.data()?["Media_Files"][index]["Video"]
-                        ?
-                        null
-                        :
-                    Navigator.push(
-                      context,
-                      PageTransition(
-                          childCurrent:Media_files(channel: widget.channel,),
-                          child:Image_viewer(url: snapshot.data!.data()?["Media_Files"][index]["Image_URL"]),
-                          type: PageTransitionType
-                              .rightToLeftJoined,
-                          duration: const Duration(
-                              milliseconds: 300)),
-                    );
+                    // snapshot.data!.data()?["Media_Files"][index]["Video"]
+                    //     ?
+                    //     null
+                    //     :
+                    // Navigator.push(
+                    //   context,
+                    //   PageTransition(
+                    //       childCurrent:Media_files(channel: widget.channel,),
+                    //       child:Image_viewer(url: snapshot.data!.data()?["Media_Files"][index]["Image_URL"]),
+                    //       type: PageTransitionType
+                    //           .rightToLeftJoined,
+                    //       duration: const Duration(
+                    //           milliseconds: 300)),
+                    // );
                   },
                   child: Container(
                       height: size.height*0.1,
