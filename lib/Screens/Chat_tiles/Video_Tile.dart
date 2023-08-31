@@ -49,7 +49,7 @@ class _VideoTileState extends State<VideoTile> {
     return Column(
       children: [
         SizedBox(
-          height: size.height*0.01,
+          height: size.height * 0.01,
         ),
         downloadedVideo
             ? InkWell(
@@ -67,19 +67,24 @@ class _VideoTileState extends State<VideoTile> {
                   width: double.maxFinite,
                   height: size.height * 0.3,
                   decoration: (playing || resume)
-                      ? BoxDecoration(
+                      ?
+                  BoxDecoration(
                           color: Colors.black,
-                          // borderRadius: const BorderRadius.all(Radius.circular(12)),
+                          borderRadius: const BorderRadius.only(
+                            bottomRight: Radius.circular(20),
+                            bottomLeft: Radius.circular(20),
+                          ),
                           border: Border.all(color: Colors.black, width: 2))
-                      : BoxDecoration(
+                      :
+                  BoxDecoration(
+                          borderRadius: const BorderRadius.only(
+                            bottomRight: Radius.circular(20),
+                            bottomLeft: Radius.circular(20),
+                          ),
                           image: DecorationImage(
                               image: FileImage(thumbnailPath),
                               fit: BoxFit.contain),
                           color: Colors.black,
-                          // borderRadius: const BorderRadius.only(
-                          //     bottomLeft: Radius.circular(15),
-                          //   bottomRight: Radius.circular(15),
-                          // ),
                           border: Border.all(color: Colors.black, width: 2)),
                   child: playing
                       ? Container(
@@ -188,10 +193,13 @@ class _VideoTileState extends State<VideoTile> {
                       width: size.width * 0.55,
                       height: size.height * 0.3,
                       decoration: BoxDecoration(
-                        // borderRadius: const BorderRadius.all(Radius.circular(15)),
                         image: DecorationImage(
                           image: FileImage(thumbnailPath),
                           fit: BoxFit.contain,
+                        ),
+                        borderRadius: const BorderRadius.only(
+                          bottomRight: Radius.circular(20),
+                          bottomLeft: Radius.circular(20),
                         ),
                       ),
                       child: BackdropFilter(
@@ -228,7 +236,7 @@ class _VideoTileState extends State<VideoTile> {
   }
 
   check() async {
-    Directory? directory = await getApplicationCacheDirectory();
+    Directory? directory = await getApplicationSupportDirectory();
 
     String additionalPath = "/videos";
     String additionalPath1 = "/thumbnail";
@@ -243,7 +251,7 @@ class _VideoTileState extends State<VideoTile> {
       });
     } else {
       print("original not exist");
-      directory = await getApplicationCacheDirectory();
+      directory = await getApplicationSupportDirectory();
       additionalPath = "/thumbnail";
       directory = Directory("${directory.path}$additionalPath");
 
@@ -282,7 +290,7 @@ class _VideoTileState extends State<VideoTile> {
   }
 
   downloadVideo() async {
-    Directory directory = await getApplicationCacheDirectory();
+    Directory directory = await getApplicationSupportDirectory();
     String additionalPath = "/videos";
     directory = Directory("${directory.path}$additionalPath");
 

@@ -585,6 +585,7 @@ class _basicDetailsState extends State<basicDetails> {
                           "Active":false,
                           "Read_Count": 0,
                           "Last_Active" : DateTime.now()};
+                        DateTime stamp=DateTime.now();
                         var data=await FirebaseFirestore.instance.collection("Chat_Channels").doc("Channels").get();
                         data.data()==null
                             ?
@@ -614,7 +615,7 @@ class _basicDetailsState extends State<basicDetails> {
                                   "${secController.text.trim().split(" ")[0]} "
                                   "${subjectController.text.trim().split(" ")[0]}"
                           ).update({
-                            "Messages" : FieldValue.arrayUnion([{"Name": usermodel["Name"],"text":"Hello" , "UID": usermodel["Email"],"Stamp": DateTime.now(),"Image": usermodel["Profile_URL"]}]),
+                            "Messages" : FieldValue.arrayUnion([{"Name": usermodel["Name"],"text":"Hello" , "UID": usermodel["Email"],"Stamp": stamp,"Image": usermodel["Profile_URL"]}]),
                             "Token" : FieldValue.arrayUnion([usermodel["Token"]]),
                             "Admins" : FieldValue.arrayUnion(["${usermodel["Email"]}"]),
                             "Members" : FieldValue.arrayUnion([
@@ -623,6 +624,14 @@ class _basicDetailsState extends State<basicDetails> {
                                 "Post" : "Teachers"
                               }
                                   ]),
+                            "${stamp.toString().split(".")[0]}_delevered" : FieldValue.arrayUnion([{
+                              "Email" : usermodel["Email"],
+                              "Stamp" : stamp
+                            }]),
+                            "${stamp.toString().split(".")[0]}_seen" : FieldValue.arrayUnion([{
+                              "Email" : usermodel["Email"],
+                              "Stamp" : stamp
+                            }]),
                             usermodel["Email"].toString().split("@")[0] : map,
                           })
                               :
@@ -635,7 +644,7 @@ class _basicDetailsState extends State<basicDetails> {
                                   "${secController.text.trim().split(" ")[0]} "
                                   "${subjectController.text.trim().split(" ")[0]}"
                           ).set({
-                            "Messages" : [{"Name": usermodel["Name"],"text":"Hello" , "UID": usermodel["Email"],"Stamp": DateTime.now(),"Image": usermodel["Profile_URL"]}],
+                            "Messages" : [{"Name": usermodel["Name"],"text":"Hello" , "UID": usermodel["Email"],"Stamp": stamp,"Image": usermodel["Profile_URL"]}],
                             "Token" : FieldValue.arrayUnion([usermodel["Token"]]),
                             "Admins" : FieldValue.arrayUnion(["${usermodel["Email"]}"]),
                             "Members" : FieldValue.arrayUnion([
@@ -644,9 +653,17 @@ class _basicDetailsState extends State<basicDetails> {
                                 "Post" : "Teachers"
                               }
                             ]),
+                            "${stamp.toString().split(".")[0]}_delevered" : FieldValue.arrayUnion([{
+                              "Email" : usermodel["Email"],
+                              "Stamp" : stamp
+                            }]),
+                            "${stamp.toString().split(".")[0]}_seen" : FieldValue.arrayUnion([{
+                              "Email" : usermodel["Email"],
+                              "Stamp" : stamp
+                            }]),
                             usermodel["Email"].toString().split("@")[0] : map,
                             "image_URL" : "null",
-                            "CreatedOn": {"Date" : DateTime.now(), "Name": usermodel["Name"]}
+                            "CreatedOn": {"Date" : stamp, "Name": usermodel["Name"]}
                                 });
                         });
 

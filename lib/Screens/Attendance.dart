@@ -575,7 +575,7 @@ class _AttendanceState extends State<Attendance> {
                                                             }]),
                                                             "count_attendance": FieldValue.increment(1)
                                                           });
-                                                      database().sendPushMessage(token, "Attendance marked", subject_filter);
+                                                      database().sendPushMessage(token, "Attendance marked", subject_filter,false,"",DateTime.now());
                                                       marked_email.remove(element);
                                                     }
                                                     else{
@@ -629,7 +629,7 @@ class _AttendanceState extends State<Attendance> {
                                                             }]),
                                                             "count_attendance": FieldValue.increment(1)
                                                           });
-                                                      database().sendPushMessage(token, "Attendance Missed", subject_filter);
+                                                      database().sendPushMessage(token, "Attendance Missed", subject_filter,false,"",DateTime.now());
                                                       marked_email.remove(element);
                                                     }
                                                   }

@@ -117,9 +117,9 @@ class database {
     ];
     return daysInMonth[month - 1];
   }
-  void sendPushMessage(String token, String body, String title) async {
+  void sendPushMessage(String token, String body, String title,bool msg,String channel , DateTime stamp) async {
     try {
-      print("......................");
+      print("......................${stamp.toString()}");
       await http.post(
         Uri.parse("https://fcm.googleapis.com/fcm/send"),
         headers: <String, String>{
@@ -134,6 +134,9 @@ class database {
             'status': "done",
             'body': body,
             'title': title,
+            "msg" : msg ? "true" : false,
+            'channel' : channel,
+            'stamp' : stamp.toString()
           },
           "apns": {
             "headers": {"apns-priority": "5"},

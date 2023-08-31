@@ -236,6 +236,7 @@ class _SendMediaState extends State<SendMedia> {
                       ),
                     ),
                   );
+                  DateTime stamp= DateTime.now();
                   Reference reference=FirebaseStorage.instance.ref();
 
                   // Create Directory into Firebase Storage
@@ -245,12 +246,12 @@ class _SendMediaState extends State<SendMedia> {
 
                   Reference imageFolder=imageDirectory.child(widget.channel);
 
-                  Reference channel=imageFolder.child("${DateTime.now()}");
+                  Reference channel=imageFolder.child("$stamp");
 
 
                   TaskSnapshot snap= await channel.putFile(File(widget.imagePath.path));
                   String URL=await snap.ref.getDownloadURL();
-                  String path = await VideoThumbnail.thumbnailFile(video: URL,imageFormat: ImageFormat.PNG,quality: 1,thumbnailPath: (await getApplicationCacheDirectory()).path) ?? "";
+                  String path = await VideoThumbnail.thumbnailFile(video: URL,imageFormat: ImageFormat.PNG,quality: 1,thumbnailPath: (await getApplicationDocumentsDirectory()).path) ?? "";
                   reference=FirebaseStorage.instance.ref();
 
                   imageDirectory=reference.child("Message_Images");
@@ -258,7 +259,7 @@ class _SendMediaState extends State<SendMedia> {
 
                   imageFolder=imageDirectory.child("${usermodel[widget.channel]}");
 
-                  channel=imageDirectory.child("${DateTime.now()}");
+                  channel=imageDirectory.child("$stamp");
 
                   snap= await channel.putFile(File(path));
                   String thumbURL=await snap.ref.getDownloadURL();
@@ -276,7 +277,7 @@ class _SendMediaState extends State<SendMedia> {
                           "text": messageController.text
                               .trim()
                               .toString(),
-                          "Stamp": DateTime.now(),
+                          "Stamp": stamp,
                           "Reply": widget.replyBoxHeight != 0
                               ? true
                               : false,
@@ -324,7 +325,11 @@ class _SendMediaState extends State<SendMedia> {
                             ? database().sendPushMessage(
                             element,
                             messageController.text.trim(),
-                            widget.channel)
+                            widget.channel,
+                            true,
+                            widget.channel,
+                            stamp
+                        )
                             : null;
                       }
                     },
@@ -620,7 +625,11 @@ class _SendMediaState extends State<SendMedia> {
                               ? database().sendPushMessage(
                               element,
                               messageController.text.trim(),
-                              widget.channel)
+                              widget.channel,
+                            true,
+                            widget.channel,
+                            stamp
+                          )
                               : null;
                         }
 

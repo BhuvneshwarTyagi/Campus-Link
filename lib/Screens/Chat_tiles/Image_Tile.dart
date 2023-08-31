@@ -79,10 +79,10 @@ class _ImageTileState extends State<ImageTile> {
                   height: size.height*0.3,
                   decoration: BoxDecoration(
                     color: Colors.black,
-                    // borderRadius: const BorderRadius.only(
-                    //   bottomRight: Radius.circular(30),
-                    //   bottomLeft: Radius.circular(30),
-                    // ) ,
+                    borderRadius: const BorderRadius.only(
+                      bottomRight: Radius.circular(20),
+                      bottomLeft: Radius.circular(20),
+                    ),
                     image: DecorationImage(
                       image: FileImage(_imagePath),
                       fit: BoxFit.contain,
@@ -90,10 +90,15 @@ class _ImageTileState extends State<ImageTile> {
                   ),
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: x, sigmaY: y),
-                    child: SizedBox(
+                    child: Container(
                       width: size.width*0.55,
                       height: size.height*0.35,
-
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          bottomRight: Radius.circular(20),
+                          bottomLeft: Radius.circular(20),
+                        ),
+                      ),
                       child: downloaded
                           ?
                       const SizedBox()
@@ -136,7 +141,7 @@ class _ImageTileState extends State<ImageTile> {
 
   check() async {
     try{
-      Directory? directory = await getApplicationCacheDirectory();
+      Directory? directory = await getApplicationSupportDirectory();
       String additionalPath= "/images";
       directory = Directory("${directory.path}$additionalPath");
       _imagePath=File("${directory.path}/${widget.stamp}.png");
@@ -152,7 +157,7 @@ class _ImageTileState extends State<ImageTile> {
 
       else{
         print("original not exist");
-        directory = await getApplicationCacheDirectory();
+        directory = await getApplicationSupportDirectory();
         additionalPath= "/thumbnail";
         directory = Directory("${directory.path}$additionalPath");
 
@@ -197,7 +202,7 @@ class _ImageTileState extends State<ImageTile> {
 
 
   downloadImage() async {
-    Directory? directory = await getApplicationCacheDirectory();
+    Directory? directory = await getApplicationSupportDirectory();
     String additionalPath= "/images";
     directory = Directory("${directory.path}$additionalPath");
 

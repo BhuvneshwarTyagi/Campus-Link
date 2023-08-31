@@ -3,6 +3,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:campus_link_teachers/Database/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:excel/excel.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:file_manager/file_manager.dart';
 import 'package:flutter/material.dart';
@@ -169,7 +170,8 @@ class _SubjectState extends State<Subject> {
                                                 children: [
                                                   IconButton(
                                                       onPressed: () async {
-                                                        await Share.shareXFiles([XFile(entity.path)], text: '${widget.course} ${widget.uni} ${widget.year} (${widget.section}) ${widget.subject} Attendance Sheet');
+                                                        await Share.shareXFiles(
+                                                            [XFile(entity.path)], text: '${widget.course} ${widget.uni} ${widget.year} (${widget.section}) ${widget.subject} Attendance Sheet');
                                                         },
                                                       icon: const Icon(Icons.share,color: Colors.black,)),
                                                   IconButton(

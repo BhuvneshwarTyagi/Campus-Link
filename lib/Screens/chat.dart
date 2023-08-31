@@ -1,19 +1,18 @@
-import 'dart:io';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:campus_link_teachers/Constraints.dart';
 import 'package:campus_link_teachers/Database/database.dart';
+import 'package:campus_link_teachers/Screens/Chat_tiles/Document_Viewer.dart';
 import 'package:campus_link_teachers/Screens/Sending_Media.dart';
 import 'package:campus_link_teachers/Screens/loadingscreen.dart';
 import 'package:chat_bubbles/date_chips/date_chip.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:swipe_to/swipe_to.dart';
-import 'Chat_tiles/User_circle_Avatar.dart';
 import 'Chat_tiles/msg_tile.dart';
 import 'chat_info.dart';
 
@@ -75,11 +74,11 @@ class _chat_pageState extends State<chat_page> {
                             fit: BoxFit.fill)),
                     child: Scaffold(
                       backgroundColor: Colors.transparent,
-                      extendBodyBehindAppBar: true,
+
                       appBar: !selected
                           ? AppBar(
                               elevation: 0,
-                              backgroundColor: Colors.black54,
+                              backgroundColor: Colors.black87,
                               leading: IconButton(
                                   onPressed: () async {
                                     await FirebaseFirestore.instance
@@ -208,7 +207,7 @@ class _chat_pageState extends State<chat_page> {
                             )
                           : AppBar(
                               elevation: 0,
-                              backgroundColor: Colors.black54,
+                              backgroundColor: Colors.black87,
                               leading: IconButton(
                                 onPressed: () {
                                   setState(() {
@@ -246,7 +245,7 @@ class _chat_pageState extends State<chat_page> {
                           itemScrollController: scrollController,
                           itemCount: message.length,
                           itemBuilder: (context, index) {
-
+                            print("ddddddddddddddddddddddddddddddddddd${message[index]["Stamp"].toString().split(".")[0]}");
                             bool read = updateReadedCount(snapshot, index);
 
                             bool Reply = false;
@@ -327,8 +326,10 @@ class _chat_pageState extends State<chat_page> {
                                         Image? message[index]["Image_Compressed"]:"",
                                         Video,
                                         Video? message[index]["Video_Url"]: "",
-                                        Video? message[index]["Video_ThumbNail"]: ""
+                                        Video? message[index]["Video_ThumbNail"]: "",
 
+                                      snapshot.data?.data()!["${message[index]["Stamp"].toDate().toString().split(".")[0]}_delevered"].length==snapshot.data!.data()?["Members"].length,
+                                      snapshot.data?.data()!["${message[index]["Stamp"].toDate().toString().split(".")[0]}_seen"].length==snapshot.data!.data()?["Members"].length,
                                     ),
                                               ),
                                             )
@@ -375,7 +376,9 @@ class _chat_pageState extends State<chat_page> {
 
                                                   Video,
                                                 Video? message[index]["Video_Url"]: "",
-                                                Video ? message[index]["Video_ThumbNail"]: ""
+                                                Video ? message[index]["Video_ThumbNail"]: "",
+                                                snapshot.data?.data()!["${message[index]["Stamp"].toDate().toString().split(".")[0]}_delevered"].length==snapshot.data!.data()?["Members"].length,
+                                                snapshot.data?.data()!["${message[index]["Stamp"].toDate().toString().split(".")[0]}_seen"].length==snapshot.data!.data()?["Members"].length,
                                             ),
                                       )
                                     ],
@@ -483,16 +486,16 @@ class _chat_pageState extends State<chat_page> {
                                         maxLines: 5,
                                         minLines: 1,
                                         autocorrect: true,
-                                        onTap: (){
-                                          setState(() {
-                                            fieldIconWidth=size.width*0.15;
-                                          });
-                                        },
-                                        onTapOutside:  (event) {
-                                            setState(() {
-                                              fieldIconWidth=size.width*0.35;
-                                            });
-                                        },
+                                        // onTap: (){
+                                        //   setState(() {
+                                        //     fieldIconWidth=size.width*0.15;
+                                        //   });
+                                        // },
+                                        // onTapOutside:  (event) {
+                                        //     setState(() {
+                                        //       fieldIconWidth=size.width*0.35;
+                                        //     });
+                                        // },
                                         textAlign: TextAlign.start,
                                         style: const TextStyle(color: Colors.black, fontSize: 18),
                                         decoration: InputDecoration(
@@ -505,7 +508,17 @@ class _chat_pageState extends State<chat_page> {
                                                 Transform.rotate(
                                                   angle: 1.6,
                                                   child: IconButton(
-                                                      onPressed: (){},
+                                                      onPressed: () async {
+                                                        FilePickerResult? filePickerResult= await FilePicker.platform.pickFiles(allowMultiple: true).then((value) {
+                                                          print("..............value : $value");
+                                                          if(value!.files.isNotEmpty){
+                                                            Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                                              return DocumentViewer(document: value, replyToName: message[replyIndex]["Name"],replyToText: message[replyIndex]["text"].toString().substring(0,message[replyIndex]["text"].length>120?120:message[replyIndex]["text"].length),replyBoxHeight: replyBoxHeight, );
+                                                            },));
+                                                          }
+                                                        });
+
+                                                      },
                                                       icon: const Icon(Icons.attachment_outlined)),
                                                 ),
                                               fieldIconWidth>=size.width*0.35
@@ -614,6 +627,7 @@ class _chat_pageState extends State<chat_page> {
                                   ]),
                               TextButton(
                                 onPressed: () async {
+                                  DateTime stamp=DateTime.now();
                                   messageController.text.trim() == ""
                                       ? null
                                       : await FirebaseFirestore.instance
@@ -630,7 +644,7 @@ class _chat_pageState extends State<chat_page> {
                                                 "text": messageController.text
                                                     .trim()
                                                     .toString(),
-                                                "Stamp": DateTime.now(),
+                                                "Stamp": stamp,
                                                 "Reply": replyBoxHeight != 0
                                                     ? true
                                                     : false,
@@ -638,7 +652,15 @@ class _chat_pageState extends State<chat_page> {
                                                     replyIndex -
                                                     1,
                                               }
-                                            ])
+                                            ]),
+                                            "${stamp.toString().split(".")[0]}_delevered" : FieldValue.arrayUnion([{
+                                              "Email" : usermodel["Email"],
+                                              "Stamp" : stamp
+                                            }]),
+                                            "${stamp.toString().split(".")[0]}_seen" : FieldValue.arrayUnion([{
+                                              "Email" : usermodel["Email"],
+                                              "Stamp" : stamp
+                                            }]),
                                           },
                                         ).whenComplete(
                                           () async {
@@ -656,14 +678,22 @@ class _chat_pageState extends State<chat_page> {
                                               return value.data()?["Token"];
                                             });
                                             for (var element in tokens) {
-                                              element.toString() !=
-                                                      usermodel["Token"]
-                                                  ? database().sendPushMessage(
-                                                      element,
-                                                      messageController.text.trim().toString(),
-                                                      widget.channel,
-                                                      )
-                                                  : null;
+                                              print("Sending to element");
+                                              try{
+                                                element.toString() != usermodel["Token"]
+                                                    ? database().sendPushMessage(
+                                                    element,
+                                                    messageController.text.trim().toString(),
+                                                    widget.channel,
+                                                    true,
+                                                    widget.channel,
+                                                    stamp
+                                                )
+                                                    : null;
+                                              }
+                                              catch (e){
+                                                print(e);
+                                              }
                                             }
                                             setState(() {
                                               messageController.clear();
@@ -714,7 +744,9 @@ class _chat_pageState extends State<chat_page> {
       String compressedURL,
       bool videoMsg,
       String videoURL,
-      String videoThumbnailURL
+      String videoThumbnailURL,
+      bool isDelevered,
+      bool isSeen,
       )  {
     return Align(
       alignment: sender ? Alignment.centerRight : Alignment.centerLeft,
@@ -727,7 +759,7 @@ class _chat_pageState extends State<chat_page> {
           Container(
 
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(15)),
+              borderRadius: const BorderRadius.all(Radius.circular(15)),
                gradient: LinearGradient(colors: [
                  Colors.black.withOpacity(0.9),
                  Colors.black.withOpacity(0.6)
@@ -749,20 +781,41 @@ class _chat_pageState extends State<chat_page> {
                 const SizedBox(
                   width: 5,
                 ),
-                sender
-                    ? Icon(
-                  Icons.check,
+                isSeen
+                    ?
+                Icon(
+                  Icons.done_all_outlined,
                   color: readed
                       ? Colors.green
                       : Colors.white.withOpacity(0.8),
                   size: size.width * 0.04,
                 )
-                    : const SizedBox(),
+                    :
+                isDelevered
+                    ?
+                Icon(
+                      Icons.done_all_outlined,
+                      color: readed
+                          ? Colors.white
+                          : Colors.white.withOpacity(0.8),
+                      size: size.width * 0.04,
+                    )
+                    :
+                Icon(
+                  Icons.check,
+                  color: readed
+                      ? Colors.white
+                      : Colors.white.withOpacity(0.8),
+                  size: size.width * 0.04,
+                )
+
               ],
             ),
           )
               :
-          const SizedBox(),
+          SizedBox(
+            width: size.width*0.02,
+          ),
 
           MsgTile(
             comressedURL: compressedURL,
@@ -809,23 +862,14 @@ class _chat_pageState extends State<chat_page> {
                       fontWeight: FontWeight.w700),
                   textAlign: TextAlign.right,
                 ),
-                const SizedBox(
-                  width: 5,
-                ),
-                sender
-                    ? Icon(
-                  Icons.check,
-                  color: readed
-                      ? Colors.green
-                      : Colors.white.withOpacity(0.8),
-                  size: size.width * 0.04,
-                )
-                    : const SizedBox(),
+
               ],
             ),
           )
               :
-          const SizedBox(),
+          SizedBox(
+            width: size.width*0.02,
+          ),
         ],
       ),
     );
@@ -898,7 +942,7 @@ class _chat_pageState extends State<chat_page> {
   int activeStatus(AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
     int count = 0;
     List<dynamic> memberList = snapshot.data?.data()!["Members"];
-    //print(memberList);
+
     for (Map<String,dynamic> email in memberList) {
       print(email);
       if (snapshot.data?.data()![email["Email"].toString().split("@")[0]]["Active"] != null && snapshot.data?.data()![email["Email"].toString().split("@")[0]]["Active"]) {

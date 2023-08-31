@@ -79,6 +79,8 @@ class MsgTile extends StatelessWidget {
           borderRadius: const BorderRadius.only(
             topRight: Radius.circular(30),
             topLeft: Radius.circular(30),
+            bottomRight: Radius.circular(20),
+            bottomLeft: Radius.circular(20),
 
           ),
           gradient: !sender?
@@ -144,12 +146,14 @@ class MsgTile extends StatelessWidget {
           )
               : const SizedBox(),
           videoMsg
-              ? VideoTile(
+              ? Center(
+                child: VideoTile(
             channel: channel,
             videoURL: videoURL,
             videoThumbnailURL: videoThumbnailURL,
             stamp: stamp,
-          )
+          ),
+              )
               : const SizedBox(),
 
         ],
