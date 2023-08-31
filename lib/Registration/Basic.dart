@@ -60,7 +60,7 @@ class _basicDetailsState extends State<basicDetails> {
   final textStyle = GoogleFonts.alegreya(
     fontSize: 28,
     fontWeight: FontWeight.w900,
-    color: Colors.amber,
+    color: Colors.white,
     shadows: <Shadow>[
       const Shadow(
         offset: Offset(1, 1),
@@ -72,10 +72,17 @@ class _basicDetailsState extends State<basicDetails> {
   Widget build(BuildContext context) {
 
     return Container(
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-            image: AssetImage("assets/images/bg-image.png"),
-            fit: BoxFit.cover
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            const Color.fromRGBO(86, 149, 178, 1),
+            // Color.fromRGBO(86, 149, 178, 1),
+            const Color.fromRGBO(68, 174, 218, 1),
+            //Color.fromRGBO(118, 78, 232, 1),
+            Colors.deepPurple.shade300
+          ],
         ),
       ),
       child: Scaffold(
@@ -90,7 +97,7 @@ class _basicDetailsState extends State<basicDetails> {
               WavyAnimatedText(
                 'Fill Your Basic Details',
                 textStyle: GoogleFonts.openSans(
-                    color: Colors.amber,
+                    color: Colors.white54,
                     fontSize: 22,
                     fontWeight: FontWeight.w800,
                     shadows: <Shadow>[
@@ -122,22 +129,24 @@ class _basicDetailsState extends State<basicDetails> {
                   focusNode: univf,
                   controller: universityController,
                   searchStyle: GoogleFonts.openSans(
-                      color: Colors.amber,
+                      color: Colors.white,
                       fontSize: 15,
                       fontWeight: FontWeight.w800),
                   suggestionStyle: GoogleFonts.openSans(
-                    color: Colors.amber,
+                    color: Colors.white,
                     fontSize: 15,
                     fontWeight: FontWeight.w800,
                   ),
-                  marginColor: Colors.amber,
+                  marginColor: Colors.black,
                   suggestionsDecoration: SuggestionDecoration(
-                      color: const Color.fromRGBO(3, 74, 140, 1),
+                      color: const Color.fromRGBO(40, 130, 146, 1),
                       //shape: BoxShape.rectangle,
                       padding: const EdgeInsets.all(10),
-                      border: Border.all(width: 2, color: Colors.amber),
+                      border: Border.all(width: 2, color: Colors.black),
                       borderRadius: BorderRadius.circular(0)),
                   searchInputDecoration: InputDecoration(
+                    fillColor: Colors.black26.withOpacity(0.7),
+                    filled: true,
                       hintText: "University",
                       hintStyle: GoogleFonts.openSans(
                           color: Colors.white38,
@@ -146,15 +155,15 @@ class _basicDetailsState extends State<basicDetails> {
                       focusedBorder: OutlineInputBorder(
                         borderSide: const BorderSide(
                           width: 3,
-                          color: Colors.amber,
+                          color: Colors.black,
                         ),
                         borderRadius: BorderRadius.circular(15),
                       ),
-                      focusColor: Colors.amber,
+                      focusColor: Colors.black,
                       border: OutlineInputBorder(
                         borderSide: const BorderSide(
                           width: 3,
-                          color: Colors.amber,
+                          color: Colors.black,
                         ),
                         borderRadius: BorderRadius.circular(15),
                       ),
@@ -164,7 +173,8 @@ class _basicDetailsState extends State<basicDetails> {
                           color: Colors.black,
                         ),
                         borderRadius: BorderRadius.circular(15),
-                      )),
+                      ),
+                  ),
                   onSuggestionTap: (value) {
                     setState(() {
                       fetchCollege(value.searchKey);
@@ -188,47 +198,51 @@ class _basicDetailsState extends State<basicDetails> {
                   focusNode: clgf,
                   controller: clgController,
                   searchStyle: GoogleFonts.openSans(
-                      color: Colors.amber,
+                      color: Colors.white,
                       fontSize: 15,
                       fontWeight: FontWeight.w800),
                   suggestionStyle: GoogleFonts.openSans(
-                      color: Colors.amber,
+
+                      color: Colors.white,
                       fontSize: 15,
                       fontWeight: FontWeight.w800),
                   suggestionsDecoration: SuggestionDecoration(
-                      color: const Color.fromRGBO(3, 74, 140, 1),
+                      color: const Color.fromRGBO(40, 130, 146, 1),
                       //shape: BoxShape.rectangle,
                       padding: const EdgeInsets.all(10),
-                      border: Border.all(width: 2, color: Colors.amber),
+                      border: Border.all(width: 2, color: Colors.black),
                       borderRadius: BorderRadius.circular(0)),
                   searchInputDecoration: InputDecoration(
+                    fillColor: Colors.black26.withOpacity(0.7),
+                    filled: true,
                       hintText: "Colleges",
                       hintStyle: GoogleFonts.openSans(
                           color: Colors.white38,
                           fontSize: 15,
                           fontWeight: FontWeight.w500),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                          width: 3,
-                          color: Colors.amber,
-                        ),
-                        borderRadius: BorderRadius.circular(15),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        width: 3,
+                        color: Colors.black,
                       ),
-                      focusColor: Colors.amber,
-                      border: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                          width: 3,
-                          color: Colors.amber,
-                        ),
-                        borderRadius: BorderRadius.circular(15),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    focusColor: Colors.black,
+                    border: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        width: 3,
+                        color: Colors.black,
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                          width: 3,
-                          color: Colors.black,
-                        ),
-                        borderRadius: BorderRadius.circular(15),
-                      )),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        width: 3,
+                        color: Colors.black,
+                      ),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
                   onSuggestionTap: (value) {
                     setState(() {
                       fetchCourse(value.searchKey);
@@ -250,47 +264,50 @@ class _basicDetailsState extends State<basicDetails> {
                   focusNode: coursef,
                   controller: courseController,
                   searchStyle: GoogleFonts.openSans(
-                      color: Colors.amber,
+                      color: Colors.white,
                       fontSize: 15,
                       fontWeight: FontWeight.w800),
                   suggestionStyle: GoogleFonts.openSans(
-                      color: Colors.amber,
+                      color: Colors.white,
                       fontSize: 15,
                       fontWeight: FontWeight.w800),
                   suggestionsDecoration: SuggestionDecoration(
-                      color: const Color.fromRGBO(3, 74, 140, 1),
+                      color: const Color.fromRGBO(40, 130, 146, 1),
                       //shape: BoxShape.rectangle,
                       padding: const EdgeInsets.all(10),
-                      border: Border.all(width: 2, color: Colors.amber),
+                      border: Border.all(width: 2, color: Colors.black),
                       borderRadius: BorderRadius.circular(0)),
                   searchInputDecoration: InputDecoration(
+                    fillColor: Colors.black26.withOpacity(0.7),
+                    filled: true,
                       hintText: "Course",
                       hintStyle: GoogleFonts.openSans(
                           color: Colors.white38,
                           fontSize: 15,
                           fontWeight: FontWeight.w500),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                          width: 3,
-                          color: Colors.amber,
-                        ),
-                        borderRadius: BorderRadius.circular(15),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        width: 3,
+                        color: Colors.black,
                       ),
-                      focusColor: Colors.amber,
-                      border: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                          width: 3,
-                          color: Colors.amber,
-                        ),
-                        borderRadius: BorderRadius.circular(15),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    focusColor: Colors.black,
+                    border: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        width: 3,
+                        color: Colors.black,
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                          width: 3,
-                          color: Colors.black,
-                        ),
-                        borderRadius: BorderRadius.circular(15),
-                      )),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        width: 3,
+                        color: Colors.black,
+                      ),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
                   onSuggestionTap: (value) {
                     setState(() {
                       fetchBranch(value.searchKey);
@@ -313,47 +330,50 @@ class _basicDetailsState extends State<basicDetails> {
                   focusNode: branchf,
                   controller: branchController,
                   searchStyle: GoogleFonts.openSans(
-                      color: Colors.amber,
+                      color: Colors.white,
                       fontSize: 15,
                       fontWeight: FontWeight.w800),
                   suggestionStyle: GoogleFonts.openSans(
-                      color:Colors.amber,
+                      color:Colors.white,
                       fontSize: 15,
                       fontWeight: FontWeight.w800),
                   suggestionsDecoration: SuggestionDecoration(
-                      color: const Color.fromRGBO(3, 74, 140, 1),
+                      color: const Color.fromRGBO(40, 130, 146, 1),
                       //shape: BoxShape.rectangle,
                       padding: const EdgeInsets.all(10),
-                      border: Border.all(width: 2, color: Colors.amber),
+                      border: Border.all(width: 2, color: Colors.black),
                       borderRadius: BorderRadius.circular(0)),
                   searchInputDecoration: InputDecoration(
+                    fillColor: Colors.black26.withOpacity(0.7),
+                      filled: true,
                       hintText: "Branch",
                       hintStyle: GoogleFonts.openSans(
                           color: Colors.white38,
                           fontSize: 15,
                           fontWeight: FontWeight.w500),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                          width: 3,
-                          color: Colors.amber,
-                        ),
-                        borderRadius: BorderRadius.circular(15),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        width: 3,
+                        color: Colors.black,
                       ),
-                      focusColor: Colors.amber,
-                      border: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                          width: 3,
-                          color: Colors.amber,
-                        ),
-                        borderRadius: BorderRadius.circular(15),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    focusColor: Colors.black,
+                    border: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        width: 3,
+                        color: Colors.black,
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                          width: 3,
-                          color: Colors.black,
-                        ),
-                        borderRadius: BorderRadius.circular(15),
-                      )),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        width: 3,
+                        color: Colors.black,
+                      ),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
                   onSuggestionTap: (value) {
                     setState(() {
                       fetchSubject(value.searchKey);
@@ -376,45 +396,50 @@ class _basicDetailsState extends State<basicDetails> {
                   focusNode: yearf,
                   controller: yearController,
                   searchStyle: GoogleFonts.openSans(
-                      color: Colors.amber,
+                      color: Colors.white,
                       fontSize: 15,
                       fontWeight: FontWeight.w800),
                   suggestionStyle: GoogleFonts.openSans(
-                      color: Colors.amber,
+                      color: Colors.white,
                       fontSize: 15,
                       fontWeight: FontWeight.w800),
                   suggestionsDecoration: SuggestionDecoration(
-                      color: const Color.fromRGBO(3, 74, 140, 1),
+                      color: const Color.fromRGBO(40, 130, 146, 1),
                       //shape: BoxShape.rectangle,
                       padding: const EdgeInsets.all(10),
-                      border: Border.all(width: 2, color: Colors.amber),
+                      border: Border.all(width: 2, color: Colors.black),
                       borderRadius: BorderRadius.circular(0)),
                   searchInputDecoration: InputDecoration(
+                    fillColor: Colors.black26.withOpacity(0.7),
+                    filled: true,
                       hintText: "Year",
                       hintStyle: GoogleFonts.openSans(
                           color: Colors.white38,
                           fontSize: 15,
                           fontWeight: FontWeight.w500),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                          width: 3,
-                          color: Colors.amber,
-                        ),
-                        borderRadius: BorderRadius.circular(15),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        width: 3,
+                        color: Colors.black,
                       ),
-                      focusColor: Colors.amber,
-                      border: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                          width: 3,
-                          color: Colors.amber,
-                        ),
-                        borderRadius: BorderRadius.circular(15),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    focusColor: Colors.black,
+                    border: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        width: 3,
+                        color: Colors.black,
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide:
-                        const BorderSide(width: 3, color: Colors.black),
-                        borderRadius: BorderRadius.circular(15),
-                      )),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        width: 3,
+                        color: Colors.black,
+                      ),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
                   onSuggestionTap: (value) {
                     setState(() {});
                     FocusScope.of(context).requestFocus(secf);
@@ -434,47 +459,52 @@ class _basicDetailsState extends State<basicDetails> {
                   focusNode: secf,
                   controller: secController,
                   searchStyle: GoogleFonts.openSans(
-                      color: Colors.amber,
+                      color: Colors.white,
                       fontSize: 15,
                       fontWeight: FontWeight.w800),
                   suggestionStyle: GoogleFonts.openSans(
-                      color: Colors.amber,
+                      color: Colors.white,
                       fontSize: 15,
                       fontWeight: FontWeight.w800),
                   suggestionsDecoration: SuggestionDecoration(
-                      color: Colors.transparent,
-                      shape: BoxShape.rectangle,
+
+                      color: const Color.fromRGBO(40, 130, 146, 1),
+
+                      //shape: BoxShape.rectangle,
                       padding: const EdgeInsets.all(10),
                       border: Border.all(width: 3, color: Colors.black),
-                      borderRadius: BorderRadius.circular(15)),
+                      borderRadius: BorderRadius.circular(0)),
                   searchInputDecoration: InputDecoration(
+                    fillColor: Colors.black26.withOpacity(0.7),
+                    filled: true,
                       hintText: "Section",
                       hintStyle: GoogleFonts.openSans(
                           color: Colors.white38,
                           fontSize: 15,
                           fontWeight: FontWeight.w500),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                          width: 3,
-                          color: Colors.amber,
-                        ),
-                        borderRadius: BorderRadius.circular(15),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        width: 3,
+                        color: Colors.black,
                       ),
-                      focusColor: Colors.amber,
-                      border: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                          width: 3,
-                          color: Colors.amber,
-                        ),
-                        borderRadius: BorderRadius.circular(15),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    focusColor: Colors.black,
+                    border: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        width: 3,
+                        color: Colors.black,
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                          width: 3,
-                          color: Colors.black,
-                        ),
-                        borderRadius: BorderRadius.circular(15),
-                      )),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        width: 3,
+                        color: Colors.black,
+                      ),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
                   onSuggestionTap: (value) {
                     setState(() {});
                     FocusScope.of(context).requestFocus(subjectf);
@@ -494,45 +524,50 @@ class _basicDetailsState extends State<basicDetails> {
                   focusNode: subjectf,
                   controller: subjectController,
                   searchStyle: GoogleFonts.openSans(
-                      color: Colors.amber,
+                      color: Colors.white,
                       fontSize: 15,
                       fontWeight: FontWeight.w800),
                   suggestionStyle: GoogleFonts.openSans(
-                      color: Colors.amber,
+                      color: Colors.white,
                       fontSize: 15,
                       fontWeight: FontWeight.w800),
                   suggestionsDecoration: SuggestionDecoration(
-                      color: const Color.fromRGBO(3, 74, 140, 1),
+                      color: const Color.fromRGBO(40, 130, 146, 1),
                       //shape: BoxShape.rectangle,
                       padding: const EdgeInsets.all(10),
-                      border: Border.all(width: 2, color: Colors.amber),
+                      border: Border.all(width: 2, color: Colors.black),
                       borderRadius: BorderRadius.circular(0)),
                   searchInputDecoration: InputDecoration(
+                    fillColor: Colors.black26.withOpacity(0.7),
+                    filled: true,
                       hintText: "Subject",
                       hintStyle: GoogleFonts.openSans(
                           color: Colors.white38,
                           fontSize: 15,
                           fontWeight: FontWeight.w500),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                          width: 3,
-                          color: Colors.amber,
-                        ),
-                        borderRadius: BorderRadius.circular(15),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        width: 3,
+                        color: Colors.black,
                       ),
-                      focusColor: Colors.amber,
-                      border: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                          width: 3,
-                          color: Colors.amber,
-                        ),
-                        borderRadius: BorderRadius.circular(15),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    focusColor: Colors.black,
+                    border: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        width: 3,
+                        color: Colors.black,
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide:
-                        const BorderSide(width: 3, color: Colors.black),
-                        borderRadius: BorderRadius.circular(15),
-                      )),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        width: 3,
+                        color: Colors.black,
+                      ),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
                   onSuggestionTap: (value) {
                     setState(() {});
                     FocusScope.of(context).requestFocus(buttonf);
@@ -547,7 +582,35 @@ class _basicDetailsState extends State<basicDetails> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.04,
               ),
-              SizedBox(
+              Container(
+                decoration: BoxDecoration(
+                    gradient:(
+                    universityController.text.isNotEmpty &&
+                        clgController.text.isNotEmpty &&
+                        courseController.text.isNotEmpty &&
+                        branchController.text.isNotEmpty &&
+                        yearController.text.isNotEmpty &&
+                        secController.text.isNotEmpty &&
+                        subjectController.text.isNotEmpty)
+                        ?
+                    const LinearGradient(
+                      begin: Alignment.centerLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Colors.blue, Colors.purpleAccent],
+                    )
+                :
+
+                 LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Colors.grey, Colors.grey.shade300,Colors.grey
+
+                  ],
+                )
+                  ,
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(color: Colors.black54,width: 2)
+                ),
                 width: MediaQuery.of(context).size.width * 0.95,
                 height: MediaQuery.of(context).size.height*0.07,
                 child: ElevatedButton(
@@ -556,15 +619,8 @@ class _basicDetailsState extends State<basicDetails> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15)),
                       side: const BorderSide(width: 3, color: Colors.black),
-                      backgroundColor: (universityController.text.isNotEmpty &&
-                          clgController.text.isNotEmpty &&
-                          courseController.text.isNotEmpty &&
-                          branchController.text.isNotEmpty &&
-                          yearController.text.isNotEmpty &&
-                          secController.text.isNotEmpty &&
-                          subjectController.text.isNotEmpty)
-                          ? Colors.amber
-                          : Colors.grey[850]),
+                      backgroundColor: Colors.transparent,
+                  ),
                   focusNode: buttonf,
                   onPressed: () async {
 

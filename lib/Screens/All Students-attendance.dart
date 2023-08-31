@@ -58,7 +58,7 @@ class _AllStudentsState extends State<AllStudents> {
                           blurRadius: 6,
                           blurStyle: BlurStyle.outer,
                           color: Colors.white.withOpacity(0.6),
-                          offset: Offset(0, 0),
+                          offset: const Offset(0, 0),
                         )
                       ]
                   ),
