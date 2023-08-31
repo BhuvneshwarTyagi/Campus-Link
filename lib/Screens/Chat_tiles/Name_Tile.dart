@@ -10,7 +10,7 @@ class NameTile extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size=MediaQuery.of(context).size;
     return AutoSizeText(
-      name,
+      sender ? "You" :name,
       style: GoogleFonts.poppins(
           color: sender? Colors.white:Colors.black,
           fontSize: size.width*0.034,

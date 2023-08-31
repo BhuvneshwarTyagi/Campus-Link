@@ -51,6 +51,12 @@ class _chat_pageState extends State<chat_page> {
           activeCount= activeStatus(snapshot)
               :
               null;
+          snapshot.hasData
+              ?
+          develered(snapshot)
+              :
+          null;
+
           return snapshot.hasData
               ? WillPopScope(
                   onWillPop: () async {
@@ -60,7 +66,7 @@ class _chat_pageState extends State<chat_page> {
                         .update({
                       usermodel["Email"].toString().split("@")[0]: {
                         "Last_Active": DateTime.now(),
-                        "Read_Count": message.length - 1,
+                        "Read_Count": message.length,
                         "Active": false,
                       }
                     });
@@ -89,7 +95,7 @@ class _chat_pageState extends State<chat_page> {
                                           .toString()
                                           .split("@")[0]: {
                                         "Last_Active": DateTime.now(),
-                                        "Read_Count": message.length - 1,
+                                        "Read_Count": message.length,
                                         "Active": false,
                                       }
                                     }).whenComplete(() => Navigator.pop(context));
@@ -246,7 +252,7 @@ class _chat_pageState extends State<chat_page> {
                           itemCount: message.length,
                           itemBuilder: (context, index) {
                             print("ddddddddddddddddddddddddddddddddddd${message[index]["Stamp"].toString().split(".")[0]}");
-                            bool read = updateReadedCount(snapshot, index);
+
 
                             bool Reply = false;
                             message[index]["Reply"] == null
@@ -315,7 +321,6 @@ class _chat_pageState extends State<chat_page> {
                                             "${message.length - message[index]["Reply_Index"] - 1}")]
                                         ["text"]
                                             : "",
-                                        read,
                                         Reply
                                             ?
                                         int.parse("${message.length - message[index]["Reply_Index"] - 1}")
@@ -364,7 +369,6 @@ class _chat_pageState extends State<chat_page> {
                                                               "${message.length - message[index]["Reply_Index"] - 1}")]
                                                           ["text"]
                                                       : "",
-                                                  false,
                                   Reply
                                       ?
                                   int.parse("${message.length - message[index]["Reply_Index"] - 1}")
@@ -486,16 +490,6 @@ class _chat_pageState extends State<chat_page> {
                                         maxLines: 5,
                                         minLines: 1,
                                         autocorrect: true,
-                                        // onTap: (){
-                                        //   setState(() {
-                                        //     fieldIconWidth=size.width*0.15;
-                                        //   });
-                                        // },
-                                        // onTapOutside:  (event) {
-                                        //     setState(() {
-                                        //       fieldIconWidth=size.width*0.35;
-                                        //     });
-                                        // },
                                         textAlign: TextAlign.start,
                                         style: const TextStyle(color: Colors.black, fontSize: 18),
                                         decoration: InputDecoration(
@@ -737,7 +731,6 @@ class _chat_pageState extends State<chat_page> {
       bool reply,
       String replyToName,
       String ReplyToText,
-      bool readed,
       int scrollindex,
       bool imageMsg,
       String imageURL,
@@ -785,7 +778,7 @@ class _chat_pageState extends State<chat_page> {
                     ?
                 Icon(
                   Icons.done_all_outlined,
-                  color: readed
+                  color: isSeen
                       ? Colors.green
                       : Colors.white.withOpacity(0.8),
                   size: size.width * 0.04,
@@ -795,7 +788,7 @@ class _chat_pageState extends State<chat_page> {
                     ?
                 Icon(
                       Icons.done_all_outlined,
-                      color: readed
+                      color: isSeen
                           ? Colors.white
                           : Colors.white.withOpacity(0.8),
                       size: size.width * 0.04,
@@ -803,7 +796,7 @@ class _chat_pageState extends State<chat_page> {
                     :
                 Icon(
                   Icons.check,
-                  color: readed
+                  color: isSeen
                       ? Colors.white
                       : Colors.white.withOpacity(0.8),
                   size: size.width * 0.04,
@@ -825,7 +818,6 @@ class _chat_pageState extends State<chat_page> {
             replyIndex: replyIndex,
             imageMsg: imageMsg,
             imageURL: imageURL,
-            readed: readed,
             reply: reply,
             replyToName: replyToName,
             ReplyToText: ReplyToText,
@@ -843,7 +835,7 @@ class _chat_pageState extends State<chat_page> {
           Container(
 
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(15)),
+                borderRadius: const BorderRadius.all(Radius.circular(15)),
                 gradient: LinearGradient(colors: [
                   Colors.black.withOpacity(0.9),
                   Colors.black.withOpacity(0.6)
@@ -901,43 +893,7 @@ class _chat_pageState extends State<chat_page> {
     }).whenComplete(() => setState(() {}));
   }
 
-  bool updateReadedCount(
-      AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot,
-      int messageIndex) {
-    bool out = true;
-    List<dynamic> memberList = snapshot.data?.data()!["Members"];
-    DateTime msgStamp = snapshot.data!
-        .data()!["Messages"]
-            [snapshot.data!.data()!["Messages"].length - messageIndex - 1]
-            ["Stamp"]
-        .toDate();
-    for (var email in memberList) {
-      DateTime userStamp = snapshot.data!
-          .data()![email["Email"].toString().split("@")[0]]["Last_Active"]
-          .toDate();
-      print(userStamp.hour);
-      print(msgStamp.hour);
-      if (msgStamp.year >= userStamp.year &&
-          msgStamp.month >= userStamp.month &&
-          msgStamp.day >= userStamp.day &&
-          msgStamp.hour >= userStamp.hour &&
-          msgStamp.minute > userStamp.minute) {
-        print(email);
-        out = false;
-        break;
-      } else {
-        if (msgStamp.day > userStamp.day) {
-          out = false;
-          break;
-        } else {
-          out = true;
-        }
-        //break;
-      }
-    }
 
-    return out;
-  }
 
   int activeStatus(AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
     int count = 0;
@@ -951,4 +907,40 @@ class _chat_pageState extends State<chat_page> {
     }
     return count;
   }
+
+  develered(AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) async {
+    print(" ..............here");
+    int lastcount= snapshot.data!.data()?[usermodel["Email"].toString().split("@")[0]]["Read_Count"];
+    int len = snapshot.data!.data()?["Messages"].length;
+    for(int i=len-lastcount;i>0;i--){
+      print("...............for");
+      String? stamp= snapshot.data!.data()?["Messages"][len-1-i]["Stamp"].toDate().toString().split(".")[0];
+      await FirebaseFirestore.instance.collection("Messages").doc(widget.channel).update({
+        "${stamp}_seen": FieldValue.arrayUnion([
+          {
+            "Email": usermodel["Email"],
+            "Stamp": DateTime.now()
+          }
+        ]),
+        "${stamp}_delevered" : FieldValue.arrayUnion([
+          {
+            "Email": usermodel["Email"],
+            "Stamp": DateTime.now()
+          }
+        ]),
+      });
+    }
+    if(lastcount!=len){
+      print("..................if");
+      await FirebaseFirestore.instance.collection("Messages").doc(widget.channel).update({
+        usermodel["Email"].toString().split("@")[0] : {
+          "Active" : true,
+          "Read_Count" : len,
+          "Last_Active" : DateTime.now()
+        }
+      });
+    }
+  }
+
+
 }

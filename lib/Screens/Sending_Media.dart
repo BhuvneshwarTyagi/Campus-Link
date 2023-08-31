@@ -295,7 +295,15 @@ class _SendMediaState extends State<SendMedia> {
                         "Video":true,
                         "Video_Thumbnail_URL":thumbURL,
                         "Video_URL":URL
-                      }])
+                      }]),
+                      "${stamp.toString().split(".")[0]}_delevered" : FieldValue.arrayUnion([{
+                        "Email" : usermodel["Email"],
+                        "Stamp" : stamp
+                      }]),
+                      "${stamp.toString().split(".")[0]}_seen" : FieldValue.arrayUnion([{
+                        "Email" : usermodel["Email"],
+                        "Stamp" : stamp
+                      }]),
                     },
                   ).whenComplete(
                         () async {
@@ -595,10 +603,17 @@ class _SendMediaState extends State<SendMedia> {
                         "Media_Files":FieldValue.arrayUnion([{
                           "Video":false,
                           "Image_URL":URL,
-                        }])
+                        }]),
+                        "${stamp.toString().split(".")[0]}_delevered" : FieldValue.arrayUnion([{
+                          "Email" : usermodel["Email"],
+                          "Stamp" : stamp
+                        }]),
+                        "${stamp.toString().split(".")[0]}_seen" : FieldValue.arrayUnion([{
+                          "Email" : usermodel["Email"],
+                          "Stamp" : stamp
+                        }]),
                       },
-                    ).whenComplete(
-                          () async {
+                    ).whenComplete(() async {
                         setState(() {
                           messageController.clear();
                         });
@@ -633,9 +648,7 @@ class _SendMediaState extends State<SendMedia> {
                               : null;
                         }
 
-                      },
-
-                    );
+                      },);
 
                   },
                   child: CircleAvatar(

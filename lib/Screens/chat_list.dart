@@ -109,13 +109,30 @@ class _chatsystemState extends State<chatsystem> {
                 null;
                 snapshot.hasData
                     ?
-                count= snapshot.data?.data()!["Messages"].length-int.parse("${snapshot.data?.data()![usermodel["Email"].toString().split("@")[0]]["Read_Count"]}")-1
+                count= readCount-int.parse("${snapshot.data?.data()![usermodel["Email"].toString().split("@")[0]]["Read_Count"]}")-1
                     :
                 null;
               return snapshot.hasData
                   ?
               InkWell(
                 onTap: () async {
+                  for(int i=count;i>0;i--){
+                    String? stamp= snapshot.data!.data()?["Messages"][readCount-1-i]["Stamp"].toDate().toString().split(".")[0];
+                    await FirebaseFirestore.instance.collection("Messages").doc(usermodel["Message_channels"][index]).update({
+                      "${stamp}_seen": FieldValue.arrayUnion([
+                        {
+                          "Email": usermodel["Email"],
+                          "Stamp": DateTime.now()
+                        }
+                      ]),
+                      "${stamp}_delevered" : FieldValue.arrayUnion([
+                        {
+                          "Email": usermodel["Email"],
+                          "Stamp": DateTime.now()
+                        }
+                      ]),
+                    });
+                  }
                   await FirebaseFirestore.instance
                       .collection("Messages")
                       .doc(usermodel["Message_channels"][index])

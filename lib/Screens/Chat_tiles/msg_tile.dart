@@ -30,7 +30,7 @@ class MsgTile extends StatelessWidget {
       required this.videoURL,
       required this.videoThumbnailURL,
       required this.videoMsg,
-      required this.readed,
+
       required this.stamp,
       required this.comressedURL, required this.image});
   final bool imageMsg;
@@ -49,7 +49,7 @@ class MsgTile extends StatelessWidget {
   final String videoURL;
   final String videoThumbnailURL;
   final bool videoMsg;
-  final bool readed;
+
   final DateTime stamp;
   final String image;
   @override
@@ -64,9 +64,17 @@ class MsgTile extends StatelessWidget {
         ?
     size.width * 0.0235 * 25
         :
+    sender
+        ?
+        text.length <= 3
+    ?
+        size.width * 0.033 * 9
+            :
+        size.width * 0.0235 * len
+        :
     name.length>=text.length
         ?
-    size.width * 0.04 * len
+    size.width * 0.033 * len
         :
     size.width * 0.0235 * len
         ;
@@ -128,12 +136,14 @@ class MsgTile extends StatelessWidget {
           ),
 
           reply
-              ? ReplyTile(
+              ?
+          ReplyTile(
               scrollController: scrollController,
               replyIndex: replyIndex,
               scrollindex: scrollindex,
               replyToName: replyToName,
-              ReplyToText: ReplyToText)
+              ReplyToText: ReplyToText,
+          )
               : const SizedBox(),
           text.isNotEmpty ? TextTile(sender: sender,text: text) : const SizedBox(),
 
