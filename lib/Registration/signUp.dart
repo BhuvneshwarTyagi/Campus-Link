@@ -331,6 +331,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   "Name" : nameController.text.trim(),
                                   "bg" : "bg-1.jpg"
                                 });
+                                await FirebaseFirestore.instance.collection("Teacher_record").doc("Email").update({
+                                  "Email": FieldValue.arrayUnion([usermodel["Email"]])
+                                });
                                 await FirebaseFirestore.instance.collection("Teachers").doc(email.text.trim()).collection("Teachings").doc("Teachings").set({}).whenComplete(() => Navigator.pop(context));
 
                               }

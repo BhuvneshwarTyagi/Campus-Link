@@ -1,85 +1,100 @@
 import 'dart:async';
 import 'package:campus_link_teachers/push_notification/helper_notification.dart';
 import 'package:campus_link_teachers/push_notification/utils.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inapp_notifications/flutter_inapp_notifications.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:workmanager/workmanager.dart';
 import 'Connection.dart';
 
-// void callbackDispatcher(){
-//   Workmanager().executeTask((taskName, inputData) async {
-//     print("\n\n\n working");
-//     WidgetsFlutterBinding.ensureInitialized();
-//     await Firebase.initializeApp();
-//    await FirebaseFirestore.instance.collection("testing").doc("${DateTime.now().minute}").set({
-//      "Success":true
-//    });
-//
-//     return Future.value(true);
-//   });
-// }
-Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print("Handling a background message");
-  NotificationServices.display(message);
-  WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp().whenComplete(() async {
-    // await FirebaseFirestore.instance.collection("Students").doc('bhanu68tyagi@gmail.com').update({
-    //   "Name":"${TimeOfDay.now().minute}"
-    // });
-  });
+const fetchBackground = "fetchBackground";
+
+@pragma('vm:entry-point')
+callbackDispatcherfordelevery() async {
+
+  try{
+    print(".......Starting workmanager executeTask   2.....");
+    Workmanager().executeTask((taskName, inputData) async {
+      try{
+        WidgetsFlutterBinding.ensureInitialized();
+        await Firebase.initializeApp();
+        print(".............doc ${inputData?["channel"]}");
+        print(".............stamp ${inputData?["stamp"]}");
+        await FirebaseFirestore.instance.collection("Messages").doc(inputData?["channel"]).collection("Messages_Detail").doc("Messages_Detail").update(
+            {
+              "${inputData?["stamp"]}_delevered" : FieldValue.arrayUnion([
+                {
+                  "Email" : FirebaseAuth.instance.currentUser?.email,
+                  "Stamp" : DateTime.now()
+                }
+              ])
+            }
+        );
+      }
+      catch (e){
+        print("fucking error............................. $e ");
+      }
+      return Future.value(true);
+    });
+
+  }catch (e){
+    print("..........error.........\n.........$e........");
+  }
 }
+
+
+@pragma('vm:entry-point')
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  if (kDebugMode) {
+    print("Handling a background message");
+  }
+
+  print(".............from background handler.............");
+
+  //NotificationServices.display(message);
+
+  print(message.data["msg"]);
+  if(message.data["msg"]=="true"){
+    try{
+      Workmanager().initialize(
+        callbackDispatcherfordelevery,
+      );
+      print(".......workmanager");
+      await Workmanager().registerOneOffTask("Develered", "Delevery",inputData: {
+        "channel" :message.data["channel"],
+        "stamp" : message.data["stamp"].toString().split(".")[0]
+      });
+    }catch(e){
+      print("........Error from background handler.........");
+    }
+  }
+}
+@pragma('vm:entry-point')
+Future<void> firebaseMessagingonmessageHandler(RemoteMessage message) async {
+  if (kDebugMode) {
+    print("Handling a onmessage message");
+  }
+
+  print(".............From onmessage.............");
+
+  NotificationServices.display(message);
+
+}
+
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-
-  var status = await Permission.manageExternalStorage.request();
-  print(status);
-
-  if (status.isPermanentlyDenied) {
-    openAppSettings();
-  }
-  //FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-  // var cron = Cron();
-  // try{
-  //   cron.schedule(Schedule.parse("* * * * *"),() async {
-  //   print("\n\n\n working");
-  //   WidgetsFlutterBinding.ensureInitialized();
-  //   await Firebase.initializeApp();
-  //  await FirebaseFirestore.instance.collection("testing").doc("${DateTime.now().minute}").set({
-  //    "Success":true
-  //  });
-  // });
-  // }catch(e){
-  //   print(e);
-  // }
-  //Workmanager().initialize(callbackDispatcher);
-  // await FirebaseMessaging.instance.getInitialMessage();
-  // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
+  // Workmanager().initialize(
+  //   callbackDispatcherfordelevery(),
+  // );
   runApp(const MyApp());
 }
-// @pragma('vm:entry-point')
-// Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async{
-//   print(message.data);
-//   WidgetsFlutterBinding.ensureInitialized();
-//   await Firebase.initializeApp();
-//   if(message.data['body']=='attendance'){
-//     await FirebaseFirestore.instance
-//         .collection("testing")
-//         .doc(message.data['body'])
-//         .update({"worked": FieldValue.arrayUnion([true])});
-//   }
-//   else{
-//     await FirebaseFirestore.instance
-//         .collection("testing")
-//         .doc(message.data['body'])
-//         .set({"worked": FieldValue.arrayUnion([true])});
-//   }
-//   print(".............");
-// }
+
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -88,65 +103,22 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
+enum LocationStatus { UNKNOWN, INITIALIZED, RUNNING, STOPPED }
+
+
+
 class _MyAppState extends State<MyApp> {
-  // This widget is the root of your application.
+
   @override
   void initState() {
     super.initState();
-
-
-
-    //WidgetsBinding.instance.addObserver(WidgetsBindingObserver);
-
-    // if (Platform.isIOS) {
-    //   print('platform is IOS');
-    //   FirebaseMessaging.instance
-    //       .requestPermission(sound: true, badge: true, alert: true);
-    // }
-
     NotificationServices.initialize(context);
 
-    // FirebaseMessaging.instance.getInitialMessage().then((message) {
-    //   // if (message != null) {
-    //   //   final routeFromMessage = message.data["route"];
-    //
-    //   //   Navigator.of(context).pushNamed(routeFromMessage);
-    //   // }
-    // });
+    FirebaseMessaging.onMessage.listen(firebaseMessagingonmessageHandler);
 
-    FirebaseMessaging.onMessage.listen((message) async {
-      if (message.notification != null) {
-        print(message.notification!.body);
-        print(message.notification!.title);
-      }
-      NotificationServices.display(message);
-      WidgetsFlutterBinding.ensureInitialized();
-      await Firebase.initializeApp().whenComplete(() async {
-        // await FirebaseFirestore.instance.collection("Students").doc('bhanu68tyagi@gmail.com').update({
-        //   "Name":"${TimeOfDay.now().minute}"
-        // });
-      });
+    FirebaseMessaging.onBackgroundMessage.call(firebaseMessagingBackgroundHandler);
 
-    });
-
-    FirebaseMessaging.onBackgroundMessage((message) async {
-      WidgetsFlutterBinding.ensureInitialized();
-      await Firebase.initializeApp().whenComplete(() async {
-      //   await FirebaseFirestore.instance.collection("Students").doc('bhanu68tyagi@gmail.com').update({
-      //     "Name":"${TimeOfDay.now().minute}"
-      //   });
-      // });
-    });
-    // FirebaseMessaging.onMessageOpenedApp.listen((message) {
-    //   //final routeFromMessage = message.data["route"];
-    //
-    //   //Navigator.of(context).pushNamed(routeFromMessage);
-    // });
-  });
-
-
-        }
-
+  }
 
   void didChangeAppLifecycleState(AppLifecycleState state) {
     try {
@@ -165,19 +137,22 @@ class _MyAppState extends State<MyApp> {
         case AppLifecycleState.detached:
           NotificationServices().setUserState(userState: UserState.Offline);
           break;
+      // TODO: Handle this case.
       }
     } catch (e) {
-      print('inside catch statement');
+      if (kDebugMode) {
+        print('inside catch statement');
+      }
       debugPrint(e.toString());
     }
   }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      color: Colors.transparent,
-      //theme: ThemeData(colorScheme: const ColorScheme.dark(),backgroundColor: Colors.transparent),
+      color: const Color.fromRGBO(213, 97, 132, 1),
+      theme: ThemeData(),
       debugShowCheckedModeBanner: false,
-       home: Checkconnection(),
+      home: Checkconnection(),
       builder: InAppNotifications.init(),
     );
   }

@@ -118,20 +118,19 @@ class _chatsystemState extends State<chatsystem> {
                 onTap: () async {
                   for(int i=count;i>0;i--){
                     String? stamp= snapshot.data!.data()?["Messages"][readCount-1-i]["Stamp"].toDate().toString().split(".")[0];
-                    await FirebaseFirestore.instance.collection("Messages").doc(usermodel["Message_channels"][index]).update({
-                      "${stamp}_seen": FieldValue.arrayUnion([
-                        {
-                          "Email": usermodel["Email"],
-                          "Stamp": DateTime.now()
-                        }
-                      ]),
-                      // "${stamp}_delevered" : FieldValue.arrayUnion([
-                      //   {
-                      //     "Email": usermodel["Email"],
-                      //     "Stamp": DateTime.now()
-                      //   }
-                      // ]),
-                    });
+                    String? email= snapshot.data!.data()?["Messages"][readCount-1-i]["Email"];
+
+                    if(email != usermodel["Email"]){
+                      await FirebaseFirestore.instance.collection("Messages").doc(usermodel["Message_channels"][index]).collection("Messages_Detail").doc("Messages_Detail").update({
+                        "${stamp}_seen": FieldValue.arrayUnion([
+                          {
+                            "Email": usermodel["Email"],
+                            "Stamp": DateTime.now()
+                          }
+                        ]),
+
+                      });
+                    }
                   }
                   await FirebaseFirestore.instance
                       .collection("Messages")
@@ -143,6 +142,7 @@ class _chatsystemState extends State<chatsystem> {
                       "Last_Active": DateTime.now(),
                       "Read_Count": readCount,
                       "Active": true,
+                      "Token" : FieldValue.arrayUnion([usermodel["Token"]])
                     }
                   }).whenComplete((){
                     Navigator.push(
@@ -221,18 +221,4 @@ class _chatsystemState extends State<chatsystem> {
       ),
     );
   }
-  // counting(List<dynamic> a,DateTime b,int c,int d){
-  //   int count=0;
-  //   print(".............b:     ${b.toString().split(".")[0]}");
-  //   print(".............b:     $b");
-  //    DateTime user_stamp=DateTime.parse(b.toString().split(".")[0]);
-  //    print('.............$user_stamp');
-  //   for(int i=c;i<d;i++){
-  //      DateTime msg_stamp=DateTime.parse(a[i]["Stamp"].toString().split(".")[0]);
-  //     if(user_stamp.isBefore(msg_stamp)){
-  //       count++;
-  //     }
-  //   }
-  //   return count;
-  // }
 }

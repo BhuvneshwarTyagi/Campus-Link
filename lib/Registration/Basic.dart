@@ -640,7 +640,9 @@ class _basicDetailsState extends State<basicDetails> {
                         Map<String,dynamic> map = {
                           "Active":false,
                           "Read_Count": 0,
-                          "Last_Active" : DateTime.now()};
+                          "Last_Active" : DateTime.now(),
+                          "Token": FieldValue.arrayUnion([usermodel["Token"]])
+                        };
                         DateTime stamp=DateTime.now();
                         var data=await FirebaseFirestore.instance.collection("Chat_Channels").doc("Channels").get();
                         data.data()==null
@@ -650,6 +652,7 @@ class _basicDetailsState extends State<basicDetails> {
                         })
                             :
                             null;
+
                         await FirebaseFirestore.instance.collection("Chat_Channels").doc("Channels").get().then((value) async {
                           List<dynamic> channel=value.data()!["Channels"];
                           channel.contains(
@@ -671,8 +674,7 @@ class _basicDetailsState extends State<basicDetails> {
                                   "${secController.text.trim().split(" ")[0]} "
                                   "${subjectController.text.trim().split(" ")[0]}"
                           ).update({
-                            "Messages" : FieldValue.arrayUnion([{"Name": usermodel["Name"],"text":"Hello" , "UID": usermodel["Email"],"Stamp": stamp,"Image": usermodel["Profile_URL"]}]),
-                            "Token" : FieldValue.arrayUnion([usermodel["Token"]]),
+                            "Messages" : FieldValue.arrayUnion([{"Name": usermodel["Name"],"text":"Hello Students" , "UID": usermodel["Email"],"Stamp": stamp,"Image": usermodel["Profile_URL"]}]),
                             "Admins" : FieldValue.arrayUnion(["${usermodel["Email"]}"]),
                             "Members" : FieldValue.arrayUnion([
                               {
@@ -680,15 +682,71 @@ class _basicDetailsState extends State<basicDetails> {
                                 "Post" : "Teachers"
                               }
                                   ]),
-                            "${stamp.toString().split(".")[0]}_delevered" : FieldValue.arrayUnion([{
-                              "Email" : usermodel["Email"],
-                              "Stamp" : stamp
-                            }]),
-                            "${stamp.toString().split(".")[0]}_seen" : FieldValue.arrayUnion([{
-                              "Email" : usermodel["Email"],
-                              "Stamp" : stamp
-                            }]),
                             usermodel["Email"].toString().split("@")[0] : map,
+                          }).whenComplete(() async {
+
+
+                            final doc=await FirebaseFirestore
+                                .instance
+                                .collection("Messages")
+                                .doc("${universityController.text.trim().split(" ")[0]} "
+                                "${clgController.text.trim().split(" ")[0]} "
+                                "${courseController.text.trim().split(" ")[0]} "
+                                "${branchController.text.trim().split(" ")[0]} "
+                                "${yearController.text.trim().split(" ")[0]} "
+                                "${secController.text.trim().split(" ")[0]} "
+                                "${subjectController.text.trim().split(" ")[0]}")
+                                .collection("Messages_Detail")
+                                .doc("Messages_Detail").get();
+                            !doc.exists
+                                ?
+                            await FirebaseFirestore
+                                .instance
+                                .collection("Messages")
+                                .doc("${universityController.text.trim().split(" ")[0]} "
+                                "${clgController.text.trim().split(" ")[0]} "
+                                "${courseController.text.trim().split(" ")[0]} "
+                                "${branchController.text.trim().split(" ")[0]} "
+                                "${yearController.text.trim().split(" ")[0]} "
+                                "${secController.text.trim().split(" ")[0]} "
+                                "${subjectController.text.trim().split(" ")[0]}")
+                                .collection("Messages_Detail")
+                                .doc("Messages_Detail")
+                                .set({
+                              "${stamp.toString().split(".")[0]}_delevered" : FieldValue.arrayUnion([{
+                                "Email" : usermodel["Email"],
+                                "Stamp" : stamp,
+                              }]),
+
+                              "${stamp.toString().split(".")[0]}_seen" : FieldValue.arrayUnion([{
+                                "Email" : usermodel["Email"],
+                                "Stamp" : stamp
+                              }]),
+                            })
+                                :
+                            await FirebaseFirestore
+                                .instance
+                                .collection("Messages")
+                                .doc("${universityController.text.trim().split(" ")[0]} "
+                                "${clgController.text.trim().split(" ")[0]} "
+                                "${courseController.text.trim().split(" ")[0]} "
+                                "${branchController.text.trim().split(" ")[0]} "
+                                "${yearController.text.trim().split(" ")[0]} "
+                                "${secController.text.trim().split(" ")[0]} "
+                                "${subjectController.text.trim().split(" ")[0]}")
+                                .collection("Messages_Detail")
+                                .doc("Messages_Detail")
+                                .update({
+                              "${stamp.toString().split(".")[0]}_delevered" : FieldValue.arrayUnion([{
+                                "Email" : usermodel["Email"],
+                                "Stamp" : stamp,
+                              }]),
+
+                              "${stamp.toString().split(".")[0]}_seen" : FieldValue.arrayUnion([{
+                                "Email" : usermodel["Email"],
+                                "Stamp" : stamp
+                              }]),
+                            });
                           })
                               :
                           await FirebaseFirestore.instance.collection("Messages").doc(
@@ -700,8 +758,7 @@ class _basicDetailsState extends State<basicDetails> {
                                   "${secController.text.trim().split(" ")[0]} "
                                   "${subjectController.text.trim().split(" ")[0]}"
                           ).set({
-                            "Messages" : [{"Name": usermodel["Name"],"text":"Hello" , "UID": usermodel["Email"],"Stamp": stamp,"Image": usermodel["Profile_URL"]}],
-                            "Token" : FieldValue.arrayUnion([usermodel["Token"]]),
+                            "Messages" : [{"Name": usermodel["Name"],"text":"Hello Students" , "UID": usermodel["Email"],"Stamp": stamp,"Image": usermodel["Profile_URL"]}],
                             "Admins" : FieldValue.arrayUnion(["${usermodel["Email"]}"]),
                             "Members" : FieldValue.arrayUnion([
                               {
@@ -709,18 +766,35 @@ class _basicDetailsState extends State<basicDetails> {
                                 "Post" : "Teachers"
                               }
                             ]),
-                            "${stamp.toString().split(".")[0]}_delevered" : FieldValue.arrayUnion([{
-                              "Email" : usermodel["Email"],
-                              "Stamp" : stamp
-                            }]),
-                            "${stamp.toString().split(".")[0]}_seen" : FieldValue.arrayUnion([{
-                              "Email" : usermodel["Email"],
-                              "Stamp" : stamp
-                            }]),
                             usermodel["Email"].toString().split("@")[0] : map,
                             "image_URL" : "null",
                             "CreatedOn": {"Date" : stamp, "Name": usermodel["Name"]}
-                                });
+                                })
+                              .whenComplete(() async {
+                            await FirebaseFirestore
+                                .instance
+                                .collection("Messages")
+                                .doc("${universityController.text.trim().split(" ")[0]} "
+                                "${clgController.text.trim().split(" ")[0]} "
+                                "${courseController.text.trim().split(" ")[0]} "
+                                "${branchController.text.trim().split(" ")[0]} "
+                                "${yearController.text.trim().split(" ")[0]} "
+                                "${secController.text.trim().split(" ")[0]} "
+                                "${subjectController.text.trim().split(" ")[0]}")
+                                .collection("Messages_Detail")
+                                .doc("Messages_Detail")
+                                .set({
+                              "${stamp.toString().split(".")[0]}_delevered" : FieldValue.arrayUnion([{
+                                "Email" : usermodel["Email"],
+                                "Stamp" : stamp
+                              }]),
+
+                              "${stamp.toString().split(".")[0]}_seen" : FieldValue.arrayUnion([{
+                                "Email" : usermodel["Email"],
+                                "Stamp" : stamp
+                              }]),
+                            });
+                          });
                         });
 
 
@@ -745,9 +819,7 @@ class _basicDetailsState extends State<basicDetails> {
                               "${subjectController.text.trim().split(" ")[0]}"
                           ])
                         });
-                        await FirebaseFirestore.instance.collection("Teacher_record").doc("Email").update({
-                          "Email": FieldValue.arrayUnion([usermodel["Email"]])
-                        });
+
 
                         data=await FirebaseFirestore.instance.collection("University").doc("University").get();
 
