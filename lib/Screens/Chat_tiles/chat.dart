@@ -2,7 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:campus_link_teachers/Constraints.dart';
 import 'package:campus_link_teachers/Database/database.dart';
 import 'package:campus_link_teachers/Screens/Chat_tiles/Document_Viewer.dart';
-import 'package:campus_link_teachers/Screens/Sending_Media.dart';
+import 'package:campus_link_teachers/Screens/Chat_tiles/Sending_Media.dart';
 import 'package:campus_link_teachers/Screens/loadingscreen.dart';
 import 'package:chat_bubbles/date_chips/date_chip.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,7 +13,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:swipe_to/swipe_to.dart';
-import 'Chat_tiles/msg_tile.dart';
+import 'msg_tile.dart';
 import 'chat_info.dart';
 
 class chat_page extends StatefulWidget {

@@ -9,10 +9,10 @@ import 'package:page_transition/page_transition.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
-import '../Constraints.dart';
-import '../Database/database.dart';
+import '../../Constraints.dart';
+import '../../Database/database.dart';
 import 'chat.dart';
-import 'loadingscreen.dart';
+import '../loadingscreen.dart';
 
 class SendMedia extends StatefulWidget {
   const SendMedia({super.key, required this.imagePath, required this.channel, required this.messageLength, required this.replyBoxHeight, required this.replyToName, required this.replyToText, required this.replyIndex, required this.video});

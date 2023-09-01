@@ -5,7 +5,8 @@ import 'package:page_transition/page_transition.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import '../Image_viewer.dart';
+
+import 'Image_viewer.dart';
 
 class ImageTile extends StatefulWidget {
   const ImageTile(

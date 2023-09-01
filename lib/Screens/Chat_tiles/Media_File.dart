@@ -1,11 +1,6 @@
 
-
-import 'package:campus_link_teachers/Screens/Image_viewer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
 
 class Media_files extends StatefulWidget {
   const Media_files({Key? key, required this.channel}) : super(key: key,);

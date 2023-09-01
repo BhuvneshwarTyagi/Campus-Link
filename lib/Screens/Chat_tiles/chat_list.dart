@@ -3,8 +3,8 @@ import 'package:campus_link_teachers/Screens/loadingscreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../Constraints.dart';
-import 'background_image.dart';
+import '../../Constraints.dart';
+import '../background_image.dart';
 import 'chat.dart';
 
 class chatsystem extends StatefulWidget {

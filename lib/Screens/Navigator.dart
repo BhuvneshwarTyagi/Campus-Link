@@ -17,7 +17,7 @@ import 'Filters.dart';
 import 'Notes.dart';
 import 'Performance.dart';
 import 'Sessional.dart';
-import 'chat_list.dart';
+import 'Chat_tiles/chat_list.dart';
 import 'download_attendance.dart';
 
 class Nevi extends StatefulWidget {
