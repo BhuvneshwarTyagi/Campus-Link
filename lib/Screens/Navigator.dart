@@ -114,13 +114,13 @@ class _NeviState extends State<Nevi> {
                     ),
                   ),
                   accountName: AutoSizeText(
-                    "Priyanka",
+                    usermodel["Name"],
                     style: GoogleFonts.exo(
                         fontSize: size.height * 0.022,
                         fontWeight: FontWeight.w600),
                   ),
                   accountEmail: AutoSizeText(
-                    "gupta200priyanka@gmail.com",
+                    usermodel["Email"],
                     style: GoogleFonts.exo(
                         fontSize: size.height * 0.02,
                         fontWeight: FontWeight.w600),
@@ -138,7 +138,7 @@ class _NeviState extends State<Nevi> {
                         // backgroundColor: Colors.teal.shade300,
                         child: usermodel["Profile_URL"]==null?
                         AutoSizeText(
-                         "P",
+                         usermodel["Name"].toString().substring(0,1),
                           style: GoogleFonts.exo(
                               fontSize: size.height * 0.05,
                               fontWeight: FontWeight.w600),
@@ -160,7 +160,9 @@ class _NeviState extends State<Nevi> {
               ListTile(
                 leading: const Icon(Icons.home,color: Colors.black,),
                 title: const Text("Home"),
-                onTap: () {},
+                onTap: () {
+                  Navigator.pop(context);
+                },
               ),
               ListTile(
                 leading: const Icon(Icons.add,color: Colors.black,),

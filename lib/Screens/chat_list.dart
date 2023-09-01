@@ -125,12 +125,12 @@ class _chatsystemState extends State<chatsystem> {
                           "Stamp": DateTime.now()
                         }
                       ]),
-                      "${stamp}_delevered" : FieldValue.arrayUnion([
-                        {
-                          "Email": usermodel["Email"],
-                          "Stamp": DateTime.now()
-                        }
-                      ]),
+                      // "${stamp}_delevered" : FieldValue.arrayUnion([
+                      //   {
+                      //     "Email": usermodel["Email"],
+                      //     "Stamp": DateTime.now()
+                      //   }
+                      // ]),
                     });
                   }
                   await FirebaseFirestore.instance

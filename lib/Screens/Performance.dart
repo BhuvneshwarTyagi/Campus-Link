@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:pie_chart/pie_chart.dart';
 
 class Performance extends StatefulWidget {
   const Performance({Key? key}) : super(key: key);
@@ -13,10 +14,24 @@ class _PerformanceState extends State<Performance> {
   bool clear = false;
   @override
   Widget build(BuildContext context) {
+    Size size=MediaQuery.of(context).size;
+    List barChartX=[10,20];
+    //pai chart data
+    Map<String, double> dataMap = {
+      "Present": 50,
+      "Absent": 20,
+
+    };
+
+    final colorList = <Color>[
+      Colors.indigo,
+      Colors.purpleAccent
+    ];
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Center(
           child: Container(
+            height: size.height,
             padding: EdgeInsets.only(
               left: MediaQuery.of(context).size.width * 0.025,
               right: MediaQuery.of(context).size.width * 0.025,
@@ -86,33 +101,81 @@ class _PerformanceState extends State<Performance> {
                   height: MediaQuery.of(context).size.height*0.03,
                   thickness: MediaQuery.of(context).size.height*0.001,
                 ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height*0.6,
-                  width: MediaQuery.of(context).size.width*0.6,
-                  child: PieChart(
-                    PieChartData(
-                      startDegreeOffset: -90,
-                      sections: [
-                        PieChartSectionData(
-                          color: Colors.green[200],
-                          title: 'Presents',
-                          value: 15,
-                          radius: 20,
-                          showTitle: true,
-                          titleStyle: const TextStyle(color: Colors.black,fontSize: 18,fontWeight: FontWeight.w700),
-                        ),
-                        PieChartSectionData(
-                          color: Colors.red[900],
-                          title: 'Absent',
-                          value: 85,
-                          radius: 20,
-                          showTitle: true,
-                          titleStyle: const TextStyle(color: Colors.black,fontSize: 18,fontWeight: FontWeight.w700),
-                        ),
-                      ],
+                Container(
+                  height: size.height*0.42,
+                  width: size.width,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.black,
+                      width: 2,
                     ),
+                    color: Colors.black26.withOpacity(0.7)
                   ),
+                  child: BarChart(
+                    BarChartData(
+                      barTouchData:BarTouchData(
+                        touchTooltipData: BarTouchTooltipData(
+                          tooltipBgColor: Colors.white,
+                          getTooltipItem: (a, b, c, d) => null,
+                        ),
+
+
+
+
+                      ) ,
+
+                      alignment: BarChartAlignment.center,
+                      barGroups: List.generate(
+                        barChartX.length,
+                            (i) => BarChartGroupData(
+                          x: i,
+                          barRods: [
+                            BarChartRodData(
+                              toY: 10,
+                              color: Colors.white60,
+                              width: 10.0,
+                              borderRadius: BorderRadius.circular(10),
+                              backDrawRodData: BackgroundBarChartRodData(
+                                show: true,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      titlesData: FlTitlesData(
+                        bottomTitles: AxisTitles(
+                          sideTitles: SideTitles(
+
+                              showTitles: true,
+                              reservedSize: 38,
+
+
+                          ),
+                        ),
+                      ),
+                    ),
+                    ),
                 ),
+                Column(
+                  children: [
+                    SizedBox(
+                      height: size.height*0.02,
+                    ),
+                   /* PieChart(
+
+                      dataMap: dataMap,
+                      chartType: ChartType.ring,
+                      baseChartColor: Colors.white,
+                      colorList: colorList,
+                      chartValuesOptions:  const ChartValuesOptions(
+
+                        showChartValuesInPercentage: true,
+                      ),
+                      totalValue: 100,
+                    ),*/
+                  ],
+                )
               ],
             ),
           ),
@@ -120,3 +183,11 @@ class _PerformanceState extends State<Performance> {
     );
   }
 }
+
+
+
+
+
+
+
+
