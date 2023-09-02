@@ -27,7 +27,7 @@ callbackDispatcherfordelevery() async {
         print(".............stamp ${inputData?["stamp"]}");
         await FirebaseFirestore.instance.collection("Messages").doc(inputData?["channel"]).collection("Messages_Detail").doc("Messages_Detail").update(
             {
-              "${inputData?["stamp"]}_delevered" : FieldValue.arrayUnion([
+              "${inputData?["Email"]}_${inputData?["Stamp"]}_Delevered" : FieldValue.arrayUnion([
                 {
                   "Email" : FirebaseAuth.instance.currentUser?.email,
                   "Stamp" : DateTime.now()
@@ -67,7 +67,8 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
       print(".......workmanager");
       await Workmanager().registerOneOffTask("Develered", "Delevery",inputData: {
         "channel" :message.data["channel"],
-        "stamp" : message.data["stamp"].toString().split(".")[0]
+        "Stamp" : message.data["stamp"],
+        "Email" : message.data["Email"],
       });
     }catch(e){
       print("........Error from background handler.........");
@@ -84,7 +85,7 @@ Future<void> firebaseMessagingonmessageHandler(RemoteMessage message) async {
   if(message.data["msg"]=="true"){
     await FirebaseFirestore.instance.collection("Messages").doc(message.data["channel"]).collection("Messages_Detail").doc("Messages_Detail").update(
         {
-          "${message.data["stamp"].toString().split(".")[0]}_delevered" : FieldValue.arrayUnion([
+          "${message.data["Email"]}_${message.data["stamp"]}_Delevered" : FieldValue.arrayUnion([
             {
               "Email" : FirebaseAuth.instance.currentUser?.email,
               "Stamp" : DateTime.now()
@@ -95,7 +96,8 @@ Future<void> firebaseMessagingonmessageHandler(RemoteMessage message) async {
   }
   NotificationServices.display(message);
 
-}@pragma('vm:entry-point')
+}
+@pragma('vm:entry-point')
 Future<void> firebaseMessagingonmessageOpenedAppHandler(RemoteMessage message) async {
   if (kDebugMode) {
     print("Handling a onmessage message");
@@ -105,7 +107,7 @@ Future<void> firebaseMessagingonmessageOpenedAppHandler(RemoteMessage message) a
   if(message.data["msg"]=="true"){
     await FirebaseFirestore.instance.collection("Messages").doc(message.data["channel"]).collection("Messages_Detail").doc("Messages_Detail").update(
         {
-          "${message.data["stamp"].toString().split(".")[0]}_delevered" : FieldValue.arrayUnion([
+          "${message.data["Email"]}_${message.data["stamp"]}_Delevered" : FieldValue.arrayUnion([
             {
               "Email" : FirebaseAuth.instance.currentUser?.email,
               "Stamp" : DateTime.now()
@@ -121,9 +123,6 @@ Future<void> firebaseMessagingonmessageOpenedAppHandler(RemoteMessage message) a
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  // Workmanager().initialize(
-  //   callbackDispatcherfordelevery(),
-  // );
   runApp(const MyApp());
 }
 
