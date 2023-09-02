@@ -60,6 +60,7 @@ class _chat_pageState extends State<chat_page> {
                         "Last_Active": DateTime.now(),
                         "Read_Count": message.length,
                         "Active": false,
+                        "Token" : FieldValue.arrayUnion([usermodel["Token"]]),
                       }
                     });
                     return true;
@@ -99,6 +100,7 @@ class _chat_pageState extends State<chat_page> {
                                                     "Read_Count":
                                                         message.length,
                                                     "Active": false,
+                                                    "Token" : FieldValue.arrayUnion([usermodel["Token"]]),
                                                   }
                                                 }).whenComplete(() =>
                                                         Navigator.pop(context));
@@ -476,7 +478,7 @@ class _chat_pageState extends State<chat_page> {
                                                                     [
                                                                     "Video_ThumbNail"]
                                                                 : "",
-                                                            snapshot.data
+                                                            snapshot2.data
                                                                     ?.data()![
                                                                         "${message[index]["Stamp"].toDate().toString().split(".")[0]}_delevered"]
                                                                     .length ==
@@ -484,7 +486,7 @@ class _chat_pageState extends State<chat_page> {
                                                                     .data()?[
                                                                         "Members"]
                                                                     .length,
-                                                            snapshot.data
+                                                            snapshot2.data
                                                                     ?.data()![
                                                                         "${message[index]["Stamp"].toDate().toString().split(".")[0]}_seen"]
                                                                     .length ==
@@ -887,6 +889,12 @@ class _chat_pageState extends State<chat_page> {
                                                                     1,
                                                           }
                                                         ]),
+                                                        usermodel["Email"].toString().split("@")[0] : {
+                                                          "Active" : true,
+                                                          "Last_Active": DateTime.now(),
+                                                          "Read_Count" : message.length+1,
+                                                          "Token": FieldValue.arrayUnion([usermodel["Token"]]),
+                                                        }
                                                       },
                                                     ).whenComplete(
                                                       () async {
@@ -908,14 +916,9 @@ class _chat_pageState extends State<chat_page> {
                                                             print("............member $user");
                                                             List<dynamic> tokens =  user["Token"];
                                                             print("............error1");
-                                                            if(member["Email"]!=usermodel["Email"]){
-                                                              for (var token
-                                                                  in tokens) {
-                                                                print(
-                                                                    "${member["Email"]}");
-                                                                if (user[
-                                                                        "Active"] !=
-                                                                    true) {
+                                                            if(member["Email"] != usermodel["Email"]){
+                                                              for (var token in tokens) {
+                                                                print("${member["Email"]}");
                                                                   database().sendPushMessage(
                                                                       token,
                                                                       messageController
@@ -928,7 +931,7 @@ class _chat_pageState extends State<chat_page> {
                                                                       widget
                                                                           .channel,
                                                                       stamp);
-                                                                }
+
                                                               }
                                                             }
                                                           } catch (e) {
@@ -1159,30 +1162,26 @@ class _chat_pageState extends State<chat_page> {
     return count;
   }
 
-  develered(
-      AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) async {
+  develered(AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) async {
     print(" ..............here");
-    int lastcount = snapshot.data!
-        .data()?[usermodel["Email"].toString().split("@")[0]]["Read_Count"];
+    int lastcount = snapshot.data!.data()?[usermodel["Email"].toString().split("@")[0]]["Read_Count"];
     int len = snapshot.data!.data()?["Messages"].length;
-    for (int i = len - lastcount; i > 0; i--) {
-      print("...............for");
-      String? stamp = snapshot.data!
-          .data()?["Messages"][len - 1 - i]["Stamp"]
-          .toDate()
-          .toString()
-          .split(".")[0];
-      await FirebaseFirestore.instance
-          .collection("Messages")
-          .doc(widget.channel)
-          .update({
-        "${stamp}_seen": FieldValue.arrayUnion([
-          {"Email": usermodel["Email"], "Stamp": DateTime.now()}
-        ]),
-        "${stamp}_delevered": FieldValue.arrayUnion([
-          {"Email": usermodel["Email"], "Stamp": DateTime.now()}
-        ]),
-      });
+    for(int i=len;i>lastcount;i--){
+      String? stamp= snapshot.data!.data()?["Messages"][i-1]["Stamp"].toDate().toString().split(".")[0];
+      String? email= snapshot.data!.data()?["Messages"][i-1]["Email"];
+
+      if(email != usermodel["Email"]){
+        await FirebaseFirestore.instance.collection("Messages").doc(widget.channel).collection("Messages_Detail").doc("Messages_Detail").update({
+          "${stamp}_seen": FieldValue.arrayUnion([
+            {
+              "Email": usermodel["Email"],
+              "Stamp": DateTime.now(),
+              "From" : "delevered"
+            }
+          ]),
+
+        });
+      }
     }
     if (lastcount != len) {
       print("..................if");

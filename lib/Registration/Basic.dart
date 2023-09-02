@@ -639,7 +639,7 @@ class _basicDetailsState extends State<basicDetails> {
                             type: PageTransitionType.bottomToTopJoined));
                         Map<String,dynamic> map = {
                           "Active":false,
-                          "Read_Count": 0,
+                          "Read_Count": 1,
                           "Last_Active" : DateTime.now(),
                           "Token": FieldValue.arrayUnion([usermodel["Token"]])
                         };

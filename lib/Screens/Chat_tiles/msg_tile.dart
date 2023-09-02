@@ -78,6 +78,9 @@ class MsgTile extends StatelessWidget {
         :
     size.width * 0.0235 * len
         ;
+    if(width < size.width*0.3){
+      width=size.width*0.3;
+    }
     return Container(
       width: width,
       margin: EdgeInsets.symmetric(
@@ -128,7 +131,7 @@ class MsgTile extends StatelessWidget {
                 width: size.width*0.01,
               ),
               SizedBox(
-                width: width - size.width*0.18,
+                  width: width - size.width*0.18,
                   child: NameTile(sender:sender,name: name)
               ),
 

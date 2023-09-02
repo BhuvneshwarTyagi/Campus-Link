@@ -81,7 +81,39 @@ Future<void> firebaseMessagingonmessageHandler(RemoteMessage message) async {
   }
 
   print(".............From onmessage.............");
+  if(message.data["msg"]=="true"){
+    await FirebaseFirestore.instance.collection("Messages").doc(message.data["channel"]).collection("Messages_Detail").doc("Messages_Detail").update(
+        {
+          "${message.data["stamp"].toString().split(".")[0]}_delevered" : FieldValue.arrayUnion([
+            {
+              "Email" : FirebaseAuth.instance.currentUser?.email,
+              "Stamp" : DateTime.now()
+            }
+          ])
+        }
+    );
+  }
+  NotificationServices.display(message);
 
+}@pragma('vm:entry-point')
+Future<void> firebaseMessagingonmessageOpenedAppHandler(RemoteMessage message) async {
+  if (kDebugMode) {
+    print("Handling a onmessage message");
+  }
+
+  print(".............From onmessage Opened App.............");
+  if(message.data["msg"]=="true"){
+    await FirebaseFirestore.instance.collection("Messages").doc(message.data["channel"]).collection("Messages_Detail").doc("Messages_Detail").update(
+        {
+          "${message.data["stamp"].toString().split(".")[0]}_delevered" : FieldValue.arrayUnion([
+            {
+              "Email" : FirebaseAuth.instance.currentUser?.email,
+              "Stamp" : DateTime.now()
+            }
+          ])
+        }
+    );
+  }
   NotificationServices.display(message);
 
 }
@@ -117,6 +149,8 @@ class _MyAppState extends State<MyApp> {
     FirebaseMessaging.onMessage.listen(firebaseMessagingonmessageHandler);
 
     FirebaseMessaging.onBackgroundMessage.call(firebaseMessagingBackgroundHandler);
+
+    FirebaseMessaging.onMessageOpenedApp.listen(firebaseMessagingonmessageOpenedAppHandler);
 
   }
 
