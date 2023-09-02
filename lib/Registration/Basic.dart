@@ -637,7 +637,13 @@ class _basicDetailsState extends State<basicDetails> {
                           childCurrent: const basicDetails(),
                             child: const loading(text: "Adding subject please wait"),
                             type: PageTransitionType.bottomToTopJoined));
-                        Map<String,dynamic> map = {
+                        Map<String,dynamic> map1 = {
+                          "Active":false,
+                          "Read_Count": 0,
+                          "Last_Active" : DateTime.now(),
+                          "Token": FieldValue.arrayUnion([usermodel["Token"]])
+                        };
+                        Map<String,dynamic> map2 = {
                           "Active":false,
                           "Read_Count": 1,
                           "Last_Active" : DateTime.now(),
@@ -674,7 +680,6 @@ class _basicDetailsState extends State<basicDetails> {
                                   "${secController.text.trim().split(" ")[0]} "
                                   "${subjectController.text.trim().split(" ")[0]}"
                           ).update({
-                            "Messages" : FieldValue.arrayUnion([{"Name": usermodel["Name"],"text":"Hello Students" , "UID": usermodel["Email"],"Stamp": stamp,"Image": usermodel["Profile_URL"]}]),
                             "Admins" : FieldValue.arrayUnion(["${usermodel["Email"]}"]),
                             "Members" : FieldValue.arrayUnion([
                               {
@@ -682,7 +687,7 @@ class _basicDetailsState extends State<basicDetails> {
                                 "Post" : "Teachers"
                               }
                                   ]),
-                            usermodel["Email"].toString().split("@")[0] : map,
+                            usermodel["Email"].toString().split("@")[0] : map1,
                           }).whenComplete(() async {
 
 
@@ -713,12 +718,12 @@ class _basicDetailsState extends State<basicDetails> {
                                 .collection("Messages_Detail")
                                 .doc("Messages_Detail")
                                 .set({
-                              "${stamp.toString().split(".")[0]}_delevered" : FieldValue.arrayUnion([{
+                              "${usermodel["Email"].toString().split("@")[0]}_${stamp.toString().split(".")[0]}_Delevered" : FieldValue.arrayUnion([{
                                 "Email" : usermodel["Email"],
                                 "Stamp" : stamp,
                               }]),
 
-                              "${stamp.toString().split(".")[0]}_seen" : FieldValue.arrayUnion([{
+                              "${usermodel["Email"].toString().split("@")[0]}_${stamp.toString().split(".")[0]}_Seen" : FieldValue.arrayUnion([{
                                 "Email" : usermodel["Email"],
                                 "Stamp" : stamp
                               }]),
@@ -737,12 +742,12 @@ class _basicDetailsState extends State<basicDetails> {
                                 .collection("Messages_Detail")
                                 .doc("Messages_Detail")
                                 .update({
-                              "${stamp.toString().split(".")[0]}_delevered" : FieldValue.arrayUnion([{
+                              "${usermodel["Email"].toString().split("@")[0]}_${stamp.toString().split(".")[0]}_Delevered"  : FieldValue.arrayUnion([{
                                 "Email" : usermodel["Email"],
                                 "Stamp" : stamp,
                               }]),
 
-                              "${stamp.toString().split(".")[0]}_seen" : FieldValue.arrayUnion([{
+                              "${usermodel["Email"].toString().split("@")[0]}_${stamp.toString().split(".")[0]}_Seen"  : FieldValue.arrayUnion([{
                                 "Email" : usermodel["Email"],
                                 "Stamp" : stamp
                               }]),
@@ -766,7 +771,7 @@ class _basicDetailsState extends State<basicDetails> {
                                 "Post" : "Teachers"
                               }
                             ]),
-                            usermodel["Email"].toString().split("@")[0] : map,
+                            usermodel["Email"].toString().split("@")[0] : map2,
                             "image_URL" : "null",
                             "CreatedOn": {"Date" : stamp, "Name": usermodel["Name"]}
                                 })
@@ -784,12 +789,12 @@ class _basicDetailsState extends State<basicDetails> {
                                 .collection("Messages_Detail")
                                 .doc("Messages_Detail")
                                 .set({
-                              "${stamp.toString().split(".")[0]}_delevered" : FieldValue.arrayUnion([{
+                              "${usermodel["Email"].toString().split("@")[0]}_${stamp.toString().split(".")[0]}_Delevered"  : FieldValue.arrayUnion([{
                                 "Email" : usermodel["Email"],
                                 "Stamp" : stamp
                               }]),
 
-                              "${stamp.toString().split(".")[0]}_seen" : FieldValue.arrayUnion([{
+                              "${usermodel["Email"].toString().split("@")[0]}_${stamp.toString().split(".")[0]}_Seen"  : FieldValue.arrayUnion([{
                                 "Email" : usermodel["Email"],
                                 "Stamp" : stamp
                               }]),

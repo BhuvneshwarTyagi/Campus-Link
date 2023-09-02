@@ -34,6 +34,12 @@ class _chat_pageState extends State<chat_page> {
   double replyBoxHeight = 0;
   var imagePath;
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print("testing");
+  }
+  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return StreamBuilder(
@@ -50,7 +56,8 @@ class _chat_pageState extends State<chat_page> {
           snapshot.hasData ? develered(snapshot) : null;
 
           return snapshot.hasData
-              ? WillPopScope(
+              ?
+          WillPopScope(
             onWillPop: () async {
               await FirebaseFirestore.instance
                   .collection("Messages")
@@ -79,6 +86,11 @@ class _chat_pageState extends State<chat_page> {
                       .doc("Messages_Detail")
                       .snapshots(),
                   builder: (context, snapshot2) {
+                    snapshot2.hasData
+                        ?
+                    print("..... drhfd${message[0]["UID"]}_${message[0]["Stamp"].toDate().toString()}_Delevered")
+                        :
+                    null;
                     return snapshot2.hasData
                         ? Scaffold(
                       backgroundColor: Colors.transparent,
@@ -300,6 +312,7 @@ class _chat_pageState extends State<chat_page> {
                                 : Video = message[index]
                             ["Video_Text"];
 
+                            print(">...UID ${message[index]["Stamp"]}");
                             return Column(
                               mainAxisAlignment:
                               MainAxisAlignment.end,
@@ -372,52 +385,38 @@ class _chat_pageState extends State<chat_page> {
                                           ? int.parse(
                                           "${message.length - message[index]["Reply_Index"] - 1}")
                                           : 0,
-                                      Image,
-                                      Image
-                                          ? message[
-                                      index]
-                                      [
-                                      "Image_Url"]
+                                      message[index]["Media_Type"].toString()=="Image",
+
+                                      message[index]["Media_Type"].toString()=="Image"
+                                          ?
+                                      message[index]["Image_Url"]
+                                          :
+                                      "",
+
+                                      message[index]["Media_Type"].toString()=="Image"
+                                          ?
+                                      message[index]["Image_Thumbnail"]
+                                          :
+                                      "",
+
+                                      message[index]["Media_Type"].toString()=="Video",
+
+                                      message[index]["Media_Type"].toString()=="Video"
+                                          ?
+                                      message[index]["Video_Url"]
                                           : "",
-                                      Image
-                                          ? message[
-                                      index]
-                                      [
-                                      "Image_Compressed"]
-                                          : "",
-                                      Video,
-                                      Video
-                                          ? message[
-                                      index]
-                                      [
-                                      "Video_Url"]
-                                          : "",
-                                      Video
-                                          ? message[
-                                      index]
-                                      [
-                                      "Video_ThumbNail"]
-                                          : "",
-                                      snapshot2.data
-                                          ?.data()![
-                                      "${message[index]["Stamp"].toDate().toString().split(".")[0]}_delevered"]
-                                          .length ==
-                                          snapshot.data!
-                                              .data()?[
-                                          "Members"]
-                                              .length,
-                                      snapshot2.data
-                                          ?.data()![
-                                      "${message[index]["Stamp"].toDate().toString().split(".")[0]}_seen"]
-                                          .length ==
-                                          snapshot.data!
-                                              .data()?[
-                                          "Members"]
-                                              .length,
+                                      message[index]["Media_Type"].toString()=="Video"
+                                          ?
+                                      message[index]["Video_Thumbnail"]
+                                          :
+                                      "",
+                                      snapshot2.data?.data()!["${message[index]["UID"].toString().split("@")[0]}_${message[index]["Stamp"].toDate().toString().split('.')[0]}_Delevered"].length == snapshot.data!.data()?["Members"].length,
+                                      snapshot2.data?.data()!["${message[index]["UID"].toString().split("@")[0]}_${message[index]["Stamp"].toDate().toString().split('.')[0]}_Seen"].length == snapshot.data!.data()?["Members"].length,
                                     ),
                                   ),
                                 )
-                                    : SwipeTo(
+                                    :
+                                SwipeTo(
                                   onRightSwipe: () {
                                     setState(() {
                                       replyBoxHeight =
@@ -432,73 +431,63 @@ class _chat_pageState extends State<chat_page> {
                                     "${message[index]["text"]}",
                                     "${message[index]["Name"]}",
                                     "${message[index]["Image"]}",
-                                    message[index]
-                                    ["Stamp"]
-                                        .toDate(),
+                                    message[index]["Stamp"].toDate(),
                                     false,
                                     size,
                                     index,
                                     message.length,
                                     Reply,
                                     Reply
-                                        ? message[int.parse(
-                                        "${message.length - message[index]["Reply_Index"] - 1}")]
-                                    ["Name"]
-                                        : "",
+                                        ?
+                                    message[int.parse("${message.length - message[index]["Reply_Index"] - 1}")]["Name"]
+                                        :
+                                    "",
                                     Reply
-                                        ? message[int.parse(
-                                        "${message.length - message[index]["Reply_Index"] - 1}")]
-                                    ["text"]
-                                        : "",
+                                        ?
+                                    message[int.parse("${message.length - message[index]["Reply_Index"] - 1}")]["text"]
+                                        :
+                                    "",
                                     Reply
-                                        ? int.parse(
-                                        "${message.length - message[index]["Reply_Index"] - 1}")
-                                        : 0,
-                                    Image,
-                                    Image
-                                        ? message[index]
-                                    [
-                                    "Image_Url"]
+                                        ?
+                                    int.parse("${message.length - message[index]["Reply_Index"] - 1}")
+                                        :
+                                    0,
+
+                                    message[index]["Media_Type"].toString()=="Image",
+
+                                    message[index]["Media_Type"].toString()=="Image"
+                                        ?
+                                    message[index]["Image_Url"]
+                                        :
+                                    "",
+
+                                    message[index]["Media_Type"].toString()=="Image"
+                                        ?
+                                    message[index]["Image_Thumbnail"]
+                                        :
+                                    "",
+
+                                    message[index]["Media_Type"].toString()=="Video",
+
+                                    message[index]["Media_Type"].toString()=="Video"
+                                        ?
+                                    message[index]["Video_Url"]
                                         : "",
-                                    Image
-                                        ? message[index]
-                                    [
-                                    "Image_Compressed"]
-                                        : "",
-                                    Video,
-                                    Video
-                                        ? message[index]
-                                    [
-                                    "Video_Url"]
-                                        : "",
-                                    Video
-                                        ? message[index]
-                                    [
-                                    "Video_ThumbNail"]
-                                        : "",
-                                    snapshot2.data
-                                        ?.data()![
-                                    "${message[index]["Stamp"].toDate().toString().split(".")[0]}_delevered"]
-                                        .length ==
-                                        snapshot.data!
-                                            .data()?[
-                                        "Members"]
-                                            .length,
-                                    snapshot2.data
-                                        ?.data()![
-                                    "${message[index]["Stamp"].toDate().toString().split(".")[0]}_seen"]
-                                        .length ==
-                                        snapshot.data!
-                                            .data()?[
-                                        "Members"]
-                                            .length,
+                                    message[index]["Media_Type"].toString()=="Video"
+                                        ?
+                                    message[index]["Video_Thumbnail"]
+                                        :
+                                    "",
+                                    snapshot2.data?.data()!["${message[index]["UID"].toString().split("@")[0]}_${message[index]["Stamp"].toDate().toString().split(".")[0]}_Delevered"].length == snapshot.data!.data()?["Members"].length,
+                                    snapshot2.data?.data()!["${message[index]["UID"].toString().split("@")[0]}_${message[index]["Stamp"].toDate().toString().split(".")[0]}_Seen"].length == snapshot.data!.data()?["Members"].length,
                                   ),
                                 )
                               ],
                             );
                           },
                         )
-                            : const SizedBox(),
+                            :
+                        const SizedBox(),
                       ),
                       bottomNavigationBar: Padding(
                         padding: EdgeInsets.only(
@@ -834,22 +823,22 @@ class _chat_pageState extends State<chat_page> {
                                   !doc.exists
                                       ?
                                   await FirebaseFirestore.instance.collection("Messages").doc(widget.channel).collection("Messages_Detail").doc("Messages_Detail").set({
-                                    "${usermodel["Email"]}_${stamp}_Delevered" : FieldValue.arrayUnion([{
+                                    "${usermodel["Email"].toString().split("@")[0]}_${stamp.toString().split(".")[0]}_Delevered" : FieldValue.arrayUnion([{
                                       "Email" : usermodel["Email"],
                                       "Stamp" : stamp
                                     }]),
-                                    "${usermodel["Email"]}_${stamp}_Seen" : FieldValue.arrayUnion([{
+                                    "${usermodel["Email"].toString().split("@")[0]}_${stamp.toString().split(".")[0]}_Seen" : FieldValue.arrayUnion([{
                                       "Email" : usermodel["Email"],
                                       "Stamp" : stamp
                                     }]),
                                   })
                                       :
                                   await FirebaseFirestore.instance.collection("Messages").doc(widget.channel).collection("Messages_Detail").doc("Messages_Detail").update({
-                                    "${usermodel["Email"]}_${stamp}_Delevered" : FieldValue.arrayUnion([{
+                                    "${usermodel["Email"].toString().split("@")[0]}_${stamp.toString().split(".")[0]}_Delevered" : FieldValue.arrayUnion([{
                                       "Email" : usermodel["Email"],
                                       "Stamp" : stamp
                                     }]),
-                                    "${usermodel["Email"]}_${stamp}_Seen" : FieldValue.arrayUnion([{
+                                    "${usermodel["Email"].toString().split("@")[0]}_${stamp.toString().split(".")[0]}_Seen" : FieldValue.arrayUnion([{
                                       "Email" : usermodel["Email"],
                                       "Stamp" : stamp
                                     }]),
@@ -1009,7 +998,8 @@ class _chat_pageState extends State<chat_page> {
         sender ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
           sender
-              ? Container(
+              ?
+          Container(
             decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(15)),
                 gradient: LinearGradient(colors: [
@@ -1062,9 +1052,11 @@ class _chat_pageState extends State<chat_page> {
               ],
             ),
           )
-              : SizedBox(
+              :
+          SizedBox(
             width: size.width * 0.02,
           ),
+
           MsgTile(
             comressedURL: compressedURL,
             image: image,
@@ -1085,8 +1077,10 @@ class _chat_pageState extends State<chat_page> {
             videoThumbnailURL: videoThumbnailURL,
             videoURL: videoURL,
           ),
+
           !sender
-              ? Container(
+              ?
+          Container(
             decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(15)),
                 gradient: LinearGradient(colors: [
@@ -1113,9 +1107,8 @@ class _chat_pageState extends State<chat_page> {
               ],
             ),
           )
-              : SizedBox(
-            width: size.width * 0.02,
-          ),
+              :
+          SizedBox(width: size.width * 0.02,),
         ],
       ),
     );
@@ -1168,12 +1161,12 @@ class _chat_pageState extends State<chat_page> {
         }
       });
       for(int i=len;i>lastcount;i--){
-        String? stamp= snapshot.data!.data()?["Messages"][i-1]["Stamp"];
-        String? email= snapshot.data!.data()?["Messages"][i-1]["Email"];
+        String? stamp= snapshot.data!.data()?["Messages"][i-1]["Stamp"].toDate().toString().split(".")[0];
+        String? email= snapshot.data!.data()?["Messages"][i-1]["UID"];
 
         if(email != usermodel["Email"]){
           await FirebaseFirestore.instance.collection("Messages").doc(widget.channel).collection("Messages_Detail").doc("Messages_Detail").update({
-            "${email}_${stamp}_Seen": FieldValue.arrayUnion([
+            "${email.toString().split('@')[0]}_${stamp}_Seen": FieldValue.arrayUnion([
               {
                 "Email": usermodel["Email"],
                 "Stamp": DateTime.now(),
@@ -1184,6 +1177,15 @@ class _chat_pageState extends State<chat_page> {
           });
         }
       }
+    }
+    else{
+      print("..................else");
+      await FirebaseFirestore.instance
+          .collection("Messages")
+          .doc(widget.channel)
+          .update({
+        "${usermodel["Email"].toString().split("@")[0]}.Active": true
+      });
     }
   }
 }

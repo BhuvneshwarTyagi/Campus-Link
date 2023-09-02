@@ -31,7 +31,7 @@ class _ImageTileState extends State<ImageTile> {
 
   int downloadTaskStatus = 0;
   bool downloaded=false;
-  double percent=1;
+  double percent= 0;
   bool isDownloading = false;
   double x=8,y=8;
   @override

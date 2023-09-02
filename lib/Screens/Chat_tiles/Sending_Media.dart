@@ -59,7 +59,7 @@ class _SendMediaState extends State<SendMedia> {
                 child: VideoPlayer(videoPlayerController),
               )
               :
-          Center(child: CircularProgressIndicator()),
+          const loading(text: "Please wait...\nLoading video"),
         ),
       ),
       appBar: AppBar(
@@ -284,40 +284,39 @@ class _SendMediaState extends State<SendMedia> {
                           "Reply_Index": widget.messageLength -
                               widget.replyIndex -
                               1,
-                          "Image_Text": false,
-                          "Image_Url" : "",
-                          "Video_Text" : true,
+                          "Media" : true,
+                          "Media_Type": "Video",
                           "Video_Url" :URL,
-                          "Video_ThumbNail": thumbURL
+                          "Video_Thumbnail": thumbURL
                         }
                       ]),
                       "Media_Files":FieldValue.arrayUnion([{
                         "Video":true,
-                        "Video_Thumbnail_URL":thumbURL,
-                        "Video_URL":URL
-                      }]),
-                      "${stamp.toString().split(".")[0]}_delevered" : FieldValue.arrayUnion([{
-                        "Email" : usermodel["Email"],
-                        "Stamp" : stamp
-                      }]),
-                      "${stamp.toString().split(".")[0]}_seen" : FieldValue.arrayUnion([{
-                        "Email" : usermodel["Email"],
-                        "Stamp" : stamp
+                        "Video_Thumbnail": thumbURL,
+                        "Video_Url": URL,
+                        "Name" : "${usermodel["Email"].toString().split("@")[0]}_${stamp.toString().split(".")[0]}"
                       }]),
                     },
                   ).whenComplete(
                         () async {
+                          await FirebaseFirestore.instance.collection("Messages").doc(widget.channel).collection("Messages_Detail").doc("Messages_Detail").update({
+                            "${usermodel["Email"].toString().split("@")[0]}_${stamp.toString().split(".")[0]}_Delevered" : FieldValue.arrayUnion([{
+                              "Email" : usermodel["Email"],
+                              "Stamp" : stamp
+                            }]),
+                            "${usermodel["Email"].toString().split("@")[0]}_${stamp.toString().split(".")[0]}_Seen" : FieldValue.arrayUnion([{
+                              "Email" : usermodel["Email"],
+                              "Stamp" : stamp
+                            }]),
+                          });
                       setState(() {
                         messageController.clear();
                       });
-                      List<dynamic> tokens =
-                      await FirebaseFirestore.instance
+                      final doc = await FirebaseFirestore.instance
                           .collection("Messages")
                           .doc(widget.channel)
                           .get()
-                          .then((value) {
-                        return value.data()?["Token"];
-                      }).whenComplete(() {
+                          .whenComplete(() {
                         Navigator.pop(context);
                         Navigator.pop(context);
                         Navigator.pushReplacement(
@@ -327,18 +326,20 @@ class _SendMediaState extends State<SendMedia> {
                           ),
                         );
                       });
-                      for (var element in tokens) {
-                        element.toString() !=
-                            usermodel["Token"]
-                            ? database().sendPushMessage(
-                            element,
-                            messageController.text.trim(),
-                            widget.channel,
-                            true,
-                            widget.channel,
-                            stamp
-                        )
-                            : null;
+                      List<dynamic> members = doc.data()?["Members"];
+                      for (var member in members) {
+                        String email=member["Email"];
+                        String token = doc.data()?[email.toString().split("@")[0]]["Token"];
+                        if(email!=usermodel["Email"]){
+                          database().sendPushMessage(
+                              token,
+                              messageController.text.trim(),
+                              widget.channel,
+                              true,
+                              widget.channel.toString().split(" ")[6],
+                              stamp
+                          );
+                        }
                       }
                     },
 
@@ -581,50 +582,47 @@ class _SendMediaState extends State<SendMedia> {
                       {
                         "Messages": FieldValue.arrayUnion([
                           {
-                            "Name": usermodel["Name"]
-                                .toString(),
-                            "UID": usermodel["Email"]
-                                .toString(),
-                            "text": messageController.text
-                                .trim()
-                                .toString(),
+                            "Name": usermodel["Name"].toString(),
+                            "UID": usermodel["Email"].toString(),
+                            "text": messageController.text.trim().toString(),
                             "Stamp": stamp,
                             "Reply": widget.replyBoxHeight != 0
                                 ? true
                                 : false,
-                            "Reply_Index": widget.messageLength -
-                                widget.replyIndex -
-                                1,
-                            "Image_Text": true,
+                            "Reply_Index": widget.messageLength - widget.replyIndex - 1,
+                            "Media": true,
+                            "Media_Type" : "Image",
                             "Image_Url" : URL,
-                            "Image_Compressed" : CURL
+                            "Image_Thumbnail" : CURL
                           }
                         ]),
                         "Media_Files":FieldValue.arrayUnion([{
                           "Video":false,
-                          "Image_URL":URL,
-                        }]),
-                        "${stamp.toString().split(".")[0]}_delevered" : FieldValue.arrayUnion([{
-                          "Email" : usermodel["Email"],
-                          "Stamp" : stamp
-                        }]),
-                        "${stamp.toString().split(".")[0]}_seen" : FieldValue.arrayUnion([{
-                          "Email" : usermodel["Email"],
-                          "Stamp" : stamp
+                          "Image_Url": URL,
+                          "Image_Thumbnail" : CURL,
+                          "Name" : "${usermodel["Email"].toString().split("@")[0]}_${stamp.toString().split(".")[0]}"
                         }]),
                       },
-                    ).whenComplete(() async {
+                    ).whenComplete(
+                          () async {
+                        await FirebaseFirestore.instance.collection("Messages").doc(widget.channel).collection("Messages_Detail").doc("Messages_Detail").update({
+                          "${usermodel["Email"].toString().split("@")[0]}_${stamp.toString().split(".")[0]}_Delevered" : FieldValue.arrayUnion([{
+                            "Email" : usermodel["Email"],
+                            "Stamp" : stamp
+                          }]),
+                          "${usermodel["Email"].toString().split("@")[0]}_${stamp.toString().split(".")[0]}_Seen" : FieldValue.arrayUnion([{
+                            "Email" : usermodel["Email"],
+                            "Stamp" : stamp
+                          }]),
+                        });
                         setState(() {
                           messageController.clear();
                         });
-                        List<dynamic> tokens =
-                        await FirebaseFirestore.instance
+                        final doc = await FirebaseFirestore.instance
                             .collection("Messages")
                             .doc(widget.channel)
                             .get()
-                            .then((value) {
-                          return value.data()?["Token"];
-                        }).whenComplete((){
+                            .whenComplete(() {
                           Navigator.pop(context);
                           Navigator.pop(context);
                           Navigator.pushReplacement(
@@ -634,21 +632,24 @@ class _SendMediaState extends State<SendMedia> {
                             ),
                           );
                         });
-                        for (var element in tokens) {
-                          element.toString() !=
-                              usermodel["Token"]
-                              ? database().sendPushMessage(
-                              element,
-                              messageController.text.trim(),
-                              widget.channel,
-                            true,
-                            widget.channel,
-                            stamp
-                          )
-                              : null;
+                        List<dynamic> members = doc.data()?["Members"];
+                        for (var member in members) {
+                          String email=member["Email"];
+                          String token = doc.data()?[email.toString().split("@")[0]]["Token"];
+                          if(email!=usermodel["Email"]){
+                            database().sendPushMessage(
+                                token,
+                                messageController.text.trim(),
+                                widget.channel,
+                                true,
+                                widget.channel.toString().split(" ")[6],
+                                stamp
+                            );
+                          }
                         }
+                      },
 
-                      },);
+                    );
 
                   },
                   child: CircleAvatar(

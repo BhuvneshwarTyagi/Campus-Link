@@ -97,20 +97,25 @@ class NotificationServices{
     }
   }
 
-  void setUserState({required UserState userState}) {
-    String? userId = FirebaseAuth.instance.currentUser?.uid;
-    //if (userId == null) return;
-    int stateNum = Utils.stateToNum(userState);
-    print("${stateNum}........${userState}");
-    for(var group in usermodel["Message_channels"]){
-      FirebaseFirestore.instance.collection("Messages").doc(group).update({
-        usermodel["Email"].toString().split("@")[0] : {
-          "Active" : false,
-          "Read_Count" : FieldValue,
-          "Last_Active": DateTime.now()
-        }
-      });
+  Future<void> setUserState({required String status}) async {
+    if(status != "Online"){
+      String? userId = FirebaseAuth.instance.currentUser?.email;
+      final userdoc= await FirebaseFirestore.instance.collection("Teachers").doc(userId).get();
+      final channels = userdoc.data()?["Message_channels"];
+
+
+
+      for(var channel in channels){
+        await FirebaseFirestore.instance.collection("Messages")
+            .doc("$channel").update(
+            {
+              "${userdoc["Email"].toString().split("@")[0]}.Active" : false,
+              "${userdoc["Email"].toString().split("@")[0]}.Last_Active" : DateTime.now()
+            }
+        );
+      }
     }
+
   }
 
 }

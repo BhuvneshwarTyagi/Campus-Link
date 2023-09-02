@@ -126,9 +126,9 @@ class _chatsystemState extends State<chatsystem> {
                     count1 = int.parse("${snapshot.data?.data()![usermodel["Email"].toString().split("@")[0]]["Read_Count"]}");
                     for (int i = readCount1; i > count1; i--) {
                       String? stamp = snapshot.data!
-                          .data()?["Messages"][i-1]["Stamp"];
+                          .data()?["Messages"][i-1]["Stamp"].toDate().toString().split(".")[0];
                       String? email = snapshot.data!.data()?["Messages"]
-                      [i-1]["Email"];
+                      [i-1]["UID"];
 
                       if (email != usermodel["Email"]) {
                         await FirebaseFirestore.instance
@@ -137,7 +137,7 @@ class _chatsystemState extends State<chatsystem> {
                             .collection("Messages_Detail")
                             .doc("Messages_Detail")
                             .update({
-                          "${email}_${stamp}_Seen": FieldValue.arrayUnion([
+                          "${email.toString().split("@")[0]}_${stamp}_Seen": FieldValue.arrayUnion([
                             {
                               "Email": usermodel["Email"],
                               "Stamp": DateTime.now()

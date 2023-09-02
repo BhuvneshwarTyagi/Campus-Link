@@ -136,7 +136,8 @@ class database {
             'title': title,
             "msg" : msg ? "true" : false,
             'channel' : channel,
-            'stamp' : stamp.toString()
+            'stamp' : stamp.toString().split(".")[0],
+            'Email' : usermodel["Email"].toString().split('@')[0],
           },
           "apns": {
             "headers": {"apns-priority": "5"},

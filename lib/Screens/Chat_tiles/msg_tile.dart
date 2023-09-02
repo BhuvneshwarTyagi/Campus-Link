@@ -1,13 +1,10 @@
 import 'dart:math';
-
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:campus_link_teachers/Screens/Chat_tiles/Image_Tile.dart';
 import 'package:campus_link_teachers/Screens/Chat_tiles/Name_Tile.dart';
 import 'package:campus_link_teachers/Screens/Chat_tiles/Reply_Tile.dart';
 import 'package:campus_link_teachers/Screens/Chat_tiles/Text_Tile.dart';
 import 'package:campus_link_teachers/Screens/Chat_tiles/Video_Tile.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import 'User_circle_Avatar.dart';
@@ -141,6 +138,7 @@ class MsgTile extends StatelessWidget {
           reply
               ?
           ReplyTile(
+            sender: sender,
               scrollController: scrollController,
               replyIndex: replyIndex,
               scrollindex: scrollindex,
@@ -160,13 +158,13 @@ class MsgTile extends StatelessWidget {
               : const SizedBox(),
           videoMsg
               ? Center(
-                child: VideoTile(
-            channel: channel,
-            videoURL: videoURL,
-            videoThumbnailURL: videoThumbnailURL,
-            stamp: stamp,
-          ),
-              )
+            child: VideoTile(
+              channel: channel,
+              videoURL: videoURL,
+              videoThumbnailURL: videoThumbnailURL,
+              stamp: stamp,
+            ),
+          )
               : const SizedBox(),
 
         ],
