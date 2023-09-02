@@ -120,19 +120,32 @@ class _chatsystemState extends State<chatsystem> {
                     ?
                 InkWell(
                   onTap: () async {
-                    for(int i=readCount;i> count;i--){
-                      String? stamp= snapshot.data!.data()?["Messages"][i-1]["Stamp"].toDate().toString().split(".")[0];
-                      String? email= snapshot.data!.data()?["Messages"][i-1]["Email"];
+                    int readCount1 = 0;
+                    int count1 = 0;
+                    readCount1 = snapshot.data?.data()!["Messages"].length;
+                    count1 = int.parse("${snapshot.data?.data()![usermodel["Email"].toString().split("@")[0]]["Read_Count"]}");
+                    for (int i = readCount1; i > count1; i--) {
+                      String? stamp = snapshot.data!
+                          .data()?["Messages"][i-1]["Stamp"]
+                          .toDate()
+                          .toString()
+                          .split(".")[0];
+                      String? email = snapshot.data!.data()?["Messages"]
+                      [i-1]["Email"];
 
-                      if(email != usermodel["Email"]){
-                        await FirebaseFirestore.instance.collection("Messages").doc(usermodel["Message_channels"][index]).collection("Messages_Detail").doc("Messages_Detail").update({
+                      if (email != usermodel["Email"]) {
+                        await FirebaseFirestore.instance
+                            .collection("Messages")
+                            .doc(usermodel["Message_channels"][index])
+                            .collection("Messages_Detail")
+                            .doc("Messages_Detail")
+                            .update({
                           "${stamp}_seen": FieldValue.arrayUnion([
                             {
                               "Email": usermodel["Email"],
                               "Stamp": DateTime.now()
                             }
                           ]),
-
                         });
                       }
                     }
@@ -140,13 +153,11 @@ class _chatsystemState extends State<chatsystem> {
                         .collection("Messages")
                         .doc(usermodel["Message_channels"][index])
                         .update({
-                      usermodel["Email"]
-                          .toString()
-                          .split("@")[0]: {
+                      usermodel["Email"].toString().split("@")[0]: {
                         "Last_Active": DateTime.now(),
-                        "Read_Count": readCount,
+                        "Read_Count": readCount1,
                         "Active": true,
-                        "Token" : FieldValue.arrayUnion([usermodel["Token"]])
+                        "Token": FieldValue.arrayUnion([usermodel["Token"]])
                       }
                     }).whenComplete((){
                       Navigator.push(
