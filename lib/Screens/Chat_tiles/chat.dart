@@ -144,12 +144,9 @@ class _chat_pageState extends State<chat_page> {
                                         widget.channel,
                                         membersCount: snapshot
                                             .data!
-                                            .data()![
-                                        "Members"]
+                                            .data()!["Members"]
                                             .length,
-                                        url: snapshot.data
-                                            ?.data()![
-                                        "image_URL"],
+                                        url: snapshot.data?.data()!["image_URL"] ?? "",
                                       ),
                                       type: PageTransitionType
                                           .rightToLeftJoined,

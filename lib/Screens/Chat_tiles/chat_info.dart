@@ -404,7 +404,7 @@ class _Chat_InfoState extends State<Chat_Info> {
                                               ],
                                             ),
                                           ),
-                                          snapshot.data?.data()!["Admins"].contains(usermodel["Email"])
+                                          snapshot.data?.data()!["Admins"].contains(snapshot.data?.data()!["Members"][index]["Email"])
                                               ?
                                           Container(
                                             height: size.height*0.03,
