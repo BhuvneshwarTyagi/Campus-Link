@@ -15,7 +15,12 @@ class chatsystem extends StatefulWidget {
 }
 
 class _chatsystemState extends State<chatsystem> {
-
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    markFalse();
+  }
   @override
   Widget build(BuildContext context) {
     Size size=MediaQuery.of(context).size;
@@ -104,6 +109,8 @@ class _chatsystemState extends State<chatsystem> {
             return StreamBuilder(
                 stream: FirebaseFirestore.instance.collection("Messages").doc(usermodel["Message_channels"][index]).snapshots(),
                 builder: (context, snapshot) {
+                  print("chat List");
+                  markFalse();
                   int readCount=0;
                   int count=0;
                   snapshot.hasData
@@ -120,50 +127,13 @@ class _chatsystemState extends State<chatsystem> {
                     ?
                 InkWell(
                   onTap: () async {
-                    int readCount1 = 0;
-                    int count1 = 0;
-                    readCount1 = snapshot.data?.data()!["Messages"].length;
-                    count1 = int.parse("${snapshot.data?.data()![usermodel["Email"].toString().split("@")[0]]["Read_Count"]}");
-                    for (int i = readCount1; i > count1; i--) {
-                      String? stamp = snapshot.data!
-                          .data()?["Messages"][i-1]["Stamp"].toDate().toString().split(".")[0];
-                      String? email = snapshot.data!.data()?["Messages"]
-                      [i-1]["UID"];
 
-                      if (email != usermodel["Email"]) {
-                        await FirebaseFirestore.instance
-                            .collection("Messages")
-                            .doc(usermodel["Message_channels"][index])
-                            .collection("Messages_Detail")
-                            .doc("Messages_Detail")
-                            .update({
-                          "${email.toString().split("@")[0]}_${stamp}_Seen": FieldValue.arrayUnion([
-                            {
-                              "Email": usermodel["Email"],
-                              "Stamp": DateTime.now()
-                            }
-                          ]),
-                        });
-                      }
-                    }
-                    await FirebaseFirestore.instance
-                        .collection("Messages")
-                        .doc(usermodel["Message_channels"][index])
-                        .update({
-                      usermodel["Email"].toString().split("@")[0]: {
-                        "Last_Active": DateTime.now(),
-                        "Read_Count": readCount1,
-                        "Active": true,
-                        "Token": FieldValue.arrayUnion([usermodel["Token"]])
-                      }
-                    }).whenComplete((){
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                           builder: (context) => chat_page(channel: usermodel["Message_channels"][index]),
                         ),
                       );
-                    });
                   },
                   child: Container(
                     height: size.height*0.1,
@@ -233,5 +203,13 @@ class _chatsystemState extends State<chatsystem> {
         ),
       ),
     );
+  }
+  Future<void> markFalse() async {
+    for(var channel in usermodel["Message_channels"]){
+      await FirebaseFirestore.instance.collection("Messages").doc(channel).update({
+        "${usermodel["Email"].toString().split("@")[0]}.Active" : false
+      });
+    }
+    print(".....................false");
   }
 }

@@ -219,21 +219,93 @@ class _NeviState extends State<Nevi> {
           ),
           automaticallyImplyLeading: false,
           actions: [
-            IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  PageTransition(
-                    child: const chatsystem(),
-                    type: PageTransitionType.bottomToTopJoined,
-                    duration: const Duration(milliseconds: 200),
-                    alignment: Alignment.bottomCenter,
-                    childCurrent: const Nevi(),
-                  ),
+            StreamBuilder(
+
+              stream: FirebaseFirestore.instance.collection("Messages").where(usermodel["Email"].toString().split("@")[0],isNull: false).snapshots(),
+
+              builder: (context, snapshot) {
+                int count=0;
+
+                int end=snapshot.hasData ? snapshot.data!.docs.length :0;
+                for(int i=0;i<end; i++){
+                  int read=snapshot.data?.docs[i].data()[usermodel["Email"].toString().split("@")[0]]["Read_Count"];
+                  int len=snapshot.data?.docs[i].data()["Messages"].length;
+                  print("${read-len}");
+                  count=len-read;
+                }
+
+                return snapshot.hasData
+                    ?
+                Stack(
+                  children: <Widget>[
+                    IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          PageTransition(
+                            child: const chatsystem(),
+                            type: PageTransitionType.bottomToTopJoined,
+                            duration: const Duration(milliseconds: 200),
+                            alignment: Alignment.bottomCenter,
+                            childCurrent: const Nevi(),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.send_outlined),
+                    ),
+                    count>0
+                        ?
+                    Positioned(
+                      right: size.width*0.006,
+                      child: Container(
+                        width: size.width*0.05,
+                        height: size.width*0.05,
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: Colors.green.shade700,
+                          shape:BoxShape.circle,
+                        ),
+
+                        child: Center(
+                          child: SizedBox(
+                            width: size.width*0.04,
+                            child: AutoSizeText(
+                              '$count',
+                              style: GoogleFonts.exo(
+                                  color: Colors.black,
+                                  fontSize: size.height*0.04,
+                                  fontWeight: FontWeight.w600
+                              ),
+                              maxLines: 1,
+                              minFontSize: 8,
+                              textAlign: TextAlign.center,
+
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                        :
+                    const SizedBox()
+                  ],
+                )
+                    :
+                IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                        child: const chatsystem(),
+                        type: PageTransitionType.bottomToTopJoined,
+                        duration: const Duration(milliseconds: 200),
+                        alignment: Alignment.bottomCenter,
+                        childCurrent: const Nevi(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.send_outlined),
                 );
-              },
-              icon: const Icon(Icons.send_outlined),
-            ),
+              },),
             IconButton(
               onPressed: () {
                 Navigator.push(
