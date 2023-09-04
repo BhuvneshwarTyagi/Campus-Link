@@ -231,7 +231,7 @@ class _NeviState extends State<Nevi> {
                   int read=snapshot.data?.docs[i].data()[usermodel["Email"].toString().split("@")[0]]["Read_Count"];
                   int len=snapshot.data?.docs[i].data()["Messages"].length;
                   print("${read-len}");
-                  count=len-read;
+                  count+=len-read;
                 }
 
                 return snapshot.hasData

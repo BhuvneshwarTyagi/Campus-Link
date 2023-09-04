@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:campus_link_teachers/Registration/Login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../Constraints.dart';
@@ -64,15 +65,24 @@ class _MainPageState extends State<MainPage> {
   }
   Future<void> fetchuser() async {
     await FirebaseFirestore.instance.collection("Teachers").doc(FirebaseAuth.instance.currentUser!.email).get().then((value){
-      usermodel=value.data()!;
-    }).whenComplete((){
       setState(() {
-        if (kDebugMode) {
-          print(usermodel);
-        }
-        loaded=true;
+        usermodel=value.data()!;
       });
-    });
+    }).whenComplete(() async {
+      await FirebaseMessaging.instance.getToken().then((token) async {
+        await FirebaseFirestore.instance.collection("Teachers").doc(FirebaseAuth.instance.currentUser!.email).update({
+          'Token' : token,
+        }).whenComplete(() {
+          setState(() {
+            if (kDebugMode) {
+              print(usermodel);
+            }
+            loaded=true;
+          });
+        });
 
-  }
+      });
+
+    }
+    );}
 }

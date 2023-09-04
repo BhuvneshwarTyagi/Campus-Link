@@ -308,6 +308,7 @@ class _SendMediaState extends State<SendMedia> {
                               "Email" : usermodel["Email"],
                               "Stamp" : stamp
                             }]),
+                            "${usermodel["Email"].toString().split('@')[0]}_${stamp.toString().split(".")[0]}_Seened": FieldValue.arrayUnion([usermodel["Email"]]),
                           });
                       setState(() {
                         messageController.clear();
@@ -614,6 +615,7 @@ class _SendMediaState extends State<SendMedia> {
                             "Email" : usermodel["Email"],
                             "Stamp" : stamp
                           }]),
+                          "${usermodel["Email"].toString().split('@')[0]}_${stamp.toString().split(".")[0]}_Seened": FieldValue.arrayUnion([usermodel["Email"]]),
                         });
                         setState(() {
                           messageController.clear();
