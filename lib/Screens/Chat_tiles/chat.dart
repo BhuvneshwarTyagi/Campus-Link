@@ -1169,7 +1169,7 @@ class _chat_pageState extends State<chat_page> {
 
         if(email != usermodel["Email"]){
           final doc= await FirebaseFirestore.instance.collection("Messages").doc(widget.channel).collection("Messages_Detail").doc("Messages_Detail").get();
-          List<dynamic> list= doc.data()?["${email.toString().split('@')[0]}_${stamp}_Seened"];
+          List<dynamic> list= doc.data()?["${email.toString().split('@')[0]}_${stamp.toString().split(".")[0]}_Seened"];
           if(!list.contains("${usermodel["Email"]}")){
             await FirebaseFirestore.instance.collection("Messages").doc(widget.channel).collection("Messages_Detail").doc("Messages_Detail").update({
               "${email.toString().split('@')[0]}_${stamp}_Seen": FieldValue.arrayUnion([

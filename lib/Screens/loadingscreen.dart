@@ -14,6 +14,8 @@ class loading extends StatelessWidget {
     return  Scaffold(
       backgroundColor: Colors.black38,
       body: Container(
+        height: size.height,
+        width: size.width,
         color: Colors.transparent,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,

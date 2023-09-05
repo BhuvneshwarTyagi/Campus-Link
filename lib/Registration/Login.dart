@@ -226,41 +226,43 @@ class _SignInScreenState extends State<SignInScreen> {
                       .then((value) async {
                     List temp = value.data()!["Email"];
                     if (temp.contains(_email.text.trim())) {
-                      String test = await signin(
-                          _email.text.trim(), _password.text.trim());
-                      if (!mounted) return;
-                      if (test == "1") {
-                        Navigator.pop(context);
-                        Navigator.push(
-                          context,
-                          PageTransition(
-                            child: const MainPage(),
-                            type: PageTransitionType.rightToLeftJoined,
-                            duration: const Duration(milliseconds: 400),
-                            alignment: Alignment.bottomCenter,
-                            childCurrent: const SignInScreen(),
-                          ),
-                        );
-                      } else {
-                        InAppNotifications.instance
-                          ..titleFontSize = 14.0
-                          ..descriptionFontSize = 14.0
-                          ..textColor = Colors.black
-                          ..backgroundColor =
-                              const Color.fromRGBO(150, 150, 150, 1)
-                          ..shadow = true
-                          ..animationStyle =
-                              InAppNotificationsAnimationStyle.scale;
-                        InAppNotifications.show(
-                            title: 'Failed',
-                            duration: const Duration(seconds: 2),
-                            description: test,
-                            leading: const Icon(
-                              Icons.error_outline_outlined,
-                              color: Colors.red,
-                              size: 55,
-                            ));
-                      }
+                      await signin(
+                          _email.text.trim(), _password.text.trim()).then((value) {
+                        if (value == "1") {
+
+                          Navigator.pushReplacement(
+                            context,
+                            PageTransition(
+                              child: const MainPage(),
+                              type: PageTransitionType.rightToLeftJoined,
+                              duration: const Duration(milliseconds: 400),
+                              alignment: Alignment.bottomCenter,
+                              childCurrent: const SignInScreen(),
+                            ),
+                          );
+                        }
+                        else {
+                          InAppNotifications.instance
+                            ..titleFontSize = 14.0
+                            ..descriptionFontSize = 14.0
+                            ..textColor = Colors.black
+                            ..backgroundColor =
+                            const Color.fromRGBO(150, 150, 150, 1)
+                            ..shadow = true
+                            ..animationStyle =
+                                InAppNotificationsAnimationStyle.scale;
+                          InAppNotifications.show(
+                              title: 'Failed',
+                              duration: const Duration(seconds: 2),
+                              description: value,
+                              leading: const Icon(
+                                Icons.error_outline_outlined,
+                                color: Colors.red,
+                                size: 55,
+                              ));
+                        }
+                      });
+
                     } else {
                       InAppNotifications.instance
                         ..titleFontSize = 14.0
@@ -300,7 +302,7 @@ class _SignInScreenState extends State<SignInScreen> {
               children: [
                 TextButton(
                   onPressed: () {
-                    Navigator.push(
+                    Navigator.pushReplacement(
                         context,
                         PageTransition(
                             child: const ForgotPassword(),

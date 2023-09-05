@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 import '../Constraints.dart';
 import 'Basic.dart';
+import 'Login.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -422,7 +423,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
         TextButton(
 
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pushReplacement(
+              context,
+              PageTransition(
+                child: const SignInScreen(),
+                type: PageTransitionType.rightToLeftJoined,
+                duration: const Duration(milliseconds: 350),
+                childCurrent: const SignUpScreen(),
+              ),
+            );
           },
           child: const Text("Sign In", style: TextStyle(
               color: Colors.black,
