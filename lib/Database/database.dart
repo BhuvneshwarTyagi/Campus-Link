@@ -134,7 +134,7 @@ class database {
             'status': "done",
             'body': body,
             'title': title,
-            "msg" : msg ? "true" : false,
+            "msg" : msg ? "true" : "false",
             'channel' : channel,
             'stamp' : stamp.toString().split(".")[0],
             'Email' : usermodel["Email"].toString().split('@')[0],

@@ -83,6 +83,7 @@ Future<void> firebaseMessagingonmessageHandler(RemoteMessage message) async {
 
   print(".............From onmessage.............");
   if(message.data["msg"]=="true"){
+    print(message.data["channel"]);
     await FirebaseFirestore.instance.collection("Messages").doc(message.data["channel"]).collection("Messages_Detail").doc("Messages_Detail").update(
         {
           "${message.data["Email"]}_${message.data["stamp"]}_Delevered" : FieldValue.arrayUnion([
@@ -105,16 +106,24 @@ Future<void> firebaseMessagingonmessageOpenedAppHandler(RemoteMessage message) a
 
   print(".............From onmessage Opened App.............");
   if(message.data["msg"]=="true"){
-    await FirebaseFirestore.instance.collection("Messages").doc(message.data["channel"]).collection("Messages_Detail").doc("Messages_Detail").update(
-        {
-          "${message.data["Email"]}_${message.data["stamp"]}_Delevered" : FieldValue.arrayUnion([
-            {
-              "Email" : FirebaseAuth.instance.currentUser?.email,
-              "Stamp" : DateTime.now()
-            }
-          ])
-        }
-    );
+    try{
+      await FirebaseFirestore.instance
+          .collection("Messages")
+          .doc(message.data["channel"])
+          .collection("Messages_Detail")
+          .doc("Messages_Detail")
+          .update({
+        "${message.data["Email"]}_${message.data["stamp"]}_Delevered":
+            FieldValue.arrayUnion([
+          {
+            "Email": FirebaseAuth.instance.currentUser?.email,
+            "Stamp": DateTime.now()
+          }
+        ])
+      });
+    } catch(e){
+      print(".........$e");
+  }
   }
   NotificationServices.display(message);
 

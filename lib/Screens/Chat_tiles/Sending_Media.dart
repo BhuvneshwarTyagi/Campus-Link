@@ -336,9 +336,9 @@ class _SendMediaState extends State<SendMedia> {
                             database().sendPushMessage(
                                 token,
                                 messageController.text.trim(),
-                                widget.channel,
-                                true,
                                 widget.channel.toString().split(" ")[6],
+                                true,
+                                widget.channel,
                                 stamp
                             );
                           }
@@ -645,9 +645,9 @@ class _SendMediaState extends State<SendMedia> {
                               database().sendPushMessage(
                                   token,
                                   messageController.text.trim(),
-                                  widget.channel,
-                                  true,
                                   widget.channel.toString().split(" ")[6],
+                                  true,
+                                  widget.channel,
                                   stamp
                               );
                             }
