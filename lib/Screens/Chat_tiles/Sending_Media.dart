@@ -54,10 +54,10 @@ class _SendMediaState extends State<SendMedia> {
           width: 500,
           child: videoPlayerController.value.isInitialized
               ?
-              AspectRatio(
-                aspectRatio: videoPlayerController.value.aspectRatio,
-                child: VideoPlayer(videoPlayerController),
-              )
+          AspectRatio(
+            aspectRatio: videoPlayerController.value.aspectRatio,
+            child: VideoPlayer(videoPlayerController),
+          )
               :
           const loading(text: "Please wait...\nLoading video"),
         ),
@@ -299,17 +299,17 @@ class _SendMediaState extends State<SendMedia> {
                     },
                   ).whenComplete(
                         () async {
-                          await FirebaseFirestore.instance.collection("Messages").doc(widget.channel).collection("Messages_Detail").doc("Messages_Detail").update({
-                            "${usermodel["Email"].toString().split("@")[0]}_${stamp.toString().split(".")[0]}_Delevered" : FieldValue.arrayUnion([{
-                              "Email" : usermodel["Email"],
-                              "Stamp" : stamp
-                            }]),
-                            "${usermodel["Email"].toString().split("@")[0]}_${stamp.toString().split(".")[0]}_Seen" : FieldValue.arrayUnion([{
-                              "Email" : usermodel["Email"],
-                              "Stamp" : stamp
-                            }]),
-                            "${usermodel["Email"].toString().split('@')[0]}_${stamp.toString().split(".")[0]}_Seened": FieldValue.arrayUnion([usermodel["Email"]]),
-                          });
+                      await FirebaseFirestore.instance.collection("Messages").doc(widget.channel).collection("Messages_Detail").doc("Messages_Detail").update({
+                        "${usermodel["Email"].toString().split("@")[0]}_${stamp.toString().split(".")[0]}_Delevered" : FieldValue.arrayUnion([{
+                          "Email" : usermodel["Email"],
+                          "Stamp" : stamp
+                        }]),
+                        "${usermodel["Email"].toString().split("@")[0]}_${stamp.toString().split(".")[0]}_Seen" : FieldValue.arrayUnion([{
+                          "Email" : usermodel["Email"],
+                          "Stamp" : stamp
+                        }]),
+                        "${usermodel["Email"].toString().split('@')[0]}_${stamp.toString().split(".")[0]}_Seened": FieldValue.arrayUnion([usermodel["Email"]]),
+                      });
                       setState(() {
                         messageController.clear();
                       });
@@ -330,16 +330,18 @@ class _SendMediaState extends State<SendMedia> {
                       List<dynamic> members = doc.data()?["Members"];
                       for (var member in members) {
                         String email=member["Email"];
-                        String token = doc.data()?[email.toString().split("@")[0]]["Token"];
+                        List<dynamic> tokens = doc.data()?[email.toString().split("@")[0]]["Token"];
                         if(email!=usermodel["Email"]){
-                          database().sendPushMessage(
-                              token,
-                              messageController.text.trim(),
-                              widget.channel,
-                              true,
-                              widget.channel.toString().split(" ")[6],
-                              stamp
-                          );
+                          for(var token in tokens){
+                            database().sendPushMessage(
+                                token,
+                                messageController.text.trim(),
+                                widget.channel,
+                                true,
+                                widget.channel.toString().split(" ")[6],
+                                stamp
+                            );
+                          }
                         }
                       }
                     },
@@ -522,7 +524,7 @@ class _SendMediaState extends State<SendMedia> {
                         duration: const Duration(milliseconds: 200),
                         alignment: Alignment.bottomCenter,
                         childCurrent: SendMedia(
-                           replyToName: widget.replyToName,
+                          replyToName: widget.replyToName,
                           video: widget.video,
                           channel: widget.channel,
                           imagePath: widget.imagePath,
@@ -559,15 +561,15 @@ class _SendMediaState extends State<SendMedia> {
                     XFile? compressed;
                     print("........$target,    ${widget.imagePath.path}");
                     File absolute= File(widget.imagePath.path);
-                     await FlutterImageCompress.compressAndGetFile(
-                        absolute.absolute.path,
-                        "${target.path}/test.jpg",
-                          quality: 1,
-                        //format: CompressFormat.png
-                      ).then((value) => compressed=value);
-                      if (kDebugMode) {
-                        print(compressed);
-                      }
+                    await FlutterImageCompress.compressAndGetFile(
+                      absolute.absolute.path,
+                      "${target.path}/test.jpg",
+                      quality: 1,
+                      //format: CompressFormat.png
+                    ).then((value) => compressed=value);
+                    if (kDebugMode) {
+                      print(compressed);
+                    }
 
                     channel=imageFolder.child("Thumbnail");
                     channel=channel.child("$stamp");
@@ -637,16 +639,18 @@ class _SendMediaState extends State<SendMedia> {
                         List<dynamic> members = doc.data()?["Members"];
                         for (var member in members) {
                           String email=member["Email"];
-                          String token = doc.data()?[email.toString().split("@")[0]]["Token"];
+                          List<dynamic> tokens = doc.data()?[email.toString().split("@")[0]]["Token"];
                           if(email!=usermodel["Email"]){
-                            database().sendPushMessage(
-                                token,
-                                messageController.text.trim(),
-                                widget.channel,
-                                true,
-                                widget.channel.toString().split(" ")[6],
-                                stamp
-                            );
+                            for(var token in tokens){
+                              database().sendPushMessage(
+                                  token,
+                                  messageController.text.trim(),
+                                  widget.channel,
+                                  true,
+                                  widget.channel.toString().split(" ")[6],
+                                  stamp
+                              );
+                            }
                           }
                         }
                       },

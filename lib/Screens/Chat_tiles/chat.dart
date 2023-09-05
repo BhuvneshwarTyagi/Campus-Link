@@ -35,12 +35,6 @@ class _chat_pageState extends State<chat_page> {
   double replyBoxHeight = 0;
   var imagePath;
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    print("testing");
-  }
-  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return StreamBuilder(
@@ -405,7 +399,7 @@ class _chat_pageState extends State<chat_page> {
                                         :
                                     "",
                                     snapshot2.data?.data()!["${message[index]["UID"].toString().split("@")[0]}_${message[index]["Stamp"].toDate().toString().split('.')[0]}_Delevered"].length == snapshot.data!.data()?["Members"].length,
-                                    snapshot2.data?.data()!["${message[index]["UID"].toString().split("@")[0]}_${message[index]["Stamp"].toDate().toString().split('.')[0]}_Seen"].length == snapshot.data!.data()?["Members"].length,
+                                    snapshot2.data?.data()!["${message[index]["UID"].toString().split("@")[0]}_${message[index]["Stamp"].toDate().toString().split('.')[0]}_Seened"].length == snapshot.data!.data()?["Members"].length,
                                   ),
                                 ),
                               )
@@ -473,7 +467,7 @@ class _chat_pageState extends State<chat_page> {
                                       :
                                   "",
                                   snapshot2.data?.data()!["${message[index]["UID"].toString().split("@")[0]}_${message[index]["Stamp"].toDate().toString().split(".")[0]}_Delevered"].length == snapshot.data!.data()?["Members"].length,
-                                  snapshot2.data?.data()!["${message[index]["UID"].toString().split("@")[0]}_${message[index]["Stamp"].toDate().toString().split(".")[0]}_Seen"].length == snapshot.data!.data()?["Members"].length,
+                                  snapshot2.data?.data()!["${message[index]["UID"].toString().split("@")[0]}_${message[index]["Stamp"].toDate().toString().split(".")[0]}_Seened"].length == snapshot.data!.data()?["Members"].length,
                                 ),
                               )
                             ],
@@ -1172,7 +1166,7 @@ class _chat_pageState extends State<chat_page> {
           List<dynamic> list= doc.data()?["${email.toString().split('@')[0]}_${stamp.toString().split(".")[0]}_Seened"];
           if(!list.contains("${usermodel["Email"]}")){
             await FirebaseFirestore.instance.collection("Messages").doc(widget.channel).collection("Messages_Detail").doc("Messages_Detail").update({
-              "${email.toString().split('@')[0]}_${stamp}_Seen": FieldValue.arrayUnion([
+              "${email.toString().split('@')[0]}_${stamp.toString().split(".")[0]}_Seen": FieldValue.arrayUnion([
                 {
                   "Email": usermodel["Email"],
                   "Stamp": DateTime.now(),
@@ -1182,7 +1176,7 @@ class _chat_pageState extends State<chat_page> {
 
             });
             await FirebaseFirestore.instance.collection("Messages").doc(widget.channel).collection("Messages_Detail").doc("Messages_Detail").update({
-              "${email.toString().split('@')[0]}_${stamp.toString().split(".")[0]}_Seened": FieldValue.arrayUnion([usermodel["Email"]]),
+              "${email.toString().split('@')[0]}_${stamp}_Seened": FieldValue.arrayUnion([usermodel["Email"]]),
 
             });
           }
