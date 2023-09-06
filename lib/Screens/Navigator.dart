@@ -376,7 +376,7 @@ class _NeviState extends State<Nevi> {
                         ),
                       ),
                       SizedBox(
-                        height: size.height * 0.01,
+                        height: size.height * 0.0,
                       ),
 
                     ],

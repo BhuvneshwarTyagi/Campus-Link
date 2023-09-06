@@ -21,48 +21,37 @@ class _SignInScreenState extends State<SignInScreen> {
   bool hide = true;
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
-  final _textStyle = GoogleFonts.alegreya(
-    fontSize: 28,
-    fontWeight: FontWeight.w900,
-    color: Colors.white54,
-    shadows: <Shadow>[
-      const Shadow(
-        offset: Offset(1, 1),
-        color: Colors.black,
-      ),
-    ],
-  );
   String errorString = "";
 
   @override
   Widget build(BuildContext context) {
+    Size size=MediaQuery.of(context).size;
     return Scaffold(
         body: Container(
-      height: MediaQuery.of(context).size.height,
-      width: MediaQuery.of(context).size.width,
-    decoration: BoxDecoration(
-    gradient: LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [
-    const Color.fromRGBO(86, 149, 178, 1),
-    // Color.fromRGBO(86, 149, 178, 1),
-    const Color.fromRGBO(68, 174, 218, 1),
-    //Color.fromRGBO(118, 78, 232, 1),
-    Colors.deepPurple.shade300
-    ],
-    ),
-    ),
-      child: SingleChildScrollView(
-        padding: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width * 0.04,
-            0, MediaQuery.of(context).size.width * 0.04, 0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            const Color.fromRGBO(86, 149, 178, 1),
+            // Color.fromRGBO(86, 149, 178, 1),
+            const Color.fromRGBO(68, 174, 218, 1),
+            //Color.fromRGBO(118, 78, 232, 1),
+            Colors.deepPurple.shade300
+          ],
+        ),
+      ),
+          child: SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width * 0.04, 0, MediaQuery.of(context).size.width * 0.04, 0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
               height: MediaQuery.of(context).size.height * 0.07,
-            ),
+                ),
             Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
@@ -86,7 +75,18 @@ class _SignInScreenState extends State<SignInScreen> {
             AnimatedTextKit(
               animatedTexts: [
                 WavyAnimatedText('Welcome To Campus Link',
-                    textStyle: _textStyle),
+                    textStyle: GoogleFonts.libreBaskerville(
+                      fontSize: size.width*0.06,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white54,
+                      shadows: <Shadow>[
+                        const Shadow(
+                          offset: Offset(1, 1),
+                          color: Colors.black,
+                        ),
+                      ],
+                    ),
+                ),
               ],
               repeatForever: true,
             ),
@@ -107,6 +107,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       offset: Offset(1, 1))
                 ],
               ),
+              height: size.height*0.08,
               child: TextFormField(
                   controller: _email,
                   obscureText: false,
@@ -127,7 +128,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         ),
                       ),
                       prefixIcon: const Icon(
-                        Icons.person_outline,
+                        Icons.mail_outline_outlined,
                         color: Colors.white,
                       ),
                       label: const Text("Enter Email"),
@@ -159,6 +160,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       offset: Offset(1, 1))
                 ],
               ),
+              height: size.height*0.08,
               child: TextFormField(
                   controller: _password,
                   obscureText: hide,
@@ -209,14 +211,13 @@ class _SignInScreenState extends State<SignInScreen> {
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height * 0.07,
               decoration: BoxDecoration(
-                  gradient:const LinearGradient(
+                  gradient: const LinearGradient(
                     begin: Alignment.centerLeft,
                     end: Alignment.bottomRight,
                     colors: [Colors.blue, Colors.purpleAccent],
                   ),
                   borderRadius: BorderRadius.circular(30),
-                  border: Border.all(color: Colors.black54,width: 2)
-              ),
+                  border: Border.all(color: Colors.black54, width: 2)),
               child: ElevatedButton(
                 onPressed: () async {
                   await FirebaseFirestore.instance
@@ -226,10 +227,9 @@ class _SignInScreenState extends State<SignInScreen> {
                       .then((value) async {
                     List temp = value.data()!["Email"];
                     if (temp.contains(_email.text.trim())) {
-                      await signin(
-                          _email.text.trim(), _password.text.trim()).then((value) {
+                      await signin(_email.text.trim(), _password.text.trim())
+                          .then((value) {
                         if (value == "1") {
-
                           Navigator.pushReplacement(
                             context,
                             PageTransition(
@@ -240,14 +240,13 @@ class _SignInScreenState extends State<SignInScreen> {
                               childCurrent: const SignInScreen(),
                             ),
                           );
-                        }
-                        else {
+                        } else {
                           InAppNotifications.instance
                             ..titleFontSize = 14.0
                             ..descriptionFontSize = 14.0
                             ..textColor = Colors.black
                             ..backgroundColor =
-                            const Color.fromRGBO(150, 150, 150, 1)
+                                const Color.fromRGBO(150, 150, 150, 1)
                             ..shadow = true
                             ..animationStyle =
                                 InAppNotificationsAnimationStyle.scale;
@@ -262,7 +261,6 @@ class _SignInScreenState extends State<SignInScreen> {
                               ));
                         }
                       });
-
                     } else {
                       InAppNotifications.instance
                         ..titleFontSize = 14.0
@@ -306,7 +304,8 @@ class _SignInScreenState extends State<SignInScreen> {
                         context,
                         PageTransition(
                             child: const ForgotPassword(),
-                            type: PageTransitionType.rightToLeft,
+                            type: PageTransitionType.rightToLeftJoined,
+                            childCurrent: const SignInScreen(),
                             duration: const Duration(milliseconds: 350)));
                   },
                   child: const Text("Forgot Password ?",
@@ -360,9 +359,7 @@ class _SignInScreenState extends State<SignInScreen> {
               fontWeight: FontWeight.bold,
               shadows: [
                 const Shadow(
-                    blurRadius: 30,
-                    offset: Offset(3, 3),
-                    color: Colors.black)
+                    blurRadius: 30, offset: Offset(3, 3), color: Colors.black)
               ],
             ),
           ),

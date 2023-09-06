@@ -22,17 +22,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController email = TextEditingController();
   final TextEditingController password = TextEditingController();
   final TextEditingController nameController = TextEditingController();
-  final textStyle = GoogleFonts.alegreya(fontSize: 28, fontWeight: FontWeight.w900,color: Colors.white54,
-      shadows: <Shadow>[
-        const Shadow(
-          offset: Offset(1, 1),
-          color: Colors.black,
-        ),
-      ],
-  );
+
 
   @override
   Widget build(BuildContext context) {
+    Size size=MediaQuery.of(context).size;
     return Scaffold(
         body: Container(
 
@@ -100,7 +94,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                     WavyAnimatedText('Welcome To Campus Link',
 
-                        textStyle: textStyle
+                        textStyle: GoogleFonts.libreBaskerville(
+                          fontSize: size.width*0.06,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white54,
+                          shadows: <Shadow>[
+                            const Shadow(
+                              offset: Offset(1, 1),
+                              color: Colors.black,
+                            ),
+                          ],
+                        ),
                     ),
 
                   ],
@@ -128,6 +132,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           )
                         ],
                       ),
+                      height: size.height*0.08,
                       child: TextField(
                           controller: nameController,
                           obscureText: false,
@@ -172,6 +177,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           .height * 0.03,
                     ),
                     Container(
+                      height: size.height*0.08,
                       decoration: BoxDecoration(
                         borderRadius: const BorderRadius.all(Radius.circular(30)),
                         border: Border.all(color: Colors.black,),
@@ -229,6 +235,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
 
                     Container(
+                      height: size.height*0.08,
                       decoration: BoxDecoration(
                         borderRadius: const BorderRadius.all(Radius.circular(30)),
                         border: Border.all(color: Colors.black,),
@@ -398,12 +405,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ],
                 ),
-                SizedBox(
-                    height: MediaQuery
-                        .of(context)
-                        .size
-                        .height * 0.03
-                ),
                 signInOption(),
 
               ],
@@ -427,7 +428,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               context,
               PageTransition(
                 child: const SignInScreen(),
-                type: PageTransitionType.rightToLeftJoined,
+                type: PageTransitionType.leftToRightJoined,
                 duration: const Duration(milliseconds: 350),
                 childCurrent: const SignUpScreen(),
               ),

@@ -33,7 +33,17 @@ class _Background_imageState extends State<Background_image> {
       backgroundColor: Colors.black87,
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(63, 63, 63, 1),
-        title: const AutoSizeText("Custom Wallpaper"),
+        title: AutoSizeText("Custom Wallpaper",style: GoogleFonts.libreBaskerville(
+          fontSize: size.width*0.06,
+          fontWeight: FontWeight.w800,
+          color: Colors.white54,
+          shadows: <Shadow>[
+            const Shadow(
+              offset: Offset(1, 1),
+              color: Colors.black,
+            ),
+          ],
+        ),),
         leadingWidth: size.width*0.07,
         leading: IconButton(
             onPressed: (){
@@ -41,7 +51,7 @@ class _Background_imageState extends State<Background_image> {
               Navigator.pop(context);
 
             },
-            icon: const Icon(Icons.arrow_back_ios_new)),
+            icon: const Icon(Icons.arrow_back_ios_new,color: Colors.white54,)),
         actions: [
           TextButton(
               onPressed: () async {
@@ -81,7 +91,7 @@ class _Background_imageState extends State<Background_image> {
           Container(
             height: size.height * 0.6,
             width: size.width * 0.6,
-            margin: const EdgeInsets.all(10),
+            margin: EdgeInsets.all(size.height*0.01),
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(20)),
               image: DecorationImage(
@@ -94,6 +104,7 @@ class _Background_imageState extends State<Background_image> {
                 elevation: 0,
                 backgroundColor: Colors.black54,
                 leadingWidth: size.width*0.03,
+                toolbarHeight: size.height*0.07,
                 leading: IconButton(
                     onPressed: (){},
                     icon: Icon(Icons.arrow_back_ios_new,size: size.width*0.045,)),
@@ -109,7 +120,7 @@ class _Background_imageState extends State<Background_image> {
                       width: size.width*0.01,
                     ),
                     SizedBox(
-                      width: size.width*0.29,
+                      width: size.width*0.25,
                       height: size.height*0.025,
                       child: Center(
                         child: AutoSizeText(
@@ -118,6 +129,7 @@ class _Background_imageState extends State<Background_image> {
                               color: Colors.white,
                               fontSize: size.width*0.005
                           ),
+                          minFontSize: 9,
                         ),
                       ),
                     ),
@@ -136,7 +148,7 @@ class _Background_imageState extends State<Background_image> {
               body: Column(
                 children: [
                   SizedBox(
-                    height: size.height*0.3,
+                    height: size.height*0.265,
                   ),
                   bubble("Hello", "User1", widget.groupimage, DateTime.now(), false, size, 0, 2),
                   bubble("Hey", "User2", widget.groupimage, DateTime.now(), true, size, 0, 2)
@@ -190,10 +202,10 @@ class _Background_imageState extends State<Background_image> {
             ),
           ),
           SizedBox(
-            height: size.height * 0.25,
+            height: size.height * 0.227,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
+              padding: const EdgeInsets.fromLTRB(0, 0, 10, 10),
               itemCount: 27,
               itemBuilder: (context, index) {
                 return Card(
@@ -234,7 +246,7 @@ class _Background_imageState extends State<Background_image> {
           :
       Alignment.centerLeft,
       child: SizedBox(
-        height: size.height*0.082,
+        height: size.height*0.086,
         width: size.width*0.35,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,

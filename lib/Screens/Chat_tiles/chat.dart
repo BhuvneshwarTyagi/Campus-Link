@@ -79,22 +79,10 @@ class _chat_pageState extends State<chat_page> {
                         ? AppBar(
                       elevation: 0,
                       backgroundColor: Colors.black87,
-                      leading: IconButton(
-                          onPressed: () async {
-                            // await FirebaseFirestore.instance
-                            //     .collection("Messages")
-                            //     .doc(widget.channel)
-                            //     .update({
-                            //   usermodel["Email"]
-                            //       .toString()
-                            //       .split("@")[0]: {
-                            //     "Last_Active": DateTime.now(),
-                            //     "Read_Count": message.length,
-                            //     "Active": false,
-                            //     "Token" : FieldValue.arrayUnion([usermodel["Token"]]),
-                            //   }
-                            // }).whenComplete(() =>
-                            //     Navigator.pop(context));
+                      leadingWidth: size.width*0.13,
+                      titleSpacing: 0,
+                      leading: InkWell(
+                          onTap: () async {
                             Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(builder: (context) {
@@ -103,8 +91,9 @@ class _chat_pageState extends State<chat_page> {
                                 },)
                             );
                           },
-                          icon: const Icon(
+                          child: const Icon(
                               Icons.arrow_back_ios_new)),
+                      centerTitle: false,
                       title: Row(
                         mainAxisAlignment:
                         MainAxisAlignment.start,
@@ -154,7 +143,7 @@ class _chat_pageState extends State<chat_page> {
                               CrossAxisAlignment.start,
                               children: [
                                 SizedBox(
-                                  width: size.width * 0.49,
+                                  width: size.width * 0.56,
                                   child: AutoSizeText(
                                     widget.channel,
                                     style: GoogleFonts.exo(
@@ -499,7 +488,7 @@ class _chat_pageState extends State<chat_page> {
                                 children: [
                                   AnimatedContainer(
                                     height: replyBoxHeight,
-                                    width: size.width * 0.78,
+                                    width: size.width * 0.73,
                                     decoration:
                                     const BoxDecoration(
                                       color: Colors.white70,
@@ -591,7 +580,7 @@ class _chat_pageState extends State<chat_page> {
                                     ),
                                   ),
                                   SizedBox(
-                                    width: size.width * 0.78,
+                                    width: size.width * 0.73,
                                     child: TextField(
                                       controller:
                                       messageController,
@@ -600,9 +589,9 @@ class _chat_pageState extends State<chat_page> {
                                       minLines: 1,
                                       autocorrect: true,
                                       textAlign: TextAlign.start,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                           color: Colors.black,
-                                          fontSize: 18),
+                                          fontSize: size.width*0.03),
                                       decoration: InputDecoration(
                                         suffixIcon:
                                         AnimatedContainer(

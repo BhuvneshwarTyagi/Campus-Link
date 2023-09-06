@@ -58,9 +58,9 @@ class _FiltersState extends State<Filters> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color.fromRGBO(86, 149, 178, 1),
+              const Color.fromRGBO(86, 149, 178, 1),
              // Color.fromRGBO(86, 149, 178, 1),
-                 Color.fromRGBO(68, 174, 218, 1),
+                 const Color.fromRGBO(68, 174, 218, 1),
                 //Color.fromRGBO(118, 78, 232, 1),
                 Colors.deepPurple.shade300
             ],

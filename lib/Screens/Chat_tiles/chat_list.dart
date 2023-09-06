@@ -27,6 +27,8 @@ class _chatsystemState extends State<chatsystem> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(63, 63, 63,1),
+        titleSpacing: 0,
+        leadingWidth: size.width*0.13,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new),
           onPressed: (){
@@ -136,7 +138,7 @@ class _chatsystemState extends State<chatsystem> {
                       );
                   },
                   child: Container(
-                    height: size.height*0.1,
+                    height: size.height*0.11,
                     decoration: const BoxDecoration(
                         color: Colors.white,
                         border: Border(bottom: BorderSide(color: Colors.black, width: 1))),

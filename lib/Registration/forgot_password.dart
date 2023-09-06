@@ -18,16 +18,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   final _key = GlobalKey<FormState>();
   final TextEditingController _email=TextEditingController();
   final auth =FirebaseAuth.instance;
-  final _textStyle = GoogleFonts.alegreya(fontSize: 28, fontWeight: FontWeight.w900,color: Colors.white54,
-    shadows: <Shadow>[
-      const Shadow(
-        offset: Offset(1, 1),
-        color: Colors.black,
-      ),
-    ],
-  );
   @override
   Widget build(BuildContext context) {
+    Size size=MediaQuery.of(context).size;
     return Scaffold(
 
       body: Container(
@@ -94,7 +87,17 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 animatedTexts: [
                   WavyAnimatedText('Welcome To Campus Link',
 
-                      textStyle: _textStyle
+                      textStyle: GoogleFonts.libreBaskerville(
+                        fontSize: size.width*0.06,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white54,
+                        shadows: <Shadow>[
+                          const Shadow(
+                            offset: Offset(1, 1),
+                            color: Colors.black,
+                          ),
+                        ],
+                      ),
                   ),
 
                 ],
@@ -123,6 +126,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             )
                           ],
                         ),
+                        height: size.height*0.08,
                         child: TextFormField(
                             validator: (value) {
                               if (value!.contains('@')) {
@@ -150,7 +154,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                   ),
                                 ),
                                 prefixIcon: const Icon(
-                                  Icons.person_outline,
+                                  Icons.mail_outline_outlined,
                                   color: Colors.white,
                                 ),
                                 label: const Text("Enter email"),
@@ -171,7 +175,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                         height: MediaQuery
                             .of(context)
                             .size
-                            .height * 0.03,
+                            .height * 0.01,
                       ),
               ],
                   )
@@ -264,7 +268,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   context,
                   PageTransition(
                     child: const SignInScreen(),
-                    type: PageTransitionType.rightToLeftJoined,
+                    type: PageTransitionType.leftToRightJoined,
                     duration: const Duration(milliseconds: 350),
                     childCurrent: const ForgotPassword(),
                   ),
