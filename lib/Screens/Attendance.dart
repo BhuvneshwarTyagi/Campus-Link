@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:campus_link_teachers/Database/database.dart';
-import 'package:http/http.dart' as http;
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:campus_link_teachers/Constraints.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
