@@ -617,8 +617,8 @@ class _basicDetailsState extends State<basicDetails> {
                   style: ElevatedButton.styleFrom(
                       elevation: 25,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15)),
-                      side: const BorderSide(width: 3, color: Colors.black),
+                          borderRadius: BorderRadius.circular(30)),
+                      side: const BorderSide(width: 2, color: Colors.black),
                       backgroundColor: Colors.transparent,
                   ),
                   focusNode: buttonf,
@@ -1056,7 +1056,7 @@ class _basicDetailsState extends State<basicDetails> {
                   child: Text(
                     "Submit",
                     style: GoogleFonts.openSans(
-                        fontWeight: FontWeight.w800, fontSize: 18,
+                        fontWeight: FontWeight.w700, fontSize:MediaQuery.of(context).size.height*0.026 ,
                         color: Colors.black,
                         ),
                   ),

@@ -1,8 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:path/path.dart';
 import 'package:searchfield/searchfield.dart';
 
 import '../Constraints.dart';
@@ -57,10 +57,12 @@ class _SessionalState extends State<Sessional> {
         upload_marks
             ?
       Scaffold(
+        primary: false,
       backgroundColor: Colors.transparent,
       body: all_email.length>1
         ?
           SingleChildScrollView(
+            primary: false,
         scrollDirection: Axis.vertical,
         child: Column(
           children: [
@@ -69,19 +71,40 @@ class _SessionalState extends State<Sessional> {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: SizedBox(
+                  child: Container(
+                    height: size.height*0.06,
                     width: size.width*0.52,
+                   decoration: BoxDecoration(
+                     gradient: LinearGradient(
+                       begin: Alignment.topLeft,
+                       end: Alignment.bottomRight,
+                       colors: [Colors.blue, Colors.purpleAccent.shade100],
+                     ),
+                     borderRadius: const BorderRadius.all(Radius.circular(15),),
+                   ),
                     child: SearchField(
+
                       controller: sessionalController,
-                      suggestionItemDecoration: SuggestionDecoration(),
+                      suggestionItemDecoration: SuggestionDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [Colors.blue, Colors.purpleAccent.shade100],
+                        ),
+                      ),
                       key: const Key("Search key"),
                       suggestions:
                       _sessional.map((e) => SearchFieldListItem(e)).toList(),
                       searchStyle: _st,
                       suggestionStyle: _st,
                       marginColor: Colors.black,
+
                       suggestionsDecoration: SuggestionDecoration(
-                          color:Colors.blue,
+                          gradient: const LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [Colors.blue, Colors.purpleAccent],
+                          ),
                           //shape: BoxShape.rectangle,
                           padding: const EdgeInsets.all(10),
                           border: Border.all(width: 2, color: Colors.black),
@@ -89,7 +112,9 @@ class _SessionalState extends State<Sessional> {
                       searchInputDecoration: InputDecoration(
                           hintText: "Select Sessional",
                           contentPadding: EdgeInsets.only(left: size.width*0.08),
-                          fillColor: Colors.transparent,
+                          fillColor:Colors.transparent,
+
+
                           filled: true,
                           hintStyle: _st,
                           suffixIcon: Icon(Icons.arrow_drop_down,color: Colors.black,size: size.height*0.04,),
@@ -98,7 +123,7 @@ class _SessionalState extends State<Sessional> {
                               width: 3,
                               color: Colors.black,
                             ),
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(15),
                           ),
                           focusColor: Colors.transparent,
                           disabledBorder: OutlineInputBorder(
@@ -106,14 +131,14 @@ class _SessionalState extends State<Sessional> {
                               width: 3,
                               color: Colors.black,
                             ),
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(15),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderSide: const BorderSide(
                               width: 3,
                               color: Colors.black,
                             ),
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(15),
                           )),
                       onSuggestionTap: (value) {
                         FocusScope.of(context).unfocus();
@@ -136,19 +161,26 @@ class _SessionalState extends State<Sessional> {
                   child: Container(
                     width: size.width*0.35,
                     height: size.height*0.06,
+
                     decoration:  BoxDecoration(
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [Colors.blue, Colors.purpleAccent.shade100],
+                        ),
+                        borderRadius: const BorderRadius.all(Radius.circular(15)),
                         border: Border.all(
                             color: Colors.black,
                             width: 3
                         )
                     ),
                     child: TextField(
+                      cursorColor: Colors.black,
                       controller: max_marks_controller,
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
                         hintText: "Max Marks",
+
                         hintStyle: _st,
                         contentPadding: EdgeInsets.only(left: size.width*0.02),
                         helperStyle: _st,
@@ -196,7 +228,12 @@ class _SessionalState extends State<Sessional> {
                          height: size.height*0.29,
                          width: size.width*0.85,
                          decoration:  BoxDecoration(
-                             color: Colors.transparent,
+                             gradient: const LinearGradient(
+                               colors: [
+                                 Color.fromRGBO(200, 62, 118, 1),
+                                 Color.fromRGBO(70, 50, 110, 1),
+                               ],
+                             ),
                            borderRadius: const BorderRadius.all(Radius.circular(30)),
                              border: Border.all(
                                  color: Colors.black,
@@ -411,12 +448,13 @@ class _SessionalState extends State<Sessional> {
                     child: AnimatedContainer(
                         duration: const Duration(milliseconds: 300),
                         height: size.height*height_list[index],
-                        decoration: const BoxDecoration(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.all(Radius.circular(20))
+                        decoration:  const BoxDecoration(
+
+                          borderRadius: BorderRadius.all(Radius.circular(20),),
+                          color: Colors.indigo
                         ),
                         child: Card(
-                          color: Colors.lightBlueAccent,
+                        color: Colors.transparent,
                           elevation: 50,
                           shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.all(Radius.circular(20))
@@ -432,12 +470,13 @@ class _SessionalState extends State<Sessional> {
                                 height_list[index]==0.11
                                 ?
                                 Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    mainAxisAlignment: MainAxisAlignment.start,
 
                                     children: [
+                                      SizedBox(width: size.width*0.023,),
                                       CircleAvatar(
                                         backgroundColor: Colors.white,
-                                        radius: 30,
+                                        radius: size.height*0.033,
                                         // backgroundColor: Colors.teal.shade300,
                                         child: AutoSizeText(
                                           snapshot.data!.docs[index]["Name"].toString().trim().substring(0,1),
@@ -448,6 +487,7 @@ class _SessionalState extends State<Sessional> {
                                           ),
                                         ),
                                       ),
+                                      SizedBox(width: size.width*0.023,),
                                       Column(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
@@ -467,15 +507,17 @@ class _SessionalState extends State<Sessional> {
                                           )
                                         ],
                                       )
-                                    ])
+                                    ],
+                                )
                                     :
                                     Column(
                                       children: [
                                         Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            mainAxisAlignment: MainAxisAlignment.start,
+
 
                                             children: [
+                                              SizedBox(width: size.width*0.023,),
                                               CircleAvatar(
                                                   backgroundColor: Colors.white,
                                                   radius: 30,
@@ -489,6 +531,7 @@ class _SessionalState extends State<Sessional> {
                                                     ),
                                                   )
                                               ),
+                                              SizedBox(width: size.width*0.023,),
                                               Column(
                                                 mainAxisAlignment: MainAxisAlignment.center,
                                                 children: [
@@ -519,21 +562,21 @@ class _SessionalState extends State<Sessional> {
                                               style: GoogleFonts.exo(
                                                   fontSize: size.height * 0.03,
                                                   fontWeight: FontWeight.w600,
-                                                  color: Colors.white70),
+                                                  color: Colors.black),
                                             ),
                                             AutoSizeText(
                                               "S-1  ",
                                               style: GoogleFonts.exo(
                                                   fontSize: size.height * 0.03,
                                                   fontWeight: FontWeight.w600,
-                                                  color: Colors.white70),
+                                                  color: Colors.black),
                                             ),
                                             AutoSizeText(
                                               "S-2  ",
                                               style: GoogleFonts.exo(
                                                   fontSize: size.height * 0.03,
                                                   fontWeight: FontWeight.w600,
-                                                  color: Colors.white70
+                                                  color: Colors.black
                                               ),
                                             ),
                                             AutoSizeText(
@@ -541,7 +584,7 @@ class _SessionalState extends State<Sessional> {
                                               style: GoogleFonts.exo(
                                                   fontSize: size.height * 0.03,
                                                   fontWeight: FontWeight.w600,
-                                                  color: Colors.white70
+                                                  color: Colors.black
                                               ),
                                             ),
                                           ],
@@ -560,13 +603,13 @@ class _SessionalState extends State<Sessional> {
                                                   style: GoogleFonts.exo(
                                                       fontSize: size.height * 0.03,
                                                       fontWeight: FontWeight.w600,
-                                                      color: Colors.white70),
+                                                      color: Colors.black),
                                                 ),
                                               ),
                                             ),
                                             Container(
                                               decoration: BoxDecoration(
-                                                  border: Border.all(color: Colors.white),
+                                                  border: Border.all(color: Colors.black),
                                                   borderRadius: BorderRadius.circular(5)
 
                                               ),
@@ -578,14 +621,14 @@ class _SessionalState extends State<Sessional> {
                                                   style: GoogleFonts.exo(
                                                       fontSize: size.height * 0.03,
                                                       fontWeight: FontWeight.w600,
-                                                      color: Colors.white70
+                                                      color: Colors.black
                                                   ),
                                                 ),
                                               ),
                                             ),
                                             Container(
                                               decoration: BoxDecoration(
-                                                  border: Border.all(color: Colors.white),
+                                                  border: Border.all(color: Colors.black),
                                                   borderRadius: BorderRadius.circular(5)
                                               ),
                                               height: size.height*0.04,
@@ -596,14 +639,14 @@ class _SessionalState extends State<Sessional> {
                                                   style: GoogleFonts.exo(
                                                       fontSize: size.height * 0.03,
                                                       fontWeight: FontWeight.w600,
-                                                      color: Colors.white70
+                                                      color: Colors.black
                                                   ),
                                                 ),
                                               ),
                                             ),
                                             Container(
                                               decoration: BoxDecoration(
-                                                  border: Border.all(color: Colors.white),
+                                                  border: Border.all(color: Colors.black),
                                                   borderRadius: BorderRadius.circular(5)
                                               ),
                                               height: size.height*0.04,
@@ -614,7 +657,7 @@ class _SessionalState extends State<Sessional> {
                                                   style: GoogleFonts.exo(
                                                       fontSize: size.height * 0.03,
                                                       fontWeight: FontWeight.w600,
-                                                      color: Colors.white70
+                                                      color: Colors.black
                                                   ),
                                                 ),
                                               ),
