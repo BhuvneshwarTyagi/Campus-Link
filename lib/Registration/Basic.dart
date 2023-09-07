@@ -688,73 +688,6 @@ class _basicDetailsState extends State<basicDetails> {
                               }
                                   ]),
                             usermodel["Email"].toString().split("@")[0] : map1,
-                          }).whenComplete(() async {
-
-
-                            final doc=await FirebaseFirestore
-                                .instance
-                                .collection("Messages")
-                                .doc("${universityController.text.trim().split(" ")[0]} "
-                                "${clgController.text.trim().split(" ")[0]} "
-                                "${courseController.text.trim().split(" ")[0]} "
-                                "${branchController.text.trim().split(" ")[0]} "
-                                "${yearController.text.trim().split(" ")[0]} "
-                                "${secController.text.trim().split(" ")[0]} "
-                                "${subjectController.text.trim().split(" ")[0]}")
-                                .collection("Messages_Detail")
-                                .doc("Messages_Detail").get();
-                            !doc.exists
-                                ?
-                            await FirebaseFirestore
-                                .instance
-                                .collection("Messages")
-                                .doc("${universityController.text.trim().split(" ")[0]} "
-                                "${clgController.text.trim().split(" ")[0]} "
-                                "${courseController.text.trim().split(" ")[0]} "
-                                "${branchController.text.trim().split(" ")[0]} "
-                                "${yearController.text.trim().split(" ")[0]} "
-                                "${secController.text.trim().split(" ")[0]} "
-                                "${subjectController.text.trim().split(" ")[0]}")
-                                .collection("Messages_Detail")
-                                .doc("Messages_Detail")
-                                .set({
-                              "${usermodel["Email"].toString().split("@")[0]}_${stamp.toString().split(".")[0]}_Delevered" : FieldValue.arrayUnion([{
-                                "Email" : usermodel["Email"],
-                                "Stamp" : stamp,
-                              }]),
-
-                              "${usermodel["Email"].toString().split("@")[0]}_${stamp.toString().split(".")[0]}_Seen" : FieldValue.arrayUnion([{
-                                "Email" : usermodel["Email"],
-                                "Stamp" : stamp
-                              }]),
-                              "${usermodel["Email"].toString().split('@')[0]}_${stamp.toString().split('.')[0]}_Seened" : FieldValue.arrayUnion([
-                                usermodel["Email"]
-                              ])
-                            })
-                                :
-                            await FirebaseFirestore
-                                .instance
-                                .collection("Messages")
-                                .doc("${universityController.text.trim().split(" ")[0]} "
-                                "${clgController.text.trim().split(" ")[0]} "
-                                "${courseController.text.trim().split(" ")[0]} "
-                                "${branchController.text.trim().split(" ")[0]} "
-                                "${yearController.text.trim().split(" ")[0]} "
-                                "${secController.text.trim().split(" ")[0]} "
-                                "${subjectController.text.trim().split(" ")[0]}")
-                                .collection("Messages_Detail")
-                                .doc("Messages_Detail")
-                                .update({
-                              "${usermodel["Email"].toString().split("@")[0]}_${stamp.toString().split(".")[0]}_Delevered"  : FieldValue.arrayUnion([{
-                                "Email" : usermodel["Email"],
-                                "Stamp" : stamp,
-                              }]),
-
-                              "${usermodel["Email"].toString().split("@")[0]}_${stamp.toString().split(".")[0]}_Seen"  : FieldValue.arrayUnion([{
-                                "Email" : usermodel["Email"],
-                                "Stamp" : stamp
-                              }]),
-                            });
                           })
                               :
                           await FirebaseFirestore.instance.collection("Messages").doc(
@@ -801,6 +734,9 @@ class _basicDetailsState extends State<basicDetails> {
                                 "Email" : usermodel["Email"],
                                 "Stamp" : stamp
                               }]),
+                              "${usermodel["Email"].toString().split('@')[0]}_${stamp.toString().split('.')[0]}_Seened" : FieldValue.arrayUnion([
+                                usermodel["Email"]
+                              ])
                             });
                           });
                         });

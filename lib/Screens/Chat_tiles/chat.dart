@@ -613,8 +613,9 @@ class _chat_pageState extends State<chat_page> {
                                                       FilePickerResult? filePickerResult = await FilePicker
                                                           .platform
                                                           .pickFiles(
-                                                          allowMultiple:
-                                                          true)
+                                                        type: FileType.custom,
+                                                        allowedExtensions: ['pdf'],
+                                                          allowMultiple: false)
                                                           .then(
                                                               (value) {
                                                             print(
@@ -949,7 +950,8 @@ class _chat_pageState extends State<chat_page> {
                       "Please wait Loading chat from the server");
                 }),
           )
-              : const loading(text: "Please wait Loading chat from the server");
+              :
+          const loading(text: "Please wait Loading chat from the server");
         });
   }
 

@@ -1,12 +1,8 @@
 import 'dart:typed_data';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pdfx/pdfx.dart';
-
-import '../../Constraints.dart';
-import '../../Database/database.dart';
 import '../loadingscreen.dart';
 
 class DocumentViewer extends StatefulWidget {
@@ -48,7 +44,6 @@ class _DocumentViewerState extends State<DocumentViewer> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    print("22222222222222222${widget.document?.files.length}");
     return Scaffold(
       backgroundColor: Colors.white70,
       appBar: AppBar(),
@@ -70,9 +65,7 @@ class _DocumentViewerState extends State<DocumentViewer> {
                             return InkWell(
                               onTap: () {
                                 setState(() {
-                                 // pdfControllers[pdfIndex].dispose();
                                   pdfIndex=index;
-                                  //pdfControllers[pdfIndex];
                                 });
                               },
                               child: Container(
