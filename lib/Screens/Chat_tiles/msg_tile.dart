@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:campus_link_teachers/Screens/Chat_tiles/Image_Tile.dart';
 import 'package:campus_link_teachers/Screens/Chat_tiles/Name_Tile.dart';
+import 'package:campus_link_teachers/Screens/Chat_tiles/Pdf_tile.dart';
 import 'package:campus_link_teachers/Screens/Chat_tiles/Reply_Tile.dart';
 import 'package:campus_link_teachers/Screens/Chat_tiles/Text_Tile.dart';
 import 'package:campus_link_teachers/Screens/Chat_tiles/Video_Tile.dart';
@@ -29,7 +30,7 @@ class MsgTile extends StatelessWidget {
       required this.videoMsg,
 
       required this.stamp,
-      required this.comressedURL, required this.image});
+      required this.comressedURL, required this.image, required this.pdfMsg, required this.pdfImageUrl, required this.pdfUrl, required this.pdfName, required this.pdfSize});
   final bool imageMsg;
   final String comressedURL;
   final bool reply;
@@ -49,13 +50,18 @@ class MsgTile extends StatelessWidget {
 
   final DateTime stamp;
   final String image;
+  final bool pdfMsg;
+  final String pdfImageUrl;
+  final String pdfUrl;
+  final String pdfName;
+  final int pdfSize;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     int len=max(text.length, name.length);
-    double width= (imageMsg || reply)
+    double width= (imageMsg || reply || videoMsg || pdfMsg)
         ?
-    size.width * 0.55
+    size.width * 0.7
         :
     len>25
         ?
@@ -80,8 +86,7 @@ class MsgTile extends StatelessWidget {
     }
     return Container(
       width: width,
-      margin: EdgeInsets.symmetric(
-          horizontal: size.width * 0.01, vertical: size.height * 0.01),
+      margin: EdgeInsets.symmetric(horizontal: size.width * 0.01, vertical: size.height * 0.01),
       decoration: BoxDecoration(
 
           borderRadius: const BorderRadius.only(
@@ -91,6 +96,7 @@ class MsgTile extends StatelessWidget {
             bottomLeft: Radius.circular(20),
 
           ),
+
           gradient: !sender?
 
           const LinearGradient(colors: [
@@ -145,19 +151,29 @@ class MsgTile extends StatelessWidget {
               replyToName: replyToName,
               ReplyToText: ReplyToText,
           )
-              : const SizedBox(),
-          text.isNotEmpty ? TextTile(sender: sender,text: text) : const SizedBox(),
+              :
+          const SizedBox(),
+
+          text.isNotEmpty
+              ?
+          TextTile(sender: sender,text: text)
+              :
+          const SizedBox(),
 
           imageMsg
-              ? ImageTile(
+              ?
+          ImageTile(
             channel: channel,
             imageURL: imageURL,
             compressedURL: comressedURL,
             stamp: stamp,
           )
-              : const SizedBox(),
+              :
+          const SizedBox(),
+
           videoMsg
-              ? Center(
+              ?
+          Center(
             child: VideoTile(
               channel: channel,
               videoURL: videoURL,
@@ -165,8 +181,15 @@ class MsgTile extends StatelessWidget {
               stamp: stamp,
             ),
           )
-              : const SizedBox(),
+              :
+          const SizedBox(),
 
+          pdfMsg
+              ?
+          PdfTile(pdfUrl: pdfUrl, pdfImageUrl: pdfImageUrl,name: pdfName,size: pdfSize,stamp: stamp,)
+              :
+          const SizedBox()
+          ,
         ],
       ),
     );

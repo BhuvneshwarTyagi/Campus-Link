@@ -389,6 +389,20 @@ class _chat_pageState extends State<chat_page> {
                                     "",
                                     snapshot2.data?.data()!["${message[index]["UID"].toString().split("@")[0]}_${message[index]["Stamp"].toDate().toString().split('.')[0]}_Delevered"].length == snapshot.data!.data()?["Members"].length,
                                     snapshot2.data?.data()!["${message[index]["UID"].toString().split("@")[0]}_${message[index]["Stamp"].toDate().toString().split('.')[0]}_Seened"].length == snapshot.data!.data()?["Members"].length,
+                                    message[index]["Media_Type"].toString()=="Pdf",
+
+                                    message[index]["Media_Type"].toString()=="Pdf"
+                                        ?
+                                    message[index]["Pdf_Url_Image"]
+                                        : "",
+                                    message[index]["Media_Type"].toString()=="Pdf"
+                                        ?
+                                    message[index]["Pdf_Url"]
+                                        :
+                                    "",
+                                      message[index]["Doc_Name"] ?? "",
+                                    message[index]["Media_Type"].toString()=="Pdf"
+                                        ?message[index]["Doc_Size"] : 0,
                                   ),
                                 ),
                               )
@@ -457,6 +471,19 @@ class _chat_pageState extends State<chat_page> {
                                   "",
                                   snapshot2.data?.data()!["${message[index]["UID"].toString().split("@")[0]}_${message[index]["Stamp"].toDate().toString().split(".")[0]}_Delevered"].length == snapshot.data!.data()?["Members"].length,
                                   snapshot2.data?.data()!["${message[index]["UID"].toString().split("@")[0]}_${message[index]["Stamp"].toDate().toString().split(".")[0]}_Seened"].length == snapshot.data!.data()?["Members"].length,
+                                  message[index]["Media_Type"].toString()=="Pdf",
+
+                                  message[index]["Media_Type"].toString()=="Pdf"
+                                      ?
+                                  message[index]["Pdf_Url_Image"]
+                                      : "",
+                                  message[index]["Media_Type"].toString()=="Pdf"
+                                      ?
+                                  message[index]["Pdf_Url"]
+                                      :
+                                  "",
+                                  message[index]["Doc_Name"] ?? "",
+                                  message[index]["Doc_Size"] ?? "",
                                 ),
                               )
                             ],
@@ -980,6 +1007,11 @@ class _chat_pageState extends State<chat_page> {
       String videoThumbnailURL,
       bool isDelevered,
       bool isSeen,
+      bool pdf,
+      String pdfImageURL,
+      String pdfUrl,
+      String pdfName,
+      int pdfSize
       ) {
     return Align(
       alignment: sender ? Alignment.centerRight : Alignment.centerLeft,
@@ -1067,6 +1099,12 @@ class _chat_pageState extends State<chat_page> {
             videoMsg: videoMsg,
             videoThumbnailURL: videoThumbnailURL,
             videoURL: videoURL,
+            pdfMsg : pdf,
+              pdfImageUrl : pdfImageURL,
+              pdfUrl : pdfUrl,
+            pdfName : pdfName,
+            pdfSize: pdfSize,
+
           ),
 
           !sender
@@ -1114,8 +1152,7 @@ class _chat_pageState extends State<chat_page> {
 
 
 
-  int activeStatus(
-      AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
+  int activeStatus(AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
     int count = 0;
     List<dynamic> memberList = snapshot.data?.data()!["Members"];
 

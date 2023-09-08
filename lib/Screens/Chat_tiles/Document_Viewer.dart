@@ -13,6 +13,7 @@ import 'package:pdfx/pdfx.dart';
 import '../../Constraints.dart';
 import '../../Database/database.dart';
 import '../loadingscreen.dart';
+import 'chat.dart';
 
 class DocumentViewer extends StatefulWidget {
   const DocumentViewer(
@@ -313,6 +314,8 @@ class _DocumentViewerState extends State<DocumentViewer> {
                   "Pdf_Url" :pdfURL,
                   "Pdf_Url_Thumbnail": thumbnailURL,
                   "Pdf_Url_Image": imageURL,
+                    "Doc_Name" : widget.document?.files[0].name,
+                    "Doc_Size" : widget.document?.files[0].size,
 
                   }
                   ]),
@@ -321,7 +324,7 @@ class _DocumentViewerState extends State<DocumentViewer> {
                   "Pdf_Thumbnail": thumbnailURL,
                   "Pdf_URL": pdfURL,
                   "Pdf_Image": imageURL,
-
+                    "Doc_Size" : widget.document?.files[0].size,
                   "Name" : "${usermodel["Email"].toString().split("@")[0]}_${stamp.toString().split(".")[0]}"
                   }]),
                   },
@@ -337,35 +340,43 @@ class _DocumentViewerState extends State<DocumentViewer> {
                   "Stamp" : stamp
                   }]),
                   "${usermodel["Email"].toString().split('@')[0]}_${stamp.toString().split(".")[0]}_Seened": FieldValue.arrayUnion([usermodel["Email"]]),
+                  }).whenComplete(() async {
+                    setState(() {
+                      messageController.clear();
+                    });
+                    final doc = await FirebaseFirestore.instance
+                        .collection("Messages")
+                        .doc(widget.channel)
+                        .get()
+                        .whenComplete(() {
+                      Navigator.pop(context);
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => chat_page(channel: widget.channel),
+                        ),
+                      );
+                    });
+                    List<dynamic> members = doc.data()?["Members"];
+                    for (var member in members) {
+                      String email=member["Email"];
+                      List<dynamic> tokens = doc.data()?[email.toString().split("@")[0]]["Token"];
+                      if(email!=usermodel["Email"]){
+                        for(var token in tokens){
+                          database().sendPushMessage(
+                              token,
+                              messageController.text.trim(),
+                              widget.channel.toString().split(" ")[6],
+                              true,
+                              widget.channel,
+                              stamp
+                          );
+                        }
+                      }
+                    }
+
                   });
-                  setState(() {
-                  messageController.clear();
-                  });
-                  final doc = await FirebaseFirestore.instance
-                      .collection("Messages")
-                      .doc(widget.channel)
-                      .get()
-                      .whenComplete(() {
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                  });
-                  List<dynamic> members = doc.data()?["Members"];
-                  for (var member in members) {
-                  String email=member["Email"];
-                  List<dynamic> tokens = doc.data()?[email.toString().split("@")[0]]["Token"];
-                  if(email!=usermodel["Email"]){
-                  for(var token in tokens){
-                  database().sendPushMessage(
-                  token,
-                  messageController.text.trim(),
-                  widget.channel.toString().split(" ")[6],
-                  true,
-                  widget.channel,
-                  stamp
-                  );
-                  }
-                  }
-                  }
+
                   },
 
                   );
