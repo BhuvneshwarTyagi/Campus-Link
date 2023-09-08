@@ -629,6 +629,9 @@ class _chat_pageState extends State<chat_page> {
                                                                     builder:
                                                                         (context) {
                                                                       return DocumentViewer(
+                                                                        msgLength: message.length,
+                                                                        replyIndex: replyIndex,
+                                                                        channel: widget.channel,
                                                                         document: value,
                                                                         replyToName: message[replyIndex]["Name"],
                                                                         replyToText: message[replyIndex]["text"].toString().substring(0, message[replyIndex]["text"].length > 120 ? 120 : message[replyIndex]["text"].length),
