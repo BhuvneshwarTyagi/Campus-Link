@@ -111,9 +111,13 @@ class _SubjectState extends State<Subject> {
                         controller: controller,
                         builder: (context, snapshot) {
                           final List<FileSystemEntity> entities = snapshot;
+                          int filescount=0;
+                          if(!(entities.length.isNaN || entities.length.isInfinite)){
+                            filescount=entities.length;
+                          }
                           return ListView.builder(
                             padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 0),
-                            itemCount: entities.length,
+                            itemCount: filescount,
                             itemBuilder: (context, index) {
                               FileSystemEntity entity = entities[index];
                               print(".........Entity: $entity");
@@ -160,7 +164,7 @@ class _SubjectState extends State<Subject> {
                                               ),
                                                style: GoogleFonts.exo(
                                                  color: Colors.black,
-                                                 fontSize: 17,
+                                                 fontSize: 12,
                                                  fontWeight: FontWeight.w500
 
                                                ),
@@ -244,7 +248,7 @@ class _SubjectState extends State<Subject> {
             Align(
               alignment: Alignment.bottomRight,
               child: Container(
-                margin: EdgeInsets.all(8),
+                margin: const EdgeInsets.all(8),
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
@@ -402,33 +406,66 @@ class _SubjectState extends State<Subject> {
                                       List<dynamic> initialrow=[];
                                       initialrow.add("Name");
                                       initialrow.add("Roll Number");
-                                      if(start_date_controller.text.trim().split("-")[1]==end_date_controller.text.trim().split("-")[1]){
-                                        int start=int.parse(start_date_controller.text.trim().split("-")[2]);
-                                        int end=int.parse(end_date_controller.text.trim().split("-")[2]);
-                                        String month=months[int.parse(start_date_controller.text.trim().split("-")[1])-1];
-                                        for(int i=start;i<=end;i++){
-                                          initialrow.add("$i $month");
+                                      print(".................");
+                                      print(start_date_controller.text.trim().split("-"));
+                                      List<dynamic> startdate= start_date_controller.text.trim().split("-");
+                                      List<dynamic> lastdate= end_date_controller.text.trim().split("-");
+
+                                      for(int year= int.parse(startdate[0]); year<= int.parse(lastdate[0]) ; year++){
+                                        print(".............year : $year");
+                                        int lastmonth;
+                                        int startmonth;
+                                        if(year != int.parse(lastdate[0])){
+                                          lastmonth=12;
                                         }
-                                      }
-                                      else{
-                                        int start=int.parse(start_date_controller.text.trim().split("-")[2]);
-                                        int end=database().getDaysInMonth(int.parse(start_date_controller.text.trim().split("-")[0]), int.parse(start_date_controller.text.trim().split("-")[1]));
-                                        String month=months[int.parse(start_date_controller.text.trim().split("-")[1])-1];
-                                        for(int i=start;i<=end;i++){
-                                          initialrow.add("$i $month");
+                                        else{
+                                          lastmonth = int.parse(lastdate[1]);
                                         }
-                                        start=1;
-                                        end=int.parse(end_date_controller.text.trim().split("-")[2]);
-                                        month=months[int.parse(end_date_controller.text.trim().split("-")[1])-1];
-                                        for(int i=start;i<=end;i++){
-                                          initialrow.add("$i $month");
+
+                                        if(year != int.parse(startdate[0])){
+                                          startmonth=1;
+                                        }
+                                        else{
+                                          startmonth = int.parse(startdate[1]);
+                                        }
+
+                                        for(int month = startmonth ; month <=lastmonth ; month++){
+                                          int lastday;
+                                          int startday;
+                                          print(".............month : $month ..............lastmonth $lastmonth");
+                                          if(month == int.parse(lastdate[1]) && year == int.parse(lastdate[0])){
+                                            lastday =int.parse(lastdate[2]);
+                                          }
+                                          else{
+                                            lastday = database().getDaysInMonth(year, month);
+                                          }
+                                          if(month == int.parse(startdate[1]) && year == int.parse(startdate[0])){
+                                            startday = int.parse(startdate[2]);
+                                          }
+                                          else{
+                                            startday=1;
+                                          }
+
+                                          print("..................startday: $startday .....Lastday $lastday");
+                                          for(int day=startday ; day<= lastday; day++){
+                                            print(".............day : $day");
+                                            String monthName=months[month-1];
+                                            initialrow.add("$day ${monthName.substring(0,4)} $year");
+                                          }
+
+
                                         }
 
                                       }
+
                                       initialrow.add("Total");
                                       initialrow.add("Out of");
                                       initialrow.add("Percentage");
                                       sheetObject.appendRow(initialrow);
+
+
+
+
                                       await  FirebaseFirestore
                                           .instance
                                           .collection("Students")
@@ -447,8 +484,7 @@ class _SubjectState extends State<Subject> {
                                             email.add(element.data()["Email"]);
                                             roll[element.data()["Email"]]=element.data()["Rollnumber"];
                                             name[element.data()["Email"]]=element.data()["Name"];
-                                          })
-                                      );
+                                          }));
                                       print(roll);
                                       print(name);
                                       for (var element in email){
@@ -458,80 +494,83 @@ class _SubjectState extends State<Subject> {
                                         List<dynamic> count=[];
                                         count.add(name[element]);
                                         count.add(roll[element]);
-                                        var doc = await  FirebaseFirestore.instance.collection("Students").doc(element).collection('Attendance').doc("${widget.subject}-${startDate.month}").get();
 
+                                        for(int year= int.parse(startdate[0]); year<= int.parse(lastdate[0]) ; year++){
+                                          print(".............year : $year");
+                                          int lastmonth;
+                                          int startmonth;
+                                          if(year != int.parse(lastdate[0])){
+                                            lastmonth=12;
+                                          }
+                                          else{
+                                            lastmonth = int.parse(lastdate[1]);
+                                          }
 
-                                        print(doc.data()!["0"]);
+                                          if(year != int.parse(startdate[0])){
+                                            startmonth=1;
+                                          }
+                                          else{
+                                            startmonth = int.parse(startdate[1]);
+                                          }
 
-                                        if(start_date_controller.text.trim().split("-")[1]==end_date_controller.text.trim().split("-")[1]){
-                                          int start= int.parse(start_date_controller.text.trim().split('-')[2]);
-                                          int end= int.parse(end_date_controller.text.trim().split('-')[2]);
-                                          for(int i=start;i<=end;i++){
-                                            int countP=0;
-                                            if(doc.data()?["$i"]["Status"] != "Absent"){
-                                              List<dynamic> attendance=doc.data()!["$i"];
-                                              for(var temp in attendance){
-                                                if(temp!=""){
-                                                  countP++;
-                                                  total++;
-                                                }
-                                              }
-                                              count.add(countP);
-                                              outof = outof + int.parse("${doc.data()?["$i"].length}");
+                                          for(int month = startmonth ; month <=lastmonth ; month++){
+                                            int lastday;
+                                            int startday;
+                                            print(".............month : $month ..............lastmonth $lastmonth");
+                                            if(month == int.parse(lastdate[1]) && year == int.parse(lastdate[0])){
+                                              lastday =int.parse(lastdate[2]);
                                             }
                                             else{
-                                              count.add(0);
+                                              lastday = database().getDaysInMonth(year, month);
                                             }
-                                            print(countP);
-                                            print(total);
+                                            if(month == int.parse(startdate[1]) && year == int.parse(startdate[0])){
+                                              startday = int.parse(startdate[2]);
+                                            }
+                                            else{
+                                              startday=1;
+                                            }
+                                            var doc = await  FirebaseFirestore.instance.collection("Students").doc(element).collection('Attendance').doc("${widget.subject}-$month").get();
+
+
+                                            print(doc.data()!["0"]);
+                                            print("..................startday: $startday .....Lastday $lastday");
+                                            for(int day=startday ; day<= lastday; day++){
+                                              int countP=0;
+                                              int countl=0;
+                                              var temp=doc.data()?["$day"];
+                                              if(temp != null){
+                                                print("////////////////////////$temp");
+                                                for(int j=0;j<doc.data()?["$day"].length;j++){
+
+                                                  outof++;
+                                                  countl++;
+                                                  print(".....................${doc.data()?["$day"]}");
+                                                  if (doc.data()?["$day"][j]["Status"] != "Absent") {
+                                                    //List<dynamic> attendance = doc.data()!["$day"];
+                                                    countP++;
+                                                    total++;
+
+
+
+                                                  }
+                                                }
+                                              }
+                                              else{
+                                                countP=0;
+                                                countl=0;
+                                              }
+                                              count.add("$countP / $countl");
+                                              print(countP);
+                                              print(total);
+                                            }
+
+
                                           }
+
                                         }
-                                        else{
-                                          int start=int.parse(start_date_controller.text.trim().split("-")[2]);
-                                          int end=database().getDaysInMonth(int.parse(start_date_controller.text.trim().split("-")[0]), int.parse(start_date_controller.text.trim().split("-")[1]));
-                                          for(int i=start;i<=end;i++){
-                                            int countP=0;
-                                            if(doc.data()?["$i"] !=null){
-                                              List<dynamic> attendance=doc.data()!["$i"];
-                                              for(var temp in attendance){
-                                                if(temp!=""){
-                                                  countP++;
-                                                  total++;
-                                                }
-                                              }
-                                              count.add(countP);
-                                              outof = outof + int.parse("${doc.data()?["$i"].length}");
-                                            }
-                                            else{
-                                              count.add(0);
-                                            }
-
-                                          }
-                                          start=1;
-                                          end=int.parse(end_date_controller.text.trim().split("-")[2]);
-                                          for(int i=start;i<=end;i++){
-                                            int countP=0;
-                                            if(doc.data()?["$i"] !=null){
-                                              List<dynamic> attendance=doc.data()!["$i"];
-                                              for(var temp in attendance){
-                                                if(temp!=""){
-                                                  countP++;
-                                                  total++;
-                                                }
-                                              }
-                                              count.add(countP);
-                                              outof = outof + int.parse("${doc.data()?["$i"].length}");
-                                            }
-                                            else{
-                                              count.add(0);
-                                            }
-
-                                          }
-                                        }
-
                                         count.add(total);
                                         count.add(outof);
-                                        count.add("${(total/outof)*100}%");
+                                        count.add("${((total/outof)*100).toStringAsFixed(2)}%");
 
                                         print(".......$count........");
                                         await sheetObject.appendRow(count);//row++;

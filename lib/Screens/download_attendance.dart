@@ -42,7 +42,7 @@ class _Download_attendanceState extends State<Download_attendance> {
     super.initState();
     curr_filder.clear();
     fetch_university();
-    checkPermission();
+    //checkPermission();
   }
   Future<void> checkFileExist(String path) async {
     bool fileExistCheck = await Directory(path).exists();

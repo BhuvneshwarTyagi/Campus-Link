@@ -108,98 +108,106 @@ class _chatsystemState extends State<chatsystem> {
           scrollDirection: Axis.vertical,
           itemCount: usermodel["Message_channels"].length,
           itemBuilder: (context, index) {
-            return StreamBuilder(
-                stream: FirebaseFirestore.instance.collection("Messages").doc(usermodel["Message_channels"][index]).snapshots(),
-                builder: (context, snapshot) {
-                  print("chat List");
-                  markFalse();
-                  int readCount=0;
-                  int count=0;
-                  snapshot.hasData
+            return SizedBox(
+              height: size.height*0.1,
+              width: size.width,
+              child: StreamBuilder(
+                  stream: FirebaseFirestore.instance.collection("Messages").doc(usermodel["Message_channels"][index]).snapshots(),
+                  builder: (context, snapshot) {
+                    print("chat List");
+                    markFalse();
+                    int readCount=0;
+                    int count=0;
+                    snapshot.hasData
+                        ?
+                    readCount= snapshot.data?.data()!["Messages"].length
+                        :
+                    null;
+                    snapshot.hasData
+                        ?
+                    count= int.parse("${snapshot.data?.data()![usermodel["Email"].toString().split("@")[0]]["Read_Count"]}")
+                        :
+                    null;
+                  return snapshot.hasData
                       ?
-                  readCount= snapshot.data?.data()!["Messages"].length
-                      :
-                  null;
-                  snapshot.hasData
-                      ?
-                  count= int.parse("${snapshot.data?.data()![usermodel["Email"].toString().split("@")[0]]["Read_Count"]}")
-                      :
-                  null;
-                return snapshot.hasData
-                    ?
-                InkWell(
-                  onTap: () async {
+                  InkWell(
+                    onTap: () async {
 
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => chat_page(channel: usermodel["Message_channels"][index]),
-                        ),
-                      );
-                  },
-                  child: Container(
-                    height: size.height*0.11,
-                    decoration: const BoxDecoration(
-                        color: Colors.white,
-                        border: Border(bottom: BorderSide(color: Colors.black, width: 1))),
-                    padding: EdgeInsets.all(size.width*0.02),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        CircleAvatar(
-                          backgroundColor: const Color.fromRGBO(86, 149, 178, 1),
-                          radius: size.width*0.07,
-                         // backgroundImage: NetworkImage(snapshot.data!.data()!["image_URL"]),
-                        ),
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => chat_page(channel: usermodel["Message_channels"][index]),
+                          ),
+                        );
+                    },
+                    child: Container(
+                      height: size.height*0.11,
+                      decoration: const BoxDecoration(
+                          color: Colors.white,
+                          border: Border(bottom: BorderSide(color: Colors.black, width: 1))),
+                      padding: EdgeInsets.all(size.width*0.02),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: const Color.fromRGBO(86, 149, 178, 1),
+                            radius: size.width*0.07,
+                           // backgroundImage: NetworkImage(snapshot.data!.data()!["image_URL"]),
+                          ),
 
-                        SizedBox(width: size.width*0.03),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AutoSizeText("${usermodel["Message_channels"][index]}",
-                              style: GoogleFonts.poppins(color: Colors.black,fontSize: size.width*0.045,fontWeight: FontWeight.w500),
-                            ),
-                            Row(
-                              children: [
-                                SizedBox(
-                                  width: size.width*0.7,
-                                  child: AutoSizeText("${snapshot.data?.data()!["Messages"][snapshot.data?.data()!["Messages"].length-1]["Name"]}: ${snapshot.data?.data()!["Messages"][snapshot.data?.data()!["Messages"].length-1]["text"].length <25 ? snapshot.data?.data()!["Messages"][snapshot.data?.data()!["Messages"].length-1]["text"] : snapshot.data?.data()!["Messages"][snapshot.data?.data()!["Messages"].length-1]["text"].toString().substring(0,25)}",
-                                    style: GoogleFonts.poppins(
-                                        color: Colors.black.withOpacity(0.80),
-                                        fontSize: size.width*0.035,
-                                        fontWeight: FontWeight.w400
+                          SizedBox(width: size.width*0.03),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              AutoSizeText("${usermodel["Message_channels"][index]}",
+                                style: GoogleFonts.poppins(color: Colors.black,fontSize: size.width*0.045,fontWeight: FontWeight.w500),
+                              ),
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: size.width*0.7,
+                                    child: AutoSizeText("${snapshot.data?.data()!["Messages"][snapshot.data?.data()!["Messages"].length-1]["Name"]}: ${snapshot.data?.data()!["Messages"][snapshot.data?.data()!["Messages"].length-1]["text"].length <25 ? snapshot.data?.data()!["Messages"][snapshot.data?.data()!["Messages"].length-1]["text"] : snapshot.data?.data()!["Messages"][snapshot.data?.data()!["Messages"].length-1]["text"].toString().substring(0,25)}",
+                                      style: GoogleFonts.poppins(
+                                          color: Colors.black.withOpacity(0.80),
+                                          fontSize: size.width*0.035,
+                                          fontWeight: FontWeight.w400
+                                      ),
+                                      textAlign: TextAlign.left,
                                     ),
-                                    textAlign: TextAlign.left,
                                   ),
-                                ),
-                                readCount - count>0
-                                    ?
-                                CircleAvatar(
-                                  radius: size.width*0.03,
-                                  backgroundColor: Colors.green,
-                                  child: AutoSizeText("${readCount - count}",
-                                    style: GoogleFonts.poppins(
-                                        color: Colors.white,
-                                        fontSize: size.width*0.035,
-                                        fontWeight: FontWeight.w400
+                                  readCount - count>0
+                                      ?
+                                  CircleAvatar(
+                                    radius: size.width*0.03,
+                                    backgroundColor: Colors.green,
+                                    child: AutoSizeText("${readCount - count}",
+                                      style: GoogleFonts.poppins(
+                                          color: Colors.white,
+                                          fontSize: size.width*0.035,
+                                          fontWeight: FontWeight.w400
+                                      ),
+                                      textAlign: TextAlign.left,
                                     ),
-                                    textAlign: TextAlign.left,
-                                  ),
-                                )
-                                    :
-                                const SizedBox(),
-                              ],
-                            )
-                          ],
-                        )
-                      ],
+                                  )
+                                      :
+                                  const SizedBox(),
+                                ],
+                              )
+                            ],
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                )
-                    :
-                const loading(text: "Fetching Chats from server");
-              }
+                  )
+                      :
+                  Text("Fetching Chats from server",
+                    style: GoogleFonts.exo(
+                        color: Colors.white,
+                        fontSize: size.height*0.035
+                    ),);
+                }
+              ),
             );
           },
         ),

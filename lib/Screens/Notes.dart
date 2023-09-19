@@ -1,4 +1,6 @@
+import 'package:campus_link_teachers/Screens/quiz.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 
 class Notes extends StatefulWidget {
   const Notes({Key? key}) : super(key: key);
@@ -10,10 +12,25 @@ class Notes extends StatefulWidget {
 class _NotesState extends State<Notes> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Center(
+      body: const Center(
           child: Text("Notes")
+      ),
+      floatingActionButton: CircleAvatar(
+        backgroundColor: Colors.green,
+        child: IconButton(
+            onPressed: (){
+              Navigator.push(context,
+                  PageTransition(
+                    child: const Quiz(),
+                    type: PageTransitionType.bottomToTopJoined,
+                    childCurrent: const Notes(),
+                    duration: const Duration(milliseconds: 300)
+                  )
+              );
+            },
+            icon: const Icon(Icons.add,color: Colors.black,)),
       ),
     );
   }

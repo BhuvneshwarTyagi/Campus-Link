@@ -47,7 +47,6 @@ class _NeviState extends State<Nevi> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getToken();
   }
   Future<void> call() async {
     await database().getloc().whenComplete(() async {
@@ -839,16 +838,6 @@ class _NeviState extends State<Nevi> {
     );
   }
 
-  void getToken() async {
-    await FirebaseMessaging.instance.getToken().then((token) {
-      setState(() {
-        mtoken = token;
-        print("My token is $mtoken");
-      });
-      saveToken(token!);
-    });
-  }
-
   void sendPushMessage(String token, String body, String title) async {
     try {
       print("Send $token");
@@ -881,17 +870,5 @@ class _NeviState extends State<Nevi> {
       );
     } catch (e) {}
   }
-  void saveToken(String token) async {
-    await FirebaseFirestore.instance
-        .collection("Teachers")
-        .doc(FirebaseAuth.instance.currentUser!.email)
-        .update({
-      'Token': token,
-    });
-    // for(var element in usermodel["Message_channels"]){
-    //   await FirebaseFirestore.instance.collection("Messages").doc(element).update({
-    //     "Token": FieldValue.arrayUnion([token])
-    //   });
-    // }
-  }
+
 }

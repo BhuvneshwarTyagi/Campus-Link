@@ -483,7 +483,7 @@ class _chat_pageState extends State<chat_page> {
                                       :
                                   "",
                                   message[index]["Doc_Name"] ?? "",
-                                  message[index]["Doc_Size"] ?? "",
+                                  message[index]["Doc_Size"] ?? 0,
                                 ),
                               )
                             ],
