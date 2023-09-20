@@ -18,7 +18,7 @@ class _QuizState extends State<Quiz> {
   List<TextEditingController>questionList=[TextEditingController()];
   List<TextEditingController>optionController=[TextEditingController(),TextEditingController(),TextEditingController(),TextEditingController()];
   List<String>options=["A","B","C","D","E"];
-  int questionCount=1;
+  int questionCount=0;
 
   Options? _options;
   @override
@@ -153,6 +153,12 @@ class _QuizState extends State<Quiz> {
                   padding:  EdgeInsets.all(size.height*0.01),
                   child: TextField(
                     controller: numberController,
+                    onChanged: (value) {
+                      setState(() {
+                        questionCount=int.parse(value.toString());
+                        print("....................................$questionCount");
+                      });
+                    },
                     decoration: const InputDecoration(
                         enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
@@ -179,17 +185,22 @@ class _QuizState extends State<Quiz> {
                           color: Colors.white,
                         )
                     ),
+                    style: GoogleFonts.openSans(
+                        fontSize: size.height*0.022,
+                        color: Colors.white
+                    ),
                     cursorColor: Colors.white,
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: SizedBox(
-                    height: size.height*0.6,
+                  child: AnimatedContainer(
+                    height: size.height*0.6*questionCount,
                     width: size.width,
+                    duration: const Duration(milliseconds: 100),
                     child: ListView.builder(
                       itemCount: questionCount,
-                      physics: const NeverScrollableScrollPhysics(),
+                      scrollDirection: Axis.vertical,
                       itemBuilder: (context, index) {
                         return SizedBox(
                             height: size.height*0.6,
