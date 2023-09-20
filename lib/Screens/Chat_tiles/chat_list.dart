@@ -152,7 +152,17 @@ class _chatsystemState extends State<chatsystem> {
                           CircleAvatar(
                             backgroundColor: const Color.fromRGBO(86, 149, 178, 1),
                             radius: size.width*0.07,
-                           // backgroundImage: NetworkImage(snapshot.data!.data()!["image_URL"]),
+                            backgroundImage: snapshot.data!.data()!["image_URL"]!="null"? NetworkImage(snapshot.data!.data()!["image_URL"]) : null,
+                            child: snapshot.data?.data()!["image_URL"] == "null"
+                                ?
+                            AutoSizeText(
+                              usermodel["Message_channels"][index].toString().split(" ")[6].substring(0, 1),
+                              style: GoogleFonts.exo(
+                                  color: Colors.black,
+                                  fontSize: size.height * 0.035,
+                                  fontWeight: FontWeight.w600),
+                            )
+                                : null,
                           ),
 
                           SizedBox(width: size.width*0.03),

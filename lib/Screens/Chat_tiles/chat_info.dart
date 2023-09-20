@@ -1,14 +1,11 @@
 import 'dart:io';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:campus_link_teachers/Constraints.dart';
 import 'package:campus_link_teachers/Database/database.dart';
 import 'package:campus_link_teachers/Screens/Chat_tiles/Media_File.dart';
-import 'package:campus_link_teachers/Screens/Chat_tiles/chat.dart';
 import 'package:campus_link_teachers/Screens/loadingscreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -28,7 +25,6 @@ class Chat_Info extends StatefulWidget {
 
 class _Chat_InfoState extends State<Chat_Info> {
    bool _switched=false;
- final _notification_mute =GlobalKey();
 
 @override
   void initState() {
@@ -74,9 +70,9 @@ class _Chat_InfoState extends State<Chat_Info> {
                       CircleAvatar(
                         radius: size.height*0.08,
                         backgroundColor: Colors.white30,
-                        //backgroundImage: NetworkImage(widget.url),
-                        child://widget.url==null?
-                        Icon(Icons.group,color:Colors.white30 ,size: size.height*0.1,)
+                        backgroundImage: widget.url != "null" ? NetworkImage(widget.url) : null,
+                        child: widget.url=="null" ?
+                        Icon(Icons.group,color:Colors.white30 ,size: size.height*0.1,) : null
                     ),
                       Positioned(
                         bottom: -5,

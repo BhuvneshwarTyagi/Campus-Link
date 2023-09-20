@@ -73,10 +73,12 @@ class _chat_pageState extends State<chat_page> {
                       :
                   null;
                   return snapshot2.hasData
-                      ? Scaffold(
+                      ?
+                  Scaffold(
                     backgroundColor: Colors.transparent,
                     appBar: !selected
-                        ? AppBar(
+                        ?
+                    AppBar(
                       elevation: 0,
                       backgroundColor: Colors.black87,
                       leadingWidth: size.width*0.13,
@@ -99,11 +101,24 @@ class _chat_pageState extends State<chat_page> {
                         MainAxisAlignment.start,
                         children: [
                           CircleAvatar(
-                            radius: size.height * 0.03,
+                            radius: size.height * 0.027,
                             backgroundColor: Colors.white70,
-                            // backgroundImage: NetworkImage(
-                            //     snapshot.data
-                            //         ?.data()!["image_URL"]),
+                            backgroundImage: snapshot.data?.data()!["image_URL"] != "null"
+                                ?
+                            NetworkImage(snapshot.data?.data()!["image_URL"])
+                                :
+                            null,
+
+                            child: snapshot.data?.data()!["image_URL"] == "null"
+                                ?
+                            AutoSizeText(
+                              widget.channel.substring(0, 1),
+                              style: GoogleFonts.exo(
+                                color: Colors.black,
+                                  fontSize: size.height * 0.035,
+                                  fontWeight: FontWeight.w600),
+                            )
+                                : null,
                           ),
                           SizedBox(
                             width: size.width * 0.01,
@@ -222,7 +237,8 @@ class _chat_pageState extends State<chat_page> {
                         )
                       ],
                     )
-                        : AppBar(
+                        :
+                    AppBar(
                       elevation: 0,
                       backgroundColor: Colors.black87,
                       leading: IconButton(
@@ -334,6 +350,7 @@ class _chat_pageState extends State<chat_page> {
                                     });
                                   },
                                   child: bubble(
+                                    message[index]["UID"],
                                     scrollController,
                                     "${message[index]["text"]}",
                                     "${message[index]["Name"]}",
@@ -418,6 +435,7 @@ class _chat_pageState extends State<chat_page> {
                                   });
                                 },
                                 child: bubble(
+                                  message[index]["UID"],
                                   scrollController,
                                   "${message[index]["text"]}",
                                   "${message[index]["Name"]}",
@@ -505,10 +523,8 @@ class _chat_pageState extends State<chat_page> {
                             horizontal: size.width * 0.03,
                             vertical: size.height * 0.01),
                         child: Row(
-                          mainAxisAlignment:
-                          MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment:
-                          CrossAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Stack(
                                 alignment: Alignment.bottomCenter,
@@ -518,7 +534,7 @@ class _chat_pageState extends State<chat_page> {
                                     width: size.width * 0.73,
                                     decoration:
                                     const BoxDecoration(
-                                      color: Colors.white70,
+                                      color: Colors.black87,
                                       borderRadius:
                                       BorderRadius.only(
                                         topRight:
@@ -531,8 +547,7 @@ class _chat_pageState extends State<chat_page> {
                                         Radius.circular(30),
                                       ),
                                     ),
-                                    duration: const Duration(
-                                        milliseconds: 200),
+                                    duration: const Duration(milliseconds: 200),
                                     child: Stack(
                                       alignment:
                                       Alignment.topRight,
@@ -609,8 +624,9 @@ class _chat_pageState extends State<chat_page> {
                                   SizedBox(
                                     width: size.width * 0.73,
                                     child: TextField(
-                                      controller:
-                                      messageController,
+                                      enabled: !(snapshot.data!.data()?[usermodel["Email"].toString().split("@")[0]]["Mute"] ?? false),
+                                      cursorColor: Colors.black,
+                                      controller: messageController,
                                       enableSuggestions: true,
                                       maxLines: 5,
                                       minLines: 1,
@@ -618,10 +634,9 @@ class _chat_pageState extends State<chat_page> {
                                       textAlign: TextAlign.start,
                                       style: TextStyle(
                                           color: Colors.black,
-                                          fontSize: size.width*0.03),
+                                          fontSize: size.width*0.045),
                                       decoration: InputDecoration(
-                                        suffixIcon:
-                                        AnimatedContainer(
+                                        suffixIcon: AnimatedContainer(
                                           duration:
                                           const Duration(
                                               milliseconds:
@@ -772,22 +787,22 @@ class _chat_pageState extends State<chat_page> {
                                             ],
                                           ),
                                         ),
-                                        suffixIconColor:
-                                        Colors.black,
+                                        suffixIconColor: Colors.black,
                                         fillColor: Colors.white70,
                                         filled: true,
                                         hintText: "Message",
                                         hintStyle:
                                         GoogleFonts.exo(
                                           color: Colors.black54,
-                                          fontSize:
-                                          19, //height:size.height*0.0034
+                                          fontSize: size.width*0.045, //height:size.height*0.0034
                                         ),
-                                        contentPadding:
-                                        EdgeInsets.only(
-                                            left: size.width *
-                                                0),
+                                        contentPadding: EdgeInsets.all(size.width * 0.02),
                                         enabledBorder: const OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                                            borderSide:
+                                            BorderSide(color: Colors.black54, width: 1),
+                                        ),
+                                        focusedBorder: const OutlineInputBorder(
                                             borderRadius:
                                             BorderRadius.all(
                                                 Radius
@@ -798,7 +813,7 @@ class _chat_pageState extends State<chat_page> {
                                                 color: Colors
                                                     .black54,
                                                 width: 1)),
-                                        focusedBorder: const OutlineInputBorder(
+                                        disabledBorder: const OutlineInputBorder(
                                             borderRadius:
                                             BorderRadius.all(
                                                 Radius
@@ -925,7 +940,7 @@ class _chat_pageState extends State<chat_page> {
                                         print("............member $user");
                                         List<dynamic> tokens =  user["Token"];
                                         print("............error1");
-                                        if(member["Email"]!=usermodel["Email"]){
+                                        if(member["Email"]!= usermodel["Email"] && !snapshot.data!.data()?[member["Email"].toString().split("@")[0]]["Active"] ){
                                           for (var token in tokens) {
                                             print("${member["Email"]}");
 
@@ -986,6 +1001,7 @@ class _chat_pageState extends State<chat_page> {
   }
 
   Widget bubble(
+      String UID,
       ItemScrollController controller,
       String text,
       String name,
@@ -1011,7 +1027,7 @@ class _chat_pageState extends State<chat_page> {
       String pdfImageURL,
       String pdfUrl,
       String pdfName,
-      int pdfSize
+      int pdfSize,
       ) {
     return Align(
       alignment: sender ? Alignment.centerRight : Alignment.centerLeft,
@@ -1081,6 +1097,7 @@ class _chat_pageState extends State<chat_page> {
           ),
 
           MsgTile(
+            email: UID,
             comressedURL: compressedURL,
             image: image,
             name: name,

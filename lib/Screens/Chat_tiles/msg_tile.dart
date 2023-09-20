@@ -30,7 +30,7 @@ class MsgTile extends StatelessWidget {
       required this.videoMsg,
 
       required this.stamp,
-      required this.comressedURL, required this.image, required this.pdfMsg, required this.pdfImageUrl, required this.pdfUrl, required this.pdfName, required this.pdfSize});
+      required this.comressedURL, required this.image, required this.pdfMsg, required this.pdfImageUrl, required this.pdfUrl, required this.pdfName, required this.pdfSize, required this.email});
   final bool imageMsg;
   final String comressedURL;
   final bool reply;
@@ -47,7 +47,7 @@ class MsgTile extends StatelessWidget {
   final String videoURL;
   final String videoThumbnailURL;
   final bool videoMsg;
-
+  final String email;
   final DateTime stamp;
   final String image;
   final bool pdfMsg;
@@ -130,17 +130,15 @@ class MsgTile extends StatelessWidget {
             children: [
               SizedBox(width: size.height*0.01,),
               UserAvatar(image: image,name: name),
-              SizedBox(
-                width: size.width*0.01,
-              ),
+
               SizedBox(
                   width: width - size.width*0.18,
-                  child: NameTile(sender:sender,name: name)
+                  child: NameTile(sender:sender,name: name, channel: channel, email: email,)
               ),
 
             ],
           ),
-
+          SizedBox(height: size.height*0.01,),
           reply
               ?
           ReplyTile(

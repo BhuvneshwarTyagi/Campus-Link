@@ -17,7 +17,7 @@ class Filters extends StatefulWidget {
 
 class _FiltersState extends State<Filters> {
 
-  double _value=5;
+  double _value=8;
   Color headingcolor=Colors.cyan;
   Color optioncolor=Colors.white;
 
@@ -173,12 +173,13 @@ class _FiltersState extends State<Filters> {
                 Slider(
                   activeColor: Colors.deepPurple.shade400,
                   inactiveColor: Colors.black26,
-                  divisions: 6,
+                  divisions: 33,
+                  autofocus: false,
                   label: "$_value",
-                  min: 4,
-                    max: 10,
-                    value: _value,
-                    onChanged: (value){
+                  min: 7,
+                  max: 40,
+                  value: _value,
+                  onChanged: (value){
                     setState(() {
                       _value=value;
                       range=value;

@@ -9,7 +9,7 @@ class TextTile extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size=MediaQuery.of(context).size;
     return Padding(
-      padding: EdgeInsets.fromLTRB(size.width*0.025,size.height*0.01,size.width*0.025,size.height*0.01,),
+      padding: EdgeInsets.fromLTRB(size.width*0.025,size.height*0.0,size.width*0.025,size.height*0.01,),
       child: SelectableText(
         text,
         style: GoogleFonts.poppins(
