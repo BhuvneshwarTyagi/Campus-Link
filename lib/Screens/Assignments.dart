@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Assignments_upload extends StatefulWidget {
   const Assignments_upload({Key? key}) : super(key: key);
@@ -44,7 +45,7 @@ class _Assignments_uploadState extends State<Assignments_upload> {
                 children: [
                   Container(
                     height: size.height * 0.048,
-                    width: size.width * 0.45,
+                    width: size.width * 0.46,
                     decoration: BoxDecoration(
                         gradient: const LinearGradient(
                           begin: Alignment.topLeft,
@@ -76,13 +77,21 @@ class _Assignments_uploadState extends State<Assignments_upload> {
                                       "assets/images/view_assignment.png"),
                                   fit: BoxFit.contain,
                                 )),
-                            const AutoSizeText("View Assignment"),
+                             AutoSizeText("View Assignment",
+                               style:  GoogleFonts.exo(
+                                   color: Colors.white,
+                                   fontSize:
+                                   size.height *
+                                       0.017,
+                                   fontWeight: FontWeight.w600
+                               ),
+                            ),
                           ],
                         )),
                   ),
                   Container(
                       height: size.height * 0.048,
-                      width: size.width * 0.45,
+                      width: size.width * 0.46,
                       decoration: BoxDecoration(
                           gradient: const LinearGradient(
                             begin: Alignment.topLeft,
@@ -119,7 +128,14 @@ class _Assignments_uploadState extends State<Assignments_upload> {
                                         "assets/images/upload-icon.png"),
                                     fit: BoxFit.contain,
                                   )),
-                              const AutoSizeText("Upload Assignment"),
+                              AutoSizeText("Upload Assignment",
+                                style:  GoogleFonts.exo(
+                                    color: Colors.white,
+                                    fontSize:
+                                    size.height *
+                                        0.017,
+                                    fontWeight: FontWeight.w600
+                                ),),
                             ],
                           ))),
                 ],
