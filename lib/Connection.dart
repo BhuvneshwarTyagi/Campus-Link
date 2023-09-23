@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:campus_link_teachers/push_notification/helper_notification.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'Registration/no_internet.dart';
@@ -34,17 +35,15 @@ class Internetcheck extends StatefulWidget {
 
 class _InternetcheckState extends State<Internetcheck> {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  //flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>().requestPermission();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    //Workmanager().registerPeriodicTask("Test on background", "background",frequency: const Duration(minutes: 16));
 
-    NotificationServices().RequestPermission();
-
-    // initInfo();
+    if(!kIsWeb){
+      NotificationServices().RequestPermission();
+    }
   }
 
 
@@ -79,11 +78,15 @@ class _InternetcheckState extends State<Internetcheck> {
 
   @override
   Widget build(BuildContext context) {
+    if(kIsWeb){
+      return widget.widget;
+    }
     switch(widget.snapshot.connectionState){
       case ConnectionState.active:
         final state = widget.snapshot.data!;
         switch(state){
           case ConnectivityResult.none:
+            print("......none");
             return const No_internet();
           case ConnectivityResult.bluetooth:
             return const Center(child: Text("You are not connected to internet... you are connected to bluetooth"));
@@ -97,6 +100,7 @@ class _InternetcheckState extends State<Internetcheck> {
             return const Center(child:Text("oops Gand marao error"));
         }
       default:
+        print("..............here");
         return const No_internet();
     }
   }

@@ -1,6 +1,7 @@
 import 'dart:async';
+import 'dart:html';
 import 'package:campus_link_teachers/push_notification/helper_notification.dart';
-import 'package:campus_link_teachers/push_notification/utils.dart';
+import 'dart:ui_web' as ui;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -10,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inapp_notifications/flutter_inapp_notifications.dart';
 import 'package:workmanager/workmanager.dart';
 import 'Connection.dart';
+import 'firebase_options.dart';
 
 
 const fetchBackground = "fetchBackground";
@@ -131,7 +133,9 @@ Future<void> firebaseMessagingonmessageOpenedAppHandler(RemoteMessage message) a
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
+  ui.platformViewRegistry
+      .registerViewFactory('example', (_) => DivElement()..innerText = 'Hello, HTML!');
   runApp(const MyApp());
 }
 

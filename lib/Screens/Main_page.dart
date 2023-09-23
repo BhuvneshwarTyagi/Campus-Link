@@ -73,18 +73,16 @@ class _MainPageState extends State<MainPage> {
         usermodel=value.data()!;
       });
     }).whenComplete(() async {
+      setState(() {
+        if (kDebugMode) {
+          print(usermodel);
+        }
+        loaded=true;
+      });
       await FirebaseMessaging.instance.getToken().then((token) async {
         await FirebaseFirestore.instance.collection("Teachers").doc(FirebaseAuth.instance.currentUser!.email).update({
           'Token' : token,
-        }).whenComplete(() {
-          setState(() {
-            if (kDebugMode) {
-              print(usermodel);
-            }
-            loaded=true;
-          });
         });
-
       });
 
     }

@@ -6,7 +6,6 @@ import 'package:flutter_inapp_notifications/flutter_inapp_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 import '../Constraints.dart';
-import 'Basic.dart';
 import 'Login.dart';
 
 class SignUpScreen extends StatefulWidget {

@@ -123,117 +123,97 @@ class _SubjectState extends State<Subject> {
                               print(".........Entity: $entity");
                               return Padding(
                                 padding:  const EdgeInsets.only(top:8.0),
-                                child: Container(
-                                  // decoration: BoxDecoration(
-                                  //   gradient: LinearGradient(
-                                  //     colors: [
-                                  //       Colors.black.withOpacity(0.7),
-                                  //       Colors.black38
-                                  //     ]
-                                  //   ),
-                                  //   borderRadius: const BorderRadius.all(Radius.circular(15)),
-                                  //
-                                  // ),
-                                  child: Card(
-                                    elevation: 0,
-                                    // shape:  const RoundedRectangleBorder(
-                                    //     side: BorderSide(
-                                    //       color: Colors.white,
-                                    //       width: 1.5,
-                                    //     ),
-                                    //     borderRadius: BorderRadius.all(Radius.circular(15))
-                                    //
-                                    // ),
-                                    color: Colors.transparent,
-                                    child: Column(
-                                      children: [
-                                        ListTile(
-                                          leading: FileManager.isFile(entity)
-                                              ?
-                                          SizedBox(
-                                            height: size.height*0.06,
-                                              child: const Image(image: AssetImage("assets/images/excel.png"),fit: BoxFit.contain,))
-                                              :  Icon(Icons.folder,color: Colors.white,size: size.height*0.042),
-                                          title: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              AutoSizeText(
-                                                FileManager.basename(
-                                                entity,
-                                                showFileExtension: true,
-                                              ),
-                                               style: GoogleFonts.exo(
-                                                 color: Colors.black,
-                                                 fontSize: 12,
-                                                 fontWeight: FontWeight.w500
+                                child: Card(
+                                  elevation: 0,
+                                  color: Colors.transparent,
+                                  child: Column(
+                                    children: [
+                                      ListTile(
+                                        leading: FileManager.isFile(entity)
+                                            ?
+                                        SizedBox(
+                                          height: size.height*0.06,
+                                            child: const Image(image: AssetImage("assets/images/excel.png"),fit: BoxFit.contain,))
+                                            :  Icon(Icons.folder,color: Colors.white,size: size.height*0.042),
+                                        title: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            AutoSizeText(
+                                              FileManager.basename(
+                                              entity,
+                                              showFileExtension: true,
+                                            ),
+                                             style: GoogleFonts.exo(
+                                               color: Colors.black,
+                                               fontSize: 12,
+                                               fontWeight: FontWeight.w500
 
-                                               ),
-                                              ),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.end,
-                                                children: [
-                                                  IconButton(
-                                                      onPressed: () async {
-                                                        await Share.shareXFiles(
-                                                            [XFile(entity.path)], text: '${widget.course} ${widget.uni} ${widget.year} (${widget.section}) ${widget.subject} Attendance Sheet');
-                                                        },
-                                                      icon: const Icon(Icons.share,color: Colors.black,)),
-                                                  IconButton(
-                                                      onPressed: () async {
-                                                        await File(entity.path).delete();
-                                                        setState(() {});
+                                             ),
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.end,
+                                              children: [
+                                                IconButton(
+                                                    onPressed: () async {
+                                                      await Share.shareXFiles(
+                                                          [XFile(entity.path)], text: '${widget.course} ${widget.uni} ${widget.year} (${widget.section}) ${widget.subject} Attendance Sheet');
                                                       },
-                                                      icon: const Icon(Icons.delete_outline,color: Colors.black,)),
-                                                ],
-                                              ),
+                                                    icon: const Icon(Icons.share,color: Colors.black,)),
+                                                IconButton(
+                                                    onPressed: () async {
+                                                      await File(entity.path).delete();
+                                                      setState(() {});
+                                                    },
+                                                    icon: const Icon(Icons.delete_outline,color: Colors.black,)),
+                                              ],
+                                            ),
 
-                                            ],
-                                          ),
-                                          subtitle: subtitle(entity),
-                                          onTap: () async {
-                                            OpenFile.open(entity.path);
-                                            if (FileManager.isDirectory(entity)) {
-                                              // open the folder
-                                              controller.openDirectory(entity);
-
-                                              // delete a folder
-                                              // await entity.delete(recursive: true);
-
-                                              // rename a folder
-                                              // await entity.rename("newPath");
-
-                                              // Check weather folder exists
-                                              // entity.exists();
-
-                                              // get date of file
-                                              // DateTime date = (await entity.stat()).modified;
-                                            } else {
-                                              // delete a file
-                                              // await entity.delete();
-
-                                              // rename a file
-                                              // await entity.rename("newPath");
-
-                                              // Check weather file exists
-                                              // entity.exists();
-
-                                              // get date of file
-                                              // DateTime date = (await entity.stat()).modified;
-
-                                              // get the size of the file
-                                              // int size = (await entity.stat()).size;
-                                            }
-                                          },
+                                          ],
                                         ),
-                                        const Divider(
-                                          height: 2,
-                                          color: Colors.black87,
-                                          indent: 5,
-                                          endIndent: 5,
-                                          thickness: 2,
-                                        )
-                                      ],
-                                    ),
+                                        subtitle: subtitle(entity),
+                                        onTap: () async {
+                                          OpenFile.open(entity.path);
+                                          if (FileManager.isDirectory(entity)) {
+                                            // open the folder
+                                            controller.openDirectory(entity);
+
+                                            // delete a folder
+                                            // await entity.delete(recursive: true);
+
+                                            // rename a folder
+                                            // await entity.rename("newPath");
+
+                                            // Check weather folder exists
+                                            // entity.exists();
+
+                                            // get date of file
+                                            // DateTime date = (await entity.stat()).modified;
+                                          } else {
+                                            // delete a file
+                                            // await entity.delete();
+
+                                            // rename a file
+                                            // await entity.rename("newPath");
+
+                                            // Check weather file exists
+                                            // entity.exists();
+
+                                            // get date of file
+                                            // DateTime date = (await entity.stat()).modified;
+
+                                            // get the size of the file
+                                            // int size = (await entity.stat()).size;
+                                          }
+                                        },
+                                      ),
+                                      const Divider(
+                                        height: 2,
+                                        color: Colors.black87,
+                                        indent: 5,
+                                        endIndent: 5,
+                                        thickness: 2,
+                                      )
+                                    ],
                                   ),
                                 ),
                               );
