@@ -73,6 +73,7 @@ dependencies:
   percent_indicator: ^4.2.3
   file_picker: ^5.5.0
   pdfx: ^2.4.0
+  chatview: ^1.3.1
   #native_pdf_renderer: ^5.0.0+1
 
 
