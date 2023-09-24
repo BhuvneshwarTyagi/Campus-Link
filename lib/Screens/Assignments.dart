@@ -57,6 +57,7 @@ class _Assignments_uploadState extends State<Assignments_upload> {
                         border: Border.all(color: Colors.black, width: 2)),
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
+                            shape: const StadiumBorder(),
                             backgroundColor: Colors.transparent),
                         onPressed: () {
                           setState(() {
@@ -70,7 +71,6 @@ class _Assignments_uploadState extends State<Assignments_upload> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             SizedBox(
-                                height: size.height * 0.09,
                                 width: size.width * 0.08,
                                 child: const Image(
                                   image: AssetImage(
@@ -81,8 +81,8 @@ class _Assignments_uploadState extends State<Assignments_upload> {
                                style:  GoogleFonts.exo(
                                    color: Colors.white,
                                    fontSize:
-                                   size.height *
-                                       0.017,
+                                   size.width *
+                                       0.033,
                                    fontWeight: FontWeight.w600
                                ),
                             ),
@@ -106,6 +106,7 @@ class _Assignments_uploadState extends State<Assignments_upload> {
                           border: Border.all(color: Colors.black, width: 2)),
                       child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
+                            shape: const StadiumBorder(),
                               backgroundColor: Colors.transparent),
                           onPressed: () {
 
@@ -118,26 +119,27 @@ class _Assignments_uploadState extends State<Assignments_upload> {
 
                           },
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               SizedBox(
-                                  height: size.height * 0.09,
-                                  width: size.width * 0.05,
+                                  width: size.width * 0.06,
                                   child: const Image(
                                     image: AssetImage(
                                         "assets/images/upload-icon.png"),
                                     fit: BoxFit.contain,
                                   )),
+                              SizedBox(width: size.width*0.02),
                               AutoSizeText("Upload Assignment",
                                 style:  GoogleFonts.exo(
                                     color: Colors.white,
-                                    fontSize:
-                                    size.height *
-                                        0.017,
-                                    fontWeight: FontWeight.w600
-                                ),),
+                                    fontSize: size.width * 0.032,
+                                    fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             ],
-                          ))),
+                          ),
+                      ),
+                  ),
                 ],
               ),
             ),

@@ -353,7 +353,7 @@ class _DocumentViewerState extends State<DocumentViewer> {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => chat_page(channel: widget.channel),
+                          builder: (context) => ChatPage(channel: widget.channel),
                         ),
                       );
                     });

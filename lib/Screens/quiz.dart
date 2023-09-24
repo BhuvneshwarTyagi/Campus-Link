@@ -1,15 +1,14 @@
-
-
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:campus_link_teachers/Screens/quizquestion.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../Constraints.dart';
 
 
-enum Options{ trueFalse,multipleChoice}
+
 class Quiz extends StatefulWidget {
   const Quiz({super.key});
 
@@ -18,31 +17,22 @@ class Quiz extends StatefulWidget {
 }
 
 class _QuizState extends State<Quiz> {
-  TextEditingController videoController=TextEditingController();
-  TextEditingController numberController=TextEditingController();
-  TextEditingController questionController=TextEditingController();
-  List<TextEditingController>optionController=[];
-  TextEditingController answerController=TextEditingController();
-  List<String>options=["A","B","C","D"];
-  int questionCount=0;
-  PageController pageController=PageController();
-  var currIndex=0;
-  bool optionType=false;
-  Options? _options;
+  TextEditingController videoController = TextEditingController();
+
+
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
-
     return Container(
-        height: size.height ,
-        padding: EdgeInsets.all(size.height*0.01),
-        decoration:  BoxDecoration(
-          color: Colors.black26.withOpacity(0.6),
+        height: size.height,
+        padding: EdgeInsets.all(size.height * 0.01),
+        decoration: BoxDecoration(
+          color: Colors.black26.withOpacity(0.9),
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(30),
             topRight: Radius.circular(30),
-
           ),
         ),
         child: SingleChildScrollView(
@@ -51,807 +41,1005 @@ class _QuizState extends State<Quiz> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: size.height * 0.025,
+                  height: size.height * 0.08,
                 ),
                 Padding(
-                  padding: EdgeInsets.all(
-                      size.height * 0.009),
+                  padding: EdgeInsets.all(size.height * 0.009),
                   child: Row(
                     children: [
                       AutoSizeText(
                         "Upload File",
                         style: GoogleFonts.openSans(
-                          color:  Colors.white,
-
+                          color: Colors.white,
                           fontSize: size.height * 0.023,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      SizedBox(width: size.width*0.02,),
-                      const Icon(Icons.cloud_upload,color: Colors.white,)
+                      SizedBox(
+                        width: size.width * 0.02,
+                      ),
+                      const Icon(
+                        Icons.cloud_upload,
+                        color: Colors.white,
+                      )
                     ],
                   ),
+                ),
+                SizedBox(
+                  height: size.height * 0.03,
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: SizedBox(
-                      height: size.height*0.1,
+                      height: size.height * 0.1,
                       width: size.width,
-
                       child: DottedBorder(
                         color: Colors.white,
                         borderType: BorderType.RRect,
-
                         radius: const Radius.circular(12),
-                        padding:  EdgeInsets.all(size.height*0.01),
-                        child:Row(
+                        padding: EdgeInsets.all(size.height * 0.01),
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
-
                           children: [
                             Icon(
-
-                              size: size.height*0.04,
+                              size: size.height * 0.04,
                               Icons.upload_sharp,
                               color: Colors.white,
                             ),
                             SizedBox(
-                              width: size.width*0.03,
+                              width: size.width * 0.03,
                             ),
-                            AutoSizeText("Drop item here  or",
-
-                              style:   GoogleFonts.openSans(
+                            AutoSizeText(
+                              "Drop item here  or",
+                              style: GoogleFonts.openSans(
                                 color: Colors.white,
                                 fontSize: size.height * 0.02,
                               ),
-
                             ),
-
-
                             TextButton(
-                              onPressed: (){},
-                              child:AutoSizeText("Browse File",
-                                style:   GoogleFonts.openSans(
+                              onPressed: () {},
+                              child: AutoSizeText(
+                                "Browse File",
+                                style: GoogleFonts.openSans(
                                     color: Colors.white,
                                     fontSize: size.height * 0.02,
-                                    fontWeight: FontWeight.w700
-                                ),
-
-
-                              ) ,
-
-
+                                    fontWeight: FontWeight.w700),
+                              ),
                             )
-
-
                           ],
                         ),
-                      )
-                  ),
+                      )),
                 ),
-
+                SizedBox(
+                  height: size.height * 0.015,
+                ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: SizedBox(
-                      height: size.height*0.07,
+                      height: size.height * 0.07,
                       width: size.width,
-
                       child: DottedBorder(
                         color: Colors.white,
                         borderType: BorderType.RRect,
-
                         radius: const Radius.circular(12),
                         padding: const EdgeInsets.all(10),
-                        child:TextField(
+                        child: TextField(
                           controller: videoController,
                           decoration: const InputDecoration(
                               border: InputBorder.none,
-
-                              hintText: "Enter Video Link Here ",
+                              hintText: "Notes Description ",
                               hintStyle: TextStyle(
                                 color: Colors.white,
-                              )
-
-                          ),
+                              )),
                           cursorColor: Colors.white,
-
                         ),
-                      )
-                  ),
+                      )),
                 ),
-                Padding(
-                  padding:  EdgeInsets.all(size.height*0.01),
-                  child: TextField(
-                    controller: numberController,
-                    onChanged: (value) {
-                      setState(() {
-                        questionCount=int.parse(value.toString());
-                        print("....................................$questionCount");
-                      });
-                    },
-                    decoration: const InputDecoration(
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.white,
-                          ),
+                SizedBox(
+                  height: size.height*0.03,),
+                Center(
+                  child: Container(
+                    height: size.height * 0.06,
+                    width: size.width * 0.466,
+                    decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Colors.blue,
+                            Colors.purpleAccent,
+                          ],
                         ),
-                        disabledBorder:UnderlineInputBorder (
-                          borderSide: BorderSide(
-                            color: Colors.white,
-                          ),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.white,
-                          ),
-                        ),
-                        border: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.white,
-                          ),
-                        ),
-                        hintText: "Enter the  number of Question",
-                        hintStyle: TextStyle(
-                          color: Colors.white,
-                        )
+                        borderRadius:  BorderRadius.all(Radius.circular(size.width*0.033)),
+                        border: Border.all(color: Colors.black, width: 2)
                     ),
-                    style: GoogleFonts.openSans(
-                        fontSize: size.height*0.022,
-                        color: Colors.white
-                    ),
-                    cursorColor: Colors.white,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: AnimatedContainer(
-                    height: questionCount==0?size.height*0:size.height*0.85,
-                    width: size.width,
-                    duration: const Duration(milliseconds: 100),
-                    child:/* ListView.builder(
-                      itemCount: questionCount,
-                      scrollDirection: Axis.vertical,
-                      itemBuilder: (context, index) {
-                        return SizedBox(
-                            height: size.height*0.6,
-                            width: size.width,
-                            child:SingleChildScrollView(
-                              physics: const NeverScrollableScrollPhysics(),
-                              child: Column(
-                                children: [
-                                  TextField(
-                                    controller: questionList[index],
-                                    autocorrect: true,
-                                    keyboardType:TextInputType.text,
-                                    minLines: 3,
-                                    maxLines: 6,
-                                    cursorColor: Colors.white,
-                                    decoration: InputDecoration(
-                                      hintText: "Write your Question here......",
-                                      hintStyle: const TextStyle(color: Colors.white),
-                                      contentPadding: EdgeInsets.all(size.height*0.02),
-                                      helperStyle: GoogleFonts.openSans(
-                                          color: Colors.white54,
-                                          fontSize: size.height*0.022
-                                      ),
-                                      border: const OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(Radius.circular(20)),
-                                          borderSide: BorderSide(
-                                              color: Colors.white54,
-                                              width:2
-                                          )
-                                      ),
-                                      enabledBorder: const OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(Radius.circular(20)),
-                                          borderSide: BorderSide(
-                                              color: Colors.white,
-                                              width:2
-                                          )
-                                      ),
-                                      disabledBorder: const OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(Radius.circular(20)),
-                                          borderSide: BorderSide(
-                                              color: Colors.white54,
-                                              width:2
-                                          )
-                                      ),
-                                      focusedBorder:const OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(Radius.circular(20)),
-                                          borderSide: BorderSide(
-                                              color: Colors.white54,
-                                              width:2
-                                          )
-                                      ) ,
-                                    ),
-                                    style: GoogleFonts.openSans(
-                                        fontSize: size.height*0.022,
-                                        color: Colors.white
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: size.height*0.01,
-                                  ),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: RadioListTile(
-                                          activeColor: Colors.white,
-                                          contentPadding: const EdgeInsets.all(0.0),
-                                          title: AutoSizeText("MultipleChoice",
-                                            style: TextStyle(color: Colors.white,
-                                                fontSize: size.height*0.02
-                                            ),
-                                          ),
-                                          value: Options.multipleChoice, groupValue: _options,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              _options=value;
-                                            });
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
 
-                                          },),
-                                      ),
-                                      Expanded(
-                                        child: RadioListTile(
-                                          activeColor: Colors.white,
-                                          contentPadding: const EdgeInsets.all(0.0),
-                                          title:  AutoSizeText("True or false",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: size.height*0.02
-                                            ),
-                                          ),
-                                          value: Options.trueFalse, groupValue: _options,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              _options=value;
-                                            });
-                                          },),
-                                      )
-                                    ],
-                                  ),
-
-                                  *//*SizedBox(
-                                                      height: size.height*0.02,
-                                                      width: size.width*0.9,
-                                                      child: Row(
-                                                        children: [
-                                                          SizedBox(
-                                                            height: size.height*0.04,
-                                                            width: size.width*0.9,
-                                                            child: ListTile(
-                                                              splashColor: Colors.transparent,
-
-                                                              onTap: (){
-
-                                                              },
-                                                              title: const AutoSizeText("Single option"),
-                                                              titleTextStyle: GoogleFonts.exo(
-                                                                  color: Colors.white,
-                                                                  fontSize: size.height*0.022,
-                                                                  fontWeight: FontWeight.w500
-                                                              ),
-                                                              leading: Radio(
-                                                                activeColor: Colors.white54,
-                                                                focusColor: Colors.limeAccent,
-                                                                value: "Single option",
-                                                                onChanged: (value) {
-                                                                  setState(
-                                                                        () {
-
-                                                                    },
-                                                                  );
-                                                                }, groupValue: "Single option",
-                                                              ),
-                                                            ),
-                                                          )
-                                                        ],
-                                                      ),
-                                                    )*//*
-                                  _options==Options.multipleChoice?
-                                  SizedBox(
-                                    height: size.height*0.5,
-                                    width: size.width*0.9,
-                                    child: ListView.builder(
-                                      physics: const NeverScrollableScrollPhysics(),
-                                      itemCount: 4,
-                                      itemBuilder: (context, index) {
-                                        return Padding(
-                                          padding: const EdgeInsets.all(6.0),
-                                          child: Container(
-                                            height: size.height*0.065,
-                                            decoration: BoxDecoration(
-                                                color: Colors.transparent,
-                                                borderRadius: const BorderRadius.all(Radius.circular(20)),
-                                                border: Border.all(
-                                                    color: Colors.white54,
-                                                    width: 2
-                                                )
-                                            ),
-                                            child: TextField(
-                                              controller:optionController[index] ,
-                                              decoration: InputDecoration(
-                                                  hintText: options[index],
-                                                  hintStyle: const TextStyle(color: Colors.white),
-                                                  helperStyle: GoogleFonts.openSans(
-                                                      color: Colors.white,
-                                                      fontSize: size.height*0.022
-                                                  )
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  )
-                                      :
-                                  SizedBox(
-                                    height: size.height*0.2,
-                                    width: size.width*0.9,
-                                    child: ListView.builder(
-                                      physics: const NeverScrollableScrollPhysics(),
-                                      itemCount: 2,
-                                      itemBuilder: (context, index) {
-                                        return Padding(
-                                          padding: const EdgeInsets.all(6.0),
-                                          child: Container(
-                                            height: size.height*0.065,
-                                            decoration: BoxDecoration(
-                                                color: Colors.transparent,
-                                                borderRadius: const BorderRadius.all(Radius.circular(20)),
-                                                border: Border.all(
-                                                    color: Colors.white54,
-                                                    width: 2
-                                                )
-                                            ),
-                                            child: TextField(
-                                              controller:optionController[index] ,
-                                              decoration: InputDecoration(
-                                                  hintText: options[index],
-                                                  hintStyle: const TextStyle(color: Colors.white),
-                                                  helperStyle: GoogleFonts.openSans(
-                                                      color: Colors.white,
-                                                      fontSize: size.height*0.022
-                                                  )
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  )
-
-
-                                ],
-                              ),
-                            )
-                        );
-                      },),*/
-                    PageView.builder(
-                      controller: pageController,
-                      physics: const NeverScrollableScrollPhysics(),
-                      scrollDirection: Axis.horizontal,
-                      itemCount: questionCount*2,
-                      itemBuilder: (context, index) {
-                      return SizedBox(
-                          height:_options==Options.multipleChoice? size.height*0.7:size.height*0.55,
-                          width: size.width,
-                          child:SingleChildScrollView(
-                            physics: const NeverScrollableScrollPhysics(),
-                            child: Column(
+                          backgroundColor: Colors.transparent
+                      ),
+                        onPressed: (){
+                        showModalBottomSheet(
+                          backgroundColor: Colors.transparent,
+                            context: context,
+                            builder: ((context) {
+                          return Container(
+                            height: size.height*0.2,
+                            decoration: BoxDecoration(
+                              color: Colors.black87,
+                              borderRadius: BorderRadius.only(topRight: Radius.circular(size.height*0.022),topLeft:Radius.circular(size.height*0.022) )
+                            ),
+                            child:  Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    SizedBox(
-                                      width: size.width*0.04,
-                                    ),
-                                    AutoSizeText(
-                                      "${index+1}/${questionCount*2}",
-                                      style: GoogleFonts.openSans(
-                                        fontSize: size.height*0.025,
-                                        color: Colors.white
+                                Container(
+                                  height: size.height * 0.06,
+                                  width: size.width * 0.43,
+                                  decoration: BoxDecoration(
+                                      gradient: const LinearGradient(
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                        colors: [
+                                          Colors.blue,
+                                          Colors.purpleAccent,
+                                        ],
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: size.height*0.015,
-                                ),
-                                TextField(
-                                  controller: questionController,
-                                  autocorrect: true,
-                                  keyboardType:TextInputType.text,
-                                  minLines: 3,
-                                  maxLines: 6,
-                                  cursorColor: Colors.white,
-                                  decoration: InputDecoration(
-                                    hintText: "Write your Question here......",
-                                    hintStyle: const TextStyle(color: Colors.white),
-                                    contentPadding: EdgeInsets.all(size.height*0.02),
-                                    helperStyle: GoogleFonts.openSans(
-                                        color: Colors.white54,
-                                        fontSize: size.height*0.022
-                                    ),
-                                    border: const OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                                        borderSide: BorderSide(
-                                            color: Colors.white54,
-                                            width:2
-                                        )
-                                    ),
-                                    enabledBorder: const OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                                        borderSide: BorderSide(
-                                            color: Colors.white,
-                                            width:2
-                                        )
-                                    ),
-                                    disabledBorder: const OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                                        borderSide: BorderSide(
-                                            color: Colors.white54,
-                                            width:2
-                                        )
-                                    ),
-                                    focusedBorder:const OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                                        borderSide: BorderSide(
-                                            color: Colors.white54,
-                                            width:2
-                                        )
-                                    ) ,
+                                      borderRadius: const BorderRadius.all(Radius.circular(20)),
+                                      border: Border.all(color: Colors.black, width: 2)
                                   ),
-                                  style: GoogleFonts.openSans(
-                                      fontSize: size.height*0.022,
-                                      color: Colors.white
+                                  child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.transparent),
+
+                                      onPressed: (){
+                                        Navigator.pushReplacement(context,
+                                            PageTransition(
+                                                child: const QuizQustion(),
+                                                type: PageTransitionType.bottomToTopJoined,
+                                                childCurrent: const Quiz(),
+                                                duration: const Duration(milliseconds: 300)
+                                            )
+                                        );
+                                      },
+                                      child: AutoSizeText(
+                                        "Create a Quiz",
+                                        style: GoogleFonts.openSans(
+                                            fontSize: size.height * 0.022,
+                                            color: Colors.white
+                                        ),
+
+
+                                      )),
+                                ),
+                                Container(
+                                  height: size.height * 0.06,
+                                  width: size.width * 0.43,
+                                  decoration: BoxDecoration(
+                                      gradient: const LinearGradient(
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                        colors: [
+                                          Colors.blue,
+                                          Colors.purpleAccent,
+                                        ],
+                                      ),
+                                      borderRadius: const BorderRadius.all(Radius.circular(20)),
+                                      border: Border.all(color: Colors.black, width: 2)
                                   ),
-                                ),
-                                SizedBox(
-                                  height: size.height*0.01,
-                                ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: RadioListTile(
-                                        activeColor: Colors.white,
-                                        contentPadding: const EdgeInsets.all(0.0),
-                                        title: AutoSizeText("MultipleChoice",
-                                          style: TextStyle(color: Colors.white,
-                                              fontSize: size.height*0.02
-                                          ),
+                                  child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.transparent),
+                                      onPressed: (){
+                                        Navigator.pop(context);
+                                      },
+                                      child: AutoSizeText(
+                                        "Create a later",
+                                        style: GoogleFonts.openSans(
+                                            fontSize: size.height * 0.022,
+                                            color: Colors.white
                                         ),
-                                        value: Options.multipleChoice, groupValue: _options,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            _options=value;
-                                            print("....................${_options}");
-                                            optionController=List.generate(4, (i) => TextEditingController());
-                                            optionType=true;
-                                          });
 
-                                        },),
-                                    ),
-                                    Expanded(
-                                      child: RadioListTile(
-                                        activeColor: Colors.white,
-                                        contentPadding: const EdgeInsets.all(0.0),
-                                        title:  AutoSizeText("True or false",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: size.height*0.02
-                                          ),
-                                        ),
-                                        value: Options.trueFalse, groupValue: _options,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            _options=value;
-                                            optionController=List.generate(2, (i) => TextEditingController());
-                                            optionType=true;
-                                            //print("/////................///........$optionController");
-                                          });
-                                        },),
-                                    )
-                                  ],
+
+                                      )),
                                 ),
-
-                                /*SizedBox(
-                                                      height: size.height*0.02,
-                                                      width: size.width*0.9,
-                                                      child: Row(
-                                                        children: [
-                                                          SizedBox(
-                                                            height: size.height*0.04,
-                                                            width: size.width*0.9,
-                                                            child: ListTile(
-                                                              splashColor: Colors.transparent,
-
-                                                              onTap: (){
-
-                                                              },
-                                                              title: const AutoSizeText("Single option"),
-                                                              titleTextStyle: GoogleFonts.exo(
-                                                                  color: Colors.white,
-                                                                  fontSize: size.height*0.022,
-                                                                  fontWeight: FontWeight.w500
-                                                              ),
-                                                              leading: Radio(
-                                                                activeColor: Colors.white54,
-                                                                focusColor: Colors.limeAccent,
-                                                                value: "Single option",
-                                                                onChanged: (value) {
-                                                                  setState(
-                                                                        () {
-
-                                                                    },
-                                                                  );
-                                                                }, groupValue: "Single option",
-                                                              ),
-                                                            ),
-                                                          )
-                                                        ],
-                                                      ),
-                                                    )*/
-                                optionType?
-                                Column(
-                                  children: [
-                                    _options==Options.multipleChoice?
-                                    SizedBox(
-                                      height: size.height*0.45,
-                                      width: size.width*0.9,
-                                      child: Column(
-                                        children: [
-                                          SizedBox(
-                                            height: size.height*0.36,
-                                            width: size.width*0.9,
-                                            child:ListView.builder(
-                                              physics: const NeverScrollableScrollPhysics(),
-                                              itemCount: optionController.length,
-                                              itemBuilder: (context, index_1) {
-                                                return Padding(
-                                                  padding: const EdgeInsets.all(6.0),
-                                                  child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.start,
-                                                    children: [
-                                                      AutoSizeText(
-                                                        options[index_1],
-                                                        style: GoogleFonts.openSans(
-                                                            color: Colors.white,
-                                                            fontSize: size.height*0.022
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        width: size.width*0.022,
-                                                      ),
-                                                      Container(
-                                                        height: size.height*0.065,
-                                                        width: size.width*0.8,
-                                                        decoration: BoxDecoration(
-                                                            color: Colors.transparent,
-                                                            borderRadius: const BorderRadius.all(Radius.circular(20)),
-                                                            border: Border.all(
-                                                                color: Colors.white54,
-                                                                width: 2
-                                                            )
-                                                        ),
-                                                        child: TextField(
-                                                          controller:optionController[index_1] ,
-                                                          onTap: () {
-                                                            print(".......this index is $index_1");
-                                                          },
-                                                          textAlign: TextAlign.center,
-                                                          style: GoogleFonts.openSans(
-                                                            color: Colors.white,
-                                                            fontSize: size.height*0.02,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: size.height*0.004,
-                                          ),
-                                          Container(
-                                            height: size.height*0.063,
-                                            width: size.width*0.79,
-                                            decoration: BoxDecoration(
-                                                color: Colors.transparent,
-                                                borderRadius: const BorderRadius.all(Radius.circular(20)),
-                                                border: Border.all(
-                                                    color: Colors.white54,
-                                                    width: 2
-                                                )
-                                            ),
-                                            child: TextField(
-                                              controller:answerController,
-                                              decoration:  InputDecoration(
-                                                hintText: "Right Option",
-                                                helperStyle: GoogleFonts.openSans(
-                                                  color: Colors.white,
-                                                  fontSize: size.height*0.02,
-                                                ),
-                                              ),
-                                              textAlign: TextAlign.center,
-                                              style: GoogleFonts.openSans(
-                                                color: Colors.white,
-                                                fontSize: size.height*0.02,
-                                              ),
-
-                                            ),
-                                          )
-                                        ],
-                                      )
-                                    )
-                                        :
-                                    SizedBox(
-                                      height: size.height*0.3,
-                                      width: size.width*0.9,
-                                      child:Column(
-                                        children: [
-                                          SizedBox(
-                                            height: size.height*0.2,
-                                            width: size.width*0.9,
-                                            child: ListView.builder(
-                                              physics: const NeverScrollableScrollPhysics(),
-                                              itemCount: optionController.length,
-                                              itemBuilder: (context, index_2) {
-                                                return Padding(
-                                                  padding: const EdgeInsets.all(6.0),
-                                                  child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.start,
-                                                    children: [
-                                                      AutoSizeText(
-                                                        options[index_2],
-                                                        style: GoogleFonts.openSans(
-                                                            color: Colors.white,
-                                                            fontSize: size.height*0.022
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        width: size.width*0.022,
-                                                      ),
-                                                      Container(
-                                                        height: size.height*0.065,
-                                                        width: size.width*0.8,
-                                                        decoration: BoxDecoration(
-                                                            color: Colors.transparent,
-                                                            borderRadius: const BorderRadius.all(Radius.circular(20)),
-                                                            border: Border.all(
-                                                                color: Colors.white54,
-                                                                width: 2
-                                                            )
-                                                        ),
-                                                        child: TextField(
-                                                          controller:optionController[index_2],
-                                                          textAlign: TextAlign.center,
-                                                          style: GoogleFonts.openSans(
-                                                            color: Colors.white,
-                                                            fontSize: size.height*0.02,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                           SizedBox(
-                                             height: size.height*0.004,
-                                           ),
-                                          Container(
-                                            height: size.height*0.063,
-                                            width: size.width*0.79,
-                                            decoration: BoxDecoration(
-                                                color: Colors.transparent,
-                                                borderRadius: const BorderRadius.all(Radius.circular(20)),
-                                                border: Border.all(
-                                                    color: Colors.white54,
-                                                    width: 2
-                                                )
-                                            ),
-                                            child: TextField(
-                                              controller:answerController,
-                                              decoration:  InputDecoration(
-                                                hintText: "Right Option",
-                                                helperStyle: GoogleFonts.openSans(
-                                                  color: Colors.white,
-                                                  fontSize: size.height*0.02,
-                                                ),
-                                              ),
-                                              textAlign: TextAlign.center,
-                                              style: GoogleFonts.openSans(
-                                                color: Colors.white,
-                                                fontSize: size.height*0.02,
-                                              ),
-
-                                            ),
-                                          )
-
-                                        ],
-                                      )
-                                    ),
-                                    SizedBox(
-                                      height: size.height*0.01,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:  MainAxisAlignment.center,
-                                      children: [
-
-                                        Container(
-                                          height: size.height*0.056,
-                                          width: size.width*0.55,
-                                          decoration:  const BoxDecoration(
-                                              borderRadius: BorderRadius.all(Radius.circular(100))
-                                          ),
-                                          child: ElevatedButton(
-                                              onPressed: (){
-                                                List<String>optionList=[];
-                                                for(var i=0;i<optionController.length;i++)
-                                                  {
-                                                    optionList.add(optionController[i].text.toString().trim());
-                                                  }
-                                              FirebaseFirestore.instance.collection("Notes")
-                                                  .doc("$university_filter $college_filter $branch_filter $year_filter $section_filter $subject_filter")
-                                              .set({
-                                                "Notes-1":{
-                                                  "Question-1":{
-                                                    "Question":questionController.text.toString().trim(),
-                                                    "Options":optionList,
-                                                    "Answer":answerController.text.toString(),
-                                                    "Question-Type":_options==Options.multipleChoice?"multipleChoice":"True and False"
-                                                  },
-
-                                                }
-                                              }).whenComplete(() {
-                                                setState(() {
-                                                  answerController.clear();
-                                                  questionController.clear();
-                                                  optionList.clear();
-                                                });
-                                              });
-
-
-
-
-                                                setState(() {
-                                                  currIndex++;
-                                                  pageController.animateToPage(currIndex,
-                                                      duration: const Duration(milliseconds: 600),
-                                                      curve: Curves.linear);
-                                                });
-
-                                              },
-                                              child: AutoSizeText(
-                                                "Save and Next",
-                                                style: GoogleFonts.openSans(
-                                                  color: Colors.white,
-                                                  fontSize: size.height*0.024,
-
-                                                ),
-                                              )),
-                                        )
-                                      ],
-                                    )
-                                  ],
-                                )
-                                    :
-                                const SizedBox()
-
                               ],
                             ),
-                          )
-                      );
-                    },)
+                          );
+                        }));
+
+
+
+                        },
+                        child:  AutoSizeText("Submit",
+                          style: GoogleFonts.openSans(
+                              fontSize: size.height * 0.025, color: Colors.white,
+                          fontWeight: FontWeight.w700
+                          ),
+
+                        ),
+                    ),
                   ),
-                )
-              ]
-          ),
+                ),
+                // Padding(
+                //   padding: EdgeInsets.all(size.height * 0.01),
+                //   child: TextField(
+                //     controller: numberController,
+                //     onChanged: (value) {
+                //       setState(() {
+                //         questionCount = int.parse(value.toString());
+                //         print("....................................$questionCount");
+                //       });
+                //     },
+                //     decoration: const InputDecoration(
+                //         enabledBorder: UnderlineInputBorder(
+                //           borderSide: BorderSide(
+                //             color: Colors.white,
+                //           ),
+                //         ),
+                //         disabledBorder: UnderlineInputBorder(
+                //           borderSide: BorderSide(
+                //             color: Colors.white,
+                //           ),
+                //         ),
+                //         focusedBorder: UnderlineInputBorder(
+                //           borderSide: BorderSide(
+                //             color: Colors.white,
+                //           ),
+                //         ),
+                //         border: UnderlineInputBorder(
+                //           borderSide: BorderSide(
+                //             color: Colors.white,
+                //           ),
+                //         ),
+                //         hintText: "Enter the  number of Question",
+                //         hintStyle: TextStyle(
+                //           color: Colors.white,
+                //         )),
+                //     style: GoogleFonts.openSans(
+                //         fontSize: size.height * 0.022, color: Colors.white),
+                //     cursorColor: Colors.white,
+                //   ),
+                // ),
+                // Padding(
+                //   padding: const EdgeInsets.all(8.0),
+                //   child: AnimatedContainer(
+                //       height: questionCount == 0
+                //           ? size.height * 0
+                //           : size.height * 0.85,
+                //       width: size.width,
+                //       duration: const Duration(milliseconds: 100),
+                //       child:
+                //           /* ListView.builder(
+                //       itemCount: questionCount,
+                //       scrollDirection: Axis.vertical,
+                //       itemBuilder: (context, index) {
+                //         return SizedBox(
+                //             height: size.height*0.6,
+                //             width: size.width,
+                //             child:SingleChildScrollView(
+                //               physics: const NeverScrollableScrollPhysics(),
+                //               child: Column(
+                //                 children: [
+                //                   TextField(
+                //                     controller: questionList[index],
+                //                     autocorrect: true,
+                //                     keyboardType:TextInputType.text,
+                //                     minLines: 3,
+                //                     maxLines: 6,
+                //                     cursorColor: Colors.white,
+                //                     decoration: InputDecoration(
+                //                       hintText: "Write your Question here......",
+                //                       hintStyle: const TextStyle(color: Colors.white),
+                //                       contentPadding: EdgeInsets.all(size.height*0.02),
+                //                       helperStyle: GoogleFonts.openSans(
+                //                           color: Colors.white54,
+                //                           fontSize: size.height*0.022
+                //                       ),
+                //                       border: const OutlineInputBorder(
+                //                           borderRadius: BorderRadius.all(Radius.circular(20)),
+                //                           borderSide: BorderSide(
+                //                               color: Colors.white54,
+                //                               width:2
+                //                           )
+                //                       ),
+                //                       enabledBorder: const OutlineInputBorder(
+                //                           borderRadius: BorderRadius.all(Radius.circular(20)),
+                //                           borderSide: BorderSide(
+                //                               color: Colors.white,
+                //                               width:2
+                //                           )
+                //                       ),
+                //                       disabledBorder: const OutlineInputBorder(
+                //                           borderRadius: BorderRadius.all(Radius.circular(20)),
+                //                           borderSide: BorderSide(
+                //                               color: Colors.white54,
+                //                               width:2
+                //                           )
+                //                       ),
+                //                       focusedBorder:const OutlineInputBorder(
+                //                           borderRadius: BorderRadius.all(Radius.circular(20)),
+                //                           borderSide: BorderSide(
+                //                               color: Colors.white54,
+                //                               width:2
+                //                           )
+                //                       ) ,
+                //                     ),
+                //                     style: GoogleFonts.openSans(
+                //                         fontSize: size.height*0.022,
+                //                         color: Colors.white
+                //                     ),
+                //                   ),
+                //                   SizedBox(
+                //                     height: size.height*0.01,
+                //                   ),
+                //                   Row(
+                //                     children: [
+                //                       Expanded(
+                //                         child: RadioListTile(
+                //                           activeColor: Colors.white,
+                //                           contentPadding: const EdgeInsets.all(0.0),
+                //                           title: AutoSizeText("MultipleChoice",
+                //                             style: TextStyle(color: Colors.white,
+                //                                 fontSize: size.height*0.02
+                //                             ),
+                //                           ),
+                //                           value: Options.multipleChoice, groupValue: _options,
+                //                           onChanged: (value) {
+                //                             setState(() {
+                //                               _options=value;
+                //                             });
+                //
+                //                           },),
+                //                       ),
+                //                       Expanded(
+                //                         child: RadioListTile(
+                //                           activeColor: Colors.white,
+                //                           contentPadding: const EdgeInsets.all(0.0),
+                //                           title:  AutoSizeText("True or false",
+                //                             style: TextStyle(
+                //                                 color: Colors.white,
+                //                                 fontSize: size.height*0.02
+                //                             ),
+                //                           ),
+                //                           value: Options.trueFalse, groupValue: _options,
+                //                           onChanged: (value) {
+                //                             setState(() {
+                //                               _options=value;
+                //                             });
+                //                           },),
+                //                       )
+                //                     ],
+                //                   ),
+                //
+                //                   */ /*SizedBox(  height: size.height*0.02,
+                //                                       width: size.width*0.9,
+                //                                       child: Row(
+                //                                         children: [
+                //                                           SizedBox(
+                //                                             height: size.height*0.04,
+                //                                             width: size.width*0.9,
+                //                                             child: ListTile(
+                //                                               splashColor: Colors.transparent,
+                //
+                //                                               onTap: (){
+                //
+                //                                               },
+                //                                               title: const AutoSizeText("Single option"),
+                //                                               titleTextStyle: GoogleFonts.exo(
+                //                                                   color: Colors.white,
+                //                                                   fontSize: size.height*0.022,
+                //                                                   fontWeight: FontWeight.w500
+                //                                               ),
+                //                                               leading: Radio(
+                //                                                 activeColor: Colors.white54,
+                //                                                 focusColor: Colors.limeAccent,
+                //                                                 value: "Single option",
+                //                                                 onChanged: (value) {
+                //                                                   setState(
+                //                                                         () {
+                //
+                //                                                     },
+                //                                                   );
+                //                                                 }, groupValue: "Single option",
+                //                                               ),
+                //                                             ),
+                //                                           )
+                //                                         ],
+                //                                       ),
+                //                                     )*/ /*
+                //                   _options==Options.multipleChoice?
+                //                   SizedBox(
+                //                     height: size.height*0.5,
+                //                     width: size.width*0.9,
+                //                     child: ListView.builder(
+                //                       physics: const NeverScrollableScrollPhysics(),
+                //                       itemCount: 4,
+                //                       itemBuilder: (context, index) {
+                //                         return Padding(
+                //                           padding: const EdgeInsets.all(6.0),
+                //                           child: Container(
+                //                             height: size.height*0.065,
+                //                             decoration: BoxDecoration(
+                //                                 color: Colors.transparent,
+                //                                 borderRadius: const BorderRadius.all(Radius.circular(20)),
+                //                                 border: Border.all(
+                //                                     color: Colors.white54,
+                //                                     width: 2
+                //                                 )
+                //                             ),
+                //                             child: TextField(
+                //                               controller:optionController[index] ,
+                //                               decoration: InputDecoration(
+                //                                   hintText: options[index],
+                //                                   hintStyle: const TextStyle(color: Colors.white),
+                //                                   helperStyle: GoogleFonts.openSans(
+                //                                       color: Colors.white,
+                //                                       fontSize: size.height*0.022
+                //                                   )
+                //                               ),
+                //                             ),
+                //                           ),
+                //                         );
+                //                       },
+                //                     ),
+                //                   )
+                //                       :
+                //                   SizedBox(
+                //                     height: size.height*0.2,
+                //                     width: size.width*0.9,
+                //                     child: ListView.builder(
+                //                       physics: const NeverScrollableScrollPhysics(),
+                //                       itemCount: 2,
+                //                       itemBuilder: (context, index) {
+                //                         return Padding(
+                //                           padding: const EdgeInsets.all(6.0),
+                //                           child: Container(
+                //                             height: size.height*0.065,
+                //                             decoration: BoxDecoration(
+                //                                 color: Colors.transparent,
+                //                                 borderRadius: const BorderRadius.all(Radius.circular(20)),
+                //                                 border: Border.all(
+                //                                     color: Colors.white54,
+                //                                     width: 2
+                //                                 )
+                //                             ),
+                //                             child: TextField(
+                //                               controller:optionController[index] ,
+                //                               decoration: InputDecoration(
+                //                                   hintText: options[index],
+                //                                   hintStyle: const TextStyle(color: Colors.white),
+                //                                   helperStyle: GoogleFonts.openSans(
+                //                                       color: Colors.white,
+                //                                       fontSize: size.height*0.022
+                //                                   )
+                //                               ),
+                //                             ),
+                //                           ),
+                //                         );
+                //                       },
+                //                     ),
+                //                   )
+                //
+                //
+                //                 ],
+                //               ),
+                //             )
+                //         );
+                //       },),*/
+                //           PageView.builder(
+                //         controller: pageController,
+                //         physics: const NeverScrollableScrollPhysics(),
+                //         scrollDirection: Axis.horizontal,
+                //         itemCount: questionCount * 2,
+                //         itemBuilder: (context, index) {
+                //           return SizedBox(
+                //               height: _options == Options.multipleChoice
+                //                   ? size.height * 0.7
+                //                   : size.height * 0.55,
+                //               width: size.width,
+                //               child: SingleChildScrollView(
+                //                 physics: const NeverScrollableScrollPhysics(),
+                //                 child: Column(
+                //                   children: [
+                //                     Row(
+                //                       mainAxisAlignment:
+                //                           MainAxisAlignment.start,
+                //                       children: [
+                //                         SizedBox(
+                //                           width: size.width * 0.04,
+                //                         ),
+                //                         AutoSizeText(
+                //                           "${index + 1}/${questionCount * 2}",
+                //                           style: GoogleFonts.openSans(
+                //                               fontSize: size.height * 0.025,
+                //                               color: Colors.white),
+                //                         ),
+                //                       ],
+                //                     ),
+                //                     SizedBox(
+                //                       height: size.height * 0.015,
+                //                     ),
+                //                     TextField(
+                //                       controller: questionController,
+                //                       autocorrect: true,
+                //                       keyboardType: TextInputType.text,
+                //                       minLines: 3,
+                //                       maxLines: 6,
+                //                       cursorColor: Colors.white,
+                //                       decoration: InputDecoration(
+                //                         hintText:
+                //                             "Write your Question here......",
+                //                         hintStyle: const TextStyle(
+                //                             color: Colors.white),
+                //                         contentPadding:
+                //                             EdgeInsets.all(size.height * 0.02),
+                //                         helperStyle: GoogleFonts.openSans(
+                //                             color: Colors.white54,
+                //                             fontSize: size.height * 0.022),
+                //                         border: const OutlineInputBorder(
+                //                             borderRadius: BorderRadius.all(
+                //                                 Radius.circular(20)),
+                //                             borderSide: BorderSide(
+                //                                 color: Colors.white54,
+                //                                 width: 2)),
+                //                         enabledBorder: const OutlineInputBorder(
+                //                             borderRadius: BorderRadius.all(
+                //                                 Radius.circular(20)),
+                //                             borderSide: BorderSide(
+                //                                 color: Colors.white, width: 2)),
+                //                         disabledBorder:
+                //                             const OutlineInputBorder(
+                //                                 borderRadius: BorderRadius.all(
+                //                                     Radius.circular(20)),
+                //                                 borderSide: BorderSide(
+                //                                     color: Colors.white54,
+                //                                     width: 2)),
+                //                         focusedBorder: const OutlineInputBorder(
+                //                             borderRadius: BorderRadius.all(
+                //                                 Radius.circular(20)),
+                //                             borderSide: BorderSide(
+                //                                 color: Colors.white54,
+                //                                 width: 2)),
+                //                       ),
+                //                       style: GoogleFonts.openSans(
+                //                           fontSize: size.height * 0.022,
+                //                           color: Colors.white),
+                //                     ),
+                //                     SizedBox(
+                //                       height: size.height * 0.01,
+                //                     ),
+                //                     Row(
+                //                       children: [
+                //                         Expanded(
+                //                           child: RadioListTile(
+                //                             activeColor: Colors.white,
+                //                             contentPadding:
+                //                                 const EdgeInsets.all(0.0),
+                //                             title: AutoSizeText(
+                //                               "MultipleChoice",
+                //                               style: TextStyle(
+                //                                   color: Colors.white,
+                //                                   fontSize: size.height * 0.02),
+                //                             ),
+                //                             value: Options.multipleChoice,
+                //                             groupValue: _options,
+                //                             onChanged: (value) {
+                //                               setState(() {
+                //                                 _options = value;
+                //                                 print(
+                //                                     "....................${_options}");
+                //                                 optionController = List.generate(
+                //                                     4,
+                //                                     (i) =>
+                //                                         TextEditingController());
+                //                                 optionType = true;
+                //                               });
+                //                             },
+                //                           ),
+                //                         ),
+                //                         Expanded(
+                //                           child: RadioListTile(
+                //                             activeColor: Colors.white,
+                //                             contentPadding:
+                //                                 const EdgeInsets.all(0.0),
+                //                             title: AutoSizeText(
+                //                               "True or false",
+                //                               style: TextStyle(
+                //                                   color: Colors.white,
+                //                                   fontSize: size.height * 0.02),
+                //                             ),
+                //                             value: Options.trueFalse,
+                //                             groupValue: _options,
+                //                             onChanged: (value) {
+                //                               setState(() {
+                //                                 _options = value;
+                //                                 optionController = List.generate(
+                //                                     2,
+                //                                     (i) =>
+                //                                         TextEditingController());
+                //                                 optionType = true;
+                //                                 //print("/////................///........$optionController");
+                //                               });
+                //                             },
+                //                           ),
+                //                         )
+                //                       ],
+                //                     ),
+                //
+                //
+                //                     optionType
+                //                         ? Column(
+                //                             children: [
+                //                               _options == Options.multipleChoice
+                //                                   ? SizedBox(
+                //                                       height:
+                //                                           size.height * 0.45,
+                //                                       width: size.width * 0.9,
+                //                                       child: Column(
+                //                                         children: [
+                //                                           SizedBox(
+                //                                             height:
+                //                                                 size.height *
+                //                                                     0.36,
+                //                                             width: size.width *
+                //                                                 0.9,
+                //                                             child: ListView
+                //                                                 .builder(
+                //                                               physics:
+                //                                                   const NeverScrollableScrollPhysics(),
+                //                                               itemCount:
+                //                                                   optionController
+                //                                                       .length,
+                //                                               itemBuilder:
+                //                                                   (context,
+                //                                                       index_1) {
+                //                                                 return Padding(
+                //                                                   padding:
+                //                                                       const EdgeInsets
+                //                                                           .all(
+                //                                                           6.0),
+                //                                                   child: Row(
+                //                                                     mainAxisAlignment:
+                //                                                         MainAxisAlignment
+                //                                                             .start,
+                //                                                     children: [
+                //                                                       AutoSizeText(
+                //                                                         options[
+                //                                                             index_1],
+                //                                                         style: GoogleFonts.openSans(
+                //                                                             color:
+                //                                                                 Colors.white,
+                //                                                             fontSize: size.height * 0.022),
+                //                                                       ),
+                //                                                       SizedBox(
+                //                                                         width: size.width *
+                //                                                             0.022,
+                //                                                       ),
+                //                                                       Container(
+                //                                                         height: size.height *
+                //                                                             0.065,
+                //                                                         width: size.width *
+                //                                                             0.8,
+                //                                                         decoration: BoxDecoration(
+                //                                                             color:
+                //                                                                 Colors.transparent,
+                //                                                             borderRadius: const BorderRadius.all(Radius.circular(20)),
+                //                                                             border: Border.all(color: Colors.white54, width: 2)),
+                //                                                         child:
+                //                                                             TextField(
+                //                                                           controller:
+                //                                                               optionController[index_1],
+                //                                                           onTap:
+                //                                                               () {
+                //                                                             print(".......this index is $index_1");
+                //                                                           },
+                //                                                           textAlign:
+                //                                                               TextAlign.center,
+                //                                                           style:
+                //                                                               GoogleFonts.openSans(
+                //                                                             color:
+                //                                                                 Colors.white,
+                //                                                             fontSize:
+                //                                                                 size.height * 0.02,
+                //                                                           ),
+                //                                                         ),
+                //                                                       ),
+                //                                                     ],
+                //                                                   ),
+                //                                                 );
+                //                                               },
+                //                                             ),
+                //                                           ),
+                //                                           SizedBox(
+                //                                             height:
+                //                                                 size.height *
+                //                                                     0.004,
+                //                                           ),
+                //                                           Container(
+                //                                             height:
+                //                                                 size.height *
+                //                                                     0.063,
+                //                                             width: size.width *
+                //                                                 0.79,
+                //                                             decoration: BoxDecoration(
+                //                                                 color: Colors
+                //                                                     .transparent,
+                //                                                 borderRadius:
+                //                                                     const BorderRadius
+                //                                                         .all(
+                //                                                         Radius.circular(
+                //                                                             20)),
+                //                                                 border: Border.all(
+                //                                                     color: Colors
+                //                                                         .white54,
+                //                                                     width: 2)),
+                //                                             child: TextField(
+                //                                               controller:
+                //                                                   answerController,
+                //                                               decoration:
+                //                                                   InputDecoration(
+                //                                                 hintText:
+                //                                                     "Right Option",
+                //                                                 helperStyle:
+                //                                                     GoogleFonts
+                //                                                         .openSans(
+                //                                                   color: Colors
+                //                                                       .white,
+                //                                                   fontSize:
+                //                                                       size.height *
+                //                                                           0.02,
+                //                                                 ),
+                //                                               ),
+                //                                               textAlign:
+                //                                                   TextAlign
+                //                                                       .center,
+                //                                               style: GoogleFonts
+                //                                                   .openSans(
+                //                                                 color: Colors
+                //                                                     .white,
+                //                                                 fontSize:
+                //                                                     size.height *
+                //                                                         0.02,
+                //                                               ),
+                //                                             ),
+                //                                           )
+                //                                         ],
+                //                                       ))
+                //                                   : SizedBox(
+                //                                       height: size.height * 0.3,
+                //                                       width: size.width * 0.9,
+                //                                       child: Column(
+                //                                         children: [
+                //                                           SizedBox(
+                //                                             height:
+                //                                                 size.height *
+                //                                                     0.2,
+                //                                             width: size.width *
+                //                                                 0.9,
+                //                                             child: ListView
+                //                                                 .builder(
+                //                                               physics:
+                //                                                   const NeverScrollableScrollPhysics(),
+                //                                               itemCount:
+                //                                                   optionController
+                //                                                       .length,
+                //                                               itemBuilder:
+                //                                                   (context,
+                //                                                       index_2) {
+                //                                                 return Padding(
+                //                                                   padding:
+                //                                                       const EdgeInsets
+                //                                                           .all(
+                //                                                           6.0),
+                //                                                   child: Row(
+                //                                                     mainAxisAlignment:
+                //                                                         MainAxisAlignment
+                //                                                             .start,
+                //                                                     children: [
+                //                                                       AutoSizeText(
+                //                                                         options[
+                //                                                             index_2],
+                //                                                         style: GoogleFonts.openSans(
+                //                                                             color:
+                //                                                                 Colors.white,
+                //                                                             fontSize: size.height * 0.022),
+                //                                                       ),
+                //                                                       SizedBox(
+                //                                                         width: size.width *
+                //                                                             0.022,
+                //                                                       ),
+                //                                                       Container(
+                //                                                         height: size.height *
+                //                                                             0.065,
+                //                                                         width: size.width *
+                //                                                             0.8,
+                //                                                         decoration: BoxDecoration(
+                //                                                             color:
+                //                                                                 Colors.transparent,
+                //                                                             borderRadius: const BorderRadius.all(Radius.circular(20)),
+                //                                                             border: Border.all(color: Colors.white54, width: 2)),
+                //                                                         child:
+                //                                                             TextField(
+                //                                                           controller:
+                //                                                               optionController[index_2],
+                //                                                           textAlign:
+                //                                                               TextAlign.center,
+                //                                                           style:
+                //                                                               GoogleFonts.openSans(
+                //                                                             color:
+                //                                                                 Colors.white,
+                //                                                             fontSize:
+                //                                                                 size.height * 0.02,
+                //                                                           ),
+                //                                                         ),
+                //                                                       ),
+                //                                                     ],
+                //                                                   ),
+                //                                                 );
+                //                                               },
+                //                                             ),
+                //                                           ),
+                //                                           SizedBox(
+                //                                             height:
+                //                                                 size.height *
+                //                                                     0.004,
+                //                                           ),
+                //                                           Container(
+                //                                             height:
+                //                                                 size.height *
+                //                                                     0.063,
+                //                                             width: size.width *
+                //                                                 0.79,
+                //                                             decoration: BoxDecoration(
+                //                                                 color: Colors
+                //                                                     .transparent,
+                //                                                 borderRadius:
+                //                                                     const BorderRadius
+                //                                                         .all(
+                //                                                         Radius.circular(
+                //                                                             20)),
+                //                                                 border: Border.all(
+                //                                                     color: Colors
+                //                                                         .white54,
+                //                                                     width: 2)),
+                //                                             child: TextField(
+                //                                               controller:
+                //                                                   answerController,
+                //                                               decoration:
+                //                                                   InputDecoration(
+                //                                                 hintText:
+                //                                                     "Right Option",
+                //                                                 helperStyle:
+                //                                                     GoogleFonts
+                //                                                         .openSans(
+                //                                                   color: Colors
+                //                                                       .white,
+                //                                                   fontSize:
+                //                                                       size.height *
+                //                                                           0.02,
+                //                                                 ),
+                //                                               ),
+                //                                               textAlign:
+                //                                                   TextAlign
+                //                                                       .center,
+                //                                               style: GoogleFonts
+                //                                                   .openSans(
+                //                                                 color: Colors
+                //                                                     .white,
+                //                                                 fontSize:
+                //                                                     size.height *
+                //                                                         0.02,
+                //                                               ),
+                //                                             ),
+                //                                           )
+                //                                         ],
+                //                                       )),
+                //                               SizedBox(
+                //                                 height: size.height * 0.01,
+                //                               ),
+                //                               Row(
+                //                                 mainAxisAlignment:
+                //                                     MainAxisAlignment.center,
+                //                                 children: [
+                //                                   Container(
+                //                                     height: size.height * 0.056,
+                //                                     width: size.width * 0.55,
+                //                                     decoration: const BoxDecoration(
+                //                                         borderRadius:
+                //                                             BorderRadius.all(
+                //                                                 Radius.circular(
+                //                                                     100))),
+                //                                     child: ElevatedButton(
+                //                                         onPressed: () {
+                //                                           List<String>
+                //                                               optionList = [];
+                //                                           for (var i = 0;
+                //                                               i <
+                //                                                   optionController
+                //                                                       .length;
+                //                                               i++) {
+                //                                             optionList.add(
+                //                                                 optionController[
+                //                                                         i]
+                //                                                     .text
+                //                                                     .toString()
+                //                                                     .trim());
+                //                                           }
+                //                                           FirebaseFirestore
+                //                                               .instance
+                //                                               .collection(
+                //                                                   "Notes")
+                //                                               .doc(
+                //                                                   "$university_filter $college_filter $branch_filter $year_filter $section_filter $subject_filter")
+                //                                               .set({
+                //                                             "Notes-1": {
+                //                                               "Question-1": {
+                //                                                 "Question":
+                //                                                     questionController
+                //                                                         .text
+                //                                                         .toString()
+                //                                                         .trim(),
+                //                                                 "Options":
+                //                                                     optionList,
+                //                                                 "Answer":
+                //                                                     answerController
+                //                                                         .text
+                //                                                         .toString(),
+                //                                                 "Question-Type": _options ==
+                //                                                         Options
+                //                                                             .multipleChoice
+                //                                                     ? "multipleChoice"
+                //                                                     : "True and False"
+                //                                               },
+                //                                             }
+                //                                           }).whenComplete(() {
+                //                                             setState(() {
+                //                                               answerController
+                //                                                   .clear();
+                //                                               questionController
+                //                                                   .clear();
+                //                                               optionList
+                //                                                   .clear();
+                //                                             });
+                //                                           });
+                //
+                //                                           setState(() {
+                //                                             currIndex++;
+                //                                             pageController.animateToPage(
+                //                                                 currIndex,
+                //                                                 duration:
+                //                                                     const Duration(
+                //                                                         milliseconds:
+                //                                                             600),
+                //                                                 curve: Curves
+                //                                                     .linear);
+                //                                           });
+                //                                         },
+                //                                         child: AutoSizeText(
+                //                                           "Save and Next",
+                //                                           style: GoogleFonts
+                //                                               .openSans(
+                //                                             color: Colors.white,
+                //                                             fontSize:
+                //                                                 size.height *
+                //                                                     0.024,
+                //                                           ),
+                //                                         )),
+                //                                   )
+                //                                 ],
+                //                               )
+                //                             ],
+                //                           )
+                //                         : const SizedBox()
+                //                   ],
+                //                 ),
+                //               ));
+                //         },
+                //       )),
+                // )
+
+              ]),
         ));
-
-
   }
 }

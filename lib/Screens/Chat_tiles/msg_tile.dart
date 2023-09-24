@@ -5,9 +5,9 @@ import 'package:campus_link_teachers/Screens/Chat_tiles/Pdf_tile.dart';
 import 'package:campus_link_teachers/Screens/Chat_tiles/Reply_Tile.dart';
 import 'package:campus_link_teachers/Screens/Chat_tiles/Text_Tile.dart';
 import 'package:campus_link_teachers/Screens/Chat_tiles/Video_Tile.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-
 import 'User_circle_Avatar.dart';
 
 class MsgTile extends StatelessWidget {
@@ -30,7 +30,7 @@ class MsgTile extends StatelessWidget {
       required this.videoMsg,
 
       required this.stamp,
-      required this.comressedURL, required this.image, required this.pdfMsg, required this.pdfImageUrl, required this.pdfUrl, required this.pdfName, required this.pdfSize, required this.email});
+      required this.comressedURL, required this.image, required this.pdfMsg, required this.pdfImageUrl, required this.pdfUrl, required this.pdfName, required this.pdfSize, required this.email, required this.snapshot});
   final bool imageMsg;
   final String comressedURL;
   final bool reply;
@@ -55,6 +55,7 @@ class MsgTile extends StatelessWidget {
   final String pdfUrl;
   final String pdfName;
   final int pdfSize;
+  final AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -133,7 +134,7 @@ class MsgTile extends StatelessWidget {
 
               SizedBox(
                   width: width - size.width*0.18,
-                  child: NameTile(sender:sender,name: name, channel: channel, email: email,)
+                  child: NameTile(sender:sender,name: name, channel: channel, email: email,snapshot: snapshot,)
               ),
 
             ],

@@ -512,7 +512,7 @@ class _SubjectState extends State<Subject> {
                                             var doc = await  FirebaseFirestore.instance.collection("Students").doc(element).collection('Attendance').doc("${widget.subject}-$month").get();
 
 
-                                            print(doc.data()!["0"]);
+
                                             print("..................startday: $startday .....Lastday $lastday");
                                             for(int day=startday ; day<= lastday; day++){
                                               int countP=0;

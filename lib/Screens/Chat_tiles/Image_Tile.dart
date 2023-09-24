@@ -76,7 +76,7 @@ class _ImageTileState extends State<ImageTile> {
           },
               child: ClipRect(
                 child: Container(
-                  width: size.width*0.55,
+                  width: size.width*0.7,
                   height: size.height*0.3,
                   decoration: BoxDecoration(
                     color: Colors.black,

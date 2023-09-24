@@ -17,14 +17,14 @@ import 'chat_list.dart';
 import 'msg_tile.dart';
 import '../loadingscreen.dart';
 
-class chat_page extends StatefulWidget {
-  const chat_page({Key? key, required this.channel}) : super(key: key);
+class ChatPage extends StatefulWidget {
+  const ChatPage({Key? key, required this.channel}) : super(key: key);
   final String channel;
   @override
-  State<chat_page> createState() => _chat_pageState();
+  State<ChatPage> createState() => _ChatPageState();
 }
 
-class _chat_pageState extends State<chat_page> {
+class _ChatPageState extends State<ChatPage> {
   TextEditingController messageController = TextEditingController();
   final ItemScrollController scrollController = ItemScrollController();
   double fieldIconWidth = 150;
@@ -43,11 +43,12 @@ class _chat_pageState extends State<chat_page> {
             .doc(widget.channel)
             .snapshots(),
         builder: (context, snapshot) {
+          String type = snapshot.hasData ? snapshot.data!.data()!["Type"]?? "" : "";
           List<dynamic> message = snapshot.data?.data()!["Messages"] == null
               ? []
               : snapshot.data?.data()!["Messages"].reversed.toList();
           int activeCount = 0;
-          snapshot.hasData ? activeCount = activeStatus(snapshot) : null;
+          snapshot.hasData ?  snapshot.data!.data()!["Type"] !="Personal" ? activeCount = activeStatus(snapshot) : null : null;
           snapshot.hasData ? develered(snapshot) : null;
 
           return snapshot.hasData
@@ -67,17 +68,13 @@ class _chat_pageState extends State<chat_page> {
                     .snapshots(),
                 builder: (context, snapshot2) {
 
-                  snapshot2.hasData
-                      ?
-                  print("..... drhfd${message[0]["UID"]}_${message[0]["Stamp"].toDate().toString()}_Delevered")
-                      :
-                  null;
                   return snapshot2.hasData
                       ?
                   Scaffold(
                     backgroundColor: Colors.transparent,
                     appBar: !selected
                         ?
+
                     AppBar(
                       elevation: 0,
                       backgroundColor: Colors.black87,
@@ -96,7 +93,110 @@ class _chat_pageState extends State<chat_page> {
                           child: const Icon(
                               Icons.arrow_back_ios_new)),
                       centerTitle: false,
-                      title: Row(
+                      title:
+                      type == "Personal"
+                          ?
+                      StreamBuilder(
+                        stream: FirebaseFirestore
+                            .instance
+                            .collection(snapshot.data!.data()!["Members"][0]["Name"]==usermodel["Name"] ? snapshot.data!.data()!["Members"][1]["Post"] : snapshot.data!.data()!["Members"][0]["Post"])
+                            .doc(snapshot.data!.data()!["Members"][0]["Name"]==usermodel["Name"] ? snapshot.data!.data()!["Members"][1]["Email"] : snapshot.data!.data()!["Members"][0]["Email"])
+                            .snapshots(),
+                        builder: (context, snapshot1) {
+                          return snapshot.hasData ?
+                          Row(
+                            mainAxisAlignment:
+                            MainAxisAlignment.start,
+                            children: [
+                              CircleAvatar(
+                                radius: size.height * 0.027,
+                                backgroundColor: Colors.white70,
+                                backgroundImage: snapshot1.data?.data()!["Profile_URL"] != "null"
+                                    ?
+                                NetworkImage(snapshot1.data?.data()!["Profile_URL"] ?? "")
+                                    :
+                                null,
+
+                                child: snapshot1.data?.data()!["Profile_URL"] == "null"
+                                    ?
+                                AutoSizeText(
+                                  widget.channel.substring(0, 1),
+                                  style: GoogleFonts.exo(
+                                      color: Colors.black,
+                                      fontSize: size.height * 0.035,
+                                      fontWeight: FontWeight.w600),
+                                )
+                                    : null,
+                              ),
+                              SizedBox(
+                                width: size.width * 0.01,
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    PageTransition(
+                                        childCurrent: ChatPage(
+                                            channel: widget.channel),
+                                        child: Chat_Info(
+                                          muted: snapshot.data!.data()?[usermodel["Email"].toString().split("@")[0]]["Mute Notification"] ?? true,
+                                          channel: widget.channel,
+                                          membersCount: snapshot.data!.data()!["Members"].length,
+                                          url: snapshot.data?.data()!["image_URL"] ?? "",
+                                        ),
+                                        type: PageTransitionType
+                                            .rightToLeftJoined,
+                                        duration:
+                                        const Duration(
+                                            milliseconds:
+                                            300)),
+                                  );
+                                },
+                                child: Column(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.center,
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      width: size.width * 0.56,
+                                      child: AutoSizeText(
+                                        snapshot1.data?.data()!["Name"],
+                                        style: GoogleFonts.exo(
+                                            color: Colors.white,
+                                            fontSize:
+                                            size.width *
+                                                0.045),
+                                        maxLines: 1,
+                                        minFontSize: 1,
+                                      ),
+                                    ),
+                                    activeCount > 0
+                                        ?
+                                    AutoSizeText(
+                                      "$activeCount Online",
+                                      style: GoogleFonts.exo(
+                                          color: Colors
+                                              .green,
+                                          fontSize:
+                                          size.width *
+                                              0.028),
+                                      minFontSize: 1,
+                                      maxLines: 1,
+                                    )
+                                        :
+                                    const SizedBox(),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          )
+                              :
+                          const SizedBox();
+                        },
+                      )
+                          :
+                      Row(
                         mainAxisAlignment:
                         MainAxisAlignment.start,
                         children: [
@@ -128,20 +228,13 @@ class _chat_pageState extends State<chat_page> {
                               Navigator.push(
                                 context,
                                 PageTransition(
-                                    childCurrent: chat_page(
-                                        channel:
-                                        widget.channel),
+                                    childCurrent: ChatPage(
+                                        channel: widget.channel),
                                     child: Chat_Info(
-                                      channel:
-                                      widget.channel,
-                                      membersCount: snapshot
-                                          .data!
-                                          .data()![
-                                      "Members"]
-                                          .length,
-                                      url: snapshot.data
-                                          ?.data()![
-                                      "image_URL"] ?? "",
+                                      muted: snapshot.data!.data()?[usermodel["Email"].toString().split("@")[0]]["Mute Notification"] ?? true,
+                                      channel: widget.channel,
+                                      membersCount: snapshot.data!.data()!["Members"].length,
+                                      url: snapshot.data?.data()!["image_URL"] ?? "",
                                     ),
                                     type: PageTransitionType
                                         .rightToLeftJoined,
@@ -420,6 +513,7 @@ class _chat_pageState extends State<chat_page> {
                                       message[index]["Doc_Name"] ?? "",
                                     message[index]["Media_Type"].toString()=="Pdf"
                                         ?message[index]["Doc_Size"] : 0,
+                                      snapshot
                                   ),
                                 ),
                               )
@@ -502,6 +596,7 @@ class _chat_pageState extends State<chat_page> {
                                   "",
                                   message[index]["Doc_Name"] ?? "",
                                   message[index]["Doc_Size"] ?? 0,
+                                    snapshot
                                 ),
                               )
                             ],
@@ -518,7 +613,6 @@ class _chat_pageState extends State<chat_page> {
                               .bottom),
                       child: Container(
                         width: size.width,
-                        //color: Colors.black26,
                         padding: EdgeInsets.symmetric(
                             horizontal: size.width * 0.03,
                             vertical: size.height * 0.01),
@@ -580,8 +674,7 @@ class _chat_pageState extends State<chat_page> {
                                                 .start,
                                             children: [
                                               Text(
-                                                message[replyIndex]
-                                                ["Name"],
+                                                message.isNotEmpty ? message[replyIndex]["Name"] : "",
                                                 style: GoogleFonts.exo(
                                                     fontWeight:
                                                     FontWeight
@@ -589,16 +682,12 @@ class _chat_pageState extends State<chat_page> {
                                                     fontSize: 14),
                                               ),
                                               Text(
-                                                message[replyIndex]
-                                                ["text"]
-                                                    .toString()
-                                                    .substring(
-                                                    0,
-                                                    message[replyIndex]["text"].length <
+                                                message.isNotEmpty ? message[replyIndex]["text"].toString()
+                                                    .substring(0, message[replyIndex]["text"].length <
                                                         120
                                                         ? message[replyIndex]["text"]
                                                         .length
-                                                        : 120),
+                                                        : 120) : "",
                                                 style: GoogleFonts.exo(
                                                     fontWeight:
                                                     FontWeight
@@ -622,13 +711,13 @@ class _chat_pageState extends State<chat_page> {
                                     ),
                                   ),
                                   SizedBox(
-                                    width: size.width * 0.73,
+                                    width: size.width * 0.75,
                                     child: TextField(
                                       enabled: !(snapshot.data!.data()?[usermodel["Email"].toString().split("@")[0]]["Mute"] ?? false),
                                       cursorColor: Colors.black,
                                       controller: messageController,
                                       enableSuggestions: true,
-                                      maxLines: 5,
+                                      maxLines: 3,
                                       minLines: 1,
                                       autocorrect: true,
                                       textAlign: TextAlign.start,
@@ -636,27 +725,23 @@ class _chat_pageState extends State<chat_page> {
                                           color: Colors.black,
                                           fontSize: size.width*0.045),
                                       decoration: InputDecoration(
-                                        suffixIcon: AnimatedContainer(
-                                          duration:
-                                          const Duration(
-                                              milliseconds:
-                                              200),
-                                          width: fieldIconWidth,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment
-                                                .end,
-                                            children: [
-                                              Transform.rotate(
+
+
+                                        suffix: PopupMenuButton(
+                                          child: const Icon(Icons.attach_file_rounded),
+
+                                          itemBuilder: (context) {
+                                            return [
+                                              PopupMenuItem(child: Transform.rotate(
                                                 angle: 1.6,
                                                 child: IconButton(
                                                     onPressed:
                                                         () async {
-                                                      FilePickerResult? filePickerResult = await FilePicker
+                                                      await FilePicker
                                                           .platform
                                                           .pickFiles(
-                                                        type: FileType.custom,
-                                                        allowedExtensions: ['pdf'],
+                                                          type: FileType.custom,
+                                                          allowedExtensions: ['pdf'],
                                                           allowMultiple: false)
                                                           .then(
                                                               (value) {
@@ -687,11 +772,56 @@ class _chat_pageState extends State<chat_page> {
                                                     icon: const Icon(
                                                         Icons
                                                             .attachment_outlined)),
-                                              ),
-                                              fieldIconWidth >=
-                                                  size.width *
-                                                      0.35
-                                                  ? IconButton(
+                                              ),),
+                                              PopupMenuItem(child: Transform.rotate(
+                                                angle: 1.6,
+                                                child: IconButton(
+                                                    onPressed:
+                                                        () async {
+                                                      ImagePicker
+                                                      imagePicker =
+                                                      ImagePicker();
+                                                      print(
+                                                          imagePicker);
+                                                      XFile? file = await imagePicker.pickVideo(
+                                                          source: ImageSource
+                                                              .gallery,
+                                                          maxDuration:
+                                                          const Duration(seconds: 30));
+                                                      file!.path
+                                                          .isNotEmpty
+                                                          ? Navigator
+                                                          .push(
+                                                        context,
+                                                        PageTransition(
+                                                            childCurrent: ChatPage(channel: widget.channel),
+                                                            duration: const Duration(milliseconds: 600),
+                                                            child: SendMedia(
+                                                              imagePath: file,
+                                                              channel: widget.channel,
+                                                              messageLength: message.length,
+                                                              replyBoxHeight: replyBoxHeight,
+                                                              replyToName: message[replyIndex]["Name"],
+                                                              replyToText: message[replyIndex]["text"].toString().substring(0, message[replyIndex]["text"].length > 120 ? 120 : message[replyIndex]["text"].length),
+                                                              replyIndex: replyIndex,
+                                                              video: true,
+                                                            ),
+                                                            type: PageTransitionType.bottomToTopJoined),
+                                                      )
+                                                          : null;
+                                                    },
+                                                    icon: Icon(
+                                                      Icons
+                                                          .video_collection,
+                                                      color: Colors
+                                                          .black,
+                                                      size: size
+                                                          .height *
+                                                          0.04,
+                                                    )),
+                                              ),),
+                                              PopupMenuItem(
+                                              child: IconButton(
                                                   onPressed:
                                                       () async {
                                                     ImagePicker
@@ -709,7 +839,7 @@ class _chat_pageState extends State<chat_page> {
                                                           ? Navigator.push(
                                                         context,
                                                         PageTransition(
-                                                            childCurrent: chat_page(channel: widget.channel),
+                                                            childCurrent: ChatPage(channel: widget.channel),
                                                             duration: Duration(milliseconds: 600),
                                                             child: SendMedia(
                                                               imagePath: value,
@@ -734,60 +864,10 @@ class _chat_pageState extends State<chat_page> {
                                                     size: size
                                                         .height *
                                                         0.04,
-                                                  ))
-                                                  : const SizedBox(),
-                                              fieldIconWidth >=
-                                                  size.width *
-                                                      0.35
-                                                  ? IconButton(
-                                                  onPressed:
-                                                      () async {
-                                                    ImagePicker
-                                                    imagePicker =
-                                                    ImagePicker();
-                                                    print(
-                                                        imagePicker);
-                                                    XFile? file = await imagePicker.pickVideo(
-                                                        source: ImageSource
-                                                            .gallery,
-                                                        maxDuration:
-                                                        const Duration(seconds: 30));
-                                                    file!.path
-                                                        .isNotEmpty
-                                                        ? Navigator
-                                                        .push(
-                                                      context,
-                                                      PageTransition(
-                                                          childCurrent: chat_page(channel: widget.channel),
-                                                          duration: Duration(milliseconds: 600),
-                                                          child: SendMedia(
-                                                            imagePath: file,
-                                                            channel: widget.channel,
-                                                            messageLength: message.length,
-                                                            replyBoxHeight: replyBoxHeight,
-                                                            replyToName: message[replyIndex]["Name"],
-                                                            replyToText: message[replyIndex]["text"].toString().substring(0, message[replyIndex]["text"].length > 120 ? 120 : message[replyIndex]["text"].length),
-                                                            replyIndex: replyIndex,
-                                                            video: true,
-                                                          ),
-                                                          type: PageTransitionType.bottomToTopJoined),
-                                                    )
-                                                        : null;
-                                                  },
-                                                  icon: Icon(
-                                                    Icons
-                                                        .video_collection,
-                                                    color: Colors
-                                                        .black,
-                                                    size: size
-                                                        .height *
-                                                        0.04,
-                                                  ))
-                                                  : const SizedBox(),
-                                            ],
-                                          ),
-                                        ),
-                                        suffixIconColor: Colors.black,
+                                                  )),)
+                                            ];
+                                          },
+                                        ),                                        suffixIconColor: Colors.black,
                                         fillColor: Colors.white70,
                                         filled: true,
                                         hintText: "Message",
@@ -835,10 +915,10 @@ class _chat_pageState extends State<chat_page> {
                                     ),
                                   ),
                                 ]),
-                            TextButton(
-                              onPressed: () async {
+                             InkWell(
+                              onTap: () async {
                                 DateTime stamp = DateTime.now();
-                                int l=message.length+1;
+                                //int l=message.length+1;
                                 final doc=await FirebaseFirestore.instance.collection("Messages").doc(widget.channel).collection("Messages_Detail").doc("Messages_Detail").get();
 
                                 messageController.text.trim() != ""
@@ -913,12 +993,7 @@ class _chat_pageState extends State<chat_page> {
                                             1,
                                       }
                                     ]),
-                                    usermodel["Email"].toString().split("@")[0] : {
-                                      "Active" : true,
-                                      "Last_Active": DateTime.now(),
-                                      "Read_Count" : l,
-                                      "Token": FieldValue.arrayUnion([usermodel["Token"]]),
-                                    }
+
                                   },
                                 ).whenComplete(
                                       () async {
@@ -940,7 +1015,7 @@ class _chat_pageState extends State<chat_page> {
                                         print("............member $user");
                                         List<dynamic> tokens =  user["Token"];
                                         print("............error1");
-                                        if(member["Email"]!= usermodel["Email"] && !snapshot.data!.data()?[member["Email"].toString().split("@")[0]]["Active"] ){
+                                        if(member["Email"]!= usermodel["Email"] && !snapshot.data!.data()?[member["Email"].toString().split("@")[0]]["Active"] && snapshot.data!.data()?[member["Email"].toString().split("@")[0]]["Mute Notification"] != false){
                                           for (var token in tokens) {
                                             print("${member["Email"]}");
 
@@ -977,7 +1052,7 @@ class _chat_pageState extends State<chat_page> {
                               },
                               child: CircleAvatar(
                                 backgroundColor: Colors.white,
-                                radius: size.height * 0.025,
+                                radius: size.height * 0.028,
                                 child: Icon(
                                   Icons.send,
                                   size: size.height * 0.03,
@@ -990,9 +1065,8 @@ class _chat_pageState extends State<chat_page> {
                       ),
                     ),
                   )
-                      : const loading(
-                      text:
-                      "Please wait Loading chat from the server");
+                      :
+                  const loading(text: "Please wait Loading chat from the server");
                 }),
           )
               :
@@ -1013,7 +1087,7 @@ class _chat_pageState extends State<chat_page> {
       int length,
       bool reply,
       String replyToName,
-      String ReplyToText,
+      String replyToText,
       int scrollindex,
       bool imageMsg,
       String imageURL,
@@ -1028,6 +1102,7 @@ class _chat_pageState extends State<chat_page> {
       String pdfUrl,
       String pdfName,
       int pdfSize,
+      AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot
       ) {
     return Align(
       alignment: sender ? Alignment.centerRight : Alignment.centerLeft,
@@ -1107,7 +1182,7 @@ class _chat_pageState extends State<chat_page> {
             imageURL: imageURL,
             reply: reply,
             replyToName: replyToName,
-            ReplyToText: ReplyToText,
+            ReplyToText: replyToText,
             scrollController: controller,
             scrollindex: scrollindex,
             sender: sender,
@@ -1121,7 +1196,7 @@ class _chat_pageState extends State<chat_page> {
               pdfUrl : pdfUrl,
             pdfName : pdfName,
             pdfSize: pdfSize,
-
+            snapshot: snapshot,
           ),
 
           !sender
@@ -1171,7 +1246,7 @@ class _chat_pageState extends State<chat_page> {
 
   int activeStatus(AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
     int count = 0;
-    List<dynamic> memberList = snapshot.data?.data()!["Members"];
+    List<dynamic> memberList = snapshot.data?.data()!["Members"] ?? [];
 
     for (Map<String, dynamic> email in memberList) {
       print(email);

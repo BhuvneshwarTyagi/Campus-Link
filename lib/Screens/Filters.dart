@@ -90,7 +90,7 @@ class _FiltersState extends State<Filters> {
             style: GoogleFonts.gfsDidot(fontSize: size.height*0.05, color: Colors.black),
           ),
         ),
-        bottomNavigationBar: Container(
+        floatingActionButton: Container(
           color: Colors.transparent,
           width: MediaQuery.of(context).size.width,
           height: size.height * 0.05,
@@ -190,7 +190,7 @@ class _FiltersState extends State<Filters> {
                   height: size.height*0.01,
                 ),
                 SizedBox(
-                  height: size.height * 0.71,
+                  height: size.height * 0.75,
                   width: size.width,
                   child: StreamBuilder(
                     stream: FirebaseFirestore.instance
