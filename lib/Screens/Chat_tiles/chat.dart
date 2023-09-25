@@ -2,21 +2,13 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:chat_bubbles/date_chips/date_chip.dart';
 import 'package:chatview/chatview.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:page_transition/page_transition.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:swipe_to/swipe_to.dart';
 import '../../Constraints.dart';
 import '../../Database/database.dart';
-import 'Document_Viewer.dart';
-import 'Sending_Media.dart';
+import '../loadingscreen.dart';
 import 'chat_info.dart';
 import 'chat_list.dart';
-import 'msg_tile.dart';
-import '../loadingscreen.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({Key? key, required this.channel}) : super(key: key);
@@ -26,28 +18,17 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  TextEditingController messageController = TextEditingController();
-  final ItemScrollController scrollController = ItemScrollController();
-  double fieldIconWidth = 150;
-  List<int> tick = [];
-  bool selected = false;
-  int index1 = -1;
-  int replyIndex = 0;
-  ScrollController x=ScrollController();
-  double replyBoxHeight = 0;
   final chatController = ChatController(
     initialMessageList: [],
     scrollController: ScrollController(),
     chatUsers: [],
   );
-  var imagePath;
-  List<Message> messageList=[];
   final currentUser = ChatUser(
     id: '${usermodel["Email"]}',
     name: '${usermodel["Name"]}',
     profilePhoto: usermodel["Profile_URL"],
   );
-  List<ChatUser> chatUsers=[];
+  bool loadChat=true;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -57,31 +38,81 @@ class _ChatPageState extends State<ChatPage> {
             .doc(widget.channel)
             .snapshots(),
         builder: (context, snapshot) {
+          String channel='';
+          int activeCount=0;
           if(snapshot.hasData){
-            print("reloaded");
-
-            for(var member in snapshot.data!.data()!["Members"]){
-              if(member["Email"] != usermodel["Email"]){
+            activeCount=activeStatus(snapshot);
+            snapshot.data!.data()!['Type']=="Personal"
+                ?
+            snapshot.data!.data()!['Members'][0]["Email"]==usermodel["Email"]
+                ?
+            channel=snapshot.data!.data()!['Members'][1]["Name"]
+                :
+            channel=snapshot.data!.data()!['Members'][0]["Name"]
+                :
+            channel=widget.channel;
+            if(loadChat){
+              print("reloaded");
+              for (var member in snapshot.data!.data()!["Members"]) {
                 chatController.chatUsers.add(
-
                   ChatUser(
                     id: '${member["Email"]}',
                     name: member["Email"].toString().split("@")[0],
-                    profilePhoto: usermodel["Profile_URL"],
+                    profilePhoto: snapshot.data!.data()![member["Email"].toString().split("@")[0]]["Profile_URL"],
                   ),
                 );
+
               }
+
+              for (var msg in snapshot.data!.data()!["Messages"]) {
+                final message1 = Message(
+                    id: msg['Stamp'].toString(),
+                    message: msg['text'],
+                    createdAt: msg['Stamp'].toDate(),
+                    sendBy: msg["UID"],
+                    replyMessage: ReplyMessage(
+                      message: msg['ReplyMessage'],
+                      messageId: msg["ReplyMessageId"],
+                      messageType: MessageType.text,
+                      replyTo: msg['ReplyTo'],
+                      replyBy: msg['ReplyBy'],
+                    )
+                );
+                chatController.initialMessageList.add(message1);
+              }
+              loadChat=false;
             }
+            if(!loadChat && snapshot.data!.data()!["Messages"].length > snapshot.data!.data()![usermodel["Email"].toString().split("@")[0]]["Read_Count"]){
+              print("..........inside");
+              for (var member in snapshot.data!.data()!["Members"]) {
+                chatController.chatUsers.add(
+                  ChatUser(
+                    id: '${member["Email"]}',
+                    name: member["Email"].toString().split("@")[0],
+                    profilePhoto: snapshot.data!.data()![member["Email"].toString().split("@")[0]]["Profile_URL"],
+                  ),
+                );
 
-            for(var msg in snapshot.data!.data()!["Messages"]){
-              final message1 = Message(
-                id: msg['Stamp'].toString(),
-                message: msg['text'],
-                createdAt: msg['Stamp'].toDate(),
-                sendBy: msg["UID"],
+              }
 
-              );
-              chatController.addMessage(message1);
+              for (int i=snapshot.data!.data()![usermodel["Email"].toString().split("@")[0]]["Read_Count"];i<snapshot.data!.data()!["Messages"].length;i++) {
+                print("...................i: $i");
+                final message1 = Message (
+                    id: snapshot.data!.data()!["Messages"][i]['Stamp'].toString(),
+                    message: snapshot.data!.data()!["Messages"][i]['text'],
+                    createdAt: snapshot.data!.data()!["Messages"][i]['Stamp'].toDate(),
+                    sendBy: snapshot.data!.data()!["Messages"][i]["UID"],
+                    replyMessage: ReplyMessage(
+                      message: snapshot.data!.data()!["Messages"][i]['ReplyMessage'],
+                      messageId: snapshot.data!.data()!["Messages"][i]["ReplyMessageId"],
+                      messageType: MessageType.text,
+                      replyTo: snapshot.data!.data()!["Messages"][i]['ReplyTo'],
+                      replyBy: snapshot.data!.data()!["Messages"][i]['ReplyBy'],
+                    )
+                );
+                chatController.initialMessageList.add(message1);
+              }
+              countUpdate(snapshot.data!.data()!["Messages"].length);
             }
           }
 
@@ -95,53 +126,149 @@ class _ChatPageState extends State<ChatPage> {
                     fit: BoxFit.fill)),
             width: size.width,
             child: ChatView(
+              appBar: AppBar(
+                backgroundColor: Colors.black87,
+                title: InkWell(
+                  onTap: () async {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) {
+                          return  Chat_Info(channel: widget.channel, membersCount: snapshot.data!.data()!["Members"].length, url: snapshot.data!.data()!["image_URL"], muted: snapshot.data!.data()![usermodel["Email"].toString().split("@")[0]]["Mute"] ?? false,);
+                              },
+                        ),
+                    );
+                    },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AutoSizeText(
+                        channel,
+                        style: GoogleFonts.exo(
+                          fontSize: size.width*0.04,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      activeCount > 0
+                                                  ?
+                                              AutoSizeText(
+                                                "$activeCount Online",
+                                                style: GoogleFonts.exo(
+                                                    color: Colors
+                                                        .green,
+                                                    fontSize:
+                                                    size.width *
+                                                        0.028),
+                                                minFontSize: 1,
+                                                maxLines: 1,
+                                              )
+                                                  :
+                                              const SizedBox(),
+                    ],
+                  ),
+                ),
+                elevation: 0,
+                leading: IconButton(
+                    onPressed: (){
+                      Navigator.of(context).pop();
+                    },
+                    icon: const Icon(Icons.arrow_back_ios_new),
+                ),
+              ),
               profileCircleConfig: ProfileCircleConfiguration(
                 circleRadius: size.width*0.03,
                 profileImageUrl: usermodel["Profile_URL"],
               ),
-              chatBackgroundConfig: const ChatBackgroundConfiguration(backgroundColor: Colors.black54),
+              chatBackgroundConfig: const ChatBackgroundConfiguration(backgroundColor: Colors.black38),
               currentUser: currentUser,
               chatController: chatController,
               onSendTap: onSendTap,
+              sendMessageConfig: SendMessageConfiguration(
+
+                textFieldConfig: TextFieldConfiguration(
+                  textStyle: GoogleFonts.exo(
+                    fontSize: size.width*0.04,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  maxLines: 3,
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom)
+                )
+              ),
               chatViewState: ChatViewState.hasMessages,
               chatBubbleConfig:  ChatBubbleConfiguration(
-                maxWidth: size.width,
-                outgoingChatBubbleConfig: ChatBubble( // demonstrates as current user chat bubble
-                  margin: EdgeInsets.symmetric(horizontal: 12, vertical: 15),
-                  linkPreviewConfig: LinkPreviewConfiguration(
+                maxWidth: size.width*0.6,
+                outgoingChatBubbleConfig: ChatBubble(
+                  senderNameTextStyle: GoogleFonts.exo(
+                    fontSize: size.width*0.04,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                  ),// demonstrates as current user chat bubble
+                  margin: EdgeInsets.symmetric(horizontal: size.width*0.02, vertical: size.height*0.005),
+                  linkPreviewConfig: const LinkPreviewConfiguration(
                     proxyUrl: "Proxy URL", // Need for web
                     backgroundColor: Color(0xff272336),
                     bodyStyle: TextStyle(color: Colors.white),
                     titleStyle: TextStyle(color: Colors.white),
                   ),
-                  color: Color(0xff9f85ff),
-                ),
-                inComingChatBubbleConfig: ChatBubble(
-                  linkPreviewConfig: LinkPreviewConfiguration(
-                    linkStyle: TextStyle(
-                      color: Colors.yellow,
-                      decoration: TextDecoration.underline,
-                    ),
-                    backgroundColor: Colors.black54,
-                    bodyStyle: TextStyle(color: Colors.white70),
-                    titleStyle: TextStyle(color: Colors.yellow),
+                  color: Colors.deepPurple,
+                  borderRadius: const BorderRadius.only(
+                    bottomRight: Radius.circular(0),
+                    bottomLeft: Radius.circular(15),
+                    topRight: Radius.circular(15),
+                    topLeft: Radius.circular(0),
                   ),
-                  textStyle: TextStyle(color:Colors.white70),
-                  onMessageRead: (message) {
-                    /// send your message reciepts to the other client
-                    debugPrint('Message Read');
-                  },
-                  senderNameTextStyle:
-                  TextStyle(color: Colors.yellow),
-                  color: Colors.yellow,
+                  textStyle: GoogleFonts.exo(
+                    fontSize: size.width*0.04,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                  )
+                ),
+                inComingChatBubbleConfig: ChatBubble( // demonstrates as current user chat bubble
+                    margin: EdgeInsets.symmetric(horizontal: size.width*0.02, vertical: size.height*0.005),
+                    linkPreviewConfig: const LinkPreviewConfiguration(
+                      proxyUrl: "Proxy URL", // Need for web
+                      backgroundColor: Color(0xff272336),
+                      bodyStyle: TextStyle(color: Colors.white),
+                      titleStyle: TextStyle(color: Colors.white),
+                    ),
+                    color: Colors.deepPurple,
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(0),
+                      bottomRight: Radius.circular(15),
+                      topLeft: Radius.circular(15),
+                      topRight: Radius.circular(0),
+                    ),
+                    textStyle: GoogleFonts.exo(
+                      fontSize: size.width*0.04,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                    )
                 ),
               ),
               // Add this state once data is available.
-              repliedMessageConfig: const RepliedMessageConfiguration(
-                repliedMsgAutoScrollConfig: RepliedMsgAutoScrollConfig(
+              repliedMessageConfig: RepliedMessageConfiguration(
+                repliedMsgAutoScrollConfig: const RepliedMsgAutoScrollConfig(
                   enableHighlightRepliedMsg: true,
                   enableScrollToRepliedMsg: true,
-                )
+                  highlightScrollCurve: accelerateEasing,
+                  highlightColor: Colors.green,
+                  highlightScrollDuration: Duration(milliseconds: 100)
+                ),
+                textStyle: GoogleFonts.exo(
+                  fontSize: size.width*0.04,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                ),
+                verticalBarColor: Colors.green,
+                backgroundColor: Colors.white12,
+                borderRadius: const BorderRadius.all(Radius.circular(10)),
+                replyTitleTextStyle: GoogleFonts.exo(
+                  fontSize: size.width*0.032,
+                  color: Colors.white70,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
             // child: StreamBuilder(
@@ -1186,166 +1313,166 @@ class _ChatPageState extends State<ChatPage> {
         });
   }
 
-  Widget bubble(
-      String UID,
-      ItemScrollController controller,
-      String text,
-      String name,
-      String image,
-      DateTime stamp,
-      bool sender,
-      Size size,
-      int index,
-      int length,
-      bool reply,
-      String replyToName,
-      String replyToText,
-      int scrollindex,
-      bool imageMsg,
-      String imageURL,
-      String compressedURL,
-      bool videoMsg,
-      String videoURL,
-      String videoThumbnailURL,
-      bool isDelevered,
-      bool isSeen,
-      bool pdf,
-      String pdfImageURL,
-      String pdfUrl,
-      String pdfName,
-      int pdfSize,
-      AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot
-      ) {
-    return Align(
-      alignment: sender ? Alignment.centerRight : Alignment.centerLeft,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment:
-        sender ? MainAxisAlignment.end : MainAxisAlignment.start,
-        children: [
-          sender
-              ?
-          Container(
-            decoration: BoxDecoration(
-                borderRadius: const BorderRadius.all(Radius.circular(15)),
-                gradient: LinearGradient(colors: [
-                  Colors.black.withOpacity(0.9),
-                  Colors.black.withOpacity(0.6)
-                ])),
-            padding: EdgeInsets.fromLTRB(
-                size.width * 0.03,
-                size.height * 0.01,
-                size.width * 0.03,
-                size.height * 0.01),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                AutoSizeText(
-                  "${stamp.hour}:${stamp.minute < 10 ? "0" : ""}${stamp.minute} ${stamp.hour < 12 ? "am" : "pm"}",
-                  style: GoogleFonts.poppins(
-                      color: Colors.white70.withOpacity(0.8),
-                      fontSize: size.width * 0.022,
-                      fontWeight: FontWeight.w700),
-                  textAlign: TextAlign.right,
-                ),
-                const SizedBox(
-                  width: 5,
-                ),
-                isSeen
-                    ? Icon(
-                  Icons.done_all_outlined,
-                  color: isSeen
-                      ? Colors.green
-                      : Colors.white.withOpacity(0.8),
-                  size: size.width * 0.04,
-                )
-                    : isDelevered
-                    ? Icon(
-                  Icons.done_all_outlined,
-                  color: isSeen
-                      ? Colors.white
-                      : Colors.white.withOpacity(0.8),
-                  size: size.width * 0.04,
-                )
-                    : Icon(
-                  Icons.check,
-                  color: isSeen
-                      ? Colors.white
-                      : Colors.white.withOpacity(0.8),
-                  size: size.width * 0.04,
-                )
-              ],
-            ),
-          )
-              :
-          SizedBox(
-            width: size.width * 0.02,
-          ),
-
-          MsgTile(
-            email: UID,
-            comressedURL: compressedURL,
-            image: image,
-            name: name,
-            channel: widget.channel,
-            replyIndex: replyIndex,
-            imageMsg: imageMsg,
-            imageURL: imageURL,
-            reply: reply,
-            replyToName: replyToName,
-            ReplyToText: replyToText,
-            scrollController: controller,
-            scrollindex: scrollindex,
-            sender: sender,
-            stamp: stamp,
-            text: text,
-            videoMsg: videoMsg,
-            videoThumbnailURL: videoThumbnailURL,
-            videoURL: videoURL,
-            pdfMsg : pdf,
-              pdfImageUrl : pdfImageURL,
-              pdfUrl : pdfUrl,
-            pdfName : pdfName,
-            pdfSize: pdfSize,
-            snapshot: snapshot,
-          ),
-
-          !sender
-              ?
-          Container(
-            decoration: BoxDecoration(
-                borderRadius: const BorderRadius.all(Radius.circular(15)),
-                gradient: LinearGradient(colors: [
-                  Colors.black.withOpacity(0.9),
-                  Colors.black.withOpacity(0.6)
-                ])),
-            padding: EdgeInsets.fromLTRB(
-                size.width * 0.03,
-                size.height * 0.01,
-                size.width * 0.03,
-                size.height * 0.01),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                AutoSizeText(
-                  "${stamp.hour}:${stamp.minute < 10 ? "0" : ""}${stamp.minute} ${stamp.hour < 12 ? "am" : "pm"}",
-                  style: GoogleFonts.poppins(
-                      color: Colors.white70.withOpacity(0.8),
-                      fontSize: size.width * 0.022,
-                      fontWeight: FontWeight.w700),
-                  textAlign: TextAlign.right,
-                ),
-              ],
-            ),
-          )
-              :
-          SizedBox(width: size.width * 0.02,),
-        ],
-      ),
-    );
-  }
+  // Widget bubble(
+  //     String UID,
+  //     ItemScrollController controller,
+  //     String text,
+  //     String name,
+  //     String image,
+  //     DateTime stamp,
+  //     bool sender,
+  //     Size size,
+  //     int index,
+  //     int length,
+  //     bool reply,
+  //     String replyToName,
+  //     String replyToText,
+  //     int scrollindex,
+  //     bool imageMsg,
+  //     String imageURL,
+  //     String compressedURL,
+  //     bool videoMsg,
+  //     String videoURL,
+  //     String videoThumbnailURL,
+  //     bool isDelevered,
+  //     bool isSeen,
+  //     bool pdf,
+  //     String pdfImageURL,
+  //     String pdfUrl,
+  //     String pdfName,
+  //     int pdfSize,
+  //     AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot
+  //     ) {
+  //   return Align(
+  //     alignment: sender ? Alignment.centerRight : Alignment.centerLeft,
+  //     child: Row(
+  //       crossAxisAlignment: CrossAxisAlignment.center,
+  //       mainAxisAlignment:
+  //       sender ? MainAxisAlignment.end : MainAxisAlignment.start,
+  //       children: [
+  //         sender
+  //             ?
+  //         Container(
+  //           decoration: BoxDecoration(
+  //               borderRadius: const BorderRadius.all(Radius.circular(15)),
+  //               gradient: LinearGradient(colors: [
+  //                 Colors.black.withOpacity(0.9),
+  //                 Colors.black.withOpacity(0.6)
+  //               ])),
+  //           padding: EdgeInsets.fromLTRB(
+  //               size.width * 0.03,
+  //               size.height * 0.01,
+  //               size.width * 0.03,
+  //               size.height * 0.01),
+  //           child: Row(
+  //             mainAxisAlignment: MainAxisAlignment.end,
+  //             crossAxisAlignment: CrossAxisAlignment.end,
+  //             children: [
+  //               AutoSizeText(
+  //                 "${stamp.hour}:${stamp.minute < 10 ? "0" : ""}${stamp.minute} ${stamp.hour < 12 ? "am" : "pm"}",
+  //                 style: GoogleFonts.poppins(
+  //                     color: Colors.white70.withOpacity(0.8),
+  //                     fontSize: size.width * 0.022,
+  //                     fontWeight: FontWeight.w700),
+  //                 textAlign: TextAlign.right,
+  //               ),
+  //               const SizedBox(
+  //                 width: 5,
+  //               ),
+  //               isSeen
+  //                   ? Icon(
+  //                 Icons.done_all_outlined,
+  //                 color: isSeen
+  //                     ? Colors.green
+  //                     : Colors.white.withOpacity(0.8),
+  //                 size: size.width * 0.04,
+  //               )
+  //                   : isDelevered
+  //                   ? Icon(
+  //                 Icons.done_all_outlined,
+  //                 color: isSeen
+  //                     ? Colors.white
+  //                     : Colors.white.withOpacity(0.8),
+  //                 size: size.width * 0.04,
+  //               )
+  //                   : Icon(
+  //                 Icons.check,
+  //                 color: isSeen
+  //                     ? Colors.white
+  //                     : Colors.white.withOpacity(0.8),
+  //                 size: size.width * 0.04,
+  //               )
+  //             ],
+  //           ),
+  //         )
+  //             :
+  //         SizedBox(
+  //           width: size.width * 0.02,
+  //         ),
+  //
+  //         MsgTile(
+  //           email: UID,
+  //           comressedURL: compressedURL,
+  //           image: image,
+  //           name: name,
+  //           channel: widget.channel,
+  //           replyIndex: replyIndex,
+  //           imageMsg: imageMsg,
+  //           imageURL: imageURL,
+  //           reply: reply,
+  //           replyToName: replyToName,
+  //           ReplyToText: replyToText,
+  //           scrollController: controller,
+  //           scrollindex: scrollindex,
+  //           sender: sender,
+  //           stamp: stamp,
+  //           text: text,
+  //           videoMsg: videoMsg,
+  //           videoThumbnailURL: videoThumbnailURL,
+  //           videoURL: videoURL,
+  //           pdfMsg : pdf,
+  //             pdfImageUrl : pdfImageURL,
+  //             pdfUrl : pdfUrl,
+  //           pdfName : pdfName,
+  //           pdfSize: pdfSize,
+  //           snapshot: snapshot,
+  //         ),
+  //
+  //         !sender
+  //             ?
+  //         Container(
+  //           decoration: BoxDecoration(
+  //               borderRadius: const BorderRadius.all(Radius.circular(15)),
+  //               gradient: LinearGradient(colors: [
+  //                 Colors.black.withOpacity(0.9),
+  //                 Colors.black.withOpacity(0.6)
+  //               ])),
+  //           padding: EdgeInsets.fromLTRB(
+  //               size.width * 0.03,
+  //               size.height * 0.01,
+  //               size.width * 0.03,
+  //               size.height * 0.01),
+  //           child: Row(
+  //             mainAxisAlignment: MainAxisAlignment.end,
+  //             crossAxisAlignment: CrossAxisAlignment.end,
+  //             children: [
+  //               AutoSizeText(
+  //                 "${stamp.hour}:${stamp.minute < 10 ? "0" : ""}${stamp.minute} ${stamp.hour < 12 ? "am" : "pm"}",
+  //                 style: GoogleFonts.poppins(
+  //                     color: Colors.white70.withOpacity(0.8),
+  //                     fontSize: size.width * 0.022,
+  //                     fontWeight: FontWeight.w700),
+  //                 textAlign: TextAlign.right,
+  //               ),
+  //             ],
+  //           ),
+  //         )
+  //             :
+  //         SizedBox(width: size.width * 0.02,),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget date(DateTime date) {
     return DateChip(
@@ -1354,7 +1481,11 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-
+  countUpdate(int length) async {
+    await FirebaseFirestore.instance.collection("Messages").doc(widget.channel).update({
+      "${usermodel["Email"].toString().split("@")[0]}.Read_Count" : length
+    });
+  }
 
   int activeStatus(AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
     int count = 0;
@@ -1430,16 +1561,96 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
-  void onSendTap(String message, ReplyMessage replyMessage,MessageType messageType){
+  Future<void> onSendTap(String message, ReplyMessage replyMessage,MessageType messageType) async {
     print("..........onsendtap reply : ${replyMessage.messageId}  ....Type: $messageType");
-    final message1 = Message(
-      message: message,
-      createdAt: DateTime.now(),
-      sendBy: usermodel["Email"].toString(),
-      replyMessage: replyMessage,
-      messageType: messageType,
-    );
-    chatController.addMessage(message1);
+    // chatController.addMessage(message1);
+    DateTime stamp = DateTime.now();
+                        //int l=message.length+1;
+    final channelDoc= await FirebaseFirestore.instance.collection("Messages").doc(widget.channel).get();
+    final doc=await FirebaseFirestore.instance.collection("Messages").doc(widget.channel).collection("Messages_Detail").doc("Messages_Detail").get();
 
+    !doc.exists
+        ?
+    await FirebaseFirestore.instance.collection("Messages").doc(widget.channel).collection("Messages_Detail").doc("Messages_Detail").set({
+                          "${usermodel["Email"].toString().split("@")[0]}_${stamp.toString().split(".")[0]}_Delevered" : FieldValue.arrayUnion([{
+                            "Email" : usermodel["Email"],
+                            "Stamp" : stamp
+                          }]),
+                          "${usermodel["Email"].toString().split("@")[0]}_${stamp.toString().split(".")[0]}_Seen" : FieldValue.arrayUnion([{
+                            "Email" : usermodel["Email"],
+                            "Stamp" : stamp
+                          }]),
+                        }).whenComplete(() async {
+                          await FirebaseFirestore.instance.collection("Messages").doc(widget.channel).collection("Messages_Detail").doc("Messages_Detail").update({
+                            "${usermodel["Email"].toString().split('@')[0]}_${stamp}_Seened": FieldValue.arrayUnion([usermodel["Email"]]),
+
+                          });
+                        })
+        :
+    await FirebaseFirestore.instance.collection("Messages").doc(widget.channel).collection("Messages_Detail").doc("Messages_Detail").update({
+                          "${usermodel["Email"].toString().split("@")[0]}_${stamp.toString().split(".")[0]}_Delevered" : FieldValue.arrayUnion([{
+                            "Email" : usermodel["Email"],
+                            "Stamp" : stamp
+                          }]),
+                          "${usermodel["Email"].toString().split("@")[0]}_${stamp.toString().split(".")[0]}_Seen" : FieldValue.arrayUnion([{
+                            "Email" : usermodel["Email"],
+                            "Stamp" : stamp
+                          }]),
+                        }).whenComplete(() async {
+                          await FirebaseFirestore.instance.collection("Messages").doc(widget.channel).collection("Messages_Detail").doc("Messages_Detail").update({
+                            "${usermodel["Email"].toString().split('@')[0]}_${stamp.toString().split(".")[0]}_Seened": FieldValue.arrayUnion([usermodel["Email"]]),
+
+                          });
+                        });
+    await FirebaseFirestore
+        .instance
+        .collection("Messages")
+        .doc(widget.channel)
+        .update(
+      {
+        "Messages": FieldValue
+            .arrayUnion([
+              {
+                "Name": usermodel["Name"].toString(),
+                "UID": usermodel["Email"].toString(),
+                "text": message,
+                "Stamp": stamp,
+                "ReplyMessage" : replyMessage.message,
+                "ReplyMessageId" : replyMessage.messageId,
+                "ReplyMessageType" : replyMessage.messageType.name,
+                "ReplyTo" : replyMessage.replyTo,
+                "ReplyBy" : replyMessage.replyBy,
+                "ReplyVoiceDuration" : replyMessage.voiceMessageDuration,
+              }
+              ]),
+      },
+    ).whenComplete(() async {
+            List<dynamic> members = channelDoc.data()!["Members"];
+            for (var member in members) {
+              print("Sending to element");
+              try {
+                Map<String,dynamic> user =  channelDoc.data()?[member["Email"].toString().split("@")[0]];
+                print("............member $user");
+                List<dynamic> tokens =  user["Token"];
+                print("............error1");
+                if(member["Email"]!= usermodel["Email"] && !channelDoc.data()?[member["Email"].toString().split("@")[0]]["Active"] && channelDoc.data()?[member["Email"].toString().split("@")[0]]["Mute Notification"] != false){
+                  for (var token in tokens) {
+                    print("${member["Email"]}");
+                    database().sendPushMessage(
+                        token,
+                        message,
+                        widget.channel,
+                        true,
+                        widget.channel,
+                        stamp);
+
+                  }
+                }
+              } catch (e) {
+                print(e);
+              }
+            }
+            },
+    );
   }
 }

@@ -237,8 +237,7 @@ class _FiltersState extends State<Filters> {
                                         child: ListView.builder(
                                           physics: const NeverScrollableScrollPhysics(),
                                           itemCount: university_list?.length,
-                                          itemBuilder:
-                                              (BuildContext context, int index) {
+                                          itemBuilder: (BuildContext context, int index) {
                                             return ListTile(
                                               splashColor: Colors.transparent,
 
