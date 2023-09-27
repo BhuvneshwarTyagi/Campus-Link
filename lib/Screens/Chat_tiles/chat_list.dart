@@ -2,8 +2,9 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 import '../../Constraints.dart';
-import '../background_image.dart';
+import 'background_image.dart';
 import 'chat.dart';
 
 class chatsystem extends StatefulWidget {
@@ -113,20 +114,26 @@ class _chatsystemState extends State<chatsystem> {
               child: StreamBuilder(
                   stream: FirebaseFirestore.instance.collection("Messages").doc(usermodel["Message_channels"][index]).snapshots(),
                   builder: (context, snapshot) {
-                    print("chat List");
-                    markFalse();
+                    print(">>>>>>>>>>>>>>>>>>>>>chat list");
                     int readCount=0;
                     int count=0;
-                    snapshot.hasData
-                        ?
-                    readCount= snapshot.data?.data()!["Messages"].length
-                        :
-                    null;
-                    snapshot.hasData
-                        ?
-                    count= int.parse("${snapshot.data?.data()![usermodel["Email"].toString().split("@")[0]]["Read_Count"]}")
-                        :
-                    null;
+                    String Name='',profileUrl="";
+                    if(snapshot.hasData){
+
+                      readCount= snapshot.data?.data()!["Messages"].length;
+                      count= int.parse("${snapshot.data?.data()![usermodel["Email"].toString().split("@")[0]]["Read_Count"]}");
+                      markFalse();
+                      if(snapshot.data!.data()!["Type"] == "Personal"){
+                        if(snapshot.data!.data()!["Members"][0]==usermodel["Email"]){
+                          Name=snapshot.data!.data()![snapshot.data!.data()!["Members"][1].toString().split("@")[0]]["Name"];
+                          profileUrl=snapshot.data!.data()![snapshot.data!.data()!["Members"][1].toString().split("@")[0]]["Profile_URL"].toString();
+                        }
+                        else{
+                          Name=snapshot.data!.data()![snapshot.data!.data()!["Members"][0].toString().split("@")[0]]["Name"];
+                          profileUrl=snapshot.data!.data()![snapshot.data!.data()!["Members"][0].toString().split("@")[0]]["Profile_URL"];
+                        }
+                      }
+                    }
                   return snapshot.hasData
                       ?
                   snapshot.data!.data()!["Type"] == "Personal"
@@ -134,12 +141,9 @@ class _chatsystemState extends State<chatsystem> {
                   InkWell(
                     onTap: () async {
 
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ChatPage(channel: usermodel["Message_channels"][index]),
-                        ),
-                      );
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+                        return ChatPage(channel: usermodel["Message_channels"][index]);
+                      },));
                     },
                     child: Container(
                       height: size.height*0.11,
@@ -147,113 +151,89 @@ class _chatsystemState extends State<chatsystem> {
                           color: Colors.white,
                           border: Border(bottom: BorderSide(color: Colors.black, width: 1))),
                       padding: EdgeInsets.all(size.width*0.02),
-                      child: StreamBuilder(
-                        stream: FirebaseFirestore
-                            .instance
-                            .collection(snapshot.data!.data()!["Members"][0]["Name"]==usermodel["Name"] ? snapshot.data!.data()!["Members"][1]["Post"] : snapshot.data!.data()!["Members"][0]["Post"])
-                            .doc(snapshot.data!.data()!["Members"][0]["Name"]==usermodel["Name"] ? snapshot.data!.data()!["Members"][1]["Email"] : snapshot.data!.data()!["Members"][0]["Email"])
-                            .snapshots(),
-                        builder: (context, snapshot1) {
-                          return snapshot1.hasData ?
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              CircleAvatar(
-                                backgroundColor: const Color.fromRGBO(86, 149, 178, 1),
-                                radius: size.width*0.07,
-                                backgroundImage: snapshot1.data!.data()!["Profile_URL"]!="null"? NetworkImage(snapshot1.data!.data()!["Profile_URL"]) : null,
-                                child: snapshot1.data?.data()!["Profile_URL"] == "null"
-                                    ?
-                                AutoSizeText(
-                                  snapshot.data!.data()?["Type"] == "Personal"
-                                      ?
-                                  snapshot.data!.data()!["Members"][0] == usermodel["Name"]
-                                      ?
-                                  snapshot.data!.data()!["Members"][1].toString().substring(0,1)
-                                      :
-                                  usermodel["Name"].toString().substring(0,1)
-                                      :
-                                  usermodel["Message_channels"][index].toString().split(" ")[6].substring(0, 1),
-                                  style: GoogleFonts.exo(
-                                      color: Colors.black,
-                                      fontSize: size.height * 0.035,
-                                      fontWeight: FontWeight.w600),
-                                )
-                                    : null,
-                              ),
+                      child:  Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: const Color.fromRGBO(86, 149, 178, 1),
+                            radius: size.width*0.07,
+                            backgroundImage: profileUrl != "null" ? NetworkImage(profileUrl) : null,
+                            child: profileUrl == "null"
+                                ?
+                            AutoSizeText(
+                              Name.substring(0,1),
+                              style: GoogleFonts.exo(
+                                  color: Colors.black,
+                                  fontSize: size.height * 0.035,
+                                  fontWeight: FontWeight.w600),
+                            )
+                                : null,
+                          ),
 
-                              SizedBox(width: size.width*0.03),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                          SizedBox(width: size.width*0.03),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              AutoSizeText(
+                                Name,
+                                style: GoogleFonts.poppins(color: Colors.black,fontSize: size.width*0.045,fontWeight: FontWeight.w500),
+                              ),
+                              Row(
                                 children: [
-                                  AutoSizeText(
-                                  snapshot1.data!.data()!["Name"],
-                                    style: GoogleFonts.poppins(color: Colors.black,fontSize: size.width*0.045,fontWeight: FontWeight.w500),
-                                  ),
-                                  Row(
-                                    children: [
-                                      SizedBox(
-                                        width: size.width*0.7,
-                                        child: AutoSizeText("${
-                                            snapshot.data?.data()!["Messages"].length >0
-                                                ?
-                                            snapshot.data?.data()!["Messages"][snapshot.data?.data()!["Messages"].length-1]["Name"]
-                                                :
-                                            ""
-                                        } : ${
-                                            snapshot.data?.data()!["Messages"].length > 0
-                                                ?
-                                            snapshot.data?.data()!["Messages"][snapshot.data?.data()!["Messages"].length-1]["text"].length <25 ? snapshot.data?.data()!["Messages"][snapshot.data?.data()!["Messages"].length-1]["text"] : snapshot.data?.data()!["Messages"][snapshot.data?.data()!["Messages"].length-1]["text"].toString().substring(0,25)
-                                                :
-                                            ""
-                                        }",
-                                          style: GoogleFonts.poppins(
-                                              color: Colors.black.withOpacity(0.80),
-                                              fontSize: size.width*0.035,
-                                              fontWeight: FontWeight.w400
-                                          ),
-                                          textAlign: TextAlign.left,
-                                        ),
+                                  SizedBox(
+                                    width: size.width*0.7,
+                                    child: AutoSizeText("${
+                                        snapshot.data?.data()!["Messages"].length >0
+                                            ?
+                                        snapshot.data!.data()!["${snapshot.data?.data()!["Messages"][snapshot.data?.data()!["Messages"].length-1]["UID"].toString().split("@")[0]}"]['Name']
+                                            :
+                                        ""
+                                    } : ${
+                                        snapshot.data?.data()!["Messages"].length > 0
+                                            ?
+                                        snapshot.data?.data()!["Messages"][snapshot.data?.data()!["Messages"].length-1]["text"].length <25 ? snapshot.data?.data()!["Messages"][snapshot.data?.data()!["Messages"].length-1]["text"] : snapshot.data?.data()!["Messages"][snapshot.data?.data()!["Messages"].length-1]["text"].toString().substring(0,25)
+                                            :
+                                        ""
+                                    }",
+                                      style: GoogleFonts.poppins(
+                                          color: Colors.black.withOpacity(0.80),
+                                          fontSize: size.width*0.035,
+                                          fontWeight: FontWeight.w400
                                       ),
-                                      readCount - count>0
-                                          ?
-                                      CircleAvatar(
-                                        radius: size.width*0.03,
-                                        backgroundColor: Colors.green,
-                                        child: AutoSizeText("${readCount - count}",
-                                          style: GoogleFonts.poppins(
-                                              color: Colors.white,
-                                              fontSize: size.width*0.035,
-                                              fontWeight: FontWeight.w400
-                                          ),
-                                          textAlign: TextAlign.left,
-                                        ),
-                                      )
-                                          :
-                                      const SizedBox(),
-                                    ],
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                                  readCount - count>0
+                                      ?
+                                  CircleAvatar(
+                                    radius: size.width*0.03,
+                                    backgroundColor: Colors.green,
+                                    child: AutoSizeText("${readCount - count}",
+                                      style: GoogleFonts.poppins(
+                                          color: Colors.white,
+                                          fontSize: size.width*0.035,
+                                          fontWeight: FontWeight.w400
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
                                   )
+                                      :
+                                  const SizedBox(),
                                 ],
                               )
                             ],
                           )
-                              :
-                          const SizedBox();
-                        }
-                      ),
+                        ],
+                      )
                     ),
                   )
                   :
                   InkWell(
                     onTap: () async {
-
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ChatPage(channel: usermodel["Message_channels"][index]),
-                        ),
-                      );
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+                        return ChatPage(channel: usermodel["Message_channels"][index]);
+                      },));
                     },
                     child: Container(
                       height: size.height*0.11,

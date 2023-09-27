@@ -638,23 +638,22 @@ class _basicDetailsState extends State<basicDetails> {
                             child: const loading(text: "Adding subject please wait"),
                             type: PageTransitionType.bottomToTopJoined));
                         Map<String,dynamic> map1 = {
-                          "Active":false,
+                          "Active": false,
                           "Read_Count": 0,
                           "Last_Active" : DateTime.now(),
-                          "Token": FieldValue.arrayUnion([usermodel["Token"]])
-                        };
-                        Map<String,dynamic> map2 = {
-                          "Active":false,
-                          "Read_Count": 1,
-                          "Last_Active" : DateTime.now(),
-                          "Token": FieldValue.arrayUnion([usermodel["Token"]])
+                          "Token": FieldValue.arrayUnion([usermodel["Token"]]),
+                          "Profile_URL" : usermodel["Profile_URL"],
+                          "Name" : usermodel["Name"],
+                          "Post" : "Teachers",
+                          "Muted" : false,
+                          "Type" : "Group"
                         };
                         DateTime stamp=DateTime.now();
                         var data=await FirebaseFirestore.instance.collection("Chat_Channels").doc("Channels").get();
                         data.data()==null
                             ?
                         await FirebaseFirestore.instance.collection("Chat_Channels").doc("Channels").set({
-                          "Channels" : FieldValue.arrayUnion([""])
+                          "Channels" : FieldValue.arrayUnion([])
                         })
                             :
                             null;
@@ -682,9 +681,7 @@ class _basicDetailsState extends State<basicDetails> {
                           ).update({
                             "Admins" : FieldValue.arrayUnion(["${usermodel["Email"]}"]),
                             "Members" : FieldValue.arrayUnion([
-                              {
-                                "Email": usermodel["Email"],
-                                "Post" : "Teachers"
+                              {usermodel["Email"],
                               }
                                   ]),
                             usermodel["Email"].toString().split("@")[0] : map1,
@@ -699,46 +696,12 @@ class _basicDetailsState extends State<basicDetails> {
                                   "${secController.text.trim().split(" ")[0]} "
                                   "${subjectController.text.trim().split(" ")[0]}"
                           ).set({
-                            "Messages" : [{"Name": usermodel["Name"],"text":"Hello Students" , "UID": usermodel["Email"],"Stamp": stamp,"Image": usermodel["Profile_URL"]}],
+                            "Messages" : [],
                             "Admins" : FieldValue.arrayUnion(["${usermodel["Email"]}"]),
-                            "Members" : FieldValue.arrayUnion([
-                              {
-                                "Email": "${usermodel["Email"]}",
-                                "Post" : "Teachers"
-                              }
-                            ]),
-                            usermodel["Email"].toString().split("@")[0] : map2,
+                            "Members" : FieldValue.arrayUnion(["${usermodel["Email"]}",]),
+                            usermodel["Email"].toString().split("@")[0] : map1,
                             "image_URL" : "null",
-                            "CreatedOn": {"Date" : stamp, "Name": usermodel["Name"]}
-                                })
-                              .whenComplete(() async {
-                            await FirebaseFirestore
-                                .instance
-                                .collection("Messages")
-                                .doc("${universityController.text.trim().split(" ")[0]} "
-                                "${clgController.text.trim().split(" ")[0]} "
-                                "${courseController.text.trim().split(" ")[0]} "
-                                "${branchController.text.trim().split(" ")[0]} "
-                                "${yearController.text.trim().split(" ")[0]} "
-                                "${secController.text.trim().split(" ")[0]} "
-                                "${subjectController.text.trim().split(" ")[0]}")
-                                .collection("Messages_Detail")
-                                .doc("Messages_Detail")
-                                .set({
-                              "${usermodel["Email"].toString().split("@")[0]}_${stamp.toString().split(".")[0]}_Delevered"  : FieldValue.arrayUnion([{
-                                "Email" : usermodel["Email"],
-                                "Stamp" : stamp
-                              }]),
-
-                              "${usermodel["Email"].toString().split("@")[0]}_${stamp.toString().split(".")[0]}_Seen"  : FieldValue.arrayUnion([{
-                                "Email" : usermodel["Email"],
-                                "Stamp" : stamp
-                              }]),
-                              "${usermodel["Email"].toString().split('@')[0]}_${stamp.toString().split('.')[0]}_Seened" : FieldValue.arrayUnion([
-                                usermodel["Email"]
-                              ])
-                            });
-                          });
+                            "CreatedOn": {"Date" : stamp, "Name": usermodel["Name"]}});
                         });
 
 

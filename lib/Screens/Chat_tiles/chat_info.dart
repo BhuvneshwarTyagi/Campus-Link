@@ -392,7 +392,7 @@ class _Chat_InfoState extends State<Chat_Info> {
                                   itemCount: snapshot.data?.data()!["Members"].length,
                                   itemBuilder: (context, index) {
                                     return StreamBuilder(
-                                        stream: FirebaseFirestore.instance.collection(snapshot.data?.data()!["Members"][index]["Post"]).doc(snapshot.data?.data()!["Members"][index]["Email"]).snapshots(),
+                                        stream: FirebaseFirestore.instance.collection(snapshot.data!.data()![snapshot.data?.data()!["Members"][index].toString().split("@")[0]]["Post"]).doc(snapshot.data?.data()!["Members"][index]).snapshots(),
                                         builder: (context, snapshot2) {
                                           return snapshot2.hasData
                                               ?
@@ -603,7 +603,7 @@ class _Chat_InfoState extends State<Chat_Info> {
                                                         ],
                                                       ),
                                                     ),
-                                                    snapshot.data?.data()!["Admins"].contains(snapshot.data?.data()!["Members"][index]["Email"])
+                                                    snapshot.data?.data()!["Admins"].contains(snapshot.data?.data()!["Members"][index])
                                                         ?
                                                     Container(
                                                       height: size.height*0.03,

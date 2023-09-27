@@ -6,8 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inapp_notifications/flutter_inapp_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../Constraints.dart';
-import '../Database/database.dart';
+import '../../Constraints.dart';
+import '../../Database/database.dart';
+
 
 // ignore: camel_case_types
 class Background_image extends StatefulWidget {
