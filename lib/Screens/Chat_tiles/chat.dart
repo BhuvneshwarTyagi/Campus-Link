@@ -4,9 +4,11 @@ import 'package:chatview/chatview.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 import '../../Constraints.dart';
 import '../../Database/database.dart';
 import '../loadingscreen.dart';
+import 'Sending_Media.dart';
 import 'chat_info.dart';
 import 'chat_list.dart';
 
@@ -77,17 +79,35 @@ class _ChatPageState extends State<ChatPage> {
                   }
 
                   for (var msg in snapshot.data!.data()!["Messages"]) {
+                    List<String> emojiList=[];
+                    List<String> reactedByList = [];
+
+                    List reactionList;
+                    print(":::::::::::::::::::::::::::::::::::::::::::::::::::::::${msg["Stamp"].toDate().toString().split(".")[0]}");
+                    if(snapshot.data!.data()![msg["Stamp"].toDate().toString().split(".")[0]] !=null){
+                      reactionList=snapshot.data!.data()![msg["Stamp"].toDate().toString().split(".")[0]];
+                      for (var map in reactionList) {
+                        if (map["Emoji"] != null) {
+                          emojiList.add(map['Emoji']);
+                          reactedByList.add(map['ReactionBy']);
+                        }
+                      }
+                    }
                     final message1 = Message(
+
                         id: msg['Stamp'].toDate().toString(),
                         message: msg['text'],
                         createdAt: msg['Stamp'].toDate(),
                         sendBy: msg['UID'],
+                        messageType: MessageType.text,
+                        reaction: Reaction(reactions: emojiList, reactedUserIds: reactedByList),
                         replyMessage: ReplyMessage(
                           message: msg['ReplyMessage'],
                           messageId: msg["ReplyMessageId"],
                           messageType: MessageType.text,
                           replyTo: msg['ReplyTo'],
                           replyBy: msg['ReplyBy'],
+                          voiceMessageDuration: Duration(seconds: msg['ReplyVoiceDuration'] ?? 0),
                         )
                     );
                     chatController.initialMessageList.add(message1);
@@ -110,18 +130,31 @@ class _ChatPageState extends State<ChatPage> {
                   chatController.initialMessageList.clear();
                   for (var msg in snapshot.data!.data()!["Messages"]) {
                     print("...................i: $msg");
+                    List<String> emojiList=[];
+                    List<String> reactedByList = [];
+
+                    List<dynamic> reactionList= snapshot.data!.data()![msg["Stamp"].toDate().toString().split(".")[0]] ?? [];
+                    print(":::::::::::::::::::::::::::::::::::::::::::::::::::::::${msg["Stamp"].toDate().toString().split(".")[0]}");
+                    for(var map in reactionList){
+                      emojiList.add(map['Emoji']);
+                      reactedByList.add(map['ReactionBy']);
+
+                    }
 
                     final message1 = Message (
                         id: msg['Stamp'].toDate().toString(),
                         message: msg['text'],
                         createdAt: msg['Stamp'].toDate(),
                         sendBy: msg["UID"],
+                        reaction: Reaction(reactions: emojiList, reactedUserIds: reactedByList),
+
                         replyMessage: ReplyMessage(
                           message: msg['ReplyMessage'],
                           messageId: msg["ReplyMessageId"],
                           messageType: MessageType.text,
                           replyTo: msg['ReplyTo'],
                           replyBy: msg['ReplyBy'],
+                          voiceMessageDuration: msg['ReplyVoiceDuration'],
                         )
                     );
                     chatController.initialMessageList.add(message1);
@@ -149,22 +182,22 @@ class _ChatPageState extends State<ChatPage> {
                         snapshot.data!.data()!["Type"]!="Personal"
                             ?
                         CircleAvatar(
-                          backgroundColor: Colors.white54,
+                          backgroundColor: const Color.fromRGBO(3, 178, 183, 1).withOpacity(0.5),
                           backgroundImage: snapshot.data!.data()!["image_URL"] == "null" ? null : NetworkImage(snapshot.data!.data()!["image_URL"]),
                           child: snapshot.data!.data()!["image_URL"] != "null"
                               ?
                           const SizedBox()
                               :
                           Text(widget.channel.split(" ")[6].substring(0,1),
-                            style: GoogleFonts.exo(
-                                color: Colors.black,
+                            style: GoogleFonts.aBeeZee(
+                                color: Colors.white,
                               fontSize: size.width*0.045,
                               fontWeight: FontWeight.w600
                             ),
                           ),
                         ):
                         CircleAvatar(
-                          backgroundColor: Colors.white54,
+                          backgroundColor: const Color.fromRGBO(3, 178, 183, 1).withOpacity(0.5),
 
                           backgroundImage: snapshot.data!.data()!["Members"][0] == usermodel['Email']
                               ?
@@ -189,9 +222,9 @@ class _ChatPageState extends State<ChatPage> {
                             children: [
                               AutoSizeText(
                                 channel,
-                                style: GoogleFonts.exo(
+                                style: GoogleFonts.aBeeZee(
                                   fontSize: size.width*0.04,
-                                  color: Colors.white,
+                                  color: const Color.fromRGBO(3, 178, 183, 1),
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -199,7 +232,7 @@ class _ChatPageState extends State<ChatPage> {
                                                           ?
                                                       AutoSizeText(
                                                         "$activeCount Online",
-                                                        style: GoogleFonts.exo(
+                                                        style: GoogleFonts.aBeeZee(
                                                             color: Colors
                                                                 .green,
                                                             fontSize:
@@ -232,6 +265,7 @@ class _ChatPageState extends State<ChatPage> {
                   chatBackgroundConfig: const ChatBackgroundConfiguration(backgroundColor: Colors.black38),
                   currentUser: currentUser,
                   chatController: chatController,
+
                   onSendTap: onSendTap,
                   featureActiveConfig: FeatureActiveConfig(
                       enableOtherUserProfileAvatar: true,
@@ -240,73 +274,113 @@ class _ChatPageState extends State<ChatPage> {
                       enableCurrentUserProfileAvatar: true,
                       enableDoubleTapToLike: true,
                       receiptsBuilderVisibility: true,
+                      enableChatSeparator: true,
+                      enableReactionPopup: true,
+                      enableReplySnackBar: true,
                       enableTextField: !snapshot.data!.data()![usermodel["Email"].toString().split("@")[0]]['Muted'] != true ? false : true
                   ),
+                  loadingWidget:  const loading(text: "Syncronizing with the server please wait..."),
+                  reactionPopupConfig: ReactionPopupConfiguration(
+                    backgroundColor: Colors.black54,
+                    showGlassMorphismEffect: true,
+                    glassMorphismConfig: const GlassMorphismConfiguration(
+                      borderColor: Color.fromRGBO(3, 178, 183, 1),
+                      backgroundColor: Colors.black54,
+                      strokeWidth: 4,
+                    ),
+                    userReactionCallback: (message, emoji) {
+                      reaction(message,emoji);
+                    },
+                  ),
                   sendMessageConfig: SendMessageConfiguration(
-
+                    closeIconColor: const Color.fromRGBO(3, 178, 183, 1),
+                    imagePickerConfiguration: ImagePickerConfiguration(),
+                    imagePickerIconsConfig: const ImagePickerIconsConfiguration(
+                      cameraIconColor: Color.fromRGBO(3, 178, 183, 1),
+                      galleryIconColor: Color.fromRGBO(3, 178, 183, 1),
+                    ),
+                    enableGalleryImagePicker: false,
+                    enableCameraImagePicker: false,
+                    allowRecordingVoice: false,
+                    defaultSendButtonColor: const Color.fromRGBO(3, 178, 183, 1),
                     textFieldConfig: TextFieldConfiguration(
-                      textStyle: GoogleFonts.exo(
+                      textStyle: GoogleFonts.aBeeZee(
                         fontSize: size.width*0.04,
                         color: Colors.black,
                         fontWeight: FontWeight.w500,
                       ),
                       maxLines: 3,
-                      borderRadius: const BorderRadius.all(Radius.circular(10)),
-                      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom)
+                      borderRadius: const BorderRadius.all(Radius.circular(50)),
+                      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                      contentPadding: EdgeInsets.all(size.width*0.04),
+
                     )
                   ),
                   chatViewState: ChatViewState.hasMessages,
                   chatBubbleConfig:  ChatBubbleConfiguration(
                     maxWidth: size.width*0.6,
+                    receiptsWidgetConfig: const ReceiptsWidgetConfig(
+                       showReceiptsIn: ShowReceiptsIn.all,
+                    ),
                     outgoingChatBubbleConfig: ChatBubble(
-                      senderNameTextStyle: GoogleFonts.exo(
+                      senderNameTextStyle: GoogleFonts.aBeeZee(
                         fontSize: size.width*0.04,
                         color: Colors.white,
                         fontWeight: FontWeight.w500,
                       ),// demonstrates as current user chat bubble
                       margin: EdgeInsets.symmetric(horizontal: size.width*0.02, vertical: size.height*0.005),
-                      linkPreviewConfig: const LinkPreviewConfiguration(
-                        proxyUrl: "Proxy URL", // Need for web
+                      linkPreviewConfig: LinkPreviewConfiguration(
+                        loadingColor: Colors.grey,
+                        linkStyle: GoogleFonts.exo(
+                          color: Colors.deepPurple,
+                          decoration: TextDecoration.underline,
+                        ),
+                        //proxyUrl: "Proxy URL", // Need for web
                         backgroundColor: Color(0xff272336),
                         bodyStyle: TextStyle(color: Colors.white),
                         titleStyle: TextStyle(color: Colors.white),
                       ),
-                      color: Colors.deepPurple,
+                      color: const Color.fromRGBO(3, 178, 183, 1),
                       borderRadius: const BorderRadius.only(
-                        bottomRight: Radius.circular(0),
+                        bottomRight: Radius.circular(3),
                         bottomLeft: Radius.circular(15),
                         topRight: Radius.circular(15),
-                        topLeft: Radius.circular(0),
+                        topLeft: Radius.circular(15),
                       ),
-                      textStyle: GoogleFonts.exo(
-                        fontSize: size.width*0.04,
-                        color: Colors.white,
+                      textStyle: GoogleFonts.aBeeZee(
+                        fontSize: size.width*0.035,
+                        color: Colors.black,
                         fontWeight: FontWeight.w500,
                       )
                     ),
-                    inComingChatBubbleConfig: ChatBubble( // demonstrates as current user chat bubble
+                    inComingChatBubbleConfig: ChatBubble(// demonstrates as current user chat bubble
                         margin: EdgeInsets.symmetric(horizontal: size.width*0.02, vertical: size.height*0.005),
-                        linkPreviewConfig: const LinkPreviewConfiguration(
+                        linkPreviewConfig: LinkPreviewConfiguration(
+                          loadingColor: Colors.grey,
+                          linkStyle: GoogleFonts.exo(
+                            color: Colors.deepPurple,
+                            decoration: TextDecoration.underline,
+                          ),
                           proxyUrl: "Proxy URL", // Need for web
                           backgroundColor: Color(0xff272336),
                           bodyStyle: TextStyle(color: Colors.white),
                           titleStyle: TextStyle(color: Colors.white),
                         ),
-                        color: Colors.deepPurple,
-                        senderNameTextStyle: GoogleFonts.exo(
-                          color: Colors.deepPurple,
+                        color: const Color.fromRGBO(221, 227, 239, 1),
+                        senderNameTextStyle: GoogleFonts.aBeeZee(
+                          color: const Color.fromRGBO(3, 178, 183, 1),
                           fontWeight: FontWeight.w500,
                           fontSize: size.width*0.03
                         ),
                         borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(0),
+                          bottomLeft: Radius.circular(3),
                           bottomRight: Radius.circular(15),
                           topLeft: Radius.circular(15),
-                          topRight: Radius.circular(0),
+                          topRight: Radius.circular(15),
                         ),
-                        textStyle: GoogleFonts.exo(
-                          fontSize: size.width*0.04,
-                          color: Colors.white,
+                        textStyle: GoogleFonts.aBeeZee(
+                          fontSize: size.width*0.035,
+                          color: Colors.black87,
                           fontWeight: FontWeight.w500,
                         )
                     ),
@@ -459,25 +533,33 @@ class _ChatPageState extends State<ChatPage> {
                       );
                     },
                   ),
+                  messageConfig:  MessageConfiguration(
+                    messageReactionConfig: MessageReactionConfiguration(
+                      backgroundColor: Colors.black54,
+                      borderColor: const Color.fromRGBO(3, 178, 183, 1),
+                      borderWidth: 1.5,
+                      margin: EdgeInsets.only(top: size.height*0.01,left: size.width*0.04)
+                    ),
+                  ),
                   repliedMessageConfig: RepliedMessageConfiguration(
                     repliedMsgAutoScrollConfig: const RepliedMsgAutoScrollConfig(
                       enableHighlightRepliedMsg: true,
                       enableScrollToRepliedMsg: true,
                       highlightScrollCurve: accelerateEasing,
                       highlightColor: Colors.green,
-                      highlightScrollDuration: Duration(milliseconds: 100)
+                      highlightScrollDuration: Duration(milliseconds: 100),
                     ),
-                    textStyle: GoogleFonts.exo(
+                    textStyle: GoogleFonts.aBeeZee(
                       fontSize: size.width*0.03,
                       color: Colors.white,
                       fontWeight: FontWeight.w500,
                     ),
-                    verticalBarColor: Colors.green,
-                    backgroundColor: Colors.white12,
+                    verticalBarColor: const Color.fromRGBO(3, 178, 183, 1).withOpacity(0.5),
+                    backgroundColor: const Color.fromRGBO(3, 178, 183, 1).withOpacity(0.5),
                     borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    replyTitleTextStyle: GoogleFonts.exo(
+                    replyTitleTextStyle: GoogleFonts.aBeeZee(
                       fontSize: size.width*0.032,
-                      color: Colors.green,
+                      color: const Color.fromRGBO(3, 178, 183, 1),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -1717,6 +1799,14 @@ class _ChatPageState extends State<ChatPage> {
     return count;
   }
 
+  reaction(Message msg,emoji,) async {
+    await FirebaseFirestore.instance.collection("Messages").doc(widget.channel).update({
+      msg.createdAt.toString().split(".")[0] : FieldValue.arrayUnion([
+        {"ReactionBy": usermodel['Email'], 'Emoji': emoji}
+      ])
+    });
+  }
+
   markActive() async {
     await FirebaseFirestore.instance.collection("Messages").doc(widget.channel).update({
       "${usermodel["Email"].toString().split("@")[0]}.Active": true
@@ -1808,9 +1898,7 @@ class _ChatPageState extends State<ChatPage> {
 
   Future<void> onSendTap(String message, ReplyMessage replyMessage,MessageType messageType) async {
     print("..........onsendtap reply : ${replyMessage.messageId}  ....Type: $messageType");
-    // chatController.addMessage(message1);
     DateTime stamp = DateTime.now();
-                        //int l=message.length+1;
     final channelDoc= await FirebaseFirestore.instance.collection("Messages").doc(widget.channel).get();
     final doc=await FirebaseFirestore.instance.collection("Messages").doc(widget.channel).collection("Messages_Detail").doc("Messages_Detail").get();
 
@@ -1859,12 +1947,13 @@ class _ChatPageState extends State<ChatPage> {
                 "UID": usermodel["Email"].toString(),
                 "text": message,
                 "Stamp": stamp,
+                "Type": messageType.name,
                 "ReplyMessage" : replyMessage.message,
                 "ReplyMessageId" : replyMessage.messageId,
                 "ReplyMessageType" : replyMessage.messageType.name,
                 "ReplyTo" : replyMessage.replyTo,
                 "ReplyBy" : replyMessage.replyBy,
-                "ReplyVoiceDuration" : replyMessage.voiceMessageDuration,
+                "ReplyVoiceDuration" : replyMessage.voiceMessageDuration?.inSeconds,
               }
               ]),
       },

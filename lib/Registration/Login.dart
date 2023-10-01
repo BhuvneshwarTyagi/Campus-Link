@@ -107,7 +107,6 @@ class _SignInScreenState extends State<SignInScreen> {
                       offset: Offset(1, 1))
                 ],
               ),
-              height: size.height*0.08,
               child: TextFormField(
                   controller: _email,
                   obscureText: false,
@@ -160,7 +159,6 @@ class _SignInScreenState extends State<SignInScreen> {
                       offset: Offset(1, 1))
                 ],
               ),
-              height: size.height*0.08,
               child: TextFormField(
                   controller: _password,
                   obscureText: hide,
@@ -179,7 +177,8 @@ class _SignInScreenState extends State<SignInScreen> {
                               icon: const Icon(
                                 Icons.visibility_off_outlined,
                                 color: Colors.white,
-                              ))
+                              ),
+                      )
                           : IconButton(
                               onPressed: () {
                                 setState(() {

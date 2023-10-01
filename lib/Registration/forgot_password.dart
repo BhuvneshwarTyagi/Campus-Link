@@ -114,10 +114,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   child: Column(
                     children: [
                       Container(
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.all(Radius.circular(30)),
-                          border: Border.all(color: Colors.black,),
-                          boxShadow: const [
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(30)),
+                          boxShadow: [
                             BoxShadow(
                                 blurRadius: 20,
                                 blurStyle: BlurStyle.outer,
@@ -126,7 +125,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             )
                           ],
                         ),
-                        height: size.height*0.08,
                         child: TextFormField(
                             validator: (value) {
                               if (value!.contains('@')) {

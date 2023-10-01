@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:campus_link_teachers/Screens/QuizScreen.dart';
 import 'package:campus_link_teachers/Screens/loadingscreen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
@@ -179,6 +180,19 @@ class _NeviState extends State<Nevi> {
                 onTap: () {
                   Navigator.push(context, PageTransition(
                     child: const Download_attendance(),
+                    type: PageTransitionType.bottomToTopJoined,
+                    duration: const Duration(milliseconds: 400),
+                    alignment: Alignment.bottomCenter,
+                    childCurrent: const Nevi(),
+                  ),);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.feedback_outlined,color: Colors.black,),
+                title: const Text('Check Feedbacks'),
+                onTap: () {
+                  Navigator.push(context, PageTransition(
+                    child: const QuizScreen(),
                     type: PageTransitionType.bottomToTopJoined,
                     duration: const Duration(milliseconds: 400),
                     alignment: Alignment.bottomCenter,

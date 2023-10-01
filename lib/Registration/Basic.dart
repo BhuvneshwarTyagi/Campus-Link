@@ -724,10 +724,61 @@ class _basicDetailsState extends State<basicDetails> {
                               "${yearController.text.trim().split(" ")[0]} "
                               "${secController.text.trim().split(" ")[0]} "
                               "${subjectController.text.trim().split(" ")[0]}"
-                          ])
+                          ]),
                         });
 
+                        data = await FirebaseFirestore.instance.collection("Teachers Id").doc("${universityController.text.trim().split(" ")[0]} "
+                            "${clgController.text.trim().split(" ")[0]} "
+                            "${courseController.text.trim().split(" ")[0]} "
+                            "${branchController.text.trim().split(" ")[0]} "
+                            "${yearController.text.trim().split(" ")[0]} "
+                            "${secController.text.trim().split(" ")[0]} "
+                            "${subjectController.text.trim().split(" ")[0]}").get();
 
+                        data.data()==null ?
+                        await FirebaseFirestore.instance.collection("Teachers Id").doc(
+                            "${universityController.text.trim().split(" ")[0]} "
+                            "${clgController.text.trim().split(" ")[0]} "
+                            "${courseController.text.trim().split(" ")[0]} "
+                            "${branchController.text.trim().split(" ")[0]} "
+                            "${yearController.text.trim().split(" ")[0]} "
+                            "${secController.text.trim().split(" ")[0]} "
+                            "${subjectController.text.trim().split(" ")[0]}").set(
+                          {
+                            "University" : universityController.text.trim().split(" ")[0],
+                            "College" : clgController.text.trim().split(" ")[0],
+                            "Course" : courseController.text.trim().split(" ")[0],
+                            "Branch" : branchController.text.trim().split(" ")[0],
+                            "Year" : yearController.text.trim().split(" ")[0],
+                            "Section" :  secController.text.trim().split(" ")[0],
+                            "Subject" : subjectController.text.trim().split(" ")[0],
+                            "Employee Id" : usermodel["Employee Id"],
+                            "Email" : usermodel['Email'],
+                            "Post" : 'Teachers'
+                          }
+                        )
+                            :
+                        await FirebaseFirestore.instance.collection("Teachers Id").doc(
+                            "${universityController.text.trim().split(" ")[0]} "
+                                "${clgController.text.trim().split(" ")[0]} "
+                                "${courseController.text.trim().split(" ")[0]} "
+                                "${branchController.text.trim().split(" ")[0]} "
+                                "${yearController.text.trim().split(" ")[0]} "
+                                "${secController.text.trim().split(" ")[0]} "
+                                "${subjectController.text.trim().split(" ")[0]}").update(
+                            {
+                              "University" : universityController.text.trim().split(" ")[0],
+                              "College" : clgController.text.trim().split(" ")[0],
+                              "Course" : courseController.text.trim().split(" ")[0],
+                              "Branch" : branchController.text.trim().split(" ")[0],
+                              "Year" : yearController.text.trim().split(" ")[0],
+                              "Section" :  secController.text.trim().split(" ")[0],
+                              "Subject" : subjectController.text.trim().split(" ")[0],
+                              "Employee Id" : usermodel["Employee Id"],
+                              "Email" : usermodel['Email'],
+                              "Post" : 'Teachers'
+                            }
+                        );
                         data=await FirebaseFirestore.instance.collection("University").doc("University").get();
 
                         data.data()==null

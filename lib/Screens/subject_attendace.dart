@@ -3,13 +3,11 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:campus_link_teachers/Database/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:excel/excel.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:file_manager/file_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../push_notification/Storage_permission.dart';
@@ -38,9 +36,13 @@ class _SubjectState extends State<Subject> {
   bool isPermission = false;
   bool loading=true;
   Future<void> setpath() async {
-    Directory? path = await getExternalStorageDirectory();
+    checkPermission();
+    Directory? path = Directory("/storage/emulated/0/Campus Link/Attendance Sheet/${widget.uni}/${widget.clg}/${widget.course}/${widget.branch}/${widget.year}/${widget.section}/${widget.subject}");
+    if(! ( path.existsSync())){
+      await Directory(path.path).create(recursive: true);
+    }
     setState(() {
-      controller.setCurrentPath="${path?.path}/${widget.uni}/${widget.clg}/${widget.course}/${widget.branch}/${widget.year}/${widget.section}/${widget.subject}";
+      controller.setCurrentPath=path.path;
       loading=false;
     });
   }
@@ -132,7 +134,7 @@ class _SubjectState extends State<Subject> {
                                         leading: FileManager.isFile(entity)
                                             ?
                                         SizedBox(
-                                          height: size.height*0.06,
+                                            height: size.height*0.06,
                                             child: const Image(image: AssetImage("assets/images/excel.png"),fit: BoxFit.contain,))
                                             :  Icon(Icons.folder,color: Colors.white,size: size.height*0.042),
                                         title: Row(
@@ -140,15 +142,15 @@ class _SubjectState extends State<Subject> {
                                           children: [
                                             AutoSizeText(
                                               FileManager.basename(
-                                              entity,
-                                              showFileExtension: true,
-                                            ),
-                                             style: GoogleFonts.exo(
-                                               color: Colors.black,
-                                               fontSize: 12,
-                                               fontWeight: FontWeight.w500
+                                                entity,
+                                                showFileExtension: true,
+                                              ),
+                                              style: GoogleFonts.exo(
+                                                  color: Colors.black,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w500
 
-                                             ),
+                                              ),
                                             ),
                                             Row(
                                               mainAxisAlignment: MainAxisAlignment.end,
@@ -157,7 +159,7 @@ class _SubjectState extends State<Subject> {
                                                     onPressed: () async {
                                                       await Share.shareXFiles(
                                                           [XFile(entity.path)], text: '${widget.course} ${widget.uni} ${widget.year} (${widget.section}) ${widget.subject} Attendance Sheet');
-                                                      },
+                                                    },
                                                     icon: const Icon(Icons.share,color: Colors.black,)),
                                                 IconButton(
                                                     onPressed: () async {
@@ -230,13 +232,13 @@ class _SubjectState extends State<Subject> {
               child: Container(
                 margin: const EdgeInsets.all(8),
                 decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.deepPurple,
-                      Colors.purpleAccent
-                    ]
-                  ),
-                  borderRadius:  BorderRadius.all(Radius.circular(15))
+                    gradient: LinearGradient(
+                        colors: [
+                          Colors.deepPurple,
+                          Colors.purpleAccent
+                        ]
+                    ),
+                    borderRadius:  BorderRadius.all(Radius.circular(15))
                 ),
                 height: size.height * 0.048,
                 width: size.width*0.3,
@@ -526,12 +528,8 @@ class _SubjectState extends State<Subject> {
                                                   countl++;
                                                   print(".....................${doc.data()?["$day"]}");
                                                   if (doc.data()?["$day"][j]["Status"] != "Absent") {
-                                                    //List<dynamic> attendance = doc.data()!["$day"];
                                                     countP++;
                                                     total++;
-
-
-
                                                   }
                                                 }
                                               }
@@ -559,9 +557,11 @@ class _SubjectState extends State<Subject> {
                                       print(fileBytes);
                                       print(start_date_controller.text);
                                       var fileName="${start_date_controller.text.trim().split("-")[2]} ${months[int.parse(start_date_controller.text.trim().split("-")[1])-1]}-${end_date_controller.text.trim().split("-")[2]} ${months[int.parse(end_date_controller.text.trim().split("-")[1])-1]}.xls";
-                                      Directory? path = await getExternalStorageDirectory();
-                                      print(path?.path);
-                                      File(join('${controller.getCurrentPath}/$fileName'))..create(recursive: true)..writeAsBytes(fileBytes!).whenComplete((){ Navigator.pop(context);
+                                      Directory? path = Directory("/storage/emulated/0/Campus Link/Attendance Sheet/${widget.uni}/${widget.clg}/${widget.course}/${widget.branch}/${widget.year}/${widget.section}/${widget.subject}");
+                                      if(! ( path.existsSync())){
+                                        await Directory(path.path).create(recursive: true);
+                                      }
+                                      File(join('${path.path}/$fileName'))..create(recursive: true)..writeAsBytes(fileBytes!).whenComplete((){ Navigator.pop(context);
 
                                       setState((){
 

@@ -21,6 +21,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController email = TextEditingController();
   final TextEditingController password = TextEditingController();
   final TextEditingController nameController = TextEditingController();
+  final TextEditingController employeeIdController = TextEditingController();
 
 
   @override
@@ -31,25 +32,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-    decoration: BoxDecoration(
-    gradient: LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [
-    const Color.fromRGBO(86, 149, 178, 1),
-    // Color.fromRGBO(86, 149, 178, 1),
-    const Color.fromRGBO(68, 174, 218, 1),
-    //Color.fromRGBO(118, 78, 232, 1),
-    Colors.deepPurple.shade300
-    ],
-    ),
-    ),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                const Color.fromRGBO(86, 149, 178, 1),
+                const Color.fromRGBO(68, 174, 218, 1),
+                Colors.deepPurple.shade300
+              ],
+            ),
+          ),
           child: SingleChildScrollView(
             padding: EdgeInsets.fromLTRB(
-                MediaQuery.of(context).size.width * 0.04,
-                0,
-                MediaQuery.of(context).size.width * 0.04,
-                0),
+                MediaQuery.of(context).size.width * 0.04, 0,
+                MediaQuery.of(context).size.width * 0.04, 0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -65,13 +62,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: Regcon,
-                      border: Border.all(color: Colors.black),
-                      boxShadow: const [
-                        BoxShadow(
-                            blurRadius: 60,
-                            blurStyle: BlurStyle.outer,
-                            color: Colors.black54,
-                            offset: Offset(1, 1)
+                    border: Border.all(color: Colors.black),
+                    boxShadow: const [
+                      BoxShadow(
+                          blurRadius: 60,
+                          blurStyle: BlurStyle.outer,
+                          color: Colors.black54,
+                          offset: Offset(1, 1)
                         )
                       ],
                     image: const DecorationImage(
@@ -131,7 +128,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           )
                         ],
                       ),
-                      height: size.height*0.08,
                       child: TextField(
                           controller: nameController,
                           obscureText: false,
@@ -156,6 +152,61 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 color: Colors.white,
                               ),
                               label: const Text("Your Name"),
+                              labelStyle: TextStyle(color: Colors.white.withOpacity(0.9)),
+                              filled: true,
+                              floatingLabelBehavior: FloatingLabelBehavior.never,
+                              fillColor: Colors.black26.withOpacity(0.7),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30.0),
+                                  borderSide: const BorderSide(
+                                      width: 0, style: BorderStyle.none)
+                              )
+                          ),
+                          keyboardType: TextInputType.emailAddress),
+                    ),
+                    SizedBox(
+                      height: MediaQuery
+                          .of(context)
+                          .size
+                          .height * 0.03,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.all(Radius.circular(30)),
+                        border: Border.all(color: Colors.black,),
+                        boxShadow: const [
+                          BoxShadow(
+                              blurRadius: 20,
+                              blurStyle: BlurStyle.outer,
+                              color: Colors.black54,
+                              offset: Offset(1, 1)
+                          )
+                        ],
+                      ),
+                      child: TextField(
+                          controller: employeeIdController,
+                          obscureText: false,
+                          enableSuggestions: true,
+                          autocorrect: true,
+                          cursorColor: Colors.white,
+                          style: TextStyle(color: Colors.white.withOpacity(0.9)),
+                          decoration: InputDecoration(
+                              suffixIcon: IconButton(
+                                onPressed: (){
+                                  setState(() {
+                                    employeeIdController.clear();
+                                  });
+                                },
+                                icon: const Icon(
+                                  Icons.clear_outlined,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              prefixIcon: const Icon(
+                                Icons.person_outline,
+                                color: Colors.white,
+                              ),
+                              label: const Text("Your Employee Id"),
                               labelStyle: TextStyle(
                                   color: Colors.white.withOpacity(0.9)),
                               filled: true,
@@ -176,7 +227,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           .height * 0.03,
                     ),
                     Container(
-                      height: size.height*0.08,
                       decoration: BoxDecoration(
                         borderRadius: const BorderRadius.all(Radius.circular(30)),
                         border: Border.all(color: Colors.black,),
@@ -234,7 +284,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
 
                     Container(
-                      height: size.height*0.08,
                       decoration: BoxDecoration(
                         borderRadius: const BorderRadius.all(Radius.circular(30)),
                         border: Border.all(color: Colors.black,),
@@ -336,6 +385,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 await FirebaseFirestore.instance.collection("Teachers").doc(email.text.trim()).set({
                                   "Email" : email.text.trim(),
                                   "Name" : nameController.text.trim(),
+                                  "Employee Id" : employeeIdController.text.trim(),
                                   "bg" : "bg-1.jpg"
                                 });
                                 await FirebaseFirestore.instance.collection("Teacher_record").doc("Email").update({
