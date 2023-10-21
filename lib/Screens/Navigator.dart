@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:campus_link_teachers/Screens/QuizScreen.dart';
+import 'package:campus_link_teachers/Screens/Feedback.dart';
 import 'package:campus_link_teachers/Screens/loadingscreen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
@@ -337,7 +337,7 @@ class _NeviState extends State<Nevi> {
           ],
           iconTheme: const IconThemeData(color: Colors.black),
           backgroundColor: Colors.black38,
-          titleTextStyle: GoogleFonts.gfsDidot(
+          titleTextStyle: GoogleFonts.tiltNeon(
               color: Colors.black,
               //const Color.fromRGBO(150, 150, 150, 1),
               fontWeight: FontWeight.w500,
