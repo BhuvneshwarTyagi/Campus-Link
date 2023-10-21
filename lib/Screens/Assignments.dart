@@ -2,11 +2,11 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class Assignments_upload extends StatefulWidget {
-  const Assignments_upload({Key? key}) : super(key: key);
+class AssignmentsUpload extends StatefulWidget {
+  const AssignmentsUpload({Key? key}) : super(key: key);
 
   @override
-  State<Assignments_upload> createState() => _Assignments_uploadState();
+  State<AssignmentsUpload> createState() => _AssignmentsUploadState();
 }
 
 
@@ -15,7 +15,7 @@ bool active = false;
 int currIndex=0;
 
 
-class _Assignments_uploadState extends State<Assignments_upload> {
+class _AssignmentsUploadState extends State<AssignmentsUpload> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
