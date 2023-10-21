@@ -192,7 +192,7 @@ class _NeviState extends State<Nevi> {
                 title: const Text('Check Feedbacks'),
                 onTap: () {
                   Navigator.push(context, PageTransition(
-                    child: const QuizScreen(),
+                    child: const FeedBack(),
                     type: PageTransitionType.bottomToTopJoined,
                     duration: const Duration(milliseconds: 400),
                     alignment: Alignment.bottomCenter,

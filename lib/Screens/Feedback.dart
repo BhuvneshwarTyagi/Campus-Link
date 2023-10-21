@@ -5,13 +5,13 @@ import 'package:google_fonts/google_fonts.dart';
 import '../Constraints.dart';
 import 'loadingscreen.dart';
 
-class QuizScreen extends StatefulWidget {
-  const QuizScreen({super.key,});
+class FeedBack extends StatefulWidget {
+  const FeedBack({super.key,});
   @override
-  State<QuizScreen> createState() => _QuizScreenState();
+  State<FeedBack> createState() => _FeedBackState();
 }
 
-class _QuizScreenState extends State<QuizScreen> {
+class _FeedBackState extends State<FeedBack> {
   var count=1;
   List<dynamic> options = [];
   late DocumentSnapshot<Map<String, dynamic>> snapshot;
