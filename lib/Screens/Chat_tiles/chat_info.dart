@@ -303,7 +303,7 @@ class _Chat_InfoState extends State<Chat_Info> {
 
                               },
                             activeColor: Colors.black26,
-                            trackOutlineWidth: const MaterialStatePropertyAll(2),
+                           // trackOutlineWidth: const MaterialStatePropertyAll(2),
                             trackOutlineColor: const MaterialStatePropertyAll(Colors.black),
                             activeTrackColor: Colors.greenAccent,
 

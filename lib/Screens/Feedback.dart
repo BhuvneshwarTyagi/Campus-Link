@@ -184,7 +184,7 @@ class _FeedBackState extends State<FeedBack> {
                                                   backgroundColor: Colors.black,
                                                   color: Colors.green,
                                                   value: occurance[options[index]]==null ? 0 : occurance[options[index]]!/optionResponse.length,
-                                                  borderRadius: const BorderRadius.all(Radius.circular(15)),
+                                                  //borderRadius: const BorderRadius.all(Radius.circular(15)),
                                                 )
                                               ],
                                             ),
