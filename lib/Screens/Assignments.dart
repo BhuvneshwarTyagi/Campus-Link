@@ -10,6 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../Constraints.dart';
 import '../push_notification/Storage_permission.dart';
 import 'Chat_tiles/Image_viewer.dart';
@@ -215,10 +216,12 @@ class _Assignments_uploadState extends State<Assignments_upload> {
                           .split(" ")[0]} ${course_filter.split(
                           " ")[0]} ${branch_filter.split(
                           " ")[0]} $year_filter $section_filter $subject_filter")
-                      .snapshots(), builder: (BuildContext context,
-                  AsyncSnapshot<
-                      DocumentSnapshot<Map<String, dynamic>>> snapshot) {
-                return snapshot.hasData
+                      .snapshots(),
+                  builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
+                    // if(snapshot.hasData){
+                    //   docexits();
+                    // }
+                    return snapshot.hasData
                     ?
                 SizedBox(
 
@@ -230,16 +233,11 @@ class _Assignments_uploadState extends State<Assignments_upload> {
                           .data!["Assignment-${index + 1}"]["Document-type"]}";
                       File(newpath).exists().then((value) {
                         if (value) {
-                          if(mounted){
-                            setState(() {
                               isdownloaded[index] = true;
-                            });
-                          }
                           print(isdownloaded[index]);
                         } else {
-                          setState(() {
+
                             isdownloaded[index] = false;
-                          });
                         }
                       });
 
@@ -734,6 +732,16 @@ class _Assignments_uploadState extends State<Assignments_upload> {
     directory = await getExternalStorageDirectory();
 
     var permission = await checkALLPermissions.isStoragePermission();
+    if(!permission){
+      if(await Permission.manageExternalStorage.request().isGranted){
+        permission=true;
+      }else{
+        await Permission.manageExternalStorage.request().then((value) {
+          bool check=value.isGranted;
+          if(check){permission=true;}});
+      }
+
+    }
     if (permission) {
       String? dir = directory?.path.toString().substring(0, 19);
       path =

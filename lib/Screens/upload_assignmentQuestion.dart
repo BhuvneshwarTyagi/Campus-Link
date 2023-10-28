@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:campus_link_teachers/Database/database.dart';
 import 'package:campus_link_teachers/Screens/loadingscreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotted_border/dotted_border.dart';
@@ -265,28 +266,27 @@ class _AssigmentQuestionState extends State<AssigmentQuestion> {
                     await File("${filePath?.files[0].path}").copy(file.path).then((value) {
 
 
-                      print(
-                          "..........................After copy result will be$value");
+                      print("..........................After copy result will be$value");
                     }).whenComplete(() {
                       FirebaseFirestore.instance
                           .collection("Assignment")
                           .doc(
                           "${university_filter.split(" ")[0]} ${college_filter.split(" ")[0]} ${course_filter.split(" ")[0]} ${branch_filter.split(" ")[0]} $year_filter $section_filter $subject_filter")
                           .get()
-                          .then((value) {
+                          .then((value) async {
 
                         print("...............///.${university_filter.split(" ")[0]} ${college_filter.split(" ")[0]} ${branch_filter.split(" ")[0]} $year_filter $section_filter $subject_filter");
 
                         if (value.data() == null) {
-                          assignmentCount = 1;
+                          assignmentCount = 0;
                           FirebaseFirestore.instance
                               .collection("Assignment")
                               .doc(
                               "${university_filter.split(" ")[0]} ${college_filter.split(" ")[0]} ${course_filter.split(" ")[0]} ${branch_filter.split(" ")[0]} $year_filter $section_filter $subject_filter")
                               .set({
-                            "Total_Assignment": assignmentCount,
+                            "Total_Assignment": assignmentCount+1,
 
-                            "Assignment-$assignmentCount": {
+                            "Assignment-${assignmentCount+1}": {
                               "Assignment": pdfURL,
                               "Document-type":filePath?.files[0].extension,
                               "Size":filePath?.files[0].size,
@@ -318,6 +318,21 @@ class _AssigmentQuestionState extends State<AssigmentQuestion> {
                             "Total_Assignment": FieldValue.increment(1)
                           }
                           );
+                        }
+                        var studentsDoc =     await FirebaseFirestore.instance.collection("Students")
+                            .where("University",isEqualTo: university_filter)
+                            .where("College",isEqualTo: college_filter)
+                            .where("Branch",isEqualTo: branch_filter)
+                            .where("Course",isEqualTo: course_filter)
+                            .where("Year",isEqualTo: year_filter)
+                            .where("Section",isEqualTo: section_filter)
+                            .where("Subject",arrayContains: subject_filter).get();
+                        List<String> tokens =[];
+                        for(int i=0;i<studentsDoc.docs.length ; i++){
+                          tokens.add(studentsDoc.docs[i].data()["Token"]);
+                        }
+                        for(var token in tokens){
+                          database().sendPushMessage(token, "Assignment ${assignmentCount+1} DeadLine: ${dateInput.value.text}","New $subject_filter Assignment", false, "", stamp);
                         }
                       }).whenComplete(
                             () => Navigator.pop(context),
