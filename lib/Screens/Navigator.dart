@@ -31,7 +31,7 @@ class _NeviState extends State<Nevi> {
   int index = 0;
   late var mtoken;
   final screens = [
-    const AssignmentsUpload(),
+    const Assignments_upload(),
     const Notes(),
     const Attendance(),
     const Performance(),
