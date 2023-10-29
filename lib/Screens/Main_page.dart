@@ -68,25 +68,36 @@ class _MainPageState extends State<MainPage> {
   }
   Future<void> fetchuser() async {
   if(!loaded){
-    await FirebaseFirestore.instance.collection("Teachers").doc(FirebaseAuth.instance.currentUser!.email).get().then((value){
-      setState(() {
-        usermodel=value.data()!;
-      });
-    }).whenComplete(() async {
-      setState(() {
-        if (kDebugMode) {
-          print(usermodel);
-        }
-        loaded=true;
-      });
-      await FirebaseMessaging.instance.getToken().then((token) async {
-        await FirebaseFirestore.instance.collection("Teachers").doc(FirebaseAuth.instance.currentUser!.email).update({
-          'Token' : token,
+    await FirebaseFirestore.instance.collection("Teachers").doc(FirebaseAuth.instance.currentUser?.email).collection("Teachings").doc('Teachings')
+        .get().then((value) async {
+      university_filter = value.data()?['University'][0];
+      college_filter = value.data()?['College-0'][0];
+      course_filter = value.data()?['Course-00'][0];
+      branch_filter = value.data()?['Branch-000'][0];
+      year_filter = value.data()?['Year-0000'][0];
+      section_filter = value.data()?['Section-00000'][0];
+      subject_filter = value.data()?['Subject-000000'][0];
+      await FirebaseFirestore.instance.collection("Teachers").doc(FirebaseAuth.instance.currentUser!.email).get()
+          .then((value){
+        setState(() {
+          usermodel=value.data()!;
         });
-      });
+      }).whenComplete(() async {
+        setState(() {
+          if (kDebugMode) {
+            print(usermodel);
+          }
+          loaded=true;
+        });
+        await FirebaseMessaging.instance.getToken().then((token) async {
+          await FirebaseFirestore.instance.collection("Teachers").doc(FirebaseAuth.instance.currentUser!.email).update({
+            'Token' : token,
+          });
+        });
+      }
+      );
+    });
 
-    }
-    );
   }
   }
 }
