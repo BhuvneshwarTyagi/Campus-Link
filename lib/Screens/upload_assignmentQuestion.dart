@@ -328,11 +328,19 @@ class _AssigmentQuestionState extends State<AssigmentQuestion> {
                             .where("Section",isEqualTo: section_filter)
                             .where("Subject",arrayContains: subject_filter).get();
                         List<String> tokens =[];
+                        List<String> emails=[];
                         for(int i=0;i<studentsDoc.docs.length ; i++){
                           tokens.add(studentsDoc.docs[i].data()["Token"]);
+                          emails.add(studentsDoc.docs[i].data()["Email"]);
                         }
-                        for(var token in tokens){
-                          database().sendPushMessage(token, "Assignment ${assignmentCount+1} DeadLine: ${dateInput.value.text}","New $subject_filter Assignment", false, "", stamp);
+                        for(int i=0;i<tokens.length;i++ ){
+                          database().sendPushMessage(tokens[i], "Assignment ${assignmentCount+1} DeadLine: ${dateInput.value.text}","New $subject_filter Assignment", false, "", stamp);
+                          await FirebaseFirestore.instance.collection("Students").doc(emails[i]).update({
+                            "Notifications" : FieldValue.arrayUnion([{
+                              "title" : "$subject_filter assignment pending.",
+                              'body' : 'Your $subject_filter assignment ${assignmentCount+1} is pending. Please complete your assignment as soon as possible.\nDeadline: ${dateInput.value.text}'
+                            }])
+                          });
                         }
                       }).whenComplete(
                             () => Navigator.pop(context),

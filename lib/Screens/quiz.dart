@@ -17,6 +17,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pdfx/pdfx.dart';
 
 import '../Constraints.dart';
+import '../Database/database.dart';
 import 'loadingscreen.dart';
 
 
@@ -236,6 +237,7 @@ class _QuizState extends State<Quiz> {
                                  childCurrent: const Quiz(),
                                  child: const loading(text: "Data is uploading to server please wait.......")));
                              DateTime stamp= DateTime.now();
+                             DateTime deadline= DateTime.now();
 
 
                                pdfControllers.add(PdfController(document: PdfDocument.openFile("${filePath?.files[0].path}")));
@@ -435,6 +437,28 @@ class _QuizState extends State<Quiz> {
                                      );
                                    }));
                              });
+                             var studentsDoc =     await FirebaseFirestore.instance.collection("Students")
+                                 .where("University",isEqualTo: university_filter)
+                                 .where("College",isEqualTo: college_filter)
+                                 .where("Branch",isEqualTo: branch_filter)
+                                 .where("Course",isEqualTo: course_filter)
+                                 .where("Year",isEqualTo: year_filter)
+                                 .where("Section",isEqualTo: section_filter)
+                                 .where("Subject",arrayContains: subject_filter).get();
+                             List<String> tokens =[];
+                             List<String> emails=[];
+                             for(int i=0;i<studentsDoc.docs.length ; i++){
+                               tokens.add(studentsDoc.docs[i].data()["Token"]);
+                             }
+                             for(int i=0;i<tokens.length;i++ ){
+                               database().sendPushMessage(tokens[i], "$subject_filter Notes ${notesCount+1} uploaded,Quiz DeadLine: ${deadline}","$subject_filter Notes ${notesCount+1}", false, "", stamp);
+                               await FirebaseFirestore.instance.collection("Students").doc(emails[i]).update({
+                                 "Notifications" : FieldValue.arrayUnion([{
+                                   "title" : "$subject_filter notes ${notesCount+1} quiz.",
+                                   'body' : 'Your $subject_filter notes ${notesCount+1} quiz is pending. Please complete your quiz as soon as possible.\nDeadline: ${deadline}'
+                                 }])
+                               });
+                             }
                            }
                          else{
                            InAppNotifications.instance
