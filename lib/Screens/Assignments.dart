@@ -231,6 +231,12 @@ class _Assignments_uploadState extends State<Assignments_upload> {
                       String newpath =
                           "${path}Assignment-${index + 1}.${snapshot
                           .data!["Assignment-${index + 1}"]["Document-type"]}";
+                      isdownloaded = List.generate(
+                         snapshot .data!["Total_Assignment"],
+                              (index) => false);
+                      downloding = List.generate(
+                          snapshot .data!["Total_Assignment"],
+                              (index) => false);
                       File(newpath).exists().then((value) {
                         if (value) {
                               isdownloaded[index] = true;
@@ -336,7 +342,7 @@ class _Assignments_uploadState extends State<Assignments_upload> {
 
                                       ),
                                       child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                         children: [
                                           Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -345,7 +351,7 @@ class _Assignments_uploadState extends State<Assignments_upload> {
                                                 "Assignment : ${index + 1} (${(int.parse(snapshot.data!["Assignment-${index + 1}"]["Size"].toString())/1048576).toStringAsFixed(2)}MB)",
                                                 style: GoogleFonts.courgette(
                                                     color: Colors.black,
-                                                    fontSize: size.height*0.02,
+                                                    fontSize: size.height*0.019,
                                                     fontWeight: FontWeight.w400
                                                 ),
                                               ),
@@ -355,14 +361,14 @@ class _Assignments_uploadState extends State<Assignments_upload> {
                                                     1}"]["Last Date"]}",
                                                 style: GoogleFonts.courgette(
                                                     color: Colors.black,
-                                                    fontSize: size.height*0.02,
+                                                    fontSize: size.height*0.019,
                                                     fontWeight: FontWeight.w400
                                                 ),
                                               ),
                                               AutoSizeText(
-                                                "Assign:${snapshot
+                                                "Assign:${(snapshot
                                                     .data!["Assignment-${index +
-                                                    1}"]["Assign-Date"].toString()}",
+                                                    1}"]["Assign-Date"].toDate()).toString().split(" ")[0]}",
                                                 style: GoogleFonts.courgette(
                                                     color: Colors.black,
                                                     fontSize: size.height*0.02,
@@ -601,7 +607,7 @@ class _Assignments_uploadState extends State<Assignments_upload> {
 
                                           Container(
                                             height: size.height * 0.045,
-                                            width: size.width * 0.275,
+                                            width: size.width * 0.27,
                                             decoration: BoxDecoration(
                                                 color: Colors.transparent,
                                                 borderRadius: const BorderRadius.all(
