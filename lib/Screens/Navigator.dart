@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:campus_link_teachers/Screens/Feedback.dart';
 import 'package:campus_link_teachers/Screens/loadingscreen.dart';
+import 'package:campus_link_teachers/push_notification/helper_notification.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:auto_size_text/auto_size_text.dart';
@@ -157,6 +159,22 @@ class _NeviState extends State<Nevi> {
                 title: const Text("Home"),
                 onTap: () {
                   Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.home,color: Colors.black,),
+                title: const Text("Notification"),
+                onTap: () {
+                  NotificationServices.display(
+                      const RemoteMessage(
+                          data:{
+                            'title': "Test",
+                            'body': "Testing",
+                            'route': ""
+                          },
+                      ),
+                    '404'
+                  );
                 },
               ),
               ListTile(
@@ -337,12 +355,15 @@ class _NeviState extends State<Nevi> {
           ],
           iconTheme: const IconThemeData(color: Colors.black),
           backgroundColor: Colors.black38,
-          titleTextStyle: GoogleFonts.tiltNeon(
-              color: Colors.black,
-              //const Color.fromRGBO(150, 150, 150, 1),
-              fontWeight: FontWeight.w500,
-              fontSize: MediaQuery.of(context).size.height * 0.04),
-          title: const Text('Campus Link'),
+          title: SizedBox(
+            width: size.width*0.9,
+            height: size.height*0.055,
+            child: Text('Campus Link',style: GoogleFonts.tiltNeon(
+                color: Colors.black,
+                //const Color.fromRGBO(150, 150, 150, 1),
+                fontWeight: FontWeight.w500,
+                fontSize: MediaQuery.of(context).size.height * 0.04),),
+          )
         ),
         body: screens[index],
         bottomNavigationBar: Container(

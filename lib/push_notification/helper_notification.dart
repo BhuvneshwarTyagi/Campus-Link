@@ -3,18 +3,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class NotificationServices{
-  RequestPermission() async {
-    PermissionStatus status = await Permission.notification.request();
-    if (status.isGranted) {
-      // notification permission is granted
-    }
-    else {
-      // Open settings to enable notification permission
-    }
-  }
+  // RequestPermission() async {
+  //   PermissionStatus status = await Permission.notification.request();
+  //   if (status.isGranted) {
+  //     // notification permission is granted
+  //   }
+  //   else {
+  //     // Open settings to enable notification permission
+  //   }
+  // }
   static final FlutterLocalNotificationsPlugin _notificationsPlugin =
   FlutterLocalNotificationsPlugin();
 
@@ -31,7 +30,7 @@ class NotificationServices{
 
     const InitializationSettings initializationSettings =
     InitializationSettings(
-        android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+        android: AndroidInitializationSettings('@drawable/ic_launcher'),
         iOS: DarwinInitializationSettings());
 
     await FirebaseMessaging.instance
@@ -46,16 +45,17 @@ class NotificationServices{
         // });
   }
 
-  static void display(RemoteMessage message) async {
+  static void display(RemoteMessage message,String channel) async {
     try {
-      final id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+      final id = int.parse(channel);
 
-      NotificationDetails notificationDetails = const NotificationDetails(
+      NotificationDetails notificationDetails = NotificationDetails(
           android: AndroidNotificationDetails(
-            "campuslink",
+            channel,
             "campuslink channel",
             importance: Importance.max,
             priority: Priority.high,
+            icon: "@drawable/ic_launcher"
           ),
           iOS: DarwinNotificationDetails());
 
@@ -78,7 +78,7 @@ class NotificationServices{
             "campuslink channel",
             importance: Importance.max,
             priority: Priority.high,
-            icon: '@mipmap/ic_launcher'
+            icon: '@drawable/ic_launcher'
         ),
         iOS: DarwinNotificationDetails());
   }

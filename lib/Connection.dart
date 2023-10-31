@@ -41,9 +41,9 @@ class _InternetcheckState extends State<Internetcheck> {
     // TODO: implement initState
     super.initState();
 
-    if(!kIsWeb){
-      NotificationServices().RequestPermission();
-    }
+    // if(!kIsWeb){
+    //   NotificationServices().RequestPermission();
+    // }
   }
 
 

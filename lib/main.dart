@@ -97,7 +97,7 @@ Future<void> firebaseMessagingonmessageHandler(RemoteMessage message) async {
         }
     );
   }
-  NotificationServices.display(message);
+  NotificationServices.display(message,"404");
 
 }
 @pragma('vm:entry-point')
@@ -127,7 +127,7 @@ Future<void> firebaseMessagingonmessageOpenedAppHandler(RemoteMessage message) a
       print(".........$e");
   }
   }
-  NotificationServices.display(message);
+  NotificationServices.display(message,"404");
 
 }
 
@@ -182,6 +182,8 @@ class _MyAppState extends State<MyApp>  with WidgetsBindingObserver{
           break;
         case AppLifecycleState.detached:
           NotificationServices().setUserState(status: "Offline");
+          break;
+        default:
           break;
       // TODO: Handle this case.
       }

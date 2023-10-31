@@ -645,12 +645,13 @@ class _NotesState extends State<Notes> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    const Icon(Icons.upload_sharp),
+                    const Icon(Icons.upload_sharp,color: Colors.black),
                     AutoSizeText(
                       "Upload Notes",
                       style: TextStyle(
                         fontSize: size.height * 0.02,
                         fontWeight: FontWeight.w500,
+                        color: Colors.black
                       ),
                     ),
                   ],

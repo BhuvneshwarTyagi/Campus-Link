@@ -677,20 +677,27 @@ class _Assignments_uploadState extends State<Assignments_upload> {
               borderRadius: const BorderRadius.all(Radius.circular(20)),
               border: Border.all(color: Colors.black, width: 1)
           ),
-          width: size.width * 0.3,
+          width: size.width * 0.36,
           height: size.height * 0.05,
           child: FloatingActionButton(
             backgroundColor: Colors.transparent,
             elevation: 0,
-            child: const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            child:  Row(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Icon(
-                  Icons.upload,
-                  color: Colors.white70,
+                Image.asset("assets/images/upload-icon.png",),
+                // const Icon(
+                //   Icons.upload,
+                //   color: Colors.white70,
+                // ),
+                SizedBox(width: size.width*0.02,),
+                AutoSizeText("Upload File",style: GoogleFonts.tiltNeon(
+                    color: Colors.black,
+                    //const Color.fromRGBO(150, 150, 150, 1),
+                    fontWeight: FontWeight.w500,
+                    fontSize: size.width*0.035),
                 ),
-                AutoSizeText("Upload File")
-              ],
+            ],
             ),
             onPressed: () {
               subject_filter.isEmpty
