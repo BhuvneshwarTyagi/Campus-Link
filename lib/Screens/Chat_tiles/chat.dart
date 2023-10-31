@@ -184,7 +184,7 @@ class _ChatPageState extends State<ChatPage> {
                             ?
                         CircleAvatar(
                           backgroundColor: const Color.fromRGBO(3, 178, 183, 1).withOpacity(0.5),
-                          backgroundImage: snapshot.data!.data()!["image_URL"] == "null" ? null : NetworkImage(snapshot.data!.data()!["image_URL"]),
+                          backgroundImage: (snapshot.data!.data()!["image_URL"] == "null" || snapshot.data!.data()!["image_URL"] == null)? null : NetworkImage(snapshot.data!.data()!["image_URL"]),
                           child: snapshot.data!.data()!["image_URL"] != "null"
                               ?
                           const SizedBox()
@@ -312,7 +312,7 @@ class _ChatPageState extends State<ChatPage> {
                       enableChatSeparator: true,
                       enableReactionPopup: true,
                       enableReplySnackBar: true,
-                      enableTextField: !snapshot.data!.data()![usermodel["Email"].toString().split("@")[0]]['Muted'] != true ? false : true
+                      enableTextField: !( snapshot.data!.data()![usermodel["Email"].toString().split("@")[0]]['Muted'] != true ? false : true)
                   ),
                   loadingWidget:  const loading(text: "Syncronizing with the server please wait..."),
                   reactionPopupConfig: ReactionPopupConfiguration(
