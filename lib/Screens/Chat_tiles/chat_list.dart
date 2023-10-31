@@ -159,7 +159,7 @@ class _chatsystemState extends State<chatsystem> {
                           }
                           else{
                             Name=snapshot.data!.data()![snapshot.data!.data()!["Members"][0].toString().split("@")[0]]["Name"];
-                            profileUrl=snapshot.data!.data()![snapshot.data!.data()!["Members"][0].toString().split("@")[0]]["Profile_URL"];
+                            profileUrl=snapshot.data!.data()![snapshot.data!.data()!["Members"][0].toString().split("@")[0]]["Profile_URL"] ?? "";
                           }
                         }
                       }
@@ -186,8 +186,8 @@ class _chatsystemState extends State<chatsystem> {
                             CircleAvatar(
                               backgroundColor: const Color.fromRGBO(86, 149, 178, 1),
                               radius: size.width*0.07,
-                              backgroundImage: profileUrl != "null" ? NetworkImage(profileUrl) : null,
-                              child: profileUrl == "null"
+                              backgroundImage: (profileUrl != "null" || profileUrl!="") ? NetworkImage(profileUrl) : null,
+                              child: (profileUrl == "null" || profileUrl == "")
                                   ?
                               AutoSizeText(
                                 Name.substring(0,1),
@@ -276,8 +276,8 @@ class _chatsystemState extends State<chatsystem> {
                             CircleAvatar(
                               backgroundColor: const Color.fromRGBO(86, 149, 178, 1),
                               radius: size.width*0.07,
-                              backgroundImage: snapshot.data!.data()!["image_URL"]!="null"? NetworkImage(snapshot.data!.data()!["image_URL"]) : null,
-                              child: snapshot.data?.data()!["image_URL"] == "null"
+                              backgroundImage: (snapshot.data!.data()!["image_URL"]!="null" && snapshot.data!.data()!["image_URL"]!=null)? NetworkImage(snapshot.data!.data()!["image_URL"]) : null,
+                              child: (snapshot.data?.data()!["image_URL"] == "null" || snapshot.data!.data()!["image_URL"] ==null)
                                   ?
                               AutoSizeText(
                                 usermodel["Message_channels"][index].toString().split(" ")[6].substring(0, 1),
@@ -348,12 +348,7 @@ class _chatsystemState extends State<chatsystem> {
                       ),
                     )
                         :
-                    Text("Fetching Chats from server",
-                      style: GoogleFonts.aBeeZee(
-                          color: Colors.white,
-                          fontSize: size.height*0.035,
-                        fontWeight: FontWeight.w600
-                      ),);
+                    const CircularProgressIndicator(color: Colors.amber,);
                   }
                 ),
               );

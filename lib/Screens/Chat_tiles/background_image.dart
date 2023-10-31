@@ -57,7 +57,7 @@ class _Background_imageState extends State<Background_image> {
           TextButton(
               onPressed: () async {
                 await FirebaseFirestore.instance
-                    .collection("Teachers")
+                    .collection("Students")
                     .doc(usermodel["Email"])
                     .update({"bg": "bg-${index1 + 1}.jpg"}).whenComplete(
                         () => print("...Saved"));

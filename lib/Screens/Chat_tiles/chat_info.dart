@@ -1,17 +1,16 @@
 import 'dart:io';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:campus_link_teachers/Constraints.dart';
-import 'package:campus_link_teachers/Database/database.dart';
-import 'package:campus_link_teachers/Screens/Chat_tiles/Media_File.dart';
-import 'package:campus_link_teachers/Screens/loadingscreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:page_transition/page_transition.dart';
-
+import '../../Constraints.dart';
+import '../../Database/database.dart';
+import '../loadingscreen.dart';
 import 'Group_decription.dart';
+import 'Media_File.dart';
 
 
 

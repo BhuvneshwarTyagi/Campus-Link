@@ -1,13 +1,13 @@
 import 'dart:io';
-
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:campus_link_teachers/Screens/Chat_tiles/PdfViewer.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+
+import 'PdfViewer.dart';
 
 class PdfTile extends StatefulWidget {
   const PdfTile({Key? key, required this.pdfUrl, required this.pdfImageUrl, required this.stamp, required this.size, required this.name}) : super(key: key);

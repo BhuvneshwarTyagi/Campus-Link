@@ -173,6 +173,7 @@ class _ChatPageState extends State<ChatPage> {
                         fit: BoxFit.fill)),
                 width: size.width,
                 child: ChatView(
+
                   appBar: AppBar(
                     backgroundColor: Colors.black87,
 
@@ -201,9 +202,33 @@ class _ChatPageState extends State<ChatPage> {
 
                           backgroundImage: snapshot.data!.data()!["Members"][0] == usermodel['Email']
                               ?
-                          NetworkImage(snapshot.data!.data()![snapshot.data!.data()!["Members"][1].toString().split("@")[0]]["Profile_URL"])
+                          NetworkImage(snapshot.data!.data()![snapshot.data!.data()!["Members"][1].toString().split("@")[0]]["Profile_URL"] ?? "")
                               :
-                          NetworkImage(snapshot.data!.data()![snapshot.data!.data()!["Members"][0].toString().split("@")[0]]["Profile_URL"]),
+                          NetworkImage(snapshot.data!.data()![snapshot.data!.data()!["Members"][0].toString().split("@")[0]]["Profile_URL"] ?? "" ),
+
+                          child:
+                          snapshot.data!.data()!["Members"][0] == usermodel['Email']
+                              ?
+                          snapshot.data!.data()![snapshot.data!.data()!["Members"][1].toString().split("@")[0]]["Profile_URL"]==null || snapshot.data!.data()![snapshot.data!.data()!["Members"][1].toString().split("@")[0]]["Profile_URL"]=="null" || snapshot.data!.data()![snapshot.data!.data()!["Members"][1].toString().split("@")[0]]["Profile_URL"]==""
+                              ?
+                          Text(channel.substring(0,1),style: GoogleFonts.tiltNeon(
+                            color: Colors.black,
+                            //const Color.fromRGBO(150, 150, 150, 1),
+                            fontWeight: FontWeight.w500,
+                            fontSize: size.width*0.8,),)
+                              :
+                          const SizedBox()
+                              :
+                          snapshot.data!.data()![snapshot.data!.data()!["Members"][0].toString().split("@")[0]]["Profile_URL"]==null || snapshot.data!.data()![snapshot.data!.data()!["Members"][0].toString().split("@")[0]]["Profile_URL"]== "null" || snapshot.data!.data()![snapshot.data!.data()!["Members"][0].toString().split("@")[0]]["Profile_URL"]==""
+                              ?
+                          Text(channel.substring(0,1),style: GoogleFonts.tiltNeon(
+                            color: Colors.black,
+                            //const Color.fromRGBO(150, 150, 150, 1),
+                            fontWeight: FontWeight.w500,
+                            fontSize: size.width*0.08,),)
+                              :
+                          const SizedBox(),
+
 
                         ),
                         SizedBox(width: size.width*0.02,),
@@ -252,7 +277,7 @@ class _ChatPageState extends State<ChatPage> {
                     leading: IconButton(
                         onPressed: (){
                           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-                            return chatsystem();
+                            return const chatsystem();
                           },));
                         },
                         icon: const Icon(Icons.arrow_back_ios_new),
@@ -262,12 +287,22 @@ class _ChatPageState extends State<ChatPage> {
                     circleRadius: size.width*0.035,
                     profileImageUrl: usermodel["Profile_URL"],
                   ),
-                  chatBackgroundConfig: const ChatBackgroundConfiguration(backgroundColor: Colors.black38),
+                  chatBackgroundConfig: ChatBackgroundConfiguration(
+                      backgroundColor: Colors.black38,
+                    defaultGroupSeparatorConfig: DefaultGroupSeparatorConfiguration(
+                      textStyle: GoogleFonts.tiltNeon(
+                          color: const Color.fromRGBO(211, 211, 211, 1),
+                          //const Color.fromRGBO(150, 150, 150, 1),
+                          fontWeight: FontWeight.w500,
+                          fontSize: size.width*0.035,
+                      )
+                    )
+                  ),
                   currentUser: currentUser,
                   chatController: chatController,
-
                   onSendTap: onSendTap,
                   featureActiveConfig: FeatureActiveConfig(
+                    lastSeenAgoBuilderVisibility: true,
                       enableOtherUserProfileAvatar: true,
                       enablePagination: true,
                       enableSwipeToSeeTime: true,
@@ -321,6 +356,7 @@ class _ChatPageState extends State<ChatPage> {
                     maxWidth: size.width*0.6,
                     receiptsWidgetConfig: const ReceiptsWidgetConfig(
                        showReceiptsIn: ShowReceiptsIn.all,
+
                     ),
                     outgoingChatBubbleConfig: ChatBubble(
                       senderNameTextStyle: GoogleFonts.aBeeZee(
@@ -536,8 +572,23 @@ class _ChatPageState extends State<ChatPage> {
                   messageConfig:  MessageConfiguration(
                     messageReactionConfig: MessageReactionConfiguration(
                       backgroundColor: Colors.black54,
+
                       borderColor: const Color.fromRGBO(3, 178, 183, 1),
                       borderWidth: 1.5,
+                      reactionsBottomSheetConfig: ReactionsBottomSheetConfiguration(
+                        backgroundColor: Colors.black87,
+                        reactedUserTextStyle: GoogleFonts.tiltNeon(
+                            color: Colors.black,
+                            //const Color.fromRGBO(150, 150, 150, 1),
+                            fontWeight: FontWeight.w500,
+                            fontSize: size.width*0.04,
+                        ),
+                        reactionWidgetDecoration: const BoxDecoration(
+                          color: Colors.grey,
+                          borderRadius: BorderRadius.all(Radius.circular(15))
+                        ),
+                        reactionSize: size.width*0.06
+                      ),
                       margin: EdgeInsets.only(top: size.height*0.01,left: size.width*0.04)
                     ),
                   ),
