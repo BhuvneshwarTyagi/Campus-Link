@@ -631,7 +631,7 @@ class _basicDetailsState extends State<basicDetails> {
                         yearController.text.isNotEmpty &&
                         secController.text.isNotEmpty &&
                         subjectController.text.isNotEmpty) {
-                      try {
+                       try{
                         Navigator.push(context, PageTransition(
                           duration: const Duration(milliseconds: 400),
                           childCurrent: const basicDetails(),
@@ -681,8 +681,7 @@ class _basicDetailsState extends State<basicDetails> {
                           ).update({
                             "Admins" : FieldValue.arrayUnion(["${usermodel["Email"]}"]),
                             "Members" : FieldValue.arrayUnion([
-                              {usermodel["Email"],
-                              }
+                              usermodel["Email"]
                                   ]),
                             usermodel["Email"].toString().split("@")[0] : map1,
                           })
@@ -928,24 +927,25 @@ class _basicDetailsState extends State<basicDetails> {
                              Navigator.pop(context);
                           });
                         });
-                      } on FirebaseException catch (e) {
-                        InAppNotifications.instance
-                          ..titleFontSize = 35.0
-                          ..descriptionFontSize = 20.0
-                          ..textColor = Colors.black
-                          ..backgroundColor = const Color.fromRGBO(150, 150, 150, 1)
-                          ..shadow = true
-                          ..animationStyle = InAppNotificationsAnimationStyle.scale;
-                        InAppNotifications.show(
-                            title: 'Failed',
-                            duration: const Duration(seconds: 2),
-                            description: e.toString().split(']')[1].trim(),
-                            leading: const Icon(
-                              Icons.error_outline_outlined,
-                              color: Colors.red,
-                              size: 55,
-                            ));
-                      }
+                      }on FirebaseException catch
+                       (e) {
+                         InAppNotifications.instance
+                           ..titleFontSize = 20.0
+                           ..descriptionFontSize = 15.0
+                           ..textColor = Colors.black
+                           ..backgroundColor = const Color.fromRGBO(150, 150, 150, 1)
+                           ..shadow = true
+                           ..animationStyle = InAppNotificationsAnimationStyle.scale;
+                         InAppNotifications.show(
+                             title: 'Failed',
+                             duration: const Duration(seconds: 2),
+                             description: e.toString().split(']')[1].trim(),
+                             leading: const Icon(
+                               Icons.error_outline_outlined,
+                               color: Colors.red,
+                               size: 30,
+                             ));
+                       }
                     }
                     else {
                       InAppNotifications.instance
