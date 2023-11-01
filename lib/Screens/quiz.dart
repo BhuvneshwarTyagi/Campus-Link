@@ -44,7 +44,7 @@ class _QuizState extends State<Quiz> {
     Size size = MediaQuery.of(context).size;
 
     return Container(
-        height: size.height,
+       height: size.height,
         padding: EdgeInsets.all(size.height * 0.01),
         decoration: BoxDecoration(
           color: Colors.black26.withOpacity(0.9),
@@ -170,8 +170,13 @@ class _QuizState extends State<Quiz> {
                         radius: const Radius.circular(12),
                         padding: const EdgeInsets.all(10),
                         child: TextField(
+                          textAlign: TextAlign.start,
                           controller: videoController,
-                          decoration: const InputDecoration(
+                          style: GoogleFonts.poppins(
+                            color: Colors.white,
+                              fontSize: size.height*0.018
+                          ),
+                          decoration:  const InputDecoration(
                               border: InputBorder.none,
                               hintText: "Additional Link ",
                               hintStyle: TextStyle(
@@ -194,7 +199,12 @@ class _QuizState extends State<Quiz> {
                         radius: const Radius.circular(12),
                         padding: const EdgeInsets.all(10),
                         child: TextField(
+                          textAlign: TextAlign.start,
                           controller: notesDescription,
+                          style: GoogleFonts.poppins(
+                              color: Colors.white,
+                            fontSize: size.height*0.018
+                          ) ,
                           decoration: const InputDecoration(
                               border: InputBorder.none,
                               hintText: "Notes Description ",
