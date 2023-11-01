@@ -22,6 +22,7 @@ import '../push_notification/Storage_permission.dart';
 import 'Chat_tiles/PdfViewer.dart';
 import 'QuizScore.dart';
 import 'Quiz_response.dart';
+import 'SubjectQuizScore.dart';
 
 class Notes extends StatefulWidget {
   const Notes({Key? key}) : super(key: key);
@@ -64,12 +65,134 @@ class _NotesState extends State<Notes> {
     BorderRadiusGeometry radiusGeomentry=BorderRadius.circular(size.width*0.09);
     return Scaffold(
       backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        toolbarHeight: size.height*0.11,
+        flexibleSpace: SizedBox(
+          height: size.height * 0.11,
+          width: size.width * 1,
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Container(
+                      height: size.height * 0.06,
+                      width: size.width * 0.38,
+                      decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Colors.blue,
+                              Colors.purpleAccent,
+                            ],
+                          ),
+                          borderRadius: const BorderRadius.all(Radius.circular(20)),
+                          border: Border.all(color: Colors.black, width: 2)),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20)))
+                        ),
+                        onPressed: () {
+
+                          Navigator.push(context,
+                              PageTransition(
+                                  child: subjectQuizScore(subject: subject_filter,),
+                                  type: PageTransitionType.bottomToTopJoined,
+                                  childCurrent: const Notes(),
+                                  duration: const Duration(milliseconds: 300)
+                              )
+                          );
+
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            const Icon(Icons.leaderboard_sharp,color: Colors.red),
+                            AutoSizeText(
+                              "Leaderboard",
+                              style: TextStyle(
+                                  fontSize: size.height * 0.02,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Container(
+                      height: size.height * 0.06,
+                      width: size.width * 0.38,
+                      decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Colors.blue,
+                              Colors.purpleAccent,
+                            ],
+                          ),
+                          borderRadius: const BorderRadius.all(Radius.circular(20)),
+                          border: Border.all(color: Colors.black, width: 2)),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20)))
+                        ),
+                        onPressed: () {
+
+                          Navigator.push(context,
+                              PageTransition(
+                                  child:const Quiz(),
+                                  type: PageTransitionType.bottomToTopJoined,
+                                  childCurrent: const Notes(),
+                                  duration: const Duration(milliseconds: 300)
+                              )
+                          );
+
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            const Icon(Icons.upload_sharp,color: Colors.red),
+                            AutoSizeText(
+                              "Upload Notes",
+                              style: TextStyle(
+                                  fontSize: size.height * 0.02,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Divider(
+                color: Colors.black,
+                height: MediaQuery.of(context).size.height * 0.02,
+                thickness: MediaQuery.of(context).size.height * 0.002,
+                endIndent: 8,
+                indent: 8,
+              )
+            ],
+          ),
+        ),
+      ),
       body: subject_filter!=""
         ?
       docExists
       ?
       SizedBox(
-        height:size.height*0.8,
+        height:size.height*0.99,
         width:size.width*0.98,
         child: StreamBuilder
           (
@@ -433,7 +556,7 @@ class _NotesState extends State<Notes> {
                                                        ),
 
                                                        onPressed: () {
-                                                         Navigator.pushReplacement(context,
+                                                         Navigator.push(context,
                                                              PageTransition(
                                                                  child: responseScreen(
                                                                    quizId: index + 1,),
@@ -485,7 +608,7 @@ class _NotesState extends State<Notes> {
                                                        ),
 
                                                        onPressed: () {
-                                                         Navigator.pushReplacement(context,
+                                                         Navigator.push(context,
                                                              PageTransition(
                                                                  child: Quizscore(
                                                                    quizId: index + 1,),
@@ -544,7 +667,7 @@ class _NotesState extends State<Notes> {
                                                 ),
 
                                                 onPressed: () {
-                                                  Navigator.pushReplacement(context,
+                                                  Navigator.push(context,
                                                       PageTransition(
                                                           child: QuizQustion(
                                                             quizNumber: index + 1,),
@@ -603,7 +726,7 @@ class _NotesState extends State<Notes> {
           ),
 
 
-      floatingActionButton: subject_filter!=""
+      /*floatingActionButton: subject_filter!=""
         ?
       Padding(
         padding: EdgeInsets.only(
@@ -662,7 +785,7 @@ class _NotesState extends State<Notes> {
         ),
       )
           :
-          const SizedBox()
+          const SizedBox()*/
     );
 
   }
