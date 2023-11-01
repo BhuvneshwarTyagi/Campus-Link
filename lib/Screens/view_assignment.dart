@@ -91,7 +91,7 @@ class _ViewAssignmentState extends State<ViewAssignment> {
                                                             [
                                                             "${snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index]}"]
                                                         ["Status"] ==
-                                                    ""
+                                                    " "
                                                 ? Padding(
                                                     padding: EdgeInsets.all(
                                                         size.height * 0.014),
@@ -298,19 +298,8 @@ class _ViewAssignmentState extends State<ViewAssignment> {
                                                         ),
                                                       ),
                                                     ))
-                                                : Center(
-                                                    child: SizedBox(
-                                                        child: Column(
-                                                      children: [
-                                                        SizedBox(
-                                                          height:
-                                                              size.height * 0.3,
-                                                        ),
-                                                        const Text(
-                                                            "No Data Found "),
-                                                      ],
-                                                    )),
-                                                  );
+                                                :
+                                            const SizedBox();
                                           }),
                                     )
                                   : const Center(child: Text("No Data Found"));
@@ -561,19 +550,7 @@ class _ViewAssignmentState extends State<ViewAssignment> {
                                                         ),
                                                       ),
                                                     ))
-                                                : Center(
-                                                    child: SizedBox(
-                                                        child: Column(
-                                                      children: [
-                                                        SizedBox(
-                                                          height:
-                                                              size.height * 0.3,
-                                                        ),
-                                                        const Text(
-                                                            "No Data Found "),
-                                                      ],
-                                                    )),
-                                                  );
+                                                : const SizedBox();
                                           }),
                                     )
                                   : const Center(child: Text("No Data Found"));
@@ -823,19 +800,7 @@ class _ViewAssignmentState extends State<ViewAssignment> {
                                                       ),
                                                     ))
                                                 :
-                                            Center(
-                                                    child: SizedBox(
-                                                        child: Column(
-                                                      children: [
-                                                        SizedBox(
-                                                          height:
-                                                              size.height * 0.3,
-                                                        ),
-                                                        const Text(
-                                                            "No Data Found "),
-                                                      ],
-                                                    )),
-                                                  );
+                                            const SizedBox();
                                           }),
                                     )
                                   : const Center(child: Text("No Data Found"));
