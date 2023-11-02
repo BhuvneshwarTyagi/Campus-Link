@@ -62,7 +62,7 @@ class _NotesState extends State<Notes> {
   @override
   Widget build(BuildContext context) {
     Size size=MediaQuery.of(context).size;
-    BorderRadiusGeometry radiusGeomentry=BorderRadius.circular(size.width*0.08);
+    BorderRadiusGeometry radiusGeomentry=BorderRadius.circular(size.width*0.09);
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(

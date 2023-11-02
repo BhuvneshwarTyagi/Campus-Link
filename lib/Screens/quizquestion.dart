@@ -949,6 +949,7 @@ class _QuizQustionState extends State<QuizQustion> {
                                                                 "${university_filter.split(" ")[0]} ${college_filter.split(" ")[0]} ${course_filter.split(" ")[0]} ${branch_filter.split(" ")[0]} $year_filter $section_filter $subject_filter")
                                                                 .update({
                                                               "Notes-${widget.quizNumber}.Deadline":deadlinePickedDate,
+                                                              "Notes-${widget.quizNumber}.Total_Question": questionCount * 2,
                                                               "Notes-${widget.quizNumber}.Quiz_Created":index + 1 ==
                                                                   questionCount *
                                                                       2
@@ -975,9 +976,7 @@ class _QuizQustionState extends State<QuizQustion> {
                                                                         .multipleChoice
                                                                     ? "multipleChoice"
                                                                     : "True and False",
-                                                                "Total_Question":
-                                                                questionCount *
-                                                                    2,
+
                                                               },
                                                             }).whenComplete(() {
                                                               setState(() {
