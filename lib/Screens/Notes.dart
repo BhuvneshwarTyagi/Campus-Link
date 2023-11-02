@@ -62,7 +62,7 @@ class _NotesState extends State<Notes> {
   @override
   Widget build(BuildContext context) {
     Size size=MediaQuery.of(context).size;
-    BorderRadiusGeometry radiusGeomentry=BorderRadius.circular(size.width*0.09);
+    BorderRadiusGeometry radiusGeomentry=BorderRadius.circular(size.width*0.08);
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
@@ -114,12 +114,15 @@ class _NotesState extends State<Notes> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             const Icon(Icons.leaderboard_sharp,color: Colors.red),
-                            AutoSizeText(
-                              "Leaderboard",
-                              style: TextStyle(
-                                  fontSize: size.height * 0.02,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black
+                            FittedBox(
+                              fit: BoxFit.cover,
+                              child: AutoSizeText(
+                                "Leaderboard",
+                                style: TextStyle(
+                                    fontSize: size.height * 0.02,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black
+                                ),
                               ),
                             ),
                           ],
@@ -161,12 +164,15 @@ class _NotesState extends State<Notes> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             const Icon(Icons.upload_sharp,color: Colors.red),
-                            AutoSizeText(
-                              "Upload Notes",
-                              style: TextStyle(
-                                  fontSize: size.height * 0.02,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black
+                            FittedBox(
+                              fit: BoxFit.cover,
+                              child: AutoSizeText(
+                                "Upload Notes",
+                                style: TextStyle(
+                                    fontSize: size.height * 0.02,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black
+                                ),
                               ),
                             ),
                           ],
@@ -209,8 +215,10 @@ class _NotesState extends State<Notes> {
                 child: ListView.builder(
                   itemCount: snapshot.data["Total_Notes"],
                   itemBuilder: (context, index) {
-                    Timestamp deadline=snapshot.data["Notes-${index+1}"]["Deadline"];
-                    //print("....................${snapshot.data["Notes-${index+1}"]["Deadline"]}");
+                    /*isExpanded=List.generate(snapshot.data.data()["Total_Notes"], (index) =>  false);
+                    isDownloaded=List.generate(snapshot.data.data()?["Total_Notes"], (index) =>  false);
+                    isDownloading=List.generate(snapshot.data.data()?["Total_Notes"], (index) =>  false);*/
+                    Timestamp deadline=snapshot.data["Notes-${index+1}"]["Deadline"] ?? Timestamp(0, 0);
                     bool quizCreated = snapshot.data["Notes-${index+1}"]["Quiz_Created"];
                     String? dir = directory?.path.toString().substring(0, 19);
                     String path = "$dir/Campus Link/$university_filter $college_filter $course_filter $branch_filter $year_filter $section_filter $subject_filter/Notes/";
@@ -219,14 +227,20 @@ class _NotesState extends State<Notes> {
                         1}"]["File_Name"]}");
                     newPath.exists().then((value) async {
                       if (!value) {
-                        setState(() {
-                          isDownloaded[index] = false;
-                        });
+                        if(mounted)
+                          {
+                            setState(() {
+                              isDownloaded[index] = false;
+                            });
+                          }
                       }
                       else {
-                        setState(() {
-                          isDownloaded[index] = true;
-                        });
+                       if(mounted)
+                         {
+                           setState(() {
+                             isDownloaded[index] = true;
+                           });
+                         }
                       }
                     },);
                       return Padding(
@@ -234,14 +248,16 @@ class _NotesState extends State<Notes> {
                         child: Container(
                           width: size.width * 0.85,
                           decoration: BoxDecoration(
-                            color: const Color.fromRGBO(56, 33, 101,1),
+                            //color: const Color.fromRGBO(56, 33, 101,1),
+                            color: Colors.white70,
                             borderRadius: radiusGeomentry,
+                            border: Border.all(color:const Color.fromRGBO(56, 33, 101,1),width: 3)
                           ),
                           child: Column(
 
                             children: [
                               SizedBox(
-                                height: size.height * 0.18,
+                                height: size.height * 0.12,
                                 width: size.width * 0.93,
                                 child: Padding(
                                     padding: EdgeInsets.only(
@@ -276,13 +292,39 @@ class _NotesState extends State<Notes> {
                                                     size.width * 0.05),
                                                 topRight: Radius.circular(
                                                     size.width * 0.05)),
-                                            image: DecorationImage(
+                                            /*image: DecorationImage(
                                               image: NetworkImage(
                                                 "${snapshot.data["Notes-${index +
                                                     1}"]["thumbnailURL"]}",
                                               ), fit: BoxFit.cover,
+                                            )*/
+                                        ),
+                                      child: Center(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            SizedBox(
+                                              height: size.height*0.01,
+                                            ),
+                                            AutoSizeText(
+                                              subject_filter,
+                                              style: GoogleFonts.courgette(
+                                                  color: Colors.black,
+                                                  fontSize: size.height*0.02,
+                                                  fontWeight: FontWeight.w400
+                                              ),
+                                            ),
+                                            AutoSizeText(
+                                              "Notes : ${index + 1}",
+                                              style: GoogleFonts.courgette(
+                                                  color: Colors.black,
+                                                  fontSize: size.height*0.023,
+                                                  fontWeight: FontWeight.w400
+                                              ),
                                             )
-                                        ),),
+                                          ],
+                                        ),
+                                      ),),
                                     )
                                 ),
                               ),
@@ -290,11 +332,11 @@ class _NotesState extends State<Notes> {
                                 height: isExpanded[index]
                                     ? size.height * 0.22
                                     : size.height * 0.12,
-                                width: size.width * 0.98,
+                                width: size.width * 0.99,
                                 duration: const Duration(milliseconds: 1),
                                 decoration: BoxDecoration(
                                     color: const Color.fromRGBO(56, 33, 101,1),
-                                    borderRadius: radiusGeomentry
+                                    borderRadius: BorderRadius.circular(size.width*0.065)
 
                                 ),
                                 child: SingleChildScrollView(
@@ -310,10 +352,10 @@ class _NotesState extends State<Notes> {
                                               bottomLeft: Radius.circular(
                                                   size.width * 0.1),
                                               bottomRight: Radius.circular(
-                                                  size.width * 0.12)),),
-                                        title: Container(
+                                                  size.width * 0.1)),),
+                                        title: SizedBox(
                                             height: size.height * 0.07,
-                                            width: size.width * 0.45,
+                                            width: size.width * 0.75,
                                             //ssscolor: Colors.redAccent,
                                             child: Column(
                                               crossAxisAlignment: CrossAxisAlignment
@@ -385,8 +427,8 @@ class _NotesState extends State<Notes> {
                                             )
                                         ),
                                         leading: Container(
-                                            height: size.width * 0.07,
-                                            width: size.width * 0.07,
+                                            height: size.width * 0.05,
+                                            width: size.width * 0.05,
                                             decoration: const BoxDecoration(
                                               color: Colors.transparent,
                                               shape: BoxShape.circle,
@@ -407,7 +449,7 @@ class _NotesState extends State<Notes> {
                                             Center(
                                               child: CircularPercentIndicator(
                                                 percent: percent,
-                                                radius: size.width * 0.035,
+                                                radius: size.width * 0.046,
                                                 animation: true,
                                                 animateFromLastPercent: true,
                                                 curve: accelerateEasing,
@@ -481,21 +523,25 @@ class _NotesState extends State<Notes> {
                                         ),
 
                                         // subtitle: AutoSizeText('DEADLIiNE',style: GoogleFonts.exo(fontSize: size.height*0.015,color: Colors.black,fontWeight: FontWeight.w400),),
-                                        trailing: FloatingActionButton(
-                                            backgroundColor:Colors.lightBlueAccent,
-                                            elevation: 0,
-                                            onPressed: () {
-                                              setState(() {
+                                        trailing: Container(
+                                          height: size.width * 0.12,
+                                          width: size.width * 0.12,
+                                          child: FloatingActionButton(
+                                              backgroundColor:Colors.lightBlueAccent,
+                                              elevation: 0,
+                                              onPressed: () {
+                                                setState(() {
 
-                                                isExpanded[index] = !isExpanded[index];
+                                                  isExpanded[index] = !isExpanded[index];
 
-                                              });
-                                            },
-                                            child:
-                                            Image.asset(
-                                              "assets/icon/speech-bubble.png",
-                                              width: size.height * 0.045,
-                                              height: size.height * 0.045,)
+                                                });
+                                              },
+                                              child:
+                                              Image.asset(
+                                                "assets/icon/speech-bubble.png",
+                                                width: size.height * 0.045,
+                                                height: size.height * 0.045,)
+                                          ),
                                         ),
 
                                       ),

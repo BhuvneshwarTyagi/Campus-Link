@@ -32,7 +32,7 @@ class Quiz extends StatefulWidget {
 class _QuizState extends State<Quiz> {
   TextEditingController videoController = TextEditingController();
   TextEditingController notesDescription = TextEditingController();
-  late final FilePickerResult? filePath;
+  late  FilePickerResult? filePath;
   bool fileSelected=false;
    int notesCount=0;
 
@@ -123,13 +123,35 @@ class _QuizState extends State<Quiz> {
                                     type: FileType.custom,
                                     allowedExtensions: ['pdf'],
                                     allowMultiple: false).then((value) {
-                                  if(value!.files[0].path!.isNotEmpty) {
+                                  if(value!.files[0].path!.isNotEmpty && (value!.files[0].extension=="pdf" || value!.files[0].extension=="docx")) {
                                     filePath = value;
                                     print(".......PickedFile${filePath
                                         ?.files[0].path}");
                                     setState(() {
                                       fileSelected=true;
                                     });
+                                  }
+                                  else{
+                                    print("Extension is : ${value!.files[0].extension}");
+                                    setState(() {
+                                      fileSelected=false;
+                                    });
+                                    InAppNotifications.instance
+                                      ..titleFontSize = 25.0
+                                      ..descriptionFontSize = 15.0
+                                      ..textColor = Colors.black
+                                      ..backgroundColor = const Color.fromRGBO(150, 150, 150, 1)
+                                      ..shadow = true
+                                      ..animationStyle = InAppNotificationsAnimationStyle.scale;
+                                    InAppNotifications.show(
+                                        title: 'Error',
+                                        duration: const Duration(seconds: 2),
+                                        description: "Please select only PDF or doc type",
+                                        leading: const Icon(
+                                          Icons.error_outline,
+                                          color: Colors.red,
+                                          size: 40,
+                                        ));
                                   }
                                 });
                               },
@@ -292,7 +314,7 @@ class _QuizState extends State<Quiz> {
 
                              snap= await channel_2.putFile(File(imagePath.path));
                              String imageURL=await snap.ref.getDownloadURL().whenComplete(() => print(".............First Image Created and uploaded..."));
-                             String additionalPathForThumb= "/thumbnail";
+                            /* String additionalPathForThumb= "/thumbnail";
                              XFile? compressed;
                              File thumb = await File("${Directory("${directory.path}$additionalPathForThumb").path}/$stamp.jpg").create(recursive: true);
 
@@ -307,7 +329,7 @@ class _QuizState extends State<Quiz> {
                              Reference channel_3=thumbnailFolder.child("$stamp");
                              snap= await channel_3.putFile(File(thumb.path));
                              String thumbnailURL=await snap.ref.getDownloadURL().whenComplete(() => print("..Thumbnail uploaded"));
-
+*/
 
 
 
@@ -342,12 +364,12 @@ class _QuizState extends State<Quiz> {
                                    "Notes_description":notesDescription.text.toString().trim(),
                                    "Additional_Link":videoController.text.toString().trim(),
                                    "imageURL":imageURL,
-                                   "thumbnailURL":thumbnailURL,
-                                   "Quiz_Created":true,
+                                   "Quiz_Created":false,
                                  },
                                  "Total_Notes":FieldValue.increment(1)
                                });
                              }).whenComplete(() {
+                               Navigator.pop(context);
                                Navigator.pop(context);
                                print("..................... Ho gyi sb upload");
                                showModalBottomSheet(

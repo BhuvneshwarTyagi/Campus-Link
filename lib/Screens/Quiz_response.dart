@@ -414,9 +414,16 @@ class _responseScreenState extends State<responseScreen> {
           ),
         )
             :
-        const loading(text: "Loading Question please wait....")
+         SizedBox(
+          child: Center(child: Text("No Data Found",style: GoogleFonts.poppins(
+            color: Colors.white70
+          ),)),
+        )
             :
-        const loading(text: "Please apply filter first....")
+        const SizedBox(
+          child: Center(
+              child: Text("Please Apply Filter")),
+        )
     );
   }
   fetchResponse() async {
@@ -425,10 +432,8 @@ class _responseScreenState extends State<responseScreen> {
       snapshot =value
     ).whenComplete(() {
       calculateResponse(1);
-      setState(() {
-        loaded=true;
-      });
-    });
+    }
+    );
   }
 
 
@@ -437,21 +442,40 @@ class _responseScreenState extends State<responseScreen> {
     optionResponse.clear();
     occurance.clear();
     nameRollNumber.clear();
-    print("........mmmmmmmmmm${snapshot.data()?["Notes-${widget.quizId}"]["Submitted by"]}");
-    for(var i in snapshot.data()?["Notes-${widget.quizId}"]["Submitted by"]){
-       var question=snapshot.data()?["Notes-${widget.quizId}"]["Question-$questionno"]["Question"];
-       if(snapshot.data()?["Notes-${widget.quizId}"]["Response"][i][question]!=null)
-         {
-
-           occurance[snapshot.data()?["Notes-${widget.quizId}"]["Response"][i][question]] = occurance[snapshot.data()?["Notes-${widget.quizId}"]["Response"][i][question]]==null ? 1 : occurance[snapshot.data()?["Notes-${widget.quizId}"]["Response"][i][question]]!+1;
-           nameRollNumber[snapshot.data()?["Notes-${widget.quizId}"]["Response"][i][question]]=nameRollNumber[snapshot.data()?["Notes-${widget.quizId}"]["Response"][i][question]]==null ? ["${(i.toString().split("-")[1])}-${i.toString().split("-")[2]}"] :nameRollNumber[snapshot.data()?["Notes-${widget.quizId}"]["Response"][i][question]]!+["${(i.toString().split("-")[1])}-${i.toString().split("-")[2]}"] ;
-         }
-
+    if(snapshot.data()?["Notes-${widget.quizId}"]["Submitted by"]!=null) {
+      for (var i in snapshot.data()?["Notes-${widget
+          .quizId}"]["Submitted by"]) {
+        var question = snapshot.data()?["Notes-${widget
+            .quizId}"]["Question-$questionno"]["Question"];
+        if (snapshot.data()?["Notes-${widget
+            .quizId}"]["Response"][i][question] != null) {
+          occurance[snapshot.data()?["Notes-${widget
+              .quizId}"]["Response"][i][question]] =
+          occurance[snapshot.data()?["Notes-${widget
+              .quizId}"]["Response"][i][question]] == null
+              ? 1
+              : occurance[snapshot.data()?["Notes-${widget
+              .quizId}"]["Response"][i][question]]! + 1;
+          nameRollNumber[snapshot.data()?["Notes-${widget
+              .quizId}"]["Response"][i][question]] =
+          nameRollNumber[snapshot.data()?["Notes-${widget
+              .quizId}"]["Response"][i][question]] == null ? [
+            "${(i.toString().split("-")[1])}-${i.toString().split("-")[2]}"
+          ] : nameRollNumber[snapshot.data()?["Notes-${widget
+              .quizId}"]["Response"][i][question]]! +
+              ["${(i.toString().split("-")[1])}-${i.toString().split("-")[2]}"];
+        }
+      }
+      setState(() {
+        loaded=true;
+      });
+    }
+    else{
+      setState(() {
+        loaded=false;
+      });
     }
 
 
-    setState(() {
-      loaded=true;
-    });
   }
 }
