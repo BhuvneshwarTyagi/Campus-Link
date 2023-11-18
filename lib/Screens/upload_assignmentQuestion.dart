@@ -8,8 +8,10 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inapp_notifications/flutter_inapp_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../Constraints.dart';
@@ -251,7 +253,11 @@ class _AssigmentQuestionState extends State<AssigmentQuestion> {
                       timeInput.text.toString().isNotEmpty)
 
                   {
-                    const loading(text: "Please Wait data is uploading",);
+                    Navigator.push(context, PageTransition(
+                        type: PageTransitionType.bottomToTop,
+                        duration: const Duration(milliseconds: 400),
+                        childCurrent: const AssigmentQuestion(),
+                        child: const loading(text: "Data is uploading to server please wait.......")));
                     Reference ref = FirebaseStorage.instance
                         .ref("Assignments")
                         .child(
@@ -345,9 +351,32 @@ class _AssigmentQuestionState extends State<AssigmentQuestion> {
                           });
                         }
                       }).whenComplete(
-                            () => Navigator.pop(context),
+                           () {
+                             Navigator.pop(context);
+                             Navigator.pop(context);
+                           },
                       );
                     });
+                  }
+                  else{
+                    InAppNotifications.instance
+                      ..titleFontSize = 14.0
+                      ..descriptionFontSize = 14.0
+                      ..textColor = Colors.black
+                      ..backgroundColor =
+                      const Color.fromRGBO(150, 150, 150, 1)
+                      ..shadow = true
+                      ..animationStyle =
+                          InAppNotificationsAnimationStyle.scale;
+                    InAppNotifications.show(
+                        title: 'Failed',
+                        duration: const Duration(seconds: 2),
+                        description: "Please fill all the details",
+                        leading: const Icon(
+                          Icons.error_outline_outlined,
+                          color: Colors.red,
+                          size: 20,
+                        ));
                   }
                 },
 

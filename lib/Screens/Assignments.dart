@@ -635,7 +635,15 @@ class _Assignments_uploadState extends State<Assignments_upload> {
                                                                   selectedindex: index +
                                                                       1),));
                                                   }
-                                                }, child: const Text("Submission")),
+                                                }, child: FittedBox(
+                                              fit: BoxFit.cover,
+                                                child: AutoSizeText("Submission",
+                                                style:TextStyle(
+                                                    fontSize: size.height * 0.02,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.white
+                                                ),
+                                                ))),
                                           )
 
 

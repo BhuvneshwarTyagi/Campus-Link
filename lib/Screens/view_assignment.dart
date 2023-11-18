@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../Constraints.dart';
 import 'Chat_tiles/PdfViewer.dart';
+import 'onlinepdfviwer.dart';
 
 class ViewAssignment extends StatefulWidget {
   ViewAssignment({super.key, required this.selectedindex});
@@ -89,7 +90,7 @@ class _ViewAssignmentState extends State<ViewAssignment> {
                                                                 [
                                                                 "submitted-Assignment"]
                                                             [
-                                                            "${snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index]}"]
+                                                            snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index].toString().split("@")[0]]
                                                         ["Status"] ==
                                                     " "
                                                 ? Padding(
@@ -97,17 +98,24 @@ class _ViewAssignmentState extends State<ViewAssignment> {
                                                         size.height * 0.014),
                                                     child: InkWell(
                                                       onTap: () {
+                                                        print("this is url");
+                                                        print(snapshot.data.data()[
+                                                        "Assignment-${widget.selectedindex}"]
+                                                        ["submitted-Assignment"]
+                                                        [snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index].toString().split("@")[0]]["PdfUrl"]);
                                                         Navigator.push(
                                                           context,
                                                           MaterialPageRoute(
                                                             builder:
                                                                 (context) =>
-                                                                    PdfViewer(
-                                                              document:
-                                                                  "${snapshot.data.data()["Assignment-${widget.selectedindex}"]["submitted-Assignment"]["Document-type"]}",
-                                                              name:
-                                                                  "Assignment-${widget.selectedindex}",
-                                                            ),
+                                                                OnlinePdfViewer(
+
+                                                                  url: snapshot.data.data()[
+                                                                  "Assignment-${widget.selectedindex}"]
+                                                                  ["submitted-Assignment"]
+                                                                  [snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index].toString().split("@")[0]]["PdfUrl"], name: "Assignment-${widget.selectedindex}",
+
+                                                                ),
                                                           ),
                                                         );
                                                       },
@@ -221,14 +229,26 @@ class _ViewAssignmentState extends State<ViewAssignment> {
                                                                               fontWeight: FontWeight.w400),
                                                                         ),
                                                                         AutoSizeText(
-                                                                          "Name:${snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index].toString().split("-")[1]}",
+                                                                          "Name:${snapshot.data.data()[
+                                                                          "Assignment-${widget.selectedindex}"]
+                                                                          [
+                                                                          "submitted-Assignment"]
+                                                                          [
+                                                                          snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index].toString().split("@")[0]]
+                                                                          ["Name"]}",
                                                                           style: GoogleFonts.courgette(
                                                                               color: Colors.black,
                                                                               fontSize: size.height * 0.02,
                                                                               fontWeight: FontWeight.w400),
                                                                         ),
                                                                         AutoSizeText(
-                                                                          "Roll-No:${snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index].toString().split("-")[2]}",
+                                                                          "Roll-No:${snapshot.data.data()[
+                                                                          "Assignment-${widget.selectedindex}"]
+                                                                          [
+                                                                          "submitted-Assignment"]
+                                                                          [
+                                                                          snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index].toString().split("@")[0]]
+                                                                          ["Roll-No"]}",
                                                                           style: GoogleFonts.courgette(
                                                                               color: Colors.black,
                                                                               fontSize: size.height * 0.02,
@@ -255,7 +275,7 @@ class _ViewAssignmentState extends State<ViewAssignment> {
                                                                           style: ElevatedButton.styleFrom(shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20))), backgroundColor: Colors.transparent),
                                                                           onPressed: () {
                                                                             FirebaseFirestore.instance.collection("Assignment").doc("${university_filter.split(" ")[0]} ${college_filter.split(" ")[0]} ${course_filter.split(" ")[0]} ${branch_filter.split(" ")[0]} $year_filter $section_filter $subject_filter").update({
-                                                                              "Assignment-${widget.selectedindex}.submitted-Assignment.${snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index]}.Status": "Rejected"
+                                                                              "Assignment-${widget.selectedindex}.submitted-Assignment.${snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index].toString().split("@")[0]}.Status": "Rejected"
                                                                             });
                                                                           },
                                                                           child: AutoSizeText(
@@ -283,7 +303,7 @@ class _ViewAssignmentState extends State<ViewAssignment> {
                                                                           style: ElevatedButton.styleFrom(shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20))), backgroundColor: Colors.transparent),
                                                                           onPressed: () {
                                                                             FirebaseFirestore.instance.collection("Assignment").doc("${university_filter.split(" ")[0]} ${college_filter.split(" ")[0]} ${course_filter.split(" ")[0]} ${branch_filter.split(" ")[0]} $year_filter $section_filter $subject_filter").update({
-                                                                              "Assignment-${widget.selectedindex}.submitted-Assignment.${snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index]}.Status": "Accepted"
+                                                                              "Assignment-${widget.selectedindex}.submitted-Assignment.${snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index].toString().split("@")[0]}.Status": "Accepted"
                                                                             });
                                                                           },
                                                                           child: AutoSizeText(
@@ -337,7 +357,7 @@ class _ViewAssignmentState extends State<ViewAssignment> {
                                                                 [
                                                                 "submitted-Assignment"]
                                                             [
-                                                            "${snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index]}"]
+                                                            snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index].toString().split("@")[0]]
                                                         ["Status"] ==
                                                     "Accepted"
                                                 ? Padding(
@@ -345,17 +365,24 @@ class _ViewAssignmentState extends State<ViewAssignment> {
                                                         size.height * 0.014),
                                                     child: InkWell(
                                                       onTap: () {
+                                                        print("this is url");
+                                                        print(snapshot.data.data()[
+                                                        "Assignment-${widget.selectedindex}"]
+                                                        ["submitted-Assignment"]
+                                                        [snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index].toString().split("@")[0]]["PdfUrl"]);
                                                         Navigator.push(
                                                           context,
                                                           MaterialPageRoute(
                                                             builder:
                                                                 (context) =>
-                                                                    PdfViewer(
-                                                              document:
-                                                                  "${snapshot.data.data()["Assignment-${widget.selectedindex}"]["submitted-Assignment"]["Document-type"]}",
-                                                              name:
-                                                                  "Assignment-${widget.selectedindex}",
-                                                            ),
+                                                                    OnlinePdfViewer(
+
+                                                                      url: snapshot.data.data()[
+                                                                      "Assignment-${widget.selectedindex}"]
+                                                                      ["submitted-Assignment"]
+                                                                      [snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index].toString().split("@")[0]]["PdfUrl"], name: "Assignment-${widget.selectedindex}",
+
+                                                                    ),
                                                           ),
                                                         );
                                                       },
@@ -468,15 +495,26 @@ class _ViewAssignmentState extends State<ViewAssignment> {
                                                                               fontSize: size.height * 0.02,
                                                                               fontWeight: FontWeight.w400),
                                                                         ),
-                                                                        AutoSizeText(
-                                                                          "Name:${snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index].toString().split("-")[1]}",
+                                                                        AutoSizeText("Name:${snapshot.data.data()[
+                                                                        "Assignment-${widget.selectedindex}"]
+                                                                        [
+                                                                        "submitted-Assignment"]
+                                                                        [
+                                                                        snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index].toString().split("@")[0]]
+                                                                        ["Name"]}",
                                                                           style: GoogleFonts.courgette(
                                                                               color: Colors.black,
                                                                               fontSize: size.height * 0.02,
                                                                               fontWeight: FontWeight.w400),
                                                                         ),
                                                                         AutoSizeText(
-                                                                          "Roll-No:${snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index].toString().split("-")[2]}",
+                                                                          "Roll-No:${snapshot.data.data()[
+                                                                          "Assignment-${widget.selectedindex}"]
+                                                                          [
+                                                                          "submitted-Assignment"]
+                                                                          [
+                                                                          snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index].toString().split("@")[0]]
+                                                                          ["Name"]}",
                                                                           style: GoogleFonts.courgette(
                                                                               color: Colors.black,
                                                                               fontSize: size.height * 0.02,
@@ -507,7 +545,7 @@ class _ViewAssignmentState extends State<ViewAssignment> {
                                                                                 .doc(
                                                                                 "${university_filter.split(" ")[0]} ${college_filter.split(" ")[0]} ${course_filter.split(" ")[0]} ${branch_filter.split(" ")[0]} $year_filter $section_filter $subject_filter")
                                                                                 .update({
-                                                                              "Assignment-${widget.selectedindex}.submitted-Assignment.${snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index]}.Status":"Rejected"});
+                                                                              "Assignment-${widget.selectedindex}.submitted-Assignment.${snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index].toString().split("@")[0]}.Status":"Rejected"});
 
                                                                           },
                                                                           child: AutoSizeText(
@@ -535,7 +573,7 @@ class _ViewAssignmentState extends State<ViewAssignment> {
                                                                           style: ElevatedButton.styleFrom(shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20))), backgroundColor: Colors.transparent),
                                                                           onPressed: () {
                                                                             FirebaseFirestore.instance.collection("Assignment").doc("${university_filter.split(" ")[0]} ${college_filter.split(" ")[0]} ${course_filter.split(" ")[0]} ${branch_filter.split(" ")[0]} $year_filter $section_filter $subject_filter").update({
-                                                                              "Assignment-${widget.selectedindex}.submitted-Assignment.${snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index]}.Status": "Accepted"
+                                                                              "Assignment-${widget.selectedindex}.submitted-Assignment.${snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index].toString().split("@")[0]}.Status": "Accepted"
                                                                             });
                                                                           },
                                                                           child: AutoSizeText(
@@ -588,7 +626,7 @@ class _ViewAssignmentState extends State<ViewAssignment> {
                                                                 [
                                                                 "submitted-Assignment"]
                                                             [
-                                                            "${snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index]}"]
+                                                            snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index].toString().split("@")[0]]
                                                         ["Status"] ==
                                                     "Rejected"
                                                 ? Padding(
@@ -596,17 +634,24 @@ class _ViewAssignmentState extends State<ViewAssignment> {
                                                         size.height * 0.014),
                                                     child: InkWell(
                                                       onTap: () {
+                                                        print("this is url");
+                                                        print(snapshot.data.data()[
+                                                        "Assignment-${widget.selectedindex}"]
+                                                        ["submitted-Assignment"]
+                                                        [snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index].toString().split("@")[0]]["PdfUrl"]);
                                                         Navigator.push(
                                                           context,
                                                           MaterialPageRoute(
                                                             builder:
                                                                 (context) =>
-                                                                    PdfViewer(
-                                                              document:
-                                                                  "${snapshot.data.data()["Assignment-${widget.selectedindex}"]["submitted-Assignment"]["Document-type"]}",
-                                                              name:
-                                                                  "Assignment-${widget.selectedindex}",
-                                                            ),
+                                                                    OnlinePdfViewer(
+
+                                                                      url: snapshot.data.data()[
+                                                                      "Assignment-${widget.selectedindex}"]
+                                                                      ["submitted-Assignment"]
+                                                                      [snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index].toString().split("@")[0]]["PdfUrl"], name: "Assignment-${widget.selectedindex}",
+
+                                                                    ),
                                                           ),
                                                         );
                                                       },
@@ -720,14 +765,26 @@ class _ViewAssignmentState extends State<ViewAssignment> {
                                                                               fontWeight: FontWeight.w400),
                                                                         ),
                                                                         AutoSizeText(
-                                                                          "Name:${snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index].toString().split("-")[1]}",
+                                                                          "Name:${snapshot.data.data()[
+                                                                          "Assignment-${widget.selectedindex}"]
+                                                                          [
+                                                                          "submitted-Assignment"]
+                                                                          [
+                                                                          snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index].toString().split("@")[0]]
+                                                                          ["Name"]}",
                                                                           style: GoogleFonts.courgette(
                                                                               color: Colors.black,
                                                                               fontSize: size.height * 0.02,
                                                                               fontWeight: FontWeight.w400),
                                                                         ),
                                                                         AutoSizeText(
-                                                                          "Roll-No:${snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index].toString().split("-")[2]}",
+                                                                          "Roll-No:${snapshot.data.data()[
+                                                                          "Assignment-${widget.selectedindex}"]
+                                                                          [
+                                                                          "submitted-Assignment"]
+                                                                          [
+                                                                          snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index].toString().split("@")[0]]
+                                                                          ["Roll-No"]}",
                                                                           style: GoogleFonts.courgette(
                                                                               color: Colors.black,
                                                                               fontSize: size.height * 0.02,
@@ -785,7 +842,7 @@ class _ViewAssignmentState extends State<ViewAssignment> {
                                                                                 .doc(
                                                                                 "${university_filter.split(" ")[0]} ${college_filter.split(" ")[0]} ${course_filter.split(" ")[0]} ${branch_filter.split(" ")[0]} $year_filter $section_filter $subject_filter")
                                                                                 .update({
-                                                                              "Assignment-${widget.selectedindex}.submitted-Assignment.${snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index]}.Status":"Accepted"});
+                                                                              "Assignment-${widget.selectedindex}.submitted-Assignment.${snapshot.data.data()["Assignment-${widget.selectedindex}"]["Submitted-by"][index].toString().split("@")[0]}.Status":"Accepted"});
                                                                           },
                                                                           child: AutoSizeText(
                                                                             "Accept",
