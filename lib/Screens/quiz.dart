@@ -477,8 +477,8 @@ class _QuizState extends State<Quiz> {
                                  .where("Year",isEqualTo: year_filter)
                                  .where("Section",isEqualTo: section_filter)
                                  .where("Subject",arrayContains: subject_filter).get();
-                             List<String> tokens =[];
-                             List<String> emails=[];
+                             List<dynamic> tokens =[];
+                             List<dynamic> emails=[];
                              for(int i=0;i<studentsDoc.docs.length ; i++){
                                tokens.add(studentsDoc.docs[i].data()["Token"]);
                              }

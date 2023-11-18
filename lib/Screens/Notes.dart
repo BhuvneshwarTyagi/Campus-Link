@@ -11,6 +11,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:file_manager/file_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inapp_notifications/flutter_inapp_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:path_provider/path_provider.dart';
@@ -206,7 +207,12 @@ class _NotesState extends State<Notes> {
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot)
           {
 
-
+            /*if(snapshot.hasData)
+              {
+                isExpanded=List.generate(snapshot.data.data()["Total_Notes"], (index) =>  false);
+                isDownloaded=List.generate(snapshot.data.data()?["Total_Notes"], (index) =>  false);
+                isDownloading=List.generate(snapshot.data.data()?["Total_Notes"], (index) =>  false);
+              }*/
             return  snapshot.hasData
                 ?
             Padding(
@@ -215,9 +221,7 @@ class _NotesState extends State<Notes> {
                 child: ListView.builder(
                   itemCount: snapshot.data["Total_Notes"],
                   itemBuilder: (context, index) {
-                    /*isExpanded=List.generate(snapshot.data.data()["Total_Notes"], (index) =>  false);
-                    isDownloaded=List.generate(snapshot.data.data()?["Total_Notes"], (index) =>  false);
-                    isDownloading=List.generate(snapshot.data.data()?["Total_Notes"], (index) =>  false);*/
+
                     Timestamp deadline=snapshot.data["Notes-${index+1}"]["Deadline"] ?? Timestamp(0, 0);
                     bool quizCreated = snapshot.data["Notes-${index+1}"]["Quiz_Created"];
                     String? dir = directory?.path.toString().substring(0, 19);
@@ -371,7 +375,7 @@ class _NotesState extends State<Notes> {
                                                   "",
                                                   style: GoogleFonts.exo(
                                                       fontSize: size.height *
-                                                          0.02,
+                                                          0.01,
                                                       color: Colors.white70,
                                                       fontWeight: FontWeight
                                                           .w500),
@@ -383,7 +387,7 @@ class _NotesState extends State<Notes> {
                                                 ),
                                                 Row(
                                                   mainAxisAlignment: MainAxisAlignment
-                                                      .spaceBetween,
+                                                      .start,
                                                   crossAxisAlignment: CrossAxisAlignment
                                                       .start,
                                                   children: [
@@ -400,10 +404,13 @@ class _NotesState extends State<Notes> {
                                                       "",
                                                       style: GoogleFonts.exo(
                                                           fontSize: size.height *
-                                                              0.016,
+                                                              0.012,
                                                           color: Colors.white70,
                                                           fontWeight: FontWeight
                                                               .w500),),
+                                                    SizedBox(
+                                                      width: size.width * 0.015,
+                                                    ),
                                                     AutoSizeText(
                                                       snapshot.data["Notes-${index +
                                                           1}"]["Stamp"] != null
@@ -417,7 +424,7 @@ class _NotesState extends State<Notes> {
                                                       "",
                                                       style: GoogleFonts.exo(
                                                           fontSize: size.height *
-                                                              0.016,
+                                                              0.012,
                                                           color: Colors.white70,
                                                           fontWeight: FontWeight
                                                               .w500),),
@@ -654,17 +661,39 @@ class _NotesState extends State<Notes> {
                                                        ),
 
                                                        onPressed: () {
-                                                         Navigator.push(context,
-                                                             PageTransition(
-                                                                 child: Quizscore(
-                                                                   quizId: index + 1,),
-                                                                 type: PageTransitionType
-                                                                     .bottomToTopJoined,
-                                                                 childCurrent: const Notes(),
-                                                                 duration: const Duration(
-                                                                     milliseconds: 300)
-                                                             )
-                                                         );
+                                                         if(snapshot.data["Notes-${index+1}"]["Submitted by"]!=null && snapshot.data["Notes-${index+1}"]["Submitted by"].length>3)
+                                                           {
+                                                             Navigator.push(context,
+                                                                 PageTransition(
+                                                                     child: Quizscore(
+                                                                       quizId: index + 1,),
+                                                                     type: PageTransitionType
+                                                                         .bottomToTopJoined,
+                                                                     childCurrent: const Notes(),
+                                                                     duration: const Duration(
+                                                                         milliseconds: 300)
+                                                                 )
+                                                             );
+                                                           }
+                                                         else{
+                                                           InAppNotifications.instance
+                                                             ..titleFontSize = 25.0
+                                                             ..descriptionFontSize = 15.0
+                                                             ..textColor = Colors.black
+                                                             ..backgroundColor = const Color.fromRGBO(150, 150, 150, 1)
+                                                             ..shadow = true
+                                                             ..animationStyle = InAppNotificationsAnimationStyle.scale;
+                                                           InAppNotifications.show(
+                                                               title: 'Error',
+                                                               duration: const Duration(seconds: 2),
+                                                               description: "Submissions are less than three",
+                                                               leading: const Icon(
+                                                                 Icons.error_outline,
+                                                                 color: Colors.red,
+                                                                 size: 40,
+                                                               ));
+                                                         }
+
                                                        },
                                                        child: AutoSizeText(
                                                          "Leaderboard",
