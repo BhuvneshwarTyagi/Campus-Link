@@ -43,14 +43,11 @@ class _NotesState extends State<Notes> {
 
   int ind=0;
   bool a=true;
-
+   int currIndex=-1;
   final dio=Dio();
    double percent=0.0;
    String filePath="";
 
-   List<bool>isExpanded=[];
-   List<bool>isDownloaded=[];
-   List<bool>isDownloading=[];
 
    DateTime currDate=DateTime.now();
 @override
@@ -122,7 +119,7 @@ class _NotesState extends State<Notes> {
                                 style: TextStyle(
                                     fontSize: size.height * 0.02,
                                     fontWeight: FontWeight.w500,
-                                    color: Colors.black
+                                    color: Colors.white70
                                 ),
                               ),
                             ),
@@ -172,7 +169,7 @@ class _NotesState extends State<Notes> {
                                 style: TextStyle(
                                     fontSize: size.height * 0.02,
                                     fontWeight: FontWeight.w500,
-                                    color: Colors.black
+                                    color: Colors.white70
                                 ),
                               ),
                             ),
@@ -206,13 +203,6 @@ class _NotesState extends State<Notes> {
           stream: FirebaseFirestore.instance.collection("Notes").doc("${university_filter.split(" ")[0]} ${college_filter.split(" ")[0]} ${course_filter.split(" ")[0]} ${branch_filter.split(" ")[0]} $year_filter $section_filter $subject_filter").snapshots(),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot)
           {
-
-            /*if(snapshot.hasData)
-              {
-                isExpanded=List.generate(snapshot.data.data()["Total_Notes"], (index) =>  false);
-                isDownloaded=List.generate(snapshot.data.data()?["Total_Notes"], (index) =>  false);
-                isDownloading=List.generate(snapshot.data.data()?["Total_Notes"], (index) =>  false);
-              }*/
             return  snapshot.hasData
                 ?
             Padding(
@@ -221,32 +211,26 @@ class _NotesState extends State<Notes> {
                 child: ListView.builder(
                   itemCount: snapshot.data["Total_Notes"],
                   itemBuilder: (context, index) {
-
+                    bool isDownloaded=false;
+                    bool  isDownloading=false;
+                    bool isExpanded;
+                    if(currIndex==index)
+                      {
+                        isExpanded=true;
+                      }
+                    else{
+                      isExpanded=false;
+                    }
                     Timestamp deadline=snapshot.data["Notes-${index+1}"]["Deadline"] ?? Timestamp(0, 0);
                     bool quizCreated = snapshot.data["Notes-${index+1}"]["Quiz_Created"];
                     String? dir = directory?.path.toString().substring(0, 19);
                     String path = "$dir/Campus Link/$university_filter $college_filter $course_filter $branch_filter $year_filter $section_filter $subject_filter/Notes/";
-
                     File newPath = File("$path${snapshot.data["Notes-${index +
                         1}"]["File_Name"]}");
-                    newPath.exists().then((value) async {
-                      if (!value) {
-                        if(mounted)
-                          {
-                            setState(() {
-                              isDownloaded[index] = false;
-                            });
-                          }
+                    if(newPath.existsSync())
+                      {
+                        isDownloaded=true;
                       }
-                      else {
-                       if(mounted)
-                         {
-                           setState(() {
-                             isDownloaded[index] = true;
-                           });
-                         }
-                      }
-                    },);
                       return Padding(
                         padding: EdgeInsets.all(size.width * 0.032),
                         child: Container(
@@ -270,7 +254,7 @@ class _NotesState extends State<Notes> {
                                         right: size.height * 0.01),
                                     child: InkWell(
                                       onTap: () {
-                                        if (isDownloaded[index]) {
+                                        if (isDownloaded) {
                                           Navigator.push(
                                             context,
                                             PageTransition(
@@ -333,7 +317,7 @@ class _NotesState extends State<Notes> {
                                 ),
                               ),
                               AnimatedContainer(
-                                height: isExpanded[index]
+                                height: isExpanded
                                     ? size.height * 0.22
                                     : size.height * 0.12,
                                 width: size.width * 0.99,
@@ -447,11 +431,11 @@ class _NotesState extends State<Notes> {
                                               fit: BoxFit.cover,
                                               alignment: Alignment.center, )*/
                                             ),
-                                            child: isDownloaded[index]
+                                            child: isDownloaded
                                                 ?
                                             Image.asset("assets/icon/pdf.png")
                                                 :
-                                            isDownloading[index]
+                                            isDownloading
                                                 ?
                                             Center(
                                               child: CircularPercentIndicator(
@@ -478,7 +462,7 @@ class _NotesState extends State<Notes> {
                                               child: InkWell(
                                                   onTap: () async {
                                                     setState(() {
-                                                      isDownloading[index] = true;
+                                                      isDownloading = true;
                                                     });
 
                                                     String path = "$dir/Campus Link/$university_filter $college_filter $course_filter $branch_filter $year_filter $section_filter $subject_filter/Notes/";
@@ -501,15 +485,15 @@ class _NotesState extends State<Notes> {
                                                               setState(() {
                                                                 filePath =
                                                                     newPath.path;
-                                                                isDownloaded[index] =
+                                                                isDownloaded=
                                                                 true;
-                                                                isDownloading[index] =
+                                                                isDownloading =
                                                                 false;
                                                               });
                                                             }
                                                             else {
                                                               setState(() {
-                                                                isDownloading[index] =
+                                                                isDownloading=
                                                                 true;
                                                                 percent =
                                                                 (count / total);
@@ -519,6 +503,8 @@ class _NotesState extends State<Notes> {
                                                       }
                                                       else {
                                                         print("..Already Exsist");
+                                                        print("isdownloading :$isDownloading");
+                                                        print("isdownloaded :$isDownloaded");
                                                       }
                                                     });
                                                   },
@@ -538,8 +524,13 @@ class _NotesState extends State<Notes> {
                                               elevation: 0,
                                               onPressed: () {
                                                 setState(() {
-
-                                                  isExpanded[index] = !isExpanded[index];
+                                                  if(currIndex==index)
+                                                    {
+                                                      currIndex=-1;
+                                                    }
+                                                  else{
+                                                    currIndex=index;
+                                                  }
 
                                                 });
                                               },
@@ -552,7 +543,7 @@ class _NotesState extends State<Notes> {
                                         ),
 
                                       ),
-                                      isExpanded[index]
+                                      isExpanded
                                           ?
                                       Padding(
                                           padding: EdgeInsets.only(
@@ -886,17 +877,8 @@ class _NotesState extends State<Notes> {
   async {
     await FirebaseFirestore.instance.collection("Notes").doc("${university_filter.split(" ")[0]} ${college_filter.split(" ")[0]} ${course_filter.split(" ")[0]} ${branch_filter.split(" ")[0]} $year_filter $section_filter $subject_filter")
         .get().then((value) {
-          if(value.exists)
-            {
-              setState(() {
-
-                isExpanded=List.generate(value.data()?["Total_Notes"], (index) =>  false);
-                isDownloaded=List.generate(value.data()?["Total_Notes"], (index) =>  false);
-                isDownloading=List.generate(value.data()?["Total_Notes"], (index) =>  false);
-                docExists=true;
-              });
-              checkAndRequestPermissions();
-            }
+      checkAndRequestPermissions();
+      docExists=true;
 
     });
   }
