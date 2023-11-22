@@ -66,6 +66,8 @@ class database {
     // continue accessing the position of the device.
   }
 
+
+
   // Future getUserData() async {
   //   List userdetail = [];
   //   User? user = await FirebaseAuth.instance.currentUser;
@@ -153,4 +155,7 @@ class database {
       );
     } catch (e) {print("$e Send $token");}
   }
+
+
+
 }

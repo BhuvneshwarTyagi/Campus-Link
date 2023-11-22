@@ -1,7 +1,12 @@
+
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dotted_border/dotted_border.dart';
+import 'package:file_picker/file_picker.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_inapp_notifications/flutter_inapp_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:searchfield/searchfield.dart';
 
@@ -10,7 +15,7 @@ import '../Constraints.dart';
 enum Options { trueFalse, multipleChoice }
 
 class QuizQustion extends StatefulWidget {
-   QuizQustion({super.key, required this.quizNumber});
+  QuizQustion({super.key, required this.quizNumber});
   var quizNumber;
   @override
   State<QuizQustion> createState() => _QuizQustionState();
@@ -21,14 +26,15 @@ class _QuizQustionState extends State<QuizQustion> {
   TextEditingController questionController = TextEditingController();
   List<TextEditingController> optionController = [];
   TextEditingController answerController = TextEditingController();
-  List<TextEditingController>allQuestionController=[];
+  List<TextEditingController> allQuestionController = [];
   List<String> options = ["A", "B", "C", "D"];
   int questionCount = 0;
   PageController pageController = PageController();
   var currIndex = 0;
   bool optionType = false;
   Options? _options;
-
+  TextEditingController deadlineController = TextEditingController();
+  DateTime? deadlinePickedDate;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -46,7 +52,7 @@ class _QuizQustionState extends State<QuizQustion> {
           onPressed: () {
             Navigator.pop(context);
           },
-          icon:const Icon(Icons.arrow_back_ios_new_outlined),
+          icon: const Icon(Icons.arrow_back_ios_new_outlined),
         ),
       ),
       body: Container(
@@ -57,52 +63,113 @@ class _QuizQustionState extends State<QuizQustion> {
           scrollDirection: Axis.vertical,
           child: Column(
             children: [
-              Padding(
-                padding: EdgeInsets.all(size.height * 0.01),
-                child: TextField(
-                  controller: numberController,
-                  onChanged: (value) {
-                    setState(() {
-                      questionCount = int.parse(value.toString());
-                      print(
-                          "....................................$questionCount");
-                      setState(() {
-                        allQuestionController=List.generate(questionCount*2, (index) {
-                          return TextEditingController();
-                        },);
-                      });
-                      print(".............\n\n\n${allQuestionController.length}");
-                    });
-                  },
-                  decoration: const InputDecoration(
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.white,
-                        ),
-                      ),
-                      disabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.white,
-                        ),
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.white,
-                        ),
-                      ),
-                      border: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.white,
-                        ),
-                      ),
-                      hintText: "Enter the  number of Question",
-                      hintStyle: TextStyle(
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(size.height * 0.025),
+                    child: SizedBox(
+                      height: size.height * 0.06,
+                      width: size.width * 0.5,
+                      child: DottedBorder(
                         color: Colors.white,
-                      )),
-                  style: GoogleFonts.openSans(
-                      fontSize: size.height * 0.022, color: Colors.white),
-                  cursorColor: Colors.white,
-                ),
+                        borderType: BorderType.RRect,
+                        radius: const Radius.circular(12),
+                        padding: const EdgeInsets.all(10),
+                        child: TextField(
+                          controller: deadlineController,
+                          style: const TextStyle(
+                            color: Colors.white,
+                          ),
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            suffixIcon:
+                                Icon(Icons.calendar_today, color: Colors.white),
+                            hintText: "Deadline",
+                            hintStyle: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                          //readOnly: true,
+                          onTap: () async {
+                            deadlinePickedDate = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(2023),
+                                lastDate: DateTime(2030));
+
+                            if (deadlinePickedDate != null) {
+                              /*print(pickedDate);
+                              String formattedDate =
+                              DateFormat('dd-MM-yyyy').format(pickedDate);
+                              print(formattedDate);*/
+                              setState(() {
+                                deadlineController.text =
+                                    deadlinePickedDate.toString().split(" ")[0];
+                                print(
+                                    "..........Picked Date is: ${deadlineController.text}");
+                              });
+                            } else {}
+                          },
+                          cursorColor: Colors.white,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(size.height * 0.01),
+                    child: SizedBox(
+                      height: size.height * 0.06,
+                      width: size.width * 0.25,
+                      child: TextField(
+                        controller: numberController,
+                        onChanged: (value) {
+                          setState(() {
+                            questionCount = int.parse(value.toString());
+                            setState(() {
+                              allQuestionController = List.generate(
+                                questionCount * 2,
+                                (index) {
+                                  return TextEditingController();
+                                },
+                              );
+                            });
+                          });
+                        },
+                        decoration: const InputDecoration(
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                              ),
+                            ),
+                            disabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                              ),
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                              ),
+                            ),
+                            border: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                              ),
+                            ),
+                            hintText: "Questions",
+                            hintStyle: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                            )),
+                        style: GoogleFonts.openSans(
+                            fontSize: size.height * 0.022, color: Colors.white),
+                        cursorColor: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -208,7 +275,7 @@ class _QuizQustionState extends State<QuizQustion> {
                                             setState(() {
                                               _options = value;
                                               print(
-                                                  "....................${_options}");
+                                                  "....................asfddde${value}");
                                               optionController = List.generate(
                                                   4,
                                                   (i) =>
@@ -239,6 +306,12 @@ class _QuizQustionState extends State<QuizQustion> {
                                                   (i) =>
                                                       TextEditingController());
                                               optionType = true;
+                                              optionController[0] =
+                                                  TextEditingController(
+                                                      text: "True");
+                                              optionController[1] =
+                                                  TextEditingController(
+                                                      text: "False");
                                               //print("/////................///........$optionController");
                                             });
                                           },
@@ -340,95 +413,180 @@ class _QuizQustionState extends State<QuizQustion> {
                                                               0.004,
                                                         ),
                                                         Container(
-                                                          height: size.height*0.065,
-                                                          width: size.width*0.75,
-                                                          decoration: BoxDecoration(
-                                                            gradient: LinearGradient(
-                                                              begin: Alignment.topLeft,
-                                                              end: Alignment.bottomRight,
-                                                              colors: [Colors.blue, Colors.purpleAccent.shade100],
-                                                            ),
-                                                            borderRadius: const BorderRadius.all(Radius.circular(15),),
-                                                            border: Border.all(
-                                                              color: Colors.white,
-                                                              width: 2
-                                                            )
-                                                          ),
+                                                          height: size.height *
+                                                              0.065,
+                                                          width:
+                                                              size.width * 0.75,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                                  gradient:
+                                                                      LinearGradient(
+                                                                    begin: Alignment
+                                                                        .topLeft,
+                                                                    end: Alignment
+                                                                        .bottomRight,
+                                                                    colors: [
+                                                                      Colors
+                                                                          .blue,
+                                                                      Colors
+                                                                          .purpleAccent
+                                                                          .shade100
+                                                                    ],
+                                                                  ),
+                                                                  borderRadius:
+                                                                      const BorderRadius
+                                                                          .all(
+                                                                    Radius
+                                                                        .circular(
+                                                                            15),
+                                                                  ),
+                                                                  border: Border.all(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      width:
+                                                                          2)),
                                                           child: SearchField(
-
-                                                            controller: answerController,
-                                                            suggestionItemDecoration: SuggestionDecoration(
-                                                              gradient: LinearGradient(
-                                                                begin: Alignment.topLeft,
-                                                                end: Alignment.bottomRight,
-                                                                colors: [Colors.blue, Colors.purpleAccent.shade100],
+                                                            controller:
+                                                                answerController,
+                                                            suggestionItemDecoration:
+                                                                SuggestionDecoration(
+                                                              gradient:
+                                                                  LinearGradient(
+                                                                begin: Alignment
+                                                                    .topLeft,
+                                                                end: Alignment
+                                                                    .bottomRight,
+                                                                colors: [
+                                                                  Colors.blue,
+                                                                  Colors
+                                                                      .purpleAccent
+                                                                      .shade100
+                                                                ],
                                                               ),
                                                             ),
-                                                            key: const Key("Search key"),
-                                                            suggestions:
-                                                            options.map((e) => SearchFieldListItem(e)).toList(),
-                                                            searchStyle: GoogleFonts.openSans(
-                                                              color: Colors.white,
-                                                              fontSize: size.height*0.032
-                                                            ),
-                                                            suggestionStyle: GoogleFonts.openSans(
-                                                                color: Colors.white,
-                                                                fontSize: size.height*0.032
-                                                            ),
-                                                            marginColor: Colors.black,
-
-                                                            suggestionsDecoration: SuggestionDecoration(
-                                                                gradient: const LinearGradient(
-                                                                  begin: Alignment.topLeft,
-                                                                  end: Alignment.bottomRight,
-                                                                  colors: [Colors.blue, Colors.purpleAccent],
-                                                                ),
-                                                                //shape: BoxShape.rectangle,
-                                                                padding: const EdgeInsets.all(10),
-                                                                border: Border.all(width: 2, color: Colors.black),
-                                                                borderRadius: BorderRadius.circular(0)),
-                                                            searchInputDecoration: InputDecoration(
-                                                                hintText: "Right Option",
-                                                                contentPadding: EdgeInsets.only(left: size.width*0.08),
-                                                                fillColor:Colors.transparent,
-
-
-                                                                filled: true,
-                                                                hintStyle: GoogleFonts.openSans(
-                                                                    color: Colors.white,
-                                                                    fontSize: size.height*0.035
-                                                                ),
-                                                                suffixIcon: Icon(Icons.arrow_drop_down,color: Colors.black,size: size.height*0.04,),
-                                                                focusedBorder: OutlineInputBorder(
-                                                                  /*borderSide: const BorderSide(
+                                                            key: const Key(
+                                                                "Search key"),
+                                                            suggestions: options
+                                                                .map((e) =>
+                                                                    SearchFieldListItem(
+                                                                        e))
+                                                                .toList(),
+                                                            searchStyle: GoogleFonts
+                                                                .openSans(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    fontSize: size
+                                                                            .height *
+                                                                        0.032),
+                                                            suggestionStyle:
+                                                                GoogleFonts.openSans(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    fontSize: size
+                                                                            .height *
+                                                                        0.032),
+                                                            marginColor:
+                                                                Colors.black,
+                                                            suggestionsDecoration:
+                                                                SuggestionDecoration(
+                                                                    gradient:
+                                                                        const LinearGradient(
+                                                                      begin: Alignment
+                                                                          .topLeft,
+                                                                      end: Alignment
+                                                                          .bottomRight,
+                                                                      colors: [
+                                                                        Colors
+                                                                            .blue,
+                                                                        Colors
+                                                                            .purpleAccent
+                                                                      ],
+                                                                    ),
+                                                                    //shape: BoxShape.rectangle,
+                                                                    padding:
+                                                                        const EdgeInsets.all(
+                                                                            10),
+                                                                    border: Border.all(
+                                                                        width:
+                                                                            2,
+                                                                        color: Colors
+                                                                            .black),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            0)),
+                                                            searchInputDecoration:
+                                                                InputDecoration(
+                                                                    hintText:
+                                                                        "Right Option",
+                                                                    contentPadding: EdgeInsets.only(
+                                                                        left: size.width *
+                                                                            0.08),
+                                                                    fillColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    filled:
+                                                                        true,
+                                                                    hintStyle: GoogleFonts.openSans(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        fontSize:
+                                                                            size.height *
+                                                                                0.035),
+                                                                    suffixIcon:
+                                                                        Icon(
+                                                                      Icons
+                                                                          .arrow_drop_down,
+                                                                      color: Colors
+                                                                          .black,
+                                                                      size: size
+                                                                              .height *
+                                                                          0.04,
+                                                                    ),
+                                                                    focusedBorder:
+                                                                        OutlineInputBorder(
+                                                                      /*borderSide: const BorderSide(
                                                                     width: 3,
                                                                     color: Colors.black,
                                                                   ),*/
-                                                                  borderRadius: BorderRadius.circular(size.height*0.04),
-                                                                ),
-                                                                focusColor: Colors.transparent,
-                                                                disabledBorder: OutlineInputBorder(
-                                                                  /*borderSide: const BorderSide(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(size.height *
+                                                                              0.04),
+                                                                    ),
+                                                                    focusColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    disabledBorder:
+                                                                        OutlineInputBorder(
+                                                                      /*borderSide: const BorderSide(
                                                                     width: 3,
                                                                     color: Colors.black,
                                                                   ),*/
-                                                                  borderRadius: BorderRadius.circular(15),
-                                                                ),
-                                                                enabledBorder: OutlineInputBorder(
-                                                                  /*borderSide: const BorderSide(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              15),
+                                                                    ),
+                                                                    enabledBorder:
+                                                                        OutlineInputBorder(
+                                                                      /*borderSide: const BorderSide(
                                                                     width: 3,
                                                                     color: Colors.black,
                                                                   ),*/
-                                                                  borderRadius: BorderRadius.circular(15),
-                                                                )),
-                                                            onSuggestionTap: (value) {
-                                                              FocusScope.of(context).unfocus();
-
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              15),
+                                                                    )),
+                                                            onSuggestionTap:
+                                                                (value) {
+                                                              FocusScope.of(
+                                                                      context)
+                                                                  .unfocus();
                                                             },
                                                             enabled: true,
-                                                            hint: "Right Answer",
+                                                            hint:
+                                                                "Right Answer",
                                                             itemHeight: 50,
-                                                            maxSuggestionsInViewPort: 2,
+                                                            maxSuggestionsInViewPort:
+                                                                2,
                                                           ),
                                                         )
                                                       ],
@@ -518,95 +676,180 @@ class _QuizQustionState extends State<QuizQustion> {
                                                               0.004,
                                                         ),
                                                         Container(
-                                                          height: size.height*0.065,
-                                                          width: size.width*0.75,
-                                                          decoration: BoxDecoration(
-                                                              gradient: LinearGradient(
-                                                                begin: Alignment.topLeft,
-                                                                end: Alignment.bottomRight,
-                                                                colors: [Colors.blue, Colors.purpleAccent.shade100],
-                                                              ),
-                                                              borderRadius: const BorderRadius.all(Radius.circular(15),),
-                                                              border: Border.all(
-                                                                  color: Colors.white,
-                                                                  width: 2
-                                                              )
-                                                          ),
+                                                          height: size.height *
+                                                              0.065,
+                                                          width:
+                                                              size.width * 0.75,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                                  gradient:
+                                                                      LinearGradient(
+                                                                    begin: Alignment
+                                                                        .topLeft,
+                                                                    end: Alignment
+                                                                        .bottomRight,
+                                                                    colors: [
+                                                                      Colors
+                                                                          .blue,
+                                                                      Colors
+                                                                          .purpleAccent
+                                                                          .shade100
+                                                                    ],
+                                                                  ),
+                                                                  borderRadius:
+                                                                      const BorderRadius
+                                                                          .all(
+                                                                    Radius
+                                                                        .circular(
+                                                                            15),
+                                                                  ),
+                                                                  border: Border.all(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      width:
+                                                                          2)),
                                                           child: SearchField(
-
-                                                            controller: answerController,
-                                                            suggestionItemDecoration: SuggestionDecoration(
-                                                              gradient: LinearGradient(
-                                                                begin: Alignment.topLeft,
-                                                                end: Alignment.bottomRight,
-                                                                colors: [Colors.blue, Colors.purpleAccent.shade100],
+                                                            controller:
+                                                                answerController,
+                                                            suggestionItemDecoration:
+                                                                SuggestionDecoration(
+                                                              gradient:
+                                                                  LinearGradient(
+                                                                begin: Alignment
+                                                                    .topLeft,
+                                                                end: Alignment
+                                                                    .bottomRight,
+                                                                colors: [
+                                                                  Colors.blue,
+                                                                  Colors
+                                                                      .purpleAccent
+                                                                      .shade100
+                                                                ],
                                                               ),
                                                             ),
-                                                            key: const Key("Search key"),
-                                                            suggestions:
-                                                            options.map((e) => SearchFieldListItem(e)).toList(),
-                                                            searchStyle: GoogleFonts.openSans(
-                                                                color: Colors.white,
-                                                                fontSize: size.height*0.032
-                                                            ),
-                                                            suggestionStyle: GoogleFonts.openSans(
-                                                                color: Colors.white,
-                                                                fontSize: size.height*0.032
-                                                            ),
-                                                            marginColor: Colors.black,
-
-                                                            suggestionsDecoration: SuggestionDecoration(
-                                                                gradient: const LinearGradient(
-                                                                  begin: Alignment.topLeft,
-                                                                  end: Alignment.bottomRight,
-                                                                  colors: [Colors.blue, Colors.purpleAccent],
-                                                                ),
-                                                                //shape: BoxShape.rectangle,
-                                                                padding: const EdgeInsets.all(10),
-                                                                border: Border.all(width: 2, color: Colors.black),
-                                                                borderRadius: BorderRadius.circular(0)),
-                                                            searchInputDecoration: InputDecoration(
-                                                                hintText: "Right Option",
-                                                                contentPadding: EdgeInsets.only(left: size.width*0.08),
-                                                                fillColor:Colors.transparent,
-
-
-                                                                filled: true,
-                                                                hintStyle: GoogleFonts.openSans(
-                                                                    color: Colors.white,
-                                                                    fontSize: size.height*0.035
-                                                                ),
-                                                                suffixIcon: Icon(Icons.arrow_drop_down,color: Colors.black,size: size.height*0.04,),
-                                                                focusedBorder: OutlineInputBorder(
-                                                                  /*borderSide: const BorderSide(
+                                                            key: const Key(
+                                                                "Search key"),
+                                                            suggestions: options
+                                                                .map((e) =>
+                                                                    SearchFieldListItem(
+                                                                        e))
+                                                                .toList(),
+                                                            searchStyle: GoogleFonts
+                                                                .openSans(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    fontSize: size
+                                                                            .height *
+                                                                        0.032),
+                                                            suggestionStyle:
+                                                                GoogleFonts.openSans(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    fontSize: size
+                                                                            .height *
+                                                                        0.032),
+                                                            marginColor:
+                                                                Colors.black,
+                                                            suggestionsDecoration:
+                                                                SuggestionDecoration(
+                                                                    gradient:
+                                                                        const LinearGradient(
+                                                                      begin: Alignment
+                                                                          .topLeft,
+                                                                      end: Alignment
+                                                                          .bottomRight,
+                                                                      colors: [
+                                                                        Colors
+                                                                            .blue,
+                                                                        Colors
+                                                                            .purpleAccent
+                                                                      ],
+                                                                    ),
+                                                                    //shape: BoxShape.rectangle,
+                                                                    padding:
+                                                                        const EdgeInsets.all(
+                                                                            10),
+                                                                    border: Border.all(
+                                                                        width:
+                                                                            2,
+                                                                        color: Colors
+                                                                            .black),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            0)),
+                                                            searchInputDecoration:
+                                                                InputDecoration(
+                                                                    hintText:
+                                                                        "Right Option",
+                                                                    contentPadding: EdgeInsets.only(
+                                                                        left: size.width *
+                                                                            0.08),
+                                                                    fillColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    filled:
+                                                                        true,
+                                                                    hintStyle: GoogleFonts.openSans(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        fontSize:
+                                                                            size.height *
+                                                                                0.035),
+                                                                    suffixIcon:
+                                                                        Icon(
+                                                                      Icons
+                                                                          .arrow_drop_down,
+                                                                      color: Colors
+                                                                          .black,
+                                                                      size: size
+                                                                              .height *
+                                                                          0.04,
+                                                                    ),
+                                                                    focusedBorder:
+                                                                        OutlineInputBorder(
+                                                                      /*borderSide: const BorderSide(
                                                                     width: 3,
                                                                     color: Colors.black,
                                                                   ),*/
-                                                                  borderRadius: BorderRadius.circular(size.height*0.04),
-                                                                ),
-                                                                focusColor: Colors.transparent,
-                                                                disabledBorder: OutlineInputBorder(
-                                                                  /*borderSide: const BorderSide(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(size.height *
+                                                                              0.04),
+                                                                    ),
+                                                                    focusColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    disabledBorder:
+                                                                        OutlineInputBorder(
+                                                                      /*borderSide: const BorderSide(
                                                                     width: 3,
                                                                     color: Colors.black,
                                                                   ),*/
-                                                                  borderRadius: BorderRadius.circular(15),
-                                                                ),
-                                                                enabledBorder: OutlineInputBorder(
-                                                                  /*borderSide: const BorderSide(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              15),
+                                                                    ),
+                                                                    enabledBorder:
+                                                                        OutlineInputBorder(
+                                                                      /*borderSide: const BorderSide(
                                                                     width: 3,
                                                                     color: Colors.black,
                                                                   ),*/
-                                                                  borderRadius: BorderRadius.circular(15),
-                                                                )),
-                                                            onSuggestionTap: (value) {
-                                                              FocusScope.of(context).unfocus();
-
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              15),
+                                                                    )),
+                                                            onSuggestionTap:
+                                                                (value) {
+                                                              FocusScope.of(
+                                                                      context)
+                                                                  .unfocus();
                                                             },
                                                             enabled: true,
-                                                            hint: "Right Answer",
+                                                            hint:
+                                                                "Right Answer",
                                                             itemHeight: 50,
-                                                            maxSuggestionsInViewPort: 2,
+                                                            maxSuggestionsInViewPort:
+                                                                2,
                                                           ),
                                                         ),
                                                       ],
@@ -621,30 +864,40 @@ class _QuizQustionState extends State<QuizQustion> {
                                                 Container(
                                                   height: size.height * 0.056,
                                                   width: size.width * 0.3,
-
                                                   child: ElevatedButton(
                                                       onPressed: () {
-                                                       setState(() {
-                                                         currIndex=index-1;
-                                                         pageController.animateToPage(currIndex,
-                                                             duration: const Duration(milliseconds: 300),
-                                                             curve: Curves.linear);
-                                                       });
-
-
+                                                        setState(() {
+                                                          currIndex = index - 1;
+                                                          pageController.animateToPage(
+                                                              currIndex,
+                                                              duration:
+                                                                  const Duration(
+                                                                      milliseconds:
+                                                                          300),
+                                                              curve: Curves
+                                                                  .linear);
+                                                        });
                                                       },
                                                       child: Row(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceEvenly,
                                                         children: [
-                                                          Icon(Icons.arrow_back,color: Colors.white,size: size.height*0.03),
+                                                          Icon(Icons.arrow_back,
+                                                              color:
+                                                                  Colors.white,
+                                                              size:
+                                                                  size.height *
+                                                                      0.03),
                                                           AutoSizeText(
                                                             "Back",
                                                             style: GoogleFonts
                                                                 .openSans(
-                                                              color: Colors.white,
+                                                              color:
+                                                                  Colors.white,
                                                               fontSize:
-                                                              size.height *
-                                                                  0.024,
+                                                                  size.height *
+                                                                      0.024,
                                                             ),
                                                           )
                                                         ],
@@ -654,110 +907,151 @@ class _QuizQustionState extends State<QuizQustion> {
                                                   height: size.height * 0.056,
                                                   width: size.width * 0.3,
                                                   decoration:
-                                                  const BoxDecoration(
-                                                      borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius
-                                                              .circular(
-                                                              100))),
+                                                      const BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          100))),
                                                   child: ElevatedButton(
                                                       onPressed: () {
-                                                        setState(() {
-                                                          currIndex=index;
+                                                       /* setState(() {
+                                                          currIndex = index;
                                                           pageController.animateToPage(
                                                               currIndex,
                                                               duration:
-                                                              const Duration(
-                                                                  milliseconds:
-                                                                  600),
+                                                                  const Duration(
+                                                                      milliseconds:
+                                                                          600),
                                                               curve: Curves
                                                                   .linear);
-                                                        });
-                                                        List<String>
-                                                        optionList = [];
-                                                        for (var i = 0;
-                                                        i <
-                                                            optionController
-                                                                .length;
-                                                        i++) {
-                                                          optionList.add(
-                                                              optionController[
-                                                              i]
-                                                                  .text
-                                                                  .toString()
-                                                                  .trim());
-                                                        }
-                                                        FirebaseFirestore
-                                                            .instance
-                                                            .collection("Notes")
-                                                            .doc(
-                                                            "${university_filter.split(" ")[0]} ${college_filter.split(" ")[0]} ${course_filter.split(" ")[0]} ${branch_filter.split(" ")[0]} $year_filter $section_filter $subject_filter")
-                                                            .update({
-                                                          "Notes-${widget.quizNumber}.Question-${index+1}":{
-                                                              "Question":
-                                                              allQuestionController[index]
-                                                                  .text
-                                                                  .toString()
-                                                                  .trim(),
-                                                              "Options":
-                                                              optionList,
-                                                              "Answer":
-                                                              answerController
-                                                                  .text
-                                                                  .toString(),
-                                                              "Question-Type": _options ==
-                                                                  Options
-                                                                      .multipleChoice
-                                                                  ? "multipleChoice"
-                                                                  : "True and False",
-                                                            "Total_Question":questionCount*2
-
-                                                            },
-
-                                                        }).whenComplete(() {
-                                                          setState(() {
-                                                            answerController
-                                                                .clear();
-                                                            optionController
-                                                                .clear();
-                                                            currIndex++;
-                                                            pageController.animateToPage(
-                                                                currIndex,
-                                                                duration:
-                                                                const Duration(
-                                                                    milliseconds:
-                                                                    600),
-                                                                curve: Curves
-                                                                    .linear);
-                                                            if(index+1==questionCount*2)
+                                                        });*/
+                                                        if(allQuestionController[index].text.isNotEmpty && optionController.isNotEmpty && answerController.text.isNotEmpty && deadlineController.text.isNotEmpty)
+                                                          {
+                                                            List<String>
+                                                            optionList = [];
+                                                            for (var i = 0;
+                                                            i <
+                                                                optionController
+                                                                    .length;
+                                                            i++) {
+                                                              optionList.add(
+                                                                  optionController[
+                                                                  i]
+                                                                      .text
+                                                                      .toString()
+                                                                      .trim());
+                                                            }
+                                                            FirebaseFirestore
+                                                                .instance
+                                                                .collection("Notes")
+                                                                .doc(
+                                                                "${university_filter.split(" ")[0]} ${college_filter.split(" ")[0]} ${course_filter.split(" ")[0]} ${branch_filter.split(" ")[0]} $year_filter $section_filter $subject_filter")
+                                                                .update({
+                                                              "Notes-${widget.quizNumber}.Deadline":deadlinePickedDate,
+                                                              "Notes-${widget.quizNumber}.Total_Question": questionCount * 2,
+                                                              "Notes-${widget.quizNumber}.Quiz_Created":index + 1 ==
+                                                                  questionCount *
+                                                                      2
+                                                                  ?
+                                                              true
+                                                                  :
+                                                              false,
+                                                              "Notes-${widget.quizNumber}.Question-${index + 1}":
                                                               {
-                                                                Navigator.pop(context);
-                                                                Navigator.pop(context);
-                                                              }
-                                                          });
-                                                        });
+                                                                "Question":
+                                                                allQuestionController[
+                                                                index]
+                                                                    .text
+                                                                    .toString()
+                                                                    .trim(),
+                                                                "Options":
+                                                                optionList,
+                                                                "Answer":
+                                                                answerController
+                                                                    .text
+                                                                    .toString(),
+                                                                "Question-Type": _options ==
+                                                                    Options
+                                                                        .multipleChoice
+                                                                    ? "multipleChoice"
+                                                                    : "True and False",
 
+                                                              },
+                                                            }).whenComplete(() {
+                                                              setState(() {
+                                                                answerController
+                                                                    .clear();
+                                                                optionController
+                                                                    .clear();
+                                                                optionType=false;
+                                                                currIndex=index;
+                                                                currIndex++;
+                                                                pageController.animateToPage(
+                                                                    currIndex,
+                                                                    duration:
+                                                                    const Duration(
+                                                                        milliseconds:
+                                                                        600),
+                                                                    curve: Curves
+                                                                        .linear);
+                                                                if (index + 1 ==
+                                                                    questionCount *
+                                                                        2) {
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                }
+                                                              });
+                                                            });
+                                                          }
+                                                        else{
+                                                          InAppNotifications.instance
+                                                            ..titleFontSize = 25.0
+                                                            ..descriptionFontSize = 15.0
+                                                            ..textColor = Colors.black
+                                                            ..backgroundColor = const Color.fromRGBO(150, 150, 150, 1)
+                                                            ..shadow = true
+                                                            ..animationStyle = InAppNotificationsAnimationStyle.scale;
+                                                          InAppNotifications.show(
+                                                              title: 'Error',
+                                                              duration: const Duration(seconds: 2),
+                                                              description: "Please Provide all data to continue",
+                                                              leading: const Icon(
+                                                                Icons.error_outline,
+                                                                color: Colors.red,
+                                                                size: 40,
+                                                              ));
+                                                        }
 
                                                       },
-
                                                       child: Row(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceEvenly,
                                                         children: [
                                                           AutoSizeText(
-                                                            index+1==questionCount*2
-                                                            ?
-                                                            "Submit"
-                                                            :
-                                                            "Next",
+                                                            index + 1 ==
+                                                                    questionCount *
+                                                                        2
+                                                                ? "Submit"
+                                                                : "Next",
                                                             style: GoogleFonts
                                                                 .openSans(
-                                                              color: Colors.white,
+                                                              color:
+                                                                  Colors.white,
                                                               fontSize:
-                                                              size.height *
-                                                                  0.024,
+                                                                  size.height *
+                                                                      0.024,
                                                             ),
                                                           ),
-                                                          Icon(Icons.arrow_forward_outlined,color: Colors.white,size: size.height*0.03)
+                                                          Icon(
+                                                              Icons
+                                                                  .arrow_forward_outlined,
+                                                              color:
+                                                                  Colors.white,
+                                                              size:
+                                                                  size.height *
+                                                                      0.03)
                                                         ],
                                                       )),
                                                 )

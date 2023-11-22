@@ -11,6 +11,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:file_manager/file_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inapp_notifications/flutter_inapp_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:path_provider/path_provider.dart';
@@ -42,14 +43,11 @@ class _NotesState extends State<Notes> {
 
   int ind=0;
   bool a=true;
-
+   int currIndex=-1;
   final dio=Dio();
    double percent=0.0;
    String filePath="";
 
-   List<bool>isExpanded=[];
-   List<bool>isDownloaded=[];
-   List<bool>isDownloading=[];
 
    DateTime currDate=DateTime.now();
 @override
@@ -114,12 +112,15 @@ class _NotesState extends State<Notes> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             const Icon(Icons.leaderboard_sharp,color: Colors.red),
-                            AutoSizeText(
-                              "Leaderboard",
-                              style: TextStyle(
-                                  fontSize: size.height * 0.02,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black
+                            FittedBox(
+                              fit: BoxFit.cover,
+                              child: AutoSizeText(
+                                "Leaderboard",
+                                style: TextStyle(
+                                    fontSize: size.height * 0.02,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white70
+                                ),
                               ),
                             ),
                           ],
@@ -161,12 +162,15 @@ class _NotesState extends State<Notes> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             const Icon(Icons.upload_sharp,color: Colors.red),
-                            AutoSizeText(
-                              "Upload Notes",
-                              style: TextStyle(
-                                  fontSize: size.height * 0.02,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black
+                            FittedBox(
+                              fit: BoxFit.cover,
+                              child: AutoSizeText(
+                                "Upload Notes",
+                                style: TextStyle(
+                                    fontSize: size.height * 0.02,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white70
+                                ),
                               ),
                             ),
                           ],
@@ -199,8 +203,6 @@ class _NotesState extends State<Notes> {
           stream: FirebaseFirestore.instance.collection("Notes").doc("${university_filter.split(" ")[0]} ${college_filter.split(" ")[0]} ${course_filter.split(" ")[0]} ${branch_filter.split(" ")[0]} $year_filter $section_filter $subject_filter").snapshots(),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot)
           {
-
-
             return  snapshot.hasData
                 ?
             Padding(
@@ -209,39 +211,41 @@ class _NotesState extends State<Notes> {
                 child: ListView.builder(
                   itemCount: snapshot.data["Total_Notes"],
                   itemBuilder: (context, index) {
-                    Timestamp deadline=snapshot.data["Notes-${index+1}"]["Deadline"];
-                    //print("....................${snapshot.data["Notes-${index+1}"]["Deadline"]}");
+                    bool isDownloaded=false;
+                    bool  isDownloading=false;
+                    bool isExpanded;
+                    if(currIndex==index)
+                      {
+                        isExpanded=true;
+                      }
+                    else{
+                      isExpanded=false;
+                    }
+                    Timestamp deadline=snapshot.data["Notes-${index+1}"]["Deadline"] ?? Timestamp(0, 0);
                     bool quizCreated = snapshot.data["Notes-${index+1}"]["Quiz_Created"];
                     String? dir = directory?.path.toString().substring(0, 19);
                     String path = "$dir/Campus Link/$university_filter $college_filter $course_filter $branch_filter $year_filter $section_filter $subject_filter/Notes/";
-
                     File newPath = File("$path${snapshot.data["Notes-${index +
                         1}"]["File_Name"]}");
-                    newPath.exists().then((value) async {
-                      if (!value) {
-                        setState(() {
-                          isDownloaded[index] = false;
-                        });
+                    if(newPath.existsSync())
+                      {
+                        isDownloaded=true;
                       }
-                      else {
-                        setState(() {
-                          isDownloaded[index] = true;
-                        });
-                      }
-                    },);
                       return Padding(
                         padding: EdgeInsets.all(size.width * 0.032),
                         child: Container(
                           width: size.width * 0.85,
                           decoration: BoxDecoration(
-                            color: const Color.fromRGBO(56, 33, 101,1),
+                            //color: const Color.fromRGBO(56, 33, 101,1),
+                            color: Colors.white70,
                             borderRadius: radiusGeomentry,
+                            border: Border.all(color:const Color.fromRGBO(56, 33, 101,1),width: 3)
                           ),
                           child: Column(
 
                             children: [
                               SizedBox(
-                                height: size.height * 0.18,
+                                height: size.height * 0.12,
                                 width: size.width * 0.93,
                                 child: Padding(
                                     padding: EdgeInsets.only(
@@ -250,7 +254,7 @@ class _NotesState extends State<Notes> {
                                         right: size.height * 0.01),
                                     child: InkWell(
                                       onTap: () {
-                                        if (isDownloaded[index]) {
+                                        if (isDownloaded) {
                                           Navigator.push(
                                             context,
                                             PageTransition(
@@ -276,25 +280,51 @@ class _NotesState extends State<Notes> {
                                                     size.width * 0.05),
                                                 topRight: Radius.circular(
                                                     size.width * 0.05)),
-                                            image: DecorationImage(
+                                            /*image: DecorationImage(
                                               image: NetworkImage(
                                                 "${snapshot.data["Notes-${index +
                                                     1}"]["thumbnailURL"]}",
                                               ), fit: BoxFit.cover,
+                                            )*/
+                                        ),
+                                      child: Center(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            SizedBox(
+                                              height: size.height*0.01,
+                                            ),
+                                            AutoSizeText(
+                                              subject_filter,
+                                              style: GoogleFonts.courgette(
+                                                  color: Colors.black,
+                                                  fontSize: size.height*0.02,
+                                                  fontWeight: FontWeight.w400
+                                              ),
+                                            ),
+                                            AutoSizeText(
+                                              "Notes : ${index + 1}",
+                                              style: GoogleFonts.courgette(
+                                                  color: Colors.black,
+                                                  fontSize: size.height*0.023,
+                                                  fontWeight: FontWeight.w400
+                                              ),
                                             )
-                                        ),),
+                                          ],
+                                        ),
+                                      ),),
                                     )
                                 ),
                               ),
                               AnimatedContainer(
-                                height: isExpanded[index]
+                                height: isExpanded
                                     ? size.height * 0.22
                                     : size.height * 0.12,
-                                width: size.width * 0.98,
+                                width: size.width * 0.99,
                                 duration: const Duration(milliseconds: 1),
                                 decoration: BoxDecoration(
                                     color: const Color.fromRGBO(56, 33, 101,1),
-                                    borderRadius: radiusGeomentry
+                                    borderRadius: BorderRadius.circular(size.width*0.065)
 
                                 ),
                                 child: SingleChildScrollView(
@@ -310,10 +340,10 @@ class _NotesState extends State<Notes> {
                                               bottomLeft: Radius.circular(
                                                   size.width * 0.1),
                                               bottomRight: Radius.circular(
-                                                  size.width * 0.12)),),
-                                        title: Container(
+                                                  size.width * 0.1)),),
+                                        title: SizedBox(
                                             height: size.height * 0.07,
-                                            width: size.width * 0.45,
+                                            width: size.width * 0.75,
                                             //ssscolor: Colors.redAccent,
                                             child: Column(
                                               crossAxisAlignment: CrossAxisAlignment
@@ -329,7 +359,7 @@ class _NotesState extends State<Notes> {
                                                   "",
                                                   style: GoogleFonts.exo(
                                                       fontSize: size.height *
-                                                          0.02,
+                                                          0.01,
                                                       color: Colors.white70,
                                                       fontWeight: FontWeight
                                                           .w500),
@@ -341,7 +371,7 @@ class _NotesState extends State<Notes> {
                                                 ),
                                                 Row(
                                                   mainAxisAlignment: MainAxisAlignment
-                                                      .spaceBetween,
+                                                      .start,
                                                   crossAxisAlignment: CrossAxisAlignment
                                                       .start,
                                                   children: [
@@ -358,10 +388,13 @@ class _NotesState extends State<Notes> {
                                                       "",
                                                       style: GoogleFonts.exo(
                                                           fontSize: size.height *
-                                                              0.016,
+                                                              0.012,
                                                           color: Colors.white70,
                                                           fontWeight: FontWeight
                                                               .w500),),
+                                                    SizedBox(
+                                                      width: size.width * 0.015,
+                                                    ),
                                                     AutoSizeText(
                                                       snapshot.data["Notes-${index +
                                                           1}"]["Stamp"] != null
@@ -375,7 +408,7 @@ class _NotesState extends State<Notes> {
                                                       "",
                                                       style: GoogleFonts.exo(
                                                           fontSize: size.height *
-                                                              0.016,
+                                                              0.012,
                                                           color: Colors.white70,
                                                           fontWeight: FontWeight
                                                               .w500),),
@@ -385,8 +418,8 @@ class _NotesState extends State<Notes> {
                                             )
                                         ),
                                         leading: Container(
-                                            height: size.width * 0.07,
-                                            width: size.width * 0.07,
+                                            height: size.width * 0.05,
+                                            width: size.width * 0.05,
                                             decoration: const BoxDecoration(
                                               color: Colors.transparent,
                                               shape: BoxShape.circle,
@@ -398,16 +431,16 @@ class _NotesState extends State<Notes> {
                                               fit: BoxFit.cover,
                                               alignment: Alignment.center, )*/
                                             ),
-                                            child: isDownloaded[index]
+                                            child: isDownloaded
                                                 ?
                                             Image.asset("assets/icon/pdf.png")
                                                 :
-                                            isDownloading[index]
+                                            isDownloading
                                                 ?
                                             Center(
                                               child: CircularPercentIndicator(
                                                 percent: percent,
-                                                radius: size.width * 0.035,
+                                                radius: size.width * 0.046,
                                                 animation: true,
                                                 animateFromLastPercent: true,
                                                 curve: accelerateEasing,
@@ -429,7 +462,7 @@ class _NotesState extends State<Notes> {
                                               child: InkWell(
                                                   onTap: () async {
                                                     setState(() {
-                                                      isDownloading[index] = true;
+                                                      isDownloading = true;
                                                     });
 
                                                     String path = "$dir/Campus Link/$university_filter $college_filter $course_filter $branch_filter $year_filter $section_filter $subject_filter/Notes/";
@@ -452,15 +485,15 @@ class _NotesState extends State<Notes> {
                                                               setState(() {
                                                                 filePath =
                                                                     newPath.path;
-                                                                isDownloaded[index] =
+                                                                isDownloaded=
                                                                 true;
-                                                                isDownloading[index] =
+                                                                isDownloading =
                                                                 false;
                                                               });
                                                             }
                                                             else {
                                                               setState(() {
-                                                                isDownloading[index] =
+                                                                isDownloading=
                                                                 true;
                                                                 percent =
                                                                 (count / total);
@@ -470,6 +503,8 @@ class _NotesState extends State<Notes> {
                                                       }
                                                       else {
                                                         print("..Already Exsist");
+                                                        print("isdownloading :$isDownloading");
+                                                        print("isdownloaded :$isDownloaded");
                                                       }
                                                     });
                                                   },
@@ -481,25 +516,34 @@ class _NotesState extends State<Notes> {
                                         ),
 
                                         // subtitle: AutoSizeText('DEADLIiNE',style: GoogleFonts.exo(fontSize: size.height*0.015,color: Colors.black,fontWeight: FontWeight.w400),),
-                                        trailing: FloatingActionButton(
-                                            backgroundColor:Colors.lightBlueAccent,
-                                            elevation: 0,
-                                            onPressed: () {
-                                              setState(() {
+                                        trailing: Container(
+                                          height: size.width * 0.12,
+                                          width: size.width * 0.12,
+                                          child: FloatingActionButton(
+                                              backgroundColor:Colors.lightBlueAccent,
+                                              elevation: 0,
+                                              onPressed: () {
+                                                setState(() {
+                                                  if(currIndex==index)
+                                                    {
+                                                      currIndex=-1;
+                                                    }
+                                                  else{
+                                                    currIndex=index;
+                                                  }
 
-                                                isExpanded[index] = !isExpanded[index];
-
-                                              });
-                                            },
-                                            child:
-                                            Image.asset(
-                                              "assets/icon/speech-bubble.png",
-                                              width: size.height * 0.045,
-                                              height: size.height * 0.045,)
+                                                });
+                                              },
+                                              child:
+                                              Image.asset(
+                                                "assets/icon/speech-bubble.png",
+                                                width: size.height * 0.045,
+                                                height: size.height * 0.045,)
+                                          ),
                                         ),
 
                                       ),
-                                      isExpanded[index]
+                                      isExpanded
                                           ?
                                       Padding(
                                           padding: EdgeInsets.only(
@@ -608,17 +652,39 @@ class _NotesState extends State<Notes> {
                                                        ),
 
                                                        onPressed: () {
-                                                         Navigator.push(context,
-                                                             PageTransition(
-                                                                 child: Quizscore(
-                                                                   quizId: index + 1,),
-                                                                 type: PageTransitionType
-                                                                     .bottomToTopJoined,
-                                                                 childCurrent: const Notes(),
-                                                                 duration: const Duration(
-                                                                     milliseconds: 300)
-                                                             )
-                                                         );
+                                                         if(snapshot.data["Notes-${index+1}"]["Submitted by"]!=null && snapshot.data["Notes-${index+1}"]["Submitted by"].length>3)
+                                                           {
+                                                             Navigator.push(context,
+                                                                 PageTransition(
+                                                                     child: Quizscore(
+                                                                       quizId: index + 1,),
+                                                                     type: PageTransitionType
+                                                                         .bottomToTopJoined,
+                                                                     childCurrent: const Notes(),
+                                                                     duration: const Duration(
+                                                                         milliseconds: 300)
+                                                                 )
+                                                             );
+                                                           }
+                                                         else{
+                                                           InAppNotifications.instance
+                                                             ..titleFontSize = 25.0
+                                                             ..descriptionFontSize = 15.0
+                                                             ..textColor = Colors.black
+                                                             ..backgroundColor = const Color.fromRGBO(150, 150, 150, 1)
+                                                             ..shadow = true
+                                                             ..animationStyle = InAppNotificationsAnimationStyle.scale;
+                                                           InAppNotifications.show(
+                                                               title: 'Error',
+                                                               duration: const Duration(seconds: 2),
+                                                               description: "Submissions are less than three",
+                                                               leading: const Icon(
+                                                                 Icons.error_outline,
+                                                                 color: Colors.red,
+                                                                 size: 40,
+                                                               ));
+                                                         }
+
                                                        },
                                                        child: AutoSizeText(
                                                          "Leaderboard",
@@ -811,17 +877,8 @@ class _NotesState extends State<Notes> {
   async {
     await FirebaseFirestore.instance.collection("Notes").doc("${university_filter.split(" ")[0]} ${college_filter.split(" ")[0]} ${course_filter.split(" ")[0]} ${branch_filter.split(" ")[0]} $year_filter $section_filter $subject_filter")
         .get().then((value) {
-          if(value.exists)
-            {
-              setState(() {
-
-                isExpanded=List.generate(value.data()?["Total_Notes"], (index) =>  false);
-                isDownloaded=List.generate(value.data()?["Total_Notes"], (index) =>  false);
-                isDownloading=List.generate(value.data()?["Total_Notes"], (index) =>  false);
-                docExists=true;
-              });
-              checkAndRequestPermissions();
-            }
+      checkAndRequestPermissions();
+      docExists=true;
 
     });
   }
@@ -842,4 +899,7 @@ class _NotesState extends State<Notes> {
   }
 
 }
+
+
+
 
