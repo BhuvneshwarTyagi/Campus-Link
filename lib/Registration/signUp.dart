@@ -1,4 +1,5 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:campus_link_teachers/Screens/Main_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -388,10 +389,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   "Employee Id" : employeeIdController.text.trim(),
                                   "bg" : "bg-1.jpg"
                                 });
+                                final record = await FirebaseFirestore.instance.collection("Teacher_record").doc("Email").get();
+                                record.exists
+                                    ?
                                 await FirebaseFirestore.instance.collection("Teacher_record").doc("Email").update({
-                                  "Email": FieldValue.arrayUnion([usermodel["Email"]])
-                                });
-                                await FirebaseFirestore.instance.collection("Teachers").doc(email.text.trim()).collection("Teachings").doc("Teachings").set({}).whenComplete(() => Navigator.pop(context));
+                                  "Email": FieldValue.arrayUnion([FirebaseAuth.instance.currentUser?.email])
+                                })
+                                :
+                                await FirebaseFirestore.instance.collection("Teacher_record").doc("Email").set({
+                                  "Email": FieldValue.arrayUnion([FirebaseAuth.instance.currentUser?.email])
+                                })
+                                ;
+                                await FirebaseFirestore.instance.collection("Teachers").doc(email.text.trim()).collection("Teachings").doc("Teachings").set({}).whenComplete(
+                                        () {
+                                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+                                            return const MainPage();
+                                          },));
+                                        } );
 
                               }
 
