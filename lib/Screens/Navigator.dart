@@ -16,7 +16,7 @@ import '../Registration/Basic.dart';
 import 'Assignments.dart';
 import 'Attendance.dart';
 import 'Filters.dart';
-import 'Notes.dart';
+import 'Notes/Notes.dart';
 import 'Performance.dart';
 import 'Sessional.dart';
 import 'Chat_tiles/chat_list.dart';

@@ -15,6 +15,7 @@ import '../Constraints.dart';
 import '../push_notification/Storage_permission.dart';
 import 'Chat_tiles/Image_viewer.dart';
 import 'Chat_tiles/PdfViewer.dart';
+import 'Notes/download_tile.dart';
 
 class Assignments_upload extends StatefulWidget {
   const Assignments_upload({Key? key}) : super(key: key);
@@ -35,8 +36,6 @@ class _Assignments_uploadState extends State<Assignments_upload> {
 
   var checkALLPermissions = CheckPermission();
   Directory? directory;
-  List<bool> isdownloaded = [];
-  List<bool> downloding = [];
   String path = "";
   double percent=0.0;
   bool permissionGranted = false;
@@ -44,6 +43,7 @@ class _Assignments_uploadState extends State<Assignments_upload> {
   bool fileAlreadyExists = false;
   final dio = Dio();
   List<bool>isExpanded=[];
+  late String dir;
 
   @override
   void initState() {
@@ -74,130 +74,10 @@ class _Assignments_uploadState extends State<Assignments_upload> {
         ),
       ),
       child: Scaffold(
-        // appBar: AppBar(
-        //
-        //   elevation: 0,
-        //   backgroundColor: Colors.transparent,
-        //   actions: [
-        //
-        //     SizedBox(
-        //       width: size.width,
-        //       child: Row(
-        //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        //         children: [
-        //           Container(
-        //             height: size.height * 0.048,
-        //             width: size.width * 0.46,
-        //             decoration: BoxDecoration(
-        //                 gradient: const LinearGradient(
-        //                   begin: Alignment.topLeft,
-        //                   end: Alignment.bottomRight,
-        //                   colors: [Colors.blue, Colors.purpleAccent],
-        //                 ),
-        //                 borderRadius:
-        //                 const BorderRadius.all(Radius.circular(20)),
-        //                 border: Border.all(color: Colors.black, width: 2)),
-        //             child: ElevatedButton(
-        //                 style: ElevatedButton.styleFrom(
-        //                     shape: const StadiumBorder(),
-        //                     backgroundColor: Colors.transparent),
-        //                 onPressed: () {
-        //                   setState(() {
-        //
-        //                     pageController.animateToPage(0,
-        //                         duration: const Duration(milliseconds: 200),
-        //                         curve: Curves.linear);
-        //                   });
-        //                 },
-        //                 child: Row(
-        //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //                   children: [
-        //                     SizedBox(
-        //                         width: size.width * 0.08,
-        //                         child: const Image(
-        //                           image: AssetImage(
-        //                               "assets/images/view_assignment.png"),
-        //                           fit: BoxFit.contain,
-        //                         )),
-        //                      AutoSizeText("View Assignment",
-        //                        style:  GoogleFonts.exo(
-        //                            color: Colors.white,
-        //                            fontSize:
-        //                            size.width *
-        //                                0.033,
-        //                            fontWeight: FontWeight.w600
-        //                        ),
-        //                     ),
-        //                   ],
-        //                 )),
-        //           ),
-        //           Container(
-        //               height: size.height * 0.048,
-        //               width: size.width * 0.46,
-        //               decoration: BoxDecoration(
-        //                   gradient: const LinearGradient(
-        //                     begin: Alignment.topLeft,
-        //                     end: Alignment.bottomRight,
-        //                     colors: [
-        //                       Colors.blue,
-        //                       Colors.purpleAccent,
-        //                     ],
-        //                   ),
-        //                   borderRadius:
-        //                   const BorderRadius.all(Radius.circular(20)),
-        //                   border: Border.all(color: Colors.black, width: 2)),
-        //               child: ElevatedButton(
-        //                   style: ElevatedButton.styleFrom(
-        //                     shape: const StadiumBorder(),
-        //                       backgroundColor: Colors.transparent),
-        //                   onPressed: () {
-        //
-        //                     setState(() {
-        //
-        //                       pageController.animateToPage(1,
-        //                           duration: const Duration(milliseconds: 200),
-        //                           curve: Curves.linear);
-        //                     });
-        //
-        //                   },
-        //                   child: Row(
-        //                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        //                     children: [
-        //                       SizedBox(
-        //                           width: size.width * 0.06,
-        //                           child: const Image(
-        //                             image: AssetImage(
-        //                                 "assets/images/upload-icon.png"),
-        //                             fit: BoxFit.contain,
-        //                           )),
-        //                       SizedBox(width: size.width*0.02),
-        //                       AutoSizeText("Upload Assignment",
-        //                         style:  GoogleFonts.exo(
-        //                             color: Colors.white,
-        //                             fontSize: size.width * 0.032,
-        //                             fontWeight: FontWeight.w600,
-        //                         ),
-        //                       ),
-        //                     ],
-        //                   ),
-        //               ),
-        //           ),
-        //         ],
-        //       ),
-        //     ),
-        //   ],
-        // ),
+
         extendBody: true,
         backgroundColor: Colors.transparent,
-        // body:PageView(
-        //   controller: pageController,
-        //   children:   const [
-        //     ViewAssignment(),
-        //     UploadAssignmet(),
-        //
-        //
-        //   ],
-        // ),
+
         body: SizedBox(
             height: size.height,
             width: size.width,
@@ -228,30 +108,20 @@ class _Assignments_uploadState extends State<Assignments_upload> {
                   child: ListView.builder(
                     itemCount: snapshot.data!["Total_Assignment"],
                     itemBuilder: (context, index) {
+                      bool isDownloaded=false;
                       String newpath =
                           "${path}Assignment-${index + 1}.${snapshot
                           .data!["Assignment-${index + 1}"]["Document-type"]}";
-                      isdownloaded = List.generate(
-                         snapshot .data!["Total_Assignment"],
-                              (index) => false);
-                      downloding = List.generate(
-                          snapshot .data!["Total_Assignment"],
-                              (index) => false);
-                      File(newpath).exists().then((value) {
-                        if (value) {
-                              isdownloaded[index] = true;
-                          print(isdownloaded[index]);
-                        } else {
-
-                            isdownloaded[index] = false;
-                        }
-                      });
+                      if(File(newpath).existsSync())
+                      {
+                        isDownloaded=true;
+                      }
 
                       return Padding(
                           padding: EdgeInsets.all(size.height*0.021),
                           child: InkWell(
                             onTap: (){
-                              if( isdownloaded[index]) {
+                              if( File(newpath).existsSync()) {
                                 if (snapshot.data!["Assignment-${index +
                                     1}"]["Document-type"] == "pdf") {
                                   Navigator.push(
@@ -297,359 +167,144 @@ class _Assignments_uploadState extends State<Assignments_upload> {
                                   borderRadius: const BorderRadius.all(Radius.circular(15)),
                                   border: Border.all(color: Colors.black,width: 2)
                               ),
-                              child: Column(
+                              child: Stack(
                                 children: [
-                                  Container(
-                                    height: size.height*0.1,
-                                    width: size.width,
-                                    decoration: const BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.only(topRight: Radius.circular(15),topLeft: Radius.circular(15))
+                                 Column(
+                                   children: [
+                                     Container(
+                                       height: size.height*0.1,
+                                       width: size.width,
+                                       decoration: const BoxDecoration(
+                                           color: Colors.white,
+                                           borderRadius: BorderRadius.only(topRight: Radius.circular(15),topLeft: Radius.circular(15))
 
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        SizedBox(
-                                          height: size.height*0.01,
-                                        ),
-                                        AutoSizeText(
-                                          subject_filter,
-                                          style: GoogleFonts.courgette(
-                                              color: Colors.black,
-                                              fontSize: size.height*0.02,
-                                              fontWeight: FontWeight.w400
-                                          ),
-                                        ),
-                                        AutoSizeText(
-                                          "Assignment : ${index + 1}",
-                                          style: GoogleFonts.courgette(
-                                              color: Colors.black,
-                                              fontSize: size.height*0.02,
-                                              fontWeight: FontWeight.w400
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                      padding: EdgeInsets.all( size.height*0.008),
-                                      height: size.height*0.104,
-                                      width: size.width,
-                                      decoration: const BoxDecoration(
-                                        color:  Color.fromRGBO(60, 99, 100, 1),
-                                        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(15),bottomRight: Radius.circular(15)),
+                                       ),
+                                       child: Column(
+                                         crossAxisAlignment: CrossAxisAlignment.center,
+                                         children: [
+                                           SizedBox(
+                                             height: size.height*0.01,
+                                           ),
+                                           AutoSizeText(
+                                             subject_filter,
+                                             style: GoogleFonts.courgette(
+                                                 color: Colors.black,
+                                                 fontSize: size.height*0.02,
+                                                 fontWeight: FontWeight.w400
+                                             ),
+                                           ),
+                                           AutoSizeText(
+                                             "Assignment : ${index + 1}",
+                                             style: GoogleFonts.courgette(
+                                                 color: Colors.black,
+                                                 fontSize: size.height*0.02,
+                                                 fontWeight: FontWeight.w400
+                                             ),
+                                           )
+                                         ],
+                                       ),
+                                     ),
+                                     Container(
+                                         padding: EdgeInsets.all( size.height*0.008),
+                                         height: size.height*0.104,
+                                         width: size.width,
+                                         decoration: const BoxDecoration(
+                                           color:  Color.fromRGBO(60, 99, 100, 1),
+                                           borderRadius: BorderRadius.only(bottomLeft: Radius.circular(15),bottomRight: Radius.circular(15)),
 
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              AutoSizeText(
-                                                "Assignment : ${index + 1} (${(int.parse(snapshot.data!["Assignment-${index + 1}"]["Size"].toString())/1048576).toStringAsFixed(2)}MB)",
-                                                style: GoogleFonts.courgette(
-                                                    color: Colors.black,
-                                                    fontSize: size.height*0.019,
-                                                    fontWeight: FontWeight.w400
-                                                ),
-                                              ),
-                                              AutoSizeText(
-                                                "Deadline :${snapshot
-                                                    .data!["Assignment-${index +
-                                                    1}"]["Last Date"]}",
-                                                style: GoogleFonts.courgette(
-                                                    color: Colors.black,
-                                                    fontSize: size.height*0.019,
-                                                    fontWeight: FontWeight.w400
-                                                ),
-                                              ),
-                                              AutoSizeText(
-                                                "Assign:${(snapshot
-                                                    .data!["Assignment-${index +
-                                                    1}"]["Assign-Date"].toDate()).toString().split(" ")[0]}",
-                                                style: GoogleFonts.courgette(
-                                                    color: Colors.black,
-                                                    fontSize: size.height*0.02,
-                                                    fontWeight: FontWeight.w400
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-
-                                          isdownloaded[index]
-                                              ?
-                                          // Container(
-                                          //   height: size.height * 0.045,
-                                          //   width: size.width * 0.2,
-                                          //   decoration: BoxDecoration(
-                                          //       color: Colors.deepPurple.shade400,
-                                          //       borderRadius:
-                                          //       const BorderRadius.all(
-                                          //           Radius.circular(20)),
-                                          //       border: Border.all(
-                                          //           color: Colors.black,
-                                          //           width: 1)),
-                                          //   child: ElevatedButton(
-                                          //       onPressed: () {
-                                          //         if(snapshot
-                                          //             .data!["Assignment-${index +
-                                          //             1}"]["Document-type"]=="pdf"){
-                                          //           Navigator.push(
-                                          //               context,
-                                          //               MaterialPageRoute(
-                                          //                 builder:
-                                          //                     (context) =>
-                                          //                     PdfViewer(
-                                          //                       document:
-                                          //                       "${path}Assignment-${index +
-                                          //                           1}.${snapshot
-                                          //                           .data!["Assignment-${index +
-                                          //                           1}"]["Document-type"]}",
-                                          //                       name:
-                                          //                       "Assignment-${index + 1}",
-                                          //                     ),
-                                          //               ));
-                                          //         }
-                                          //         else{
-                                          //           Navigator.push(
-                                          //               context,
-                                          //               MaterialPageRoute(
-                                          //                 builder:
-                                          //                     (context) =>
-                                          //                     Image_viewer(path: File('${path}Assignment-${index + 1}.${snapshot
-                                          //                         .data!["Assignment-${index + 1}"]["Document-type"]}'),
-                                          //
-                                          //                     ),
-                                          //               ));
-                                          //         }
-                                          //       },
-                                          //       style: ElevatedButton.styleFrom(
-                                          //           shape:
-                                          //           const RoundedRectangleBorder(
-                                          //               borderRadius:
-                                          //               BorderRadius.all(
-                                          //                   Radius
-                                          //                       .circular(
-                                          //                       20))),
-                                          //           backgroundColor:
-                                          //           Colors.transparent),
-                                          //
-                                          //       child: AutoSizeText(
-                                          //         "View",
-                                          //         style: GoogleFonts.gfsDidot(
-                                          //             fontWeight: FontWeight.w600,
-                                          //             fontSize:
-                                          //             size.height * 0.035),
-                                          //       )),
-                                          // )
-                                          const SizedBox()
-                                              :
-                                          downloding[index]
-                                              ?
-                                          Center(
-                                            child:
-                                            CircularPercentIndicator(
-                                              percent:
-                                              percent,
-                                              radius:
-                                              size.width * 0.04,
-                                              animation: true,
-                                              animateFromLastPercent:
-                                              true,
-                                              curve: accelerateEasing,
-                                              progressColor:
-                                              Colors.green,
-                                              center: Text(
-                                                (percent * 100)
-                                                    .toStringAsFixed(
-                                                    0),
-                                                style: GoogleFonts
-                                                    .openSans(
-                                                    fontSize: size
-                                                        .height *
-                                                        0.024),
-                                              ),
-                                              //footer: const Text("Downloading"),
-                                              backgroundColor:
-                                              Colors.transparent,
-                                            ),
-                                          )
-                                              :
-                                          IconButton( onPressed: () async {
-                                            setState(() {
-                                              downloding[index]=true;
-                                            });
-                                            bool downloadecheck = await File(
-                                                "${path}Assignment-${index +
-                                                    1}.${snapshot
-                                                    .data!["Assignment-${index +
-                                                    1}"]["Document-type"]}")
-                                                .exists();
-                                            if (!downloadecheck) {
-                                              setState(() {
-                                                downloding[index] = true;
-                                              });
-                                              await dio.download(
-                                                snapshot
-                                                    .data!["Assignment-${index +
-                                                    1}"]["Assignment"],
-                                                File(newpath).path,
-                                                onReceiveProgress:
-                                                    (count, total) {
-                                                  if (count ==
-                                                      total) {
-                                                    setState(() {
-                                                      print(
-                                                          "completed");
-                                                      isdownloaded[
-                                                      index] =
-                                                      true;
-                                                      downloding[
-                                                      index] =
-                                                      false;
-                                                    });
-                                                  } else {
-                                                    if(mounted)
-                                                    {
-                                                      setState(() {
-                                                        percent =count/total;
-
-                                                      });
-                                                    }
-
-                                                  }
-                                                },
-                                              );
-                                            }
-                                          }, icon: Icon(Icons.download,
-                                            color: Colors.white,
-                                            size: size.height*0.03,)),
-
-                                          // Container(
-                                          //   height: size.height * 0.045,
-                                          //   width: size.width * 0.25,
-                                          //   decoration: BoxDecoration(
-                                          //       color: Colors.deepPurple.shade400,
-                                          //       borderRadius:
-                                          //       const BorderRadius.all(
-                                          //           Radius.circular(20)),
-                                          //       border: Border.all(
-                                          //           color: Colors.black,
-                                          //           width: 1)),
-                                          //   child: ElevatedButton(
-                                          //       style: ElevatedButton.styleFrom(
-                                          //           shape:
-                                          //           const RoundedRectangleBorder(
-                                          //               borderRadius:
-                                          //               BorderRadius.all(
-                                          //                   Radius
-                                          //                       .circular(
-                                          //                       20))),
-                                          //           backgroundColor:
-                                          //           Colors.transparent),
-                                          //       onPressed: () async {
-                                          //         setState(() {
-                                          //           downloding[index]=true;
-                                          //         });
-                                          //         bool downloadecheck = await File(
-                                          //             "${path}Assignment-${index +
-                                          //                 1}.${snapshot
-                                          //                 .data!["Assignment-${index +
-                                          //                 1}"]["Document-type"]}")
-                                          //             .exists();
-                                          //         if (!downloadecheck) {
-                                          //           setState(() {
-                                          //             downloding[index] = true;
-                                          //           });
-                                          //           await dio.download(
-                                          //             snapshot
-                                          //                 .data!["Assignment-${index +
-                                          //                 1}"]["Assignment"],
-                                          //             File(newpath).path,
-                                          //             onReceiveProgress:
-                                          //                 (count, total) {
-                                          //               if (count ==
-                                          //                   total) {
-                                          //                 setState(() {
-                                          //                   print(
-                                          //                       "completed");
-                                          //                   isdownloaded[
-                                          //                   index] =
-                                          //                   true;
-                                          //                   downloding[
-                                          //                   index] =
-                                          //                   false;
-                                          //                 });
-                                          //               } else {
-                                          //                 if(mounted)
-                                          //                 {
-                                          //                   setState(() {
-                                          //                     percent =count/total;
-                                          //
-                                          //                   });
-                                          //                 }
-                                          //
-                                          //               }
-                                          //             },
-                                          //           );
-                                          //         }
-                                          //       },
-                                          //       child: AutoSizeText(
-                                          //         "Download",
-                                          //         style: GoogleFonts.gfsDidot(
-                                          //             fontWeight: FontWeight.w600,
-                                          //             fontSize:
-                                          //             size.height * 0.04),
-                                          //       )),
-                                          // ),
-
-                                          Container(
-                                            height: size.height * 0.045,
-                                            width: size.width * 0.27,
-                                            decoration: BoxDecoration(
-                                                color: Colors.transparent,
-                                                borderRadius: const BorderRadius.all(
-                                                    Radius.circular(20)),
-                                                border: Border.all(
-                                                    color: Colors.black, width: 1)
-                                            ),
-                                            child: ElevatedButton(
-                                                style: ElevatedButton.styleFrom(
-                                                    shape: const RoundedRectangleBorder(
-                                                        borderRadius: BorderRadius
-                                                            .all(
-                                                            Radius.circular(20))),
-                                                    backgroundColor: Colors
-                                                        .transparent
-                                                ),
-                                                onPressed: () {
-                                                  if (snapshot.data!
-                                                      .data()?["Assignment-${index +
-                                                      1}"]["Submitted-by"] != null) {
-                                                    Navigator.push(context,
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              ViewAssignment(
-                                                                  selectedindex: index +
-                                                                      1),));
-                                                  }
-                                                }, child: FittedBox(
-                                              fit: BoxFit.cover,
-                                                child: AutoSizeText("Submission",
-                                                style:TextStyle(
-                                                    fontSize: size.height * 0.02,
-                                                    fontWeight: FontWeight.w500,
-                                                    color: Colors.white
-                                                ),
-                                                ))),
-                                          )
+                                         ),
+                                         child: Row(
+                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                           children: [
+                                             Column(
+                                               crossAxisAlignment: CrossAxisAlignment.start,
+                                               mainAxisAlignment: MainAxisAlignment.center,
+                                               children: [
+                                                 AutoSizeText(
+                                                   "Assignment : ${index + 1} (${(int.parse(snapshot.data!["Assignment-${index + 1}"]["Size"].toString())/1048576).toStringAsFixed(2)}MB)",
+                                                   style: GoogleFonts.courgette(
+                                                       color: Colors.black,
+                                                       fontSize: size.height*0.019,
+                                                       fontWeight: FontWeight.w400
+                                                   ),
+                                                 ),
+                                                 AutoSizeText(
+                                                   "Deadline :${snapshot
+                                                       .data!["Assignment-${index +
+                                                       1}"]["Last Date"]}",
+                                                   style: GoogleFonts.courgette(
+                                                       color: Colors.black,
+                                                       fontSize: size.height*0.019,
+                                                       fontWeight: FontWeight.w400
+                                                   ),
+                                                 ),
+                                                 AutoSizeText(
+                                                   "Assign:${(snapshot
+                                                       .data!["Assignment-${index +
+                                                       1}"]["Assign-Date"].toDate()).toString().split(" ")[0]}",
+                                                   style: GoogleFonts.courgette(
+                                                       color: Colors.black,
+                                                       fontSize: size.height*0.02,
+                                                       fontWeight: FontWeight.w400
+                                                   ),
+                                                 ),
+                                               ],
+                                             ),
+                                             Container(
+                                               height: size.height * 0.045,
+                                               width: size.width * 0.27,
+                                               decoration: BoxDecoration(
+                                                   color: Colors.transparent,
+                                                   borderRadius: const BorderRadius.all(
+                                                       Radius.circular(20)),
+                                                   border: Border.all(
+                                                       color: Colors.black, width: 1)
+                                               ),
+                                               child: ElevatedButton(
+                                                   style: ElevatedButton.styleFrom(
+                                                       shape: const RoundedRectangleBorder(
+                                                           borderRadius: BorderRadius
+                                                               .all(
+                                                               Radius.circular(20))),
+                                                       backgroundColor: Colors
+                                                           .transparent
+                                                   ),
+                                                   onPressed: () {
+                                                     if (snapshot.data!
+                                                         .data()?["Assignment-${index +
+                                                         1}"]["Submitted-by"] != null) {
+                                                       Navigator.push(context,
+                                                           MaterialPageRoute(
+                                                             builder: (context) =>
+                                                                 ViewAssignment(
+                                                                     selectedindex: index +
+                                                                         1),));
+                                                     }
+                                                   }, child: FittedBox(
+                                                   fit: BoxFit.cover,
+                                                   child: AutoSizeText("Submission",
+                                                     style:TextStyle(
+                                                         fontSize: size.height * 0.02,
+                                                         fontWeight: FontWeight.w500,
+                                                         color: Colors.white
+                                                     ),
+                                                   ))),
+                                             )
 
 
-                                        ],
-                                      )
-                                  )
+                                           ],
+                                         )
+                                     )
+                                   ],
+                                 ),
+                                  !isDownloaded
+                                      ?
+                                  Positioned(
+                                      top: 8,
+                                      right: size.width*0.04,
+                                      child: download(downloadUrl:snapshot.data!.data()?["Assignment-${index + 1}"]["Assignment"], pdfName: "Assignment-${index + 1}.${snapshot.data?.data()?["Assignment-${index + 1}"]["Document-type"]}", path:path))
+                                      :
+                                  const SizedBox()
 
 
                                 ],
@@ -764,7 +419,7 @@ class _Assignments_uploadState extends State<Assignments_upload> {
 
     }
     if (permission) {
-      String? dir = directory?.path.toString().substring(0, 19);
+      dir = directory!.path.toString().substring(0, 19);
       path =
       "$dir/Campus Link/${university_filter.split(" ")[0]}${college_filter
           .split(" ")[0]}${course_filter.split(" ")[0]}${branch_filter.split(
@@ -796,12 +451,7 @@ class _Assignments_uploadState extends State<Assignments_upload> {
 
         print(".......Yes Not Null");
         setState(() {
-          isdownloaded = List.generate(
-              value.data()?["Total_Assignment"],
-                  (index) => false);
-          downloding = List.generate(
-              value.data()?["Total_Assignment"],
-                  (index) => false);
+
 
           docExists=true;
         }

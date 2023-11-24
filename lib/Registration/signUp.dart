@@ -1,5 +1,4 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:campus_link_teachers/Screens/Main_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +6,7 @@ import 'package:flutter_inapp_notifications/flutter_inapp_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 import '../Constraints.dart';
+import '../Screens/Main_page.dart';
 import 'Login.dart';
 
 class SignUpScreen extends StatefulWidget {
