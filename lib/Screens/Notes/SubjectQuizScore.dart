@@ -56,7 +56,7 @@ class _subjectQuizScoreState extends State<subjectQuizScore> {
                     print("${snapshot.data?.data()?["${usermodel["Email"]}"]}");
                     return  snapshot.hasData
                        ?
-                       subjectQuizScore_2(snap: snapshot, subject: widget.subject,)
+                       NotesLeaderBoard(snap: snapshot, subject: widget.subject,)
                         :
                         const SizedBox(
                           child: Center(child: Text("No Data Found")),
@@ -73,15 +73,15 @@ class _subjectQuizScoreState extends State<subjectQuizScore> {
 
 
 
-class subjectQuizScore_2 extends StatefulWidget {
-   subjectQuizScore_2({super.key,required this.snap,required this.subject});
+class NotesLeaderBoard extends StatefulWidget {
+   NotesLeaderBoard({super.key,required this.snap,required this.subject});
    String subject;
    AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snap;
   @override
-  State<subjectQuizScore_2> createState() => _subjectQuizScore_2State();
+  State<NotesLeaderBoard> createState() => _NotesLeaderBoardState();
 }
 
-class _subjectQuizScore_2State extends State<subjectQuizScore_2> {
+class _NotesLeaderBoardState extends State<NotesLeaderBoard> {
   List<Map<String,dynamic>>result=[];
   List<Map<String,dynamic>>unattemptedStudents=[];
   late DocumentSnapshot<Map<String, dynamic>>? snapshot;
@@ -504,7 +504,7 @@ class _subjectQuizScore_2State extends State<subjectQuizScore_2> {
       ),
     )
         :
-        Container(
+        SizedBox(
           height: size.height,
             width: size.width,
             // decoration: const BoxDecoration(
@@ -517,7 +517,18 @@ class _subjectQuizScore_2State extends State<subjectQuizScore_2> {
             //       ],
             //     )
             // ),
-            child: const Center(child: Text("No Data Found")));
+            child: Center(
+                child: AutoSizeText(
+                    "You did not uploaded a single quiz till now.\nPlease upload the quiz.",
+                  style: GoogleFonts.tiltNeon(
+                    fontSize: 20,
+                    color: Colors.black
+                  ),
+                  maxLines: 2,
+                  textAlign: TextAlign.center,
+                ),
+            ),
+        );
   }
   Future<void> calculateResult()
   async {

@@ -104,8 +104,8 @@ class _AttendanceState extends State<Attendance> {
                                   )),
                               AutoSizeText(
                                   "All Students (${snapshot.data?.docs.length})",
-                                  style: GoogleFonts.exo(
-                                      color: Colors.white)),
+                                  style: GoogleFonts.tiltNeon(
+                                      color: !active ? Colors.black :Colors.white)),
                             ],
                           ),
                         ),
@@ -173,8 +173,8 @@ class _AttendanceState extends State<Attendance> {
                                 width: size.width * 0.37,
                                 child: AutoSizeText(
                                     "Appeared Students (${snapshot.data?.docs.length})",
-                                    style: GoogleFonts.exo(
-                                        color: Colors.white),
+                                    style: GoogleFonts.tiltNeon(
+                                        color: active ? Colors.black :Colors.white),
                                     textAlign: TextAlign.center),
                               ),
                             ],
@@ -265,29 +265,54 @@ class _AttendanceState extends State<Attendance> {
                                     0.07,
                                 child: Row(
                                   mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                                  MainAxisAlignment.start,
                                   children: [
-                                    Column(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          snapshot.data.docs[index]["Name"],
-                                          style: GoogleFonts.exo(
-                                            color: Colors.white,
+                                    CircleAvatar(
+                                      radius: size.height*0.025,
+                                      backgroundImage: NetworkImage("${snapshot.data.docs[index]["Profile_URL"] ?? ""}") ,
+                                      child: snapshot.data.docs[index]["Profile_URL"] == null || snapshot.data.docs[index]["Profile_URL"] == "null" || snapshot.data.docs[index]["Profile_URL"] == ""
+                                          ?
+                                      AutoSizeText(
+                                          snapshot.data.docs[index]["Name"].toString().substring(0,1),
+                                        style: GoogleFonts.tiltNeon(
+                                          color: Colors.black,
+                                          fontSize: 20,
+                                        ),
+                                      )
+                                          :
+                                      const SizedBox()
+                                      ,
+                                    ),
+                                    SizedBox(width: size.width*0.03,),
+                                    Expanded(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        children: [
+                                          AutoSizeText(
+                                            snapshot.data.docs[index]["Name"],
+                                            style: GoogleFonts.tiltNeon(
+                                              color: Colors.white,
+                                              fontSize: 18,
+
+                                            ),
+                                            maxLines: 1,
                                           ),
-                                        ),
-                                        SizedBox(
-                                          height: size.height * 0.01,
-                                        ),
-                                        Text(
-                                            snapshot.data.docs[index]
-                                            ["Rollnumber"],
-                                            style: GoogleFonts.exo(
-                                                color: Colors.white)),
-                                      ],
+                                          SizedBox(
+                                            height: size.height * 0.005,
+                                          ),
+                                          Text(
+                                              snapshot.data.docs[index]["Rollnumber"],
+                                              style: GoogleFonts.tiltNeon(
+                                                  color: Colors.white,
+                                                fontSize: 15
+                                              ),
+                                            maxLines: 1,
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                     Row(
                                       mainAxisAlignment:
@@ -303,14 +328,13 @@ class _AttendanceState extends State<Attendance> {
                                               {
                                                 "Active": true,
                                                 "Location": GeoPoint(
-                                                    tecloc.latitude,
-                                                    tecloc.longitude)
+                                                    tecloc.latitude+10,
+                                                    tecloc.longitude-10)
                                               },
                                             );
-                                            setState(() {});
                                           },
                                           icon: Icon(Icons.check,
-                                              color: marked_email.contains(snapshot.data.docs[index]["Email"])
+                                              color: !(marked_email.contains(snapshot.data.docs[index]["Email"]))
                                                   ? const Color
                                                   .fromRGBO(
                                                   150,
@@ -353,9 +377,10 @@ class _AttendanceState extends State<Attendance> {
                               return  snapshot.hasData
                                   ?
                               Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
-                                  SizedBox(
-                                    height: size.height * 0.66,
+                                  Expanded(
+                                    //height: size.height * 0.66,
                                     child: ListView.builder(
                                       itemCount: snapshot
                                           .data!.docs.length,
@@ -406,33 +431,56 @@ class _AttendanceState extends State<Attendance> {
                                           child: Row(
                                             mainAxisAlignment:
                                             MainAxisAlignment
-                                                .spaceBetween,
+                                                .start,
                                             children: [
-                                              Column(
-                                                mainAxisAlignment:
-                                                MainAxisAlignment
-                                                    .center,
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment
-                                                    .center,
-                                                children: [
-                                                  Text(
-                                                      snapshot.data?.docs[index]
-                                                      [
-                                                      "Name"],
-                                                      style:
-                                                      GoogleFonts.exo(color: Colors.white)),
-                                                  SizedBox(
-                                                    height: size.height *
-                                                        0.01,
+                                              CircleAvatar(
+                                                radius: size.height*0.025,
+                                                backgroundImage: NetworkImage("${snapshot.data?.docs[index]["Profile_URL"] ?? ""}") ,
+                                                child: snapshot.data?.docs[index]["Profile_URL"] == null || snapshot.data?.docs[index]["Profile_URL"] == "null" || snapshot.data?.docs[index]["Profile_URL"] == ""
+                                                    ?
+                                                AutoSizeText(
+                                                  snapshot.data!.docs[index]["Name"].toString().substring(0,1),
+                                                  style: GoogleFonts.tiltNeon(
+                                                    color: Colors.black,
+                                                    fontSize: 20,
                                                   ),
-                                                  Text(
-                                                      snapshot.data?.docs[index]
-                                                      [
-                                                      "Rollnumber"],
-                                                      style:
-                                                      GoogleFonts.exo(color: Colors.white)),
-                                                ],
+                                                )
+                                                    :
+                                                const SizedBox()
+                                                ,
+                                              ),
+                                              SizedBox(width: size.width*0.03,),
+                                              Expanded(
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .center,
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment
+                                                      .start,
+                                                  children: [
+                                                    Text(
+                                                        snapshot.data?.docs[index]
+                                                        [
+                                                        "Name"],
+                                                        style:
+                                                        GoogleFonts.tiltNeon(color: Colors.white,fontSize: 18),
+                                                      maxLines: 1,
+                                                    ),
+                                                    SizedBox(
+                                                      height: size.height *
+                                                          0.005,
+                                                    ),
+                                                    Text(
+                                                        snapshot.data?.docs[index]
+                                                        [
+                                                        "Rollnumber"],
+                                                        style:
+                                                        GoogleFonts.tiltNeon(color: Colors.white,fontSize: 15),
+                                                      maxLines: 1,
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                               Row(
                                                 mainAxisAlignment:
@@ -471,6 +519,7 @@ class _AttendanceState extends State<Attendance> {
                                     ),
                                   ),
                                   Container(
+                                    margin: EdgeInsets.only(right: size.width*0.03),
                                     decoration: BoxDecoration(
                                         gradient: const LinearGradient(
                                             colors: [
@@ -639,7 +688,7 @@ class _AttendanceState extends State<Attendance> {
                                         padding: const EdgeInsets.all(8.0),
                                         child: AutoSizeText(
                                           "Mark Attendance ✔",
-                                          style: GoogleFonts.exo(
+                                          style: GoogleFonts.tiltNeon(
                                               fontSize: 18,
                                               color: Colors.black),
                                         ),
@@ -671,9 +720,9 @@ class _AttendanceState extends State<Attendance> {
   bool distance_filter(double lat, double long, String Email)  {
     bool out = true;
     print("$tecloc");
-    final temp=Geolocator.distanceBetween(double.parse(tecloc.latitude.toStringAsPrecision(21)),double.parse(tecloc.longitude.toStringAsPrecision(21)), lat+10, long-10) ;
+    final temp=Geolocator.distanceBetween(double.parse(tecloc.latitude.toStringAsPrecision(21)),double.parse(tecloc.longitude.toStringAsPrecision(21)), lat-10, long+10) ;
     print(temp);
-    temp < range +10
+    temp <= range + 10
         ? marked_email.add(Email)
         : out = false;
     marked_email = marked_email.toSet().toList();

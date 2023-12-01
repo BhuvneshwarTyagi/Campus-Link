@@ -28,7 +28,7 @@ class _DownloadButtonState extends State<DownloadButton> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    setsystemppath();
+    setSystemPath();
   }
   @override
   Widget build(BuildContext context) {
@@ -151,7 +151,7 @@ class _DownloadButtonState extends State<DownloadButton> {
     }
     return false;
   }
-  setsystemppath() async {
+  setSystemPath() async {
     Directory? directory;
     if(Platform.isAndroid){
       Directory? directory = await getExternalStorageDirectory();
