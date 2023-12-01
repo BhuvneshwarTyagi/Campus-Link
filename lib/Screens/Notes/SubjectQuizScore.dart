@@ -17,37 +17,39 @@ class _subjectQuizScoreState extends State<subjectQuizScore> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          elevation: 0,
-          title:   Center(
-            child: AutoSizeText(
-              ' Leaderboard Quiz',
-              style: GoogleFonts.poppins(
-                  color: Colors.black,
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold),
-            ),
-          ),
-          leadingWidth: MediaQuery.of(context).size.width*0.08,
-          leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon:  Icon(Icons.arrow_back,color: Colors.black,size: MediaQuery.of(context).size.width*0.08,),
-          ),
-        ),
+      backgroundColor: Colors.transparent,
+        // appBar: AppBar(
+        //   centerTitle: true,
+        //   elevation: 0,
+        //   title:   Center(
+        //     child: AutoSizeText(
+        //       ' Leaderboard Quiz',
+        //       style: GoogleFonts.poppins(
+        //           color: Colors.black,
+        //           fontSize: 25,
+        //           fontWeight: FontWeight.bold),
+        //     ),
+        //   ),
+        //   leadingWidth: MediaQuery.of(context).size.width*0.08,
+        //   leading: IconButton(
+        //     onPressed: () {
+        //       Navigator.pop(context);
+        //     },
+        //     icon:  Icon(Icons.arrow_back,color: Colors.black,size: MediaQuery.of(context).size.width*0.08,),
+        //   ),
+        // ),
         body: Container(
-            decoration:  const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Colors.blue,
-                  Colors.purpleAccent,
-                ],
-              ),
-            ),
+          color: Colors.transparent,
+            // decoration:  const BoxDecoration(
+            //   gradient: LinearGradient(
+            //     begin: Alignment.topLeft,
+            //     end: Alignment.bottomRight,
+            //     colors: [
+            //       Colors.blue,
+            //       Colors.purpleAccent,
+            //     ],
+            //   ),
+            // ),
             child: StreamBuilder(
                   stream: FirebaseFirestore.instance.collection("Notes").doc("${university_filter.split(" ")[0]} ${college_filter.split(" ")[0]} ${course_filter.split(" ")[0]} ${branch_filter.split(" ")[0]} $year_filter $section_filter $subject_filter").snapshots(),
                   builder: (context, snapshot) {
@@ -505,16 +507,16 @@ class _subjectQuizScore_2State extends State<subjectQuizScore_2> {
         Container(
           height: size.height,
             width: size.width,
-            decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Colors.blue,
-                    Colors.purpleAccent,
-                  ],
-                )
-            ),
+            // decoration: const BoxDecoration(
+            //     gradient: LinearGradient(
+            //       begin: Alignment.topLeft,
+            //       end: Alignment.bottomRight,
+            //       colors: [
+            //         Colors.blue,
+            //         Colors.purpleAccent,
+            //       ],
+            //     )
+            // ),
             child: const Center(child: Text("No Data Found")));
   }
   Future<void> calculateResult()

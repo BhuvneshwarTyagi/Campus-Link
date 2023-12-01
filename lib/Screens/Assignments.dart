@@ -31,7 +31,7 @@ int currIndex=0;
 
 
 
-class _Assignments_uploadState extends State<Assignments_upload> {
+class _Assignments_uploadState extends State<Assignments_upload> with TickerProviderStateMixin{
 
 
   var checkALLPermissions = CheckPermission();
@@ -44,11 +44,13 @@ class _Assignments_uploadState extends State<Assignments_upload> {
   final dio = Dio();
   List<bool>isExpanded=[];
   late String dir;
-
+  late TabController _tabController;
+  int currTab=0;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _tabController=TabController(length: 2, vsync: this);
     docexits();
   }
 
@@ -75,7 +77,172 @@ class _Assignments_uploadState extends State<Assignments_upload> {
 
         extendBody: true,
         backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          toolbarHeight: size.height*0.07,
+          flexibleSpace: SizedBox(
+            height: size.height * 0.11,
+            width: size.width * 1,
+            child: Column(
+              children: [
+                SizedBox(height: size.height*0.01),
+                TabBar(
+                  indicatorColor: Colors.black,
+                  labelColor: Colors.green,
 
+                  controller: _tabController,
+                  onTap: (value) {
+                    setState(() {
+                      currTab=value;
+                    });
+                  },
+                  tabs: [
+                    SizedBox(
+                      height: size.height*0.05,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          SizedBox(
+                            width: size.width*0.1,
+                            child: Image.asset("assets/images/assignment.png"),
+                          ),
+                          SizedBox(
+                            width: size.width*0.02,
+                          ),
+                          FittedBox(
+                            fit: BoxFit.cover,
+                            child: AutoSizeText(
+                              "Assignments",
+                              style: GoogleFonts.tiltNeon(
+                                  fontSize: size.height * 0.025,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: size.height*0.05,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          SizedBox(
+                            width: size.width*0.08,
+                            child: Image.asset("assets/images/leaderboard.png"),
+                          ),
+                          FittedBox(
+                            fit: BoxFit.cover,
+                            child: AutoSizeText(
+                              "Leaderboard",
+                              style: GoogleFonts.tiltNeon(
+                                  fontSize: size.height * 0.025,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+
+                    // Container(
+                    //   height: size.height * 0.06,
+                    //   //width: size.width * 0.38,
+                    //   decoration: BoxDecoration(
+                    //       gradient: const LinearGradient(
+                    //         begin: Alignment.topLeft,
+                    //         end: Alignment.bottomRight,
+                    //         colors: [
+                    //           Colors.blue,
+                    //           Colors.purpleAccent,
+                    //         ],
+                    //       ),
+                    //       borderRadius: const BorderRadius.all(Radius.circular(20)),
+                    //       border: Border.all(color: Colors.black, width: 2)),
+                    //   child: ElevatedButton(
+                    //     style: ElevatedButton.styleFrom(
+                    //         elevation: 0,
+                    //         backgroundColor: Colors.transparent,
+                    //         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20)))
+                    //     ),
+                    //     onPressed: () {
+                    //
+                    //
+                    //
+                    //     },
+                    //     child: Row(
+                    //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    //       children: [
+                    //         const Icon(Icons.leaderboard_sharp,color: Colors.red),
+                    //         FittedBox(
+                    //           fit: BoxFit.cover,
+                    //           child: AutoSizeText(
+                    //             "Leaderboard",
+                    //             style: TextStyle(
+                    //                 fontSize: size.height * 0.02,
+                    //                 fontWeight: FontWeight.w500,
+                    //                 color: Colors.white70
+                    //             ),
+                    //           ),
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
+                    // Container(
+                    //   height: size.height * 0.06,
+                    //   //width: size.width * 0.38,
+                    //   decoration: BoxDecoration(
+                    //       gradient: const LinearGradient(
+                    //         begin: Alignment.topLeft,
+                    //         end: Alignment.bottomRight,
+                    //         colors: [
+                    //           Colors.blue,
+                    //           Colors.purpleAccent,
+                    //         ],
+                    //       ),
+                    //       borderRadius: const BorderRadius.all(Radius.circular(20)),
+                    //       border: Border.all(color: Colors.black, width: 2)),
+                    //   child: ElevatedButton(
+                    //     style: ElevatedButton.styleFrom(
+                    //         elevation: 0,
+                    //         backgroundColor: Colors.transparent,
+                    //         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20)))
+                    //     ),
+                    //     onPressed: () {
+                    //
+                    //
+                    //
+                    //     },
+                    //     child: Row(
+                    //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    //       children: [
+                    //         const Icon(Icons.upload_sharp,color: Colors.red),
+                    //         FittedBox(
+                    //           fit: BoxFit.cover,
+                    //           child: AutoSizeText(
+                    //             "Upload Notes",
+                    //             style: TextStyle(
+                    //                 fontSize: size.height * 0.02,
+                    //                 fontWeight: FontWeight.w500,
+                    //                 color: Colors.white70
+                    //             ),
+                    //           ),
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // )
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
         body: SizedBox(
             height: size.height,
             width: size.width,
@@ -176,17 +343,17 @@ class _Assignments_uploadState extends State<Assignments_upload> {
                                            ),
                                            AutoSizeText(
                                              subject_filter,
-                                             style: GoogleFonts.courgette(
+                                             style: GoogleFonts.tiltNeon(
                                                  color: Colors.black,
-                                                 fontSize: size.height*0.02,
+                                                 fontSize: size.height*0.03,
                                                  fontWeight: FontWeight.w400
                                              ),
                                            ),
                                            AutoSizeText(
-                                             "Assignment : ${index + 1}",
-                                             style: GoogleFonts.courgette(
+                                             "Assignment: ${index + 1}",
+                                             style: GoogleFonts.tiltNeon(
                                                  color: Colors.black,
-                                                 fontSize: size.height*0.02,
+                                                 fontSize: size.height*0.024,
                                                  fontWeight: FontWeight.w400
                                              ),
                                            )
@@ -210,28 +377,28 @@ class _Assignments_uploadState extends State<Assignments_upload> {
                                                mainAxisAlignment: MainAxisAlignment.center,
                                                children: [
                                                  AutoSizeText(
-                                                   "Assignment : ${index + 1} (${(int.parse(snapshot.data!["Assignment-${index + 1}"]["Size"].toString())/1048576).toStringAsFixed(2)}MB)",
-                                                   style: GoogleFonts.courgette(
+                                                   "Assignment: ${index + 1} (${(int.parse(snapshot.data!["Assignment-${index + 1}"]["Size"].toString())/1048576).toStringAsFixed(2)}MB)",
+                                                   style: GoogleFonts.tiltNeon(
                                                        color: Colors.black,
                                                        fontSize: size.height*0.019,
                                                        fontWeight: FontWeight.w400
                                                    ),
                                                  ),
                                                  AutoSizeText(
-                                                   "Deadline :${snapshot
+                                                   "Deadline: ${snapshot
                                                        .data!["Assignment-${index +
                                                        1}"]["Last Date"]}",
-                                                   style: GoogleFonts.courgette(
+                                                   style: GoogleFonts.tiltNeon(
                                                        color: Colors.black,
                                                        fontSize: size.height*0.019,
                                                        fontWeight: FontWeight.w400
                                                    ),
                                                  ),
                                                  AutoSizeText(
-                                                   "Assign:${(snapshot
+                                                   "Assign: ${(snapshot
                                                        .data!["Assignment-${index +
                                                        1}"]["Assign-Date"].toDate()).toString().split(" ")[0]}",
-                                                   style: GoogleFonts.courgette(
+                                                   style: GoogleFonts.tiltNeon(
                                                        color: Colors.black,
                                                        fontSize: size.height*0.02,
                                                        fontWeight: FontWeight.w400
@@ -251,6 +418,7 @@ class _Assignments_uploadState extends State<Assignments_upload> {
                                                ),
                                                child: ElevatedButton(
                                                    style: ElevatedButton.styleFrom(
+
                                                        shape: const RoundedRectangleBorder(
                                                            borderRadius: BorderRadius
                                                                .all(
@@ -277,7 +445,9 @@ class _Assignments_uploadState extends State<Assignments_upload> {
                                                          fontWeight: FontWeight.w500,
                                                          color: Colors.white
                                                      ),
-                                                   ))),
+                                                   ),
+                                               ),
+                                               ),
                                              )
 
 

@@ -156,7 +156,6 @@ class _FiltersState extends State<Filters> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 SizedBox(
                   height: size.height*0.01,
                 ),
@@ -190,7 +189,7 @@ class _FiltersState extends State<Filters> {
                   height: size.height*0.01,
                 ),
                 SizedBox(
-                  height: size.height * 0.75,
+                  height: size.height * 0.7,
                   width: size.width,
                   child: StreamBuilder(
                     stream: FirebaseFirestore.instance

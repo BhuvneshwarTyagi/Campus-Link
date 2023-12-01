@@ -1,17 +1,16 @@
 import 'dart:io';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:campus_link_teachers/Screens/Notes/quizquestion.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inapp_notifications/flutter_inapp_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:path_provider/path_provider.dart';
 import '../../Constraints.dart';
 import '../../Notes_tile.dart';
 import '../Chat_tiles/PdfViewer.dart';
-import '../QuizScore.dart';
-import '../Quiz_response.dart';
-import '../quizquestion.dart';
+import 'QuizScore.dart';
+import 'Quiz_response.dart';
 import 'download_tile.dart';
 
 class NotesTile extends StatefulWidget {
@@ -38,7 +37,7 @@ class _NotesTileState extends State<NotesTile> {
   @override
   Widget build(BuildContext context) {
     Size size=MediaQuery.of(context).size;
-    BorderRadiusGeometry radiusGeomentry=BorderRadius.circular(size.width*0.09);
+    BorderRadiusGeometry radiusGeomentry=BorderRadius.circular(size.width*0.05);
     return InkWell(
         onTap: () async {
           String sysPath="/storage/emulated/0";
@@ -106,17 +105,17 @@ class _NotesTileState extends State<NotesTile> {
                                 ),
                                 AutoSizeText(
                                   subject_filter,
-                                  style: GoogleFonts.courgette(
+                                  style: GoogleFonts.tiltNeon(
                                       color: Colors.black,
-                                      fontSize: size.height*0.02,
+                                      fontSize: size.height*0.03,
                                       fontWeight: FontWeight.w400
                                   ),
                                 ),
                                 AutoSizeText(
-                                  "Notes : ${widget.index + 1}",
-                                  style: GoogleFonts.courgette(
+                                  "Notes : ${widget.index}",
+                                  style: GoogleFonts.tiltNeon(
                                       color: Colors.black,
-                                      fontSize: size.height*0.023,
+                                      fontSize: size.height*0.03,
                                       fontWeight: FontWeight.w400
                                   ),
                                 )
@@ -128,91 +127,77 @@ class _NotesTileState extends State<NotesTile> {
                   AnimatedContainer(
                     height: isExpanded
                         ? size.height * 0.22
-                        : size.height * 0.12,
-                    width: size.width * 0.99,
-                    duration: const Duration(milliseconds: 1),
+                        : size.height * 0.1,
+                    duration: const Duration(milliseconds: 200),
                     decoration: BoxDecoration(
                         color: const Color.fromRGBO(56, 33, 101,1),
-                        borderRadius: BorderRadius.circular(size.width*0.065)
+                        borderRadius: BorderRadius.only(
+                          bottomLeft:  Radius.circular(size.width*0.05),
+                                bottomRight:  Radius.circular(size.width*0.05)
+                        )
 
                     ),
                     child: SingleChildScrollView(
                       physics: const NeverScrollableScrollPhysics(),
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           SizedBox(
-                            height: size.height * 0.018,
+                            height: size.height*0.01,
                           ),
                           ListTile(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.only(
                                   bottomLeft: Radius.circular(
-                                      size.width * 0.1),
+                                      size.width * 0.05),
                                   bottomRight: Radius.circular(
-                                      size.width * 0.1)),),
-                            title: SizedBox(
-                                height: size.height * 0.07,
-                                width: size.width * 0.75,
-                                //ssscolor: Colors.redAccent,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment
-                                      .start,
-                                  children: [
-                                    AutoSizeText(
-                                      widget.pdfName != ""
-                                          ?
-                                      widget.pdfName
-                                          :
-                                      "",
-                                      style: GoogleFonts.exo(
-                                          fontSize: size.height *
-                                              0.01,
-                                          color: Colors.white70,
-                                          fontWeight: FontWeight
-                                              .w500),
-                                      maxLines: 1,
+                                      size.width * 0.05)),),
+                            title: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                AutoSizeText(
+                                  widget.pdfName != ""
+                                      ?
+                                  widget.pdfName
+                                      :
+                                  "",
+                                  style: GoogleFonts.tiltNeon(
+                                      fontSize: 18,
+                                      color: Colors.white70,
+                                      fontWeight: FontWeight
+                                          .w500),
+                                  maxLines: 1,
 
-                                    ),
-                                    SizedBox(
-                                      height: size.height * 0.01,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment
-                                          .start,
-                                      crossAxisAlignment: CrossAxisAlignment
-                                          .start,
-                                      children: [
-                                        AutoSizeText(
-
-                                          "Size:${(int.parse(widget.pdfSize
-                                              .toString()) / 1048576)
-                                              .toStringAsFixed(2)} MB",
-                                          style: GoogleFonts.exo(
-                                              fontSize: size.height *
-                                                  0.012,
-                                              color: Colors.white70,
-                                              fontWeight: FontWeight
-                                                  .w500),),
-                                        SizedBox(
-                                          width: size.width * 0.015,
-                                        ),
-                                        AutoSizeText(
-                                          "Date: ${widget.stamp}"
-                                              ,
-                                          style: GoogleFonts.exo(
-                                              fontSize: size.height *
-                                                  0.012,
-                                              color: Colors.white70,
-                                              fontWeight: FontWeight
-                                                  .w500),),
-                                      ],
-                                    )
-                                  ],
-                                )
+                                ),
+                                SizedBox(
+                                  height: size.height * 0.005,
+                                ),
+                                AutoSizeText(
+                                  "Size: ${(int.parse(widget.pdfSize
+                                      .toString()) / 1048576)
+                                      .toStringAsFixed(2)} MB",
+                                  style: GoogleFonts.tiltNeon(
+                                      fontSize: 14,
+                                      color: Colors.white70,
+                                      fontWeight: FontWeight
+                                          .w500),),
+                                SizedBox(
+                                  width: size.width * 0.005,
+                                ),
+                                AutoSizeText(
+                                  "Date: ${widget.stamp.toString().split(" ")[0]}"
+                                      ,
+                                  style: GoogleFonts.tiltNeon(
+                                      fontSize: 14,
+                                      color: Colors.white70,
+                                      fontWeight: FontWeight
+                                          .w500),)
+                              ],
                             ),
                             leading: Container(
-                                height: size.width * 0.05,
-                                width: size.width * 0.05,
+                                height: size.width * 0.1,
+                                width: size.width * 0.1,
                                 decoration: const BoxDecoration(
                                   color: Colors.transparent,
                                   shape: BoxShape.circle,
@@ -307,7 +292,7 @@ class _NotesTileState extends State<NotesTile> {
                                               Navigator.push(context,
                                                   PageTransition(
                                                       child: responseScreen(
-                                                        quizId: widget.index + 1,),
+                                                        quizId: widget.index,),
                                                       type: PageTransitionType
                                                           .bottomToTopJoined,
                                                       childCurrent: const Notes(),
@@ -356,12 +341,12 @@ class _NotesTileState extends State<NotesTile> {
                                             ),
 
                                             onPressed: () {
-                                              if(widget.submission!=null && widget.submission.length>3)
+                                              if(widget.submission.length>3)
                                               {
                                                 Navigator.push(context,
                                                     PageTransition(
                                                         child: Quizscore(
-                                                          quizId: widget.index + 1,),
+                                                          quizId: widget.index,),
                                                         type: PageTransitionType
                                                             .bottomToTopJoined,
                                                         childCurrent: const Notes(),
@@ -440,7 +425,7 @@ class _NotesTileState extends State<NotesTile> {
                                       Navigator.push(context,
                                           PageTransition(
                                               child: QuizQustion(
-                                                quizNumber: widget.index + 1,),
+                                                quizNumber: widget.index,),
                                               type: PageTransitionType
                                                   .bottomToTopJoined,
                                               childCurrent: const Notes(),
