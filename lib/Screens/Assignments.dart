@@ -50,8 +50,6 @@ class _Assignments_uploadState extends State<Assignments_upload> {
     // TODO: implement initState
     super.initState();
     docexits();
-    checkAndRequestPermissions();
-
   }
 
   @override
@@ -98,9 +96,6 @@ class _Assignments_uploadState extends State<Assignments_upload> {
                           " ")[0]} $year_filter $section_filter $subject_filter")
                       .snapshots(),
                   builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
-                    // if(snapshot.hasData){
-                    //   docexits();
-                    // }
                     return snapshot.hasData
                     ?
                 SizedBox(
@@ -108,22 +103,19 @@ class _Assignments_uploadState extends State<Assignments_upload> {
                   child: ListView.builder(
                     itemCount: snapshot.data!["Total_Assignment"],
                     itemBuilder: (context, index) {
-                      bool isDownloaded=false;
+                      String sysPath= "/storage/emulated/0";
+                      String path="/Campus Link/$university_filter $college_filter $course_filter $branch_filter $year_filter $section_filter $subject_filter/Assignments/";
                       String newpath =
-                          "${path}Assignment-${index + 1}.${snapshot
+                          "$sysPath$path/Assignment-${index + 1}.${snapshot
                           .data!["Assignment-${index + 1}"]["Document-type"]}";
-                      if(File(newpath).existsSync())
-                      {
-                        isDownloaded=true;
-                      }
 
                       return Padding(
                           padding: EdgeInsets.all(size.height*0.021),
                           child: InkWell(
                             onTap: (){
+                              print("presseddddddddddddd");
                               if( File(newpath).existsSync()) {
-                                if (snapshot.data!["Assignment-${index +
-                                    1}"]["Document-type"] == "pdf") {
+                                if (snapshot.data!["Assignment-${index + 1}"]["Document-type"] == "pdf") {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -131,10 +123,7 @@ class _Assignments_uploadState extends State<Assignments_upload> {
                                             (context) =>
                                             PdfViewer(
                                               document:
-                                              "${path}Assignment-${index +
-                                                  1}.${snapshot
-                                                  .data!["Assignment-${index +
-                                                  1}"]["Document-type"]}",
+                                              newpath,
                                               name:
                                               "Assignment-${index + 1}",
                                             ),
@@ -297,14 +286,16 @@ class _Assignments_uploadState extends State<Assignments_upload> {
                                      )
                                    ],
                                  ),
-                                  !isDownloaded
-                                      ?
+
                                   Positioned(
                                       top: 8,
                                       right: size.width*0.04,
-                                      child: download(downloadUrl:snapshot.data!.data()?["Assignment-${index + 1}"]["Assignment"], pdfName: "Assignment-${index + 1}.${snapshot.data?.data()?["Assignment-${index + 1}"]["Document-type"]}", path:path))
-                                      :
-                                  const SizedBox()
+                                      child: DownloadButton(
+                                          downloadUrl: snapshot.data!.data()?["Assignment-${index + 1}"]["Assignment"],
+                                          pdfName: "Assignment-${index + 1}.${snapshot.data?.data()?["Assignment-${index + 1}"]["Document-type"]}",
+                                          path: path
+                                      ),
+                                  )
 
 
                                 ],
@@ -333,111 +324,84 @@ class _Assignments_uploadState extends State<Assignments_upload> {
             )
 
 
-        )
-        ,
+        ),
 
-        floatingActionButton: Container(
-          decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Colors.blue, Colors.purpleAccent],
+        floatingActionButton: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Colors.blue, Colors.purpleAccent],
+                  ),
+                  borderRadius: const BorderRadius.all(Radius.circular(20)),
+                  border: Border.all(color: Colors.black, width: 1)
               ),
-              borderRadius: const BorderRadius.all(Radius.circular(20)),
-              border: Border.all(color: Colors.black, width: 1)
-          ),
-          width: size.width * 0.36,
-          height: size.height * 0.05,
-          child: FloatingActionButton(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            child:  Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Image.asset("assets/images/upload-icon.png",),
-                // const Icon(
-                //   Icons.upload,
-                //   color: Colors.white70,
-                // ),
-                SizedBox(width: size.width*0.02,),
-                AutoSizeText("Upload File",style: GoogleFonts.tiltNeon(
-                    color: Colors.black,
-                    //const Color.fromRGBO(150, 150, 150, 1),
-                    fontWeight: FontWeight.w500,
-                    fontSize: size.width*0.035),
-                ),
-            ],
-            ),
-            onPressed: () {
-              subject_filter.isEmpty
-                  ?
-              showDialog(
-                context: context,
-                builder: (ctx) =>
-                    AlertDialog(
-
-                      title: const Text("Do You Want to Upload Assignment"),
-                      content: const Text("Please Apply Filter First"),
-                      actions: <Widget>[
-                        TextButton(
-
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: const Text("okay"),
-                        ),
-                      ],
+              width: size.width * 0.36,
+              height: size.height * 0.05,
+              child: FloatingActionButton(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                child:  Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Image.asset("assets/images/upload-icon.png",),
+                    // const Icon(
+                    //   Icons.upload,
+                    //   color: Colors.white70,
+                    // ),
+                    SizedBox(width: size.width*0.02,),
+                    AutoSizeText("Upload File",style: GoogleFonts.tiltNeon(
+                        color: Colors.black,
+                        //const Color.fromRGBO(150, 150, 150, 1),
+                        fontWeight: FontWeight.w500,
+                        fontSize: size.width*0.035),
                     ),
-              )
-                  :
-              Navigator.push(context, PageTransition(
-                child: const AssigmentQuestion(),
-                type: PageTransitionType.bottomToTopJoined,
-                duration: const Duration(milliseconds: 300),
-                childCurrent: const Assignments_upload(),
+                ],
+                ),
+                onPressed: () {
+                  subject_filter.isEmpty
+                      ?
+                  showDialog(
+                    context: context,
+                    builder: (ctx) =>
+                        AlertDialog(
 
-              ));
-            },
-          ),
+                          title: const Text("Do You Want to Upload Assignment"),
+                          content: const Text("Please Apply Filter First"),
+                          actions: <Widget>[
+                            TextButton(
+
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text("okay"),
+                            ),
+                          ],
+                        ),
+                  )
+                      :
+                  Navigator.push(context, PageTransition(
+                    child: const AssigmentQuestion(),
+                    type: PageTransitionType.bottomToTopJoined,
+                    duration: const Duration(milliseconds: 300),
+                    childCurrent: const Assignments_upload(),
+
+                  ));
+                },
+              ),
+            ),
+            SizedBox(
+              height: size.height*0.06,
+            )
+          ],
         ),
       ),
     );
   }
 
-  Future<void> checkAndRequestPermissions() async {
-    directory = await getExternalStorageDirectory();
-
-    var permission = await checkALLPermissions.isStoragePermission();
-    if(!permission){
-      if(await Permission.manageExternalStorage.request().isGranted){
-        permission=true;
-      }else{
-        await Permission.manageExternalStorage.request().then((value) {
-          bool check=value.isGranted;
-          if(check){permission=true;}});
-      }
-
-    }
-    if (permission) {
-      dir = directory!.path.toString().substring(0, 19);
-      path =
-      "$dir/Campus Link/${university_filter.split(" ")[0]}${college_filter
-          .split(" ")[0]}${course_filter.split(" ")[0]}${branch_filter.split(
-          " ")[0]}$year_filter$section_filter$subject_filter/Assignment/";
-      Directory(path).exists().then((value) async {
-        if (!value) {
-          await Directory(path)
-              .create(recursive: true)
-              .whenComplete(() => print(">>>>>created"));
-        }
-      });
-      setState(() {
-        permissionGranted = true;
-      });
-    } else {
-      permissionGranted = false;
-    }
-  }
 
 
   Future<void> docexits() async {

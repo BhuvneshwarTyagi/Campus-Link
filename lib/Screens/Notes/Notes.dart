@@ -1,30 +1,24 @@
-
-
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:auto_size_text/auto_size_text.dart';
-
+import 'package:campus_link_teachers/Screens/Notes/Notes_Section.dart';
 import 'package:campus_link_teachers/Screens/Notes/quiz.dart';
 import 'package:campus_link_teachers/Screens/Notes/quizquestion.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
-import 'package:file_manager/file_manager.dart';
+import 'package:dotted_border/dotted_border.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inapp_notifications/flutter_inapp_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdfx/pdfx.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
-
 import '../../Constraints.dart';
-import '../../push_notification/Storage_permission.dart';
-import '../Chat_tiles/PdfViewer.dart';
-import 'QuizScore.dart';
-import 'Quiz_response.dart';
+import '../../Database/database.dart';
+import '../loadingscreen.dart';
 import 'SubjectQuizScore.dart';
-import 'download_tile.dart';
 
 class Notes extends StatefulWidget {
   const Notes({Key? key}) : super(key: key);
@@ -33,18 +27,20 @@ class Notes extends StatefulWidget {
   State<Notes> createState() => _NotesState();
 }
 
-class _NotesState extends State<Notes> {
+class _NotesState extends State<Notes> with TickerProviderStateMixin{
 
-  var checkALLPermissions = CheckPermission();
-  bool permissionGranted=false;
-  bool docExists=false;
-  Directory? directory;
-  bool fileAlreadyExists=false;
-  late int totalStudents;
 
-  int ind=0;
+  List<Uint8List> imageBytes = [];
+  List<PdfController> pdfControllers = [];
+
+
+
+
+  List<Widget> tab=[const NotesSection(),subjectQuizScore(subject: subject_filter,)];
+
+  late TabController _tabController;
+  int currTab=0;
   bool a=true;
-   int currIndex=-1;
   final dio=Dio();
    double percent=0.0;
    String filePath="";
@@ -54,783 +50,712 @@ class _NotesState extends State<Notes> {
 @override
   void initState() {
     // TODO: implement initState
+  _tabController=TabController(length: 2, vsync: this);
     super.initState();
-    countStudents();
-    checkExists();
   }
   @override
   Widget build(BuildContext context) {
     Size size=MediaQuery.of(context).size;
-    BorderRadiusGeometry radiusGeomentry=BorderRadius.circular(size.width*0.09);
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        toolbarHeight: size.height*0.11,
+        toolbarHeight: size.height*0.07,
         flexibleSpace: SizedBox(
           height: size.height * 0.11,
           width: size.width * 1,
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Container(
-                      height: size.height * 0.06,
-                      width: size.width * 0.38,
-                      decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              Colors.blue,
-                              Colors.purpleAccent,
-                            ],
-                          ),
-                          borderRadius: const BorderRadius.all(Radius.circular(20)),
-                          border: Border.all(color: Colors.black, width: 2)),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20)))
-                        ),
-                        onPressed: () {
+              SizedBox(height: size.height*0.01),
+              TabBar(
+                indicatorColor: Colors.black,
+                labelColor: Colors.green,
 
-                          Navigator.push(context,
-                              PageTransition(
-                                  child: subjectQuizScore(subject: subject_filter,),
-                                  type: PageTransitionType.bottomToTopJoined,
-                                  childCurrent: const Notes(),
-                                  duration: const Duration(milliseconds: 300)
-                              )
-                          );
-
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            const Icon(Icons.leaderboard_sharp,color: Colors.red),
-                            FittedBox(
-                              fit: BoxFit.cover,
-                              child: AutoSizeText(
-                                "Leaderboard",
-                                style: TextStyle(
-                                    fontSize: size.height * 0.02,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.white70
-                                ),
-                              ),
+                controller: _tabController,
+                  onTap: (value) {
+                  setState(() {
+                    currTab=value;
+                  });
+                  },
+                  tabs: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        const Icon(Icons.upload_sharp,color: Colors.red),
+                        FittedBox(
+                          fit: BoxFit.cover,
+                          child: AutoSizeText(
+                            "Notes",
+                            style: TextStyle(
+                                fontSize: size.height * 0.02,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white70
                             ),
-                          ],
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                    Container(
-                      height: size.height * 0.06,
-                      width: size.width * 0.38,
-                      decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              Colors.blue,
-                              Colors.purpleAccent,
-                            ],
-                          ),
-                          borderRadius: const BorderRadius.all(Radius.circular(20)),
-                          border: Border.all(color: Colors.black, width: 2)),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20)))
-                        ),
-                        onPressed: () {
-
-                          Navigator.push(context,
-                              PageTransition(
-                                  child:const Quiz(),
-                                  type: PageTransitionType.bottomToTopJoined,
-                                  childCurrent: const Notes(),
-                                  duration: const Duration(milliseconds: 300)
-                              )
-                          );
-
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            const Icon(Icons.upload_sharp,color: Colors.red),
-                            FittedBox(
-                              fit: BoxFit.cover,
-                              child: AutoSizeText(
-                                "Upload Notes",
-                                style: TextStyle(
-                                    fontSize: size.height * 0.02,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.white70
-                                ),
-                              ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        const Icon(Icons.leaderboard_sharp,color: Colors.red),
+                        FittedBox(
+                          fit: BoxFit.cover,
+                          child: AutoSizeText(
+                            "Leaderboard",
+                            style: TextStyle(
+                                fontSize: size.height * 0.02,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white70
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-                    )
-                  ],
-                ),
+                      ],
+                    ),
+
+
+                // Container(
+                //   height: size.height * 0.06,
+                //   //width: size.width * 0.38,
+                //   decoration: BoxDecoration(
+                //       gradient: const LinearGradient(
+                //         begin: Alignment.topLeft,
+                //         end: Alignment.bottomRight,
+                //         colors: [
+                //           Colors.blue,
+                //           Colors.purpleAccent,
+                //         ],
+                //       ),
+                //       borderRadius: const BorderRadius.all(Radius.circular(20)),
+                //       border: Border.all(color: Colors.black, width: 2)),
+                //   child: ElevatedButton(
+                //     style: ElevatedButton.styleFrom(
+                //         elevation: 0,
+                //         backgroundColor: Colors.transparent,
+                //         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20)))
+                //     ),
+                //     onPressed: () {
+                //
+                //
+                //
+                //     },
+                //     child: Row(
+                //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                //       children: [
+                //         const Icon(Icons.leaderboard_sharp,color: Colors.red),
+                //         FittedBox(
+                //           fit: BoxFit.cover,
+                //           child: AutoSizeText(
+                //             "Leaderboard",
+                //             style: TextStyle(
+                //                 fontSize: size.height * 0.02,
+                //                 fontWeight: FontWeight.w500,
+                //                 color: Colors.white70
+                //             ),
+                //           ),
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                // ),
+                // Container(
+                //   height: size.height * 0.06,
+                //   //width: size.width * 0.38,
+                //   decoration: BoxDecoration(
+                //       gradient: const LinearGradient(
+                //         begin: Alignment.topLeft,
+                //         end: Alignment.bottomRight,
+                //         colors: [
+                //           Colors.blue,
+                //           Colors.purpleAccent,
+                //         ],
+                //       ),
+                //       borderRadius: const BorderRadius.all(Radius.circular(20)),
+                //       border: Border.all(color: Colors.black, width: 2)),
+                //   child: ElevatedButton(
+                //     style: ElevatedButton.styleFrom(
+                //         elevation: 0,
+                //         backgroundColor: Colors.transparent,
+                //         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20)))
+                //     ),
+                //     onPressed: () {
+                //
+                //
+                //
+                //     },
+                //     child: Row(
+                //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                //       children: [
+                //         const Icon(Icons.upload_sharp,color: Colors.red),
+                //         FittedBox(
+                //           fit: BoxFit.cover,
+                //           child: AutoSizeText(
+                //             "Upload Notes",
+                //             style: TextStyle(
+                //                 fontSize: size.height * 0.02,
+                //                 fontWeight: FontWeight.w500,
+                //                 color: Colors.white70
+                //             ),
+                //           ),
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                // )
+              ],
               ),
-              Divider(
-                color: Colors.black,
-                height: MediaQuery.of(context).size.height * 0.02,
-                thickness: MediaQuery.of(context).size.height * 0.002,
-                endIndent: 8,
-                indent: 8,
-              )
             ],
           ),
         ),
       ),
-      body: subject_filter!=""
-        ?
-      docExists
-      ?
-      SizedBox(
-        height:size.height*0.99,
-        width:size.width*0.98,
-        child: StreamBuilder
-          (
-          stream: FirebaseFirestore.instance.collection("Notes").doc("${university_filter.split(" ")[0]} ${college_filter.split(" ")[0]} ${course_filter.split(" ")[0]} ${branch_filter.split(" ")[0]} $year_filter $section_filter $subject_filter").snapshots(),
-          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot)
-          {
-            return  snapshot.hasData
-                ?
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                child: ListView.builder(
-                  itemCount: snapshot.data["Total_Notes"],
-                  itemBuilder: (context, index) {
-                    bool isDownloaded=false;
-                    bool  isDownloading=false;
-                    bool isExpanded;
-                    if(currIndex==index)
-                      {
-                        isExpanded=true;
-                      }
-                    else{
-                      isExpanded=false;
-                    }
-                    Timestamp deadline=snapshot.data["Notes-${index+1}"]["Deadline"] ?? Timestamp(0, 0);
-                    bool quizCreated = snapshot.data["Notes-${index+1}"]["Quiz_Created"];
-                    String? dir = directory?.path.toString().substring(0, 19);
-                    String path = "$dir/Campus Link/$university_filter $college_filter $course_filter $branch_filter $year_filter $section_filter $subject_filter/Notes/";
-                    File newPath = File("$path${snapshot.data["Notes-${index +
-                        1}"]["File_Name"]}");
-                    if(newPath.existsSync())
-                      {
-                        isDownloaded=true;
-                      }
-                      return Padding(
-                        padding: EdgeInsets.all(size.width * 0.032),
-                        child: Container(
-                          width: size.width * 0.85,
-                          decoration: BoxDecoration(
-                            //color: const Color.fromRGBO(56, 33, 101,1),
-                            color: Colors.white70,
-                            borderRadius: radiusGeomentry,
-                            border: Border.all(color:const Color.fromRGBO(56, 33, 101,1),width: 3)
-                          ),
-                          child: Stack(
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Colors.blue, Colors.purpleAccent],
+                ),
+                borderRadius: const BorderRadius.all(Radius.circular(20)),
+                border: Border.all(color: Colors.black, width: 1)
+            ),
+            width: size.width * 0.36,
+            height: size.height * 0.05,
+            child: FloatingActionButton(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              child:  Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Image.asset("assets/images/upload-icon.png",),
+                  SizedBox(width: size.width*0.02,),
+                  AutoSizeText("Upload File",style: GoogleFonts.tiltNeon(
+                      color: Colors.black,
+                      //const Color.fromRGBO(150, 150, 150, 1),
+                      fontWeight: FontWeight.w500,
+                      fontSize: size.width*0.035),
+                  ),
+                ],
+              ),
+              onPressed: () async {
+                TextEditingController videoController = TextEditingController();
+                TextEditingController notesDescription = TextEditingController();
+                late  FilePickerResult? filePath;
+                bool fileSelected=false;
+                int notesCount=0;
 
+                await showModalBottomSheet(
+                  backgroundColor: Colors.black,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(35),
+                      topRight: Radius.circular(35),
+                    )
+                  ),
+                  context: context,
+                  builder: (context) {
+                  return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+
+                        Padding(
+                          padding: EdgeInsets.all(size.height * 0.009),
+                          child: Row(
                             children: [
-                              Column(
-                                children: [
-                                  SizedBox(
-                                    height: size.height * 0.12,
-                                    width: size.width * 0.93,
-                                    child: Padding(
-                                        padding: EdgeInsets.only(
-                                            top: size.height * 0.01,
-                                            left: size.height * 0.01,
-                                            right: size.height * 0.01),
-                                        child: InkWell(
-                                          onTap: () {
-                                            if (newPath.existsSync()) {
-                                              Navigator.push(
-                                                context,
-                                                PageTransition(
-                                                  child: PdfViewer(
-                                                      document: newPath.path,
-                                                      name: snapshot
-                                                          .data["Notes-${index +
-                                                          1}"]["File_Name"]),
-                                                  type: PageTransitionType
-                                                      .bottomToTopJoined,
-                                                  duration: const Duration(
-                                                      milliseconds: 200),
-                                                  alignment: Alignment.bottomCenter,
-                                                  childCurrent: const Notes(),
-                                                ),
-                                              );
-                                            }
-                                          },
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.only(
-                                                  topLeft: Radius.circular(
-                                                      size.width * 0.05),
-                                                  topRight: Radius.circular(
-                                                      size.width * 0.05)),
-                                              /*image: DecorationImage(
-                                              image: NetworkImage(
-                                                "${snapshot.data["Notes-${index +
-                                                    1}"]["thumbnailURL"]}",
-                                              ), fit: BoxFit.cover,
-                                            )*/
-                                            ),
-                                            child: Center(
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                children: [
-                                                  SizedBox(
-                                                    height: size.height*0.01,
-                                                  ),
-                                                  AutoSizeText(
-                                                    subject_filter,
-                                                    style: GoogleFonts.courgette(
-                                                        color: Colors.black,
-                                                        fontSize: size.height*0.02,
-                                                        fontWeight: FontWeight.w400
-                                                    ),
-                                                  ),
-                                                  AutoSizeText(
-                                                    "Notes : ${index + 1}",
-                                                    style: GoogleFonts.courgette(
-                                                        color: Colors.black,
-                                                        fontSize: size.height*0.023,
-                                                        fontWeight: FontWeight.w400
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                            ),),
-                                        )
-                                    ),
-                                  ),
-                                  AnimatedContainer(
-                                    height: isExpanded
-                                        ? size.height * 0.22
-                                        : size.height * 0.12,
-                                    width: size.width * 0.99,
-                                    duration: const Duration(milliseconds: 1),
-                                    decoration: BoxDecoration(
-                                        color: const Color.fromRGBO(56, 33, 101,1),
-                                        borderRadius: BorderRadius.circular(size.width*0.065)
-
-                                    ),
-                                    child: SingleChildScrollView(
-                                      physics: const NeverScrollableScrollPhysics(),
-                                      child: Column(
-                                        children: [
-                                          SizedBox(
-                                            height: size.height * 0.018,
-                                          ),
-                                          ListTile(
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.only(
-                                                  bottomLeft: Radius.circular(
-                                                      size.width * 0.1),
-                                                  bottomRight: Radius.circular(
-                                                      size.width * 0.1)),),
-                                            title: SizedBox(
-                                                height: size.height * 0.07,
-                                                width: size.width * 0.75,
-                                                //ssscolor: Colors.redAccent,
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment
-                                                      .start,
-                                                  children: [
-                                                    AutoSizeText(
-                                                      snapshot.data["Notes-${index +
-                                                          1}"]["File_Name"] != null
-                                                          ?
-                                                      snapshot.data["Notes-${index +
-                                                          1}"]["File_Name"].toString()
-                                                          :
-                                                      "",
-                                                      style: GoogleFonts.exo(
-                                                          fontSize: size.height *
-                                                              0.01,
-                                                          color: Colors.white70,
-                                                          fontWeight: FontWeight
-                                                              .w500),
-                                                      maxLines: 1,
-
-                                                    ),
-                                                    SizedBox(
-                                                      height: size.height * 0.01,
-                                                    ),
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment
-                                                          .start,
-                                                      crossAxisAlignment: CrossAxisAlignment
-                                                          .start,
-                                                      children: [
-                                                        AutoSizeText(
-                                                          snapshot.data["Notes-${index +
-                                                              1}"]["File_Size"] != null
-                                                              ?
-                                                          "Size:${(int.parse(snapshot
-                                                              .data["Notes-${index +
-                                                              1}"]["File_Size"]
-                                                              .toString()) / 1048576)
-                                                              .toStringAsFixed(2)} MB"
-                                                              :
-                                                          "",
-                                                          style: GoogleFonts.exo(
-                                                              fontSize: size.height *
-                                                                  0.012,
-                                                              color: Colors.white70,
-                                                              fontWeight: FontWeight
-                                                                  .w500),),
-                                                        SizedBox(
-                                                          width: size.width * 0.015,
-                                                        ),
-                                                        AutoSizeText(
-                                                          snapshot.data["Notes-${index +
-                                                              1}"]["Stamp"] != null
-                                                              ?
-                                                          "Date: ${(snapshot
-                                                              .data["Notes-${index +
-                                                              1}"]["Stamp"].toDate())
-                                                              .toString()
-                                                              .split(" ")[0]}"
-                                                              :
-                                                          "",
-                                                          style: GoogleFonts.exo(
-                                                              fontSize: size.height *
-                                                                  0.012,
-                                                              color: Colors.white70,
-                                                              fontWeight: FontWeight
-                                                                  .w500),),
-                                                      ],
-                                                    )
-                                                  ],
-                                                )
-                                            ),
-                                            leading: Container(
-                                                height: size.width * 0.05,
-                                                width: size.width * 0.05,
-                                                decoration: const BoxDecoration(
-                                                  color: Colors.transparent,
-                                                  shape: BoxShape.circle,
-                                                  /*image:DecorationImage(
-                                              image: fileAlreadyExists
-                                                  ?
-                                              const AssetImage("assets/icon/pdf.png"):
-                                              const AssetImage("assets/icon/download-button.png"),
-                                              fit: BoxFit.cover,
-                                              alignment: Alignment.center, )*/
-                                                ),
-                                                child: Image.asset("assets/icon/pdf.png")
-
-                                            ),
-
-                                            // subtitle: AutoSizeText('DEADLIiNE',style: GoogleFonts.exo(fontSize: size.height*0.015,color: Colors.black,fontWeight: FontWeight.w400),),
-                                            trailing: Container(
-                                              height: size.width * 0.12,
-                                              width: size.width * 0.12,
-                                              child: FloatingActionButton(
-                                                  backgroundColor:Colors.lightBlueAccent,
-                                                  elevation: 0,
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      if(currIndex==index)
-                                                      {
-                                                        currIndex=-1;
-                                                      }
-                                                      else{
-                                                        currIndex=index;
-                                                      }
-
-                                                    });
-                                                  },
-                                                  child:
-                                                  Image.asset(
-                                                    "assets/icon/speech-bubble.png",
-                                                    width: size.height * 0.045,
-                                                    height: size.height * 0.045,)
-                                              ),
-                                            ),
-
-                                          ),
-                                          isExpanded
-                                              ?
-                                          Padding(
-                                              padding: EdgeInsets.only(
-                                                  top: size.height * 0.022),
-                                              child: quizCreated
-                                                  ?
-                                              Column(
-                                                children: [
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                    children: [
-                                                      //SizedBox(width: size.width*0.065,),
-                                                      AutoSizeText("Deadline : ${deadline.toDate().toString().substring(0,16)}",style: GoogleFonts.poppins(
-                                                          color: Colors.white70,
-                                                          fontSize: size.height*0.012
-                                                      ),),
-                                                      AutoSizeText("Submission : ${snapshot.data["Notes-${index+1}"]["Submitted by"]!=null?snapshot.data["Notes-${index+1}"]["Submitted by"].length:0} / $totalStudents",style: GoogleFonts.poppins(
-                                                          color: Colors.white70,
-                                                          fontSize: size.height*0.012
-                                                      ),),
-                                                    ],
-                                                  ),
-                                                  SizedBox(height: size.width*0.028,),
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                    children: [
-                                                      Container(
-                                                        height: size.height * 0.046,
-                                                        width: size.width * 0.34,
-                                                        decoration: BoxDecoration(
-                                                            gradient: const LinearGradient(
-                                                              begin: Alignment.topLeft,
-                                                              end: Alignment.bottomRight,
-                                                              colors: [
-                                                                Colors.blue,
-                                                                Colors.purpleAccent,
-                                                              ],
-                                                            ),
-                                                            borderRadius: BorderRadius.all(
-                                                                Radius.circular(
-                                                                    size.width * 0.035)),
-                                                            border: Border.all(
-                                                                color: Colors.black, width: 2)
-                                                        ),
-                                                        child: ElevatedButton(
-                                                            style: ElevatedButton.styleFrom(
-                                                                backgroundColor: Colors
-                                                                    .transparent,
-                                                                shape: RoundedRectangleBorder(
-                                                                    borderRadius: BorderRadius
-                                                                        .all(
-                                                                        Radius.circular(size
-                                                                            .width * 0.035)))
-                                                            ),
-
-                                                            onPressed: () {
-                                                              Navigator.push(context,
-                                                                  PageTransition(
-                                                                      child: responseScreen(
-                                                                        quizId: index + 1,),
-                                                                      type: PageTransitionType
-                                                                          .bottomToTopJoined,
-                                                                      childCurrent: const Notes(),
-                                                                      duration: const Duration(
-                                                                          milliseconds: 300)
-                                                                  )
-                                                              );
-                                                            },
-                                                            child: AutoSizeText(
-                                                              "See Response",
-                                                              style: GoogleFonts.openSans(
-                                                                  fontSize: size.height * 0.022,
-                                                                  color: Colors.white
-                                                              ),
-
-
-                                                            )),
-                                                      ),
-                                                      Container(
-                                                        height: size.height * 0.046,
-                                                        width: size.width * 0.34,
-                                                        decoration: BoxDecoration(
-                                                            gradient: const LinearGradient(
-                                                              begin: Alignment.topLeft,
-                                                              end: Alignment.bottomRight,
-                                                              colors: [
-                                                                Colors.blue,
-                                                                Colors.purpleAccent,
-                                                              ],
-                                                            ),
-                                                            borderRadius: BorderRadius.all(
-                                                                Radius.circular(
-                                                                    size.width * 0.035)),
-                                                            border: Border.all(
-                                                                color: Colors.black, width: 2)
-                                                        ),
-                                                        child: ElevatedButton(
-                                                            style: ElevatedButton.styleFrom(
-                                                                backgroundColor: Colors
-                                                                    .transparent,
-                                                                shape: RoundedRectangleBorder(
-                                                                    borderRadius: BorderRadius
-                                                                        .all(
-                                                                        Radius.circular(size
-                                                                            .width * 0.035)))
-                                                            ),
-
-                                                            onPressed: () {
-                                                              if(snapshot.data["Notes-${index+1}"]["Submitted by"]!=null && snapshot.data["Notes-${index+1}"]["Submitted by"].length>3)
-                                                              {
-                                                                Navigator.push(context,
-                                                                    PageTransition(
-                                                                        child: Quizscore(
-                                                                          quizId: index + 1,),
-                                                                        type: PageTransitionType
-                                                                            .bottomToTopJoined,
-                                                                        childCurrent: const Notes(),
-                                                                        duration: const Duration(
-                                                                            milliseconds: 300)
-                                                                    )
-                                                                );
-                                                              }
-                                                              else{
-                                                                InAppNotifications.instance
-                                                                  ..titleFontSize = 25.0
-                                                                  ..descriptionFontSize = 15.0
-                                                                  ..textColor = Colors.black
-                                                                  ..backgroundColor = const Color.fromRGBO(150, 150, 150, 1)
-                                                                  ..shadow = true
-                                                                  ..animationStyle = InAppNotificationsAnimationStyle.scale;
-                                                                InAppNotifications.show(
-                                                                    title: 'Error',
-                                                                    duration: const Duration(seconds: 2),
-                                                                    description: "Submissions are less than three",
-                                                                    leading: const Icon(
-                                                                      Icons.error_outline,
-                                                                      color: Colors.red,
-                                                                      size: 40,
-                                                                    ));
-                                                              }
-
-                                                            },
-                                                            child: AutoSizeText(
-                                                              "Leaderboard",
-                                                              style: GoogleFonts.openSans(
-                                                                  fontSize: size.height * 0.022,
-                                                                  color: Colors.white
-                                                              ),
-
-
-                                                            )),
-                                                      ),
-                                                    ],
-                                                  ),
-
-
-                                                ],
-                                              )
-                                                  :
-                                              Container(
-                                                height: size.height * 0.05,
-                                                width: size.width * 0.45,
-                                                decoration: BoxDecoration(
-                                                    gradient: const LinearGradient(
-                                                      begin: Alignment.topLeft,
-                                                      end: Alignment.bottomRight,
-                                                      colors: [
-                                                        Colors.blue,
-                                                        Colors.purpleAccent,
-                                                      ],
-                                                    ),
-                                                    borderRadius: BorderRadius.all(
-                                                        Radius.circular(
-                                                            size.width * 0.035)),
-                                                    border: Border.all(
-                                                        color: Colors.black, width: 2)
-                                                ),
-                                                child: ElevatedButton(
-                                                    style: ElevatedButton.styleFrom(
-                                                        backgroundColor: Colors
-                                                            .transparent,
-                                                        shape: RoundedRectangleBorder(
-                                                            borderRadius: BorderRadius
-                                                                .all(
-                                                                Radius.circular(size
-                                                                    .width * 0.035)))
-                                                    ),
-
-                                                    onPressed: () {
-                                                      Navigator.push(context,
-                                                          PageTransition(
-                                                              child: QuizQustion(
-                                                                quizNumber: index + 1,),
-                                                              type: PageTransitionType
-                                                                  .bottomToTopJoined,
-                                                              childCurrent: const Notes(),
-                                                              duration: const Duration(
-                                                                  milliseconds: 300)
-                                                          )
-                                                      );
-                                                    },
-                                                    child: AutoSizeText(
-                                                      "Create Quiz",
-                                                      style: GoogleFonts.openSans(
-                                                          fontSize: size.height * 0.022,
-                                                          color: Colors.white
-                                                      ),
-
-
-                                                    )),
-                                              )
-                                          ) :
-                                          const SizedBox(),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                              AutoSizeText(
+                                "Upload File",
+                                style: GoogleFonts.openSans(
+                                  color: Colors.white,
+                                  fontSize: size.height * 0.023,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
-                              !isDownloaded
-                                  ?
-                              Positioned(
-                                  top: 10,
-                                  right: size.width*0.055,
-                                  child: download(downloadUrl:snapshot.data["Notes-${index+1}"]["Pdf_URL"], pdfName: snapshot.data["Notes-${index+1}"]["File_Name"], path:path))
-                                  :
-                              const SizedBox()
+                              SizedBox(
+                                width: size.width * 0.02,
+                              ),
+                              const Icon(
+                                Icons.cloud_upload,
+                                color: Colors.white,
+                              )
                             ],
                           ),
                         ),
-                      );
+                        SizedBox(
+                          height: size.height * 0.03,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SizedBox(
+                              height: size.height * 0.1,
+                              width: size.width,
+                              child: DottedBorder(
+                                  color: Colors.white,
+                                  borderType: BorderType.RRect,
+                                  radius: const Radius.circular(12),
+                                  padding: EdgeInsets.all(size.height * 0.01),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        size: size.height * 0.04,
+                                        Icons.upload_sharp,
+                                        color: Colors.white,
+                                      ),
+                                      SizedBox(
+                                        width: size.width * 0.03,
+                                      ),
+                                      AutoSizeText(
+                                        "Drop item here  or",
+                                        style: GoogleFonts.openSans(
+                                          color: Colors.white,
+                                          fontSize: size.height * 0.02,
+                                        ),
+                                      ),
+                                      TextButton(
+                                        onPressed: () async {
+                                          await FilePicker
+                                              .platform
+                                              .pickFiles(
+                                              type: FileType.custom,
+                                              allowedExtensions: ['pdf'],
+                                              allowMultiple: false).then((value) {
+                                            if(value!.files[0].path!.isNotEmpty && (value.files[0].extension=="pdf" || value.files[0].extension=="docx")) {
+                                              filePath = value;
+                                              print(".......PickedFile${filePath
+                                                  ?.files[0].path}");
+                                              setState(() {
+                                                fileSelected=true;
+                                              });
+                                            }
+                                            else{
+                                              print("Extension is : ${value.files[0].extension}");
+                                              setState(() {
+                                                fileSelected=false;
+                                              });
+                                              InAppNotifications.instance
+                                                ..titleFontSize = 25.0
+                                                ..descriptionFontSize = 15.0
+                                                ..textColor = Colors.black
+                                                ..backgroundColor = const Color.fromRGBO(150, 150, 150, 1)
+                                                ..shadow = true
+                                                ..animationStyle = InAppNotificationsAnimationStyle.scale;
+                                              InAppNotifications.show(
+                                                  title: 'Error',
+                                                  duration: const Duration(seconds: 2),
+                                                  description: "Please select only PDF or doc type",
+                                                  leading: const Icon(
+                                                    Icons.error_outline,
+                                                    color: Colors.red,
+                                                    size: 40,
+                                                  ));
+                                            }
+                                          });
+                                        },
+                                        child: AutoSizeText(
+                                          "Browse File",
+                                          style: GoogleFonts.openSans(
+                                              color: Colors.white,
+                                              fontSize: size.height * 0.02,
+                                              fontWeight: FontWeight.w700),
+                                        ),
 
-                  }),
-              ))
-                :
-            const SizedBox(
-              child: Center(child: Text("No Data Found")),
-            );
-          },),
-      )
-      :
-      Center(
-        child: AutoSizeText("No data Found Yet",
-          style: GoogleFonts.poppins(
-              color: Colors.black26,
-              fontSize: size.height*0.03
-          ),),
-      )
-      :
-          Center(
-            child: AutoSizeText("Please Apply Filter First",
-            style: GoogleFonts.poppins(
-              color: Colors.black26,
-              fontSize: size.height*0.03
-            ),),
-          ),
+
+                                      ),
+                                      fileSelected
+                                          ?
+                                      Icon(
+                                        size: size.height * 0.02,
+                                        Icons.check_circle,
+                                        color: Colors.green,
+                                      )
+                                          :
+                                      const SizedBox()
+                                    ],
+                                  )
+                              )),
+                        ),
+                        SizedBox(
+                          height: size.height * 0.015,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SizedBox(
+                              height: size.height * 0.07,
+                              width: size.width,
+                              child: DottedBorder(
+                                color: Colors.white,
+                                borderType: BorderType.RRect,
+                                radius: const Radius.circular(12),
+                                padding: const EdgeInsets.all(10),
+                                child: TextField(
+                                  textAlign: TextAlign.start,
+                                  controller: videoController,
+                                  style: GoogleFonts.poppins(
+                                      color: Colors.white,
+                                      fontSize: size.height*0.018
+                                  ),
+                                  decoration:  const InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: "Additional Link ",
+                                      hintStyle: TextStyle(
+                                        color: Colors.white,
+                                      )),
+                                  cursorColor: Colors.white,
+                                ),
+                              )),
+                        ),
+                        SizedBox(
+                          height: size.height*0.03,),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SizedBox(
+                              height: size.height * 0.07,
+                              width: size.width,
+                              child: DottedBorder(
+                                color: Colors.white,
+                                borderType: BorderType.RRect,
+                                radius: const Radius.circular(12),
+                                padding: const EdgeInsets.all(10),
+                                child: TextField(
+                                  textAlign: TextAlign.start,
+                                  controller: notesDescription,
+                                  style: GoogleFonts.poppins(
+                                      color: Colors.white,
+                                      fontSize: size.height*0.018
+                                  ) ,
+                                  decoration: const InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: "Notes Description ",
+                                      hintStyle: TextStyle(
+                                        color: Colors.white,
+                                      )),
+                                  cursorColor: Colors.white,
+                                ),
+                              )),
+                        ),
+                        SizedBox(
+                          height: size.height*0.03,),
+                        Center(
+                          child: Container(
+                            height: size.height * 0.06,
+                            width: size.width * 0.466,
+                            decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Colors.blue,
+                                    Colors.purpleAccent,
+                                  ],
+                                ),
+                                borderRadius:  BorderRadius.all(Radius.circular(size.width*0.033)),
+                                border: Border.all(color: Colors.black, width: 2)
+                            ),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                elevation: 0,
+                                  backgroundColor: Colors.transparent
+                              ),
+                              onPressed: () async {
+                                if(fileSelected && notesDescription.text.toString().isNotEmpty && videoController.text.toString().isNotEmpty)
+                                {
+                                  Navigator.push(context, PageTransition(
+                                      type: PageTransitionType.bottomToTop,
+                                      duration: const Duration(milliseconds: 400),
+                                      childCurrent: const Quiz(),
+                                      child: const loading(text: "Data is uploading to server please wait.......")));
+                                  DateTime stamp= DateTime.now();
+                                  DateTime deadline= DateTime.now();
 
 
-      /*floatingActionButton: subject_filter!=""
-        ?
-      Padding(
-        padding: EdgeInsets.only(
-            bottom: size.height * 0.015, right: size.height * 0.015),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Container(
-              height: size.height * 0.06,
-              width: size.width * 0.38,
-              decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Colors.blue,
-                      Colors.purpleAccent,
-                    ],
-                  ),
-                  borderRadius: const BorderRadius.all(Radius.circular(20)),
-                  border: Border.all(color: Colors.black, width: 2)),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                  shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20)))
-                ),
-                onPressed: () {
+                                  pdfControllers.add(PdfController(document: PdfDocument.openFile("${filePath?.files[0].path}")));
+                                  getBytes();
 
-                  Navigator.push(context,
-                      PageTransition(
-                          child:const Quiz(),
-                          type: PageTransitionType.bottomToTopJoined,
-                          childCurrent: const Notes(),
-                          duration: const Duration(milliseconds: 300)
-                      )
-                  );
+                                  Reference reference=FirebaseStorage.instance.ref();
 
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    const Icon(Icons.upload_sharp,color: Colors.black),
-                    AutoSizeText(
-                      "Upload Notes",
-                      style: TextStyle(
-                        fontSize: size.height * 0.02,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+
+                                  Reference imageDirectory=reference.child("Notes");
+
+
+                                  Reference pdfFolder=imageDirectory.child("$university_filter $college_filter $branch_filter $year_filter $section_filter $subject_filter");
+
+                                  Reference channel=pdfFolder.child("$stamp");
+
+
+                                  TaskSnapshot snap= await channel.putFile(File("${filePath?.files[0].path}"));
+                                  String pdfURL=await snap.ref.getDownloadURL();
+
+                                  print("......File Uploaded $pdfURL");
+                                  Directory? directory = await getApplicationSupportDirectory();
+                                  String additionalPath= "/Notes";
+                                  directory = Directory("${directory.path}$additionalPath");
+                                 // File file = await File("${directory.path}/$stamp.pdf").create(recursive: true);
+
+
+
+                                  // Create Thumbnail of the Pdf
+
+
+                                  Reference imageFolder=pdfFolder.child("image");
+                                  Reference channel_2=imageFolder.child("$stamp");
+
+
+                                  String additionalPathForImage= "/images";
+                                  File image = await File("${Directory("${directory.path}$additionalPathForImage").path}/$stamp.jpg").create(recursive: true);
+
+                                  File imagePath = await image.writeAsBytes(imageBytes[0]);
+
+                                  //String path = await VideoThumbnail.thumbnailFile(video: URL,imageFormat: ImageFormat.PNG,quality: 1,thumbnailPath: (await getApplicationDocumentsDirectory()).path) ?? "";
+
+
+                                  snap= await channel_2.putFile(File(imagePath.path));
+                                  String imageURL=await snap.ref.getDownloadURL().whenComplete(() => print(".............First Image Created and uploaded..."));
+                                  /* String additionalPathForThumb= "/thumbnail";
+                                 XFile? compressed;
+                                 File thumb = await File("${Directory("${directory.path}$additionalPathForThumb").path}/$stamp.jpg").create(recursive: true);
+
+                                 await FlutterImageCompress.compressAndGetFile(
+                                   imagePath.path,
+                                   thumb.path,
+                                   quality: 1,
+                                   //format: CompressFormat.png
+                                 ).then((value) => compressed=value);
+
+                                 Reference thumbnailFolder=pdfFolder.child("thumbnail");
+                                 Reference channel_3=thumbnailFolder.child("$stamp");
+                                 snap= await channel_3.putFile(File(thumb.path));
+                                 String thumbnailURL=await snap.ref.getDownloadURL().whenComplete(() => print("..Thumbnail uploaded"));
+*/
+
+
+
+                                  // Thumbnail Created
+                                  FirebaseFirestore.instance.collection("Notes").doc("${university_filter.split(" ")[0]} ${college_filter.split(" ")[0]} ${course_filter.split(" ")[0]} ${branch_filter.split(" ")[0]} $year_filter $section_filter $subject_filter")
+                                      .get().then((value){
+                                    if(value.data()==null)
+                                    {
+                                      notesCount=0;
+                                      FirebaseFirestore.instance.collection("Notes").doc("${university_filter.split(" ")[0]} ${college_filter.split(" ")[0]} ${course_filter.split(" ")[0]} ${branch_filter.split(" ")[0]} $year_filter $section_filter $subject_filter")
+                                          .set({
+                                        "Total_Notes":notesCount
+                                      }).whenComplete(() => print("........\n\n\n Created"));
+                                    }
+                                    else
+                                    {
+                                      notesCount=value.data()?["Total_Notes"];
+                                    }
+                                  }).whenComplete(() {
+                                    FirebaseFirestore
+                                        .instance
+                                        .collection(
+                                        "Notes")
+                                        .doc(
+                                        "${university_filter.split(" ")[0]} ${college_filter.split(" ")[0]} ${course_filter.split(" ")[0]} ${branch_filter.split(" ")[0]} $year_filter $section_filter $subject_filter")
+                                        .update({
+                                      "Notes-${notesCount+1}": {
+                                        "Stamp":stamp,
+                                        "File_Size":filePath?.files[0].size,
+                                        "File_Name":filePath?.files[0].name,
+                                        "Pdf_URL":pdfURL,
+                                        "Notes_description":notesDescription.text.toString().trim(),
+                                        "Additional_Link":videoController.text.toString().trim(),
+                                        "imageURL":imageURL,
+                                        "Quiz_Created":false,
+                                      },
+                                      "Total_Notes":FieldValue.increment(1)
+                                    });
+                                  }).whenComplete(() {
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                    print("..................... Ho gyi sb upload");
+                                    showModalBottomSheet(
+                                        backgroundColor: Colors.transparent,
+                                        context: context,
+                                        builder: ((context) {
+                                          return Container(
+                                            height: size.height*0.2,
+                                            decoration: BoxDecoration(
+                                                color: Colors.black87,
+                                                borderRadius: BorderRadius.only(topRight: Radius.circular(size.height*0.022),topLeft:Radius.circular(size.height*0.022) )
+                                            ),
+                                            child:  Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                Container(
+                                                  height: size.height * 0.06,
+                                                  width: size.width * 0.43,
+                                                  decoration: BoxDecoration(
+                                                      gradient: const LinearGradient(
+                                                        begin: Alignment.topLeft,
+                                                        end: Alignment.bottomRight,
+                                                        colors: [
+                                                          Colors.blue,
+                                                          Colors.purpleAccent,
+                                                        ],
+                                                      ),
+                                                      borderRadius: const BorderRadius.all(Radius.circular(20)),
+                                                      border: Border.all(color: Colors.black, width: 2)
+                                                  ),
+                                                  child: ElevatedButton(
+                                                      style: ElevatedButton.styleFrom(
+                                                          backgroundColor: Colors.transparent),
+
+                                                      onPressed: (){
+                                                        Navigator.pushReplacement(context,
+                                                            PageTransition(
+                                                                child: QuizQustion(quizNumber: notesCount+1,),
+                                                                type: PageTransitionType.bottomToTopJoined,
+                                                                childCurrent: const Quiz(),
+                                                                duration: const Duration(milliseconds: 300)
+                                                            )
+                                                        );
+                                                      },
+                                                      child: AutoSizeText(
+                                                        "Create Quiz",
+                                                        style: GoogleFonts.openSans(
+                                                            fontSize: size.height * 0.022,
+                                                            color: Colors.white
+                                                        ),
+
+
+                                                      )),
+                                                ),
+                                                Container(
+                                                  height: size.height * 0.06,
+                                                  width: size.width * 0.43,
+                                                  decoration: BoxDecoration(
+                                                      gradient: const LinearGradient(
+                                                        begin: Alignment.topLeft,
+                                                        end: Alignment.bottomRight,
+                                                        colors: [
+                                                          Colors.blue,
+                                                          Colors.purpleAccent,
+                                                        ],
+                                                      ),
+                                                      borderRadius: const BorderRadius.all(Radius.circular(20)),
+                                                      border: Border.all(color: Colors.black, width: 2)
+                                                  ),
+                                                  child: ElevatedButton(
+                                                      style: ElevatedButton.styleFrom(
+                                                          backgroundColor: Colors.transparent),
+                                                      onPressed: (){
+                                                        FirebaseFirestore
+                                                            .instance
+                                                            .collection(
+                                                            "Notes")
+                                                            .doc(
+                                                            "${university_filter.split(" ")[0]} ${college_filter.split(" ")[0]} ${course_filter.split(" ")[0]} ${branch_filter.split(" ")[0]} $year_filter $section_filter $subject_filter")
+                                                            .update({
+                                                          "Notes-${notesCount+1}.Quiz_Created": false
+                                                        }).whenComplete(() =>  Navigator.pop(context));
+
+                                                      },
+                                                      child: AutoSizeText(
+                                                        "Create a later",
+                                                        style: GoogleFonts.openSans(
+                                                            fontSize: size.height * 0.022,
+                                                            color: Colors.white
+                                                        ),
+
+
+                                                      )),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        }));
+                                  });
+                                  var studentsDoc =     await FirebaseFirestore.instance.collection("Students")
+                                      .where("University",isEqualTo: university_filter)
+                                      .where("College",isEqualTo: college_filter)
+                                      .where("Branch",isEqualTo: branch_filter)
+                                      .where("Course",isEqualTo: course_filter)
+                                      .where("Year",isEqualTo: year_filter)
+                                      .where("Section",isEqualTo: section_filter)
+                                      .where("Subject",arrayContains: subject_filter).get();
+                                  List<dynamic> tokens =[];
+                                  List<dynamic> emails=[];
+                                  for(int i=0;i<studentsDoc.docs.length ; i++){
+                                    tokens.add(studentsDoc.docs[i].data()["Token"]);
+                                  }
+                                  for(int i=0;i<tokens.length;i++ ){
+                                    database().sendPushMessage(tokens[i], "$subject_filter Notes ${notesCount+1} uploaded,Quiz DeadLine: $deadline","$subject_filter Notes ${notesCount+1}", false, "", stamp);
+                                    await FirebaseFirestore.instance.collection("Students").doc(emails[i]).update({
+                                      "Notifications" : FieldValue.arrayUnion([{
+                                        "title" : "$subject_filter notes ${notesCount+1} quiz.",
+                                        'body' : 'Your $subject_filter notes ${notesCount+1} quiz is pending. Please complete your quiz as soon as possible.\nDeadline: ${deadline}'
+                                      }])
+                                    });
+                                  }
+                                }
+                                else{
+                                  InAppNotifications.instance
+                                    ..titleFontSize = 25.0
+                                    ..descriptionFontSize = 15.0
+                                    ..textColor = Colors.black
+                                    ..backgroundColor = const Color.fromRGBO(150, 150, 150, 1)
+                                    ..shadow = true
+                                    ..animationStyle = InAppNotificationsAnimationStyle.scale;
+                                  InAppNotifications.show(
+                                      title: 'Error',
+                                      duration: const Duration(seconds: 2),
+                                      description: "Please select all field",
+                                      leading: const Icon(
+                                        Icons.error_outline,
+                                        color: Colors.red,
+                                        size: 40,
+                                      ));
+                                }
+                              },
+                              child:  AutoSizeText("Submit",
+                                style: GoogleFonts.openSans(
+                                    fontSize: size.height * 0.025, color: Colors.white,
+                                    fontWeight: FontWeight.w700
+                                ),
+
+                              ),
+                            ),
+                          ),
+                        ),
+
+
+                      ]);
+                },);
+              },
             ),
-          ],
-        ),
-      )
-          :
-          const SizedBox()*/
+          ),
+          SizedBox(
+            height: size.height*0.06,
+          )
+        ],
+      ),
+      body: tab[currTab]
     );
 
   }
-  Future<void> checkAndRequestPermissions() async {
-    directory=await getExternalStorageDirectory();
-    var permission = await checkALLPermissions.isStoragePermission();
-    if (permission) {
-      String? dir=directory?.path.toString().substring(0,19);
-      String path="$dir/Campus Link/$university_filter $college_filter $course_filter $branch_filter $year_filter $section_filter $subject_filter/Notes/";
-      Directory(path).exists().then((value) async {
-        if(!value)
-          {
-            await Directory(path).create(recursive: true);
-          }
-      });
-      setState(() {
-        permissionGranted=true;
-      });
+
+  getBytes() async {
+    for (var controller in pdfControllers) {
+      PdfDocument doc = await controller.document;
+      PdfPage page = await doc.getPage(1);
+      PdfPageImage? image = await page.render(
+          width: 400,
+          height: 400,
+          format: PdfPageImageFormat.png,
+          backgroundColor: "#FFFFFF");
+      imageBytes.add(image!.bytes);
+      await page.close();
+      print("............running");
     }
+    print("..........................\n${imageBytes[0]}");
+
   }
-
-  Future<void>checkExists()
-  async {
-    await FirebaseFirestore.instance.collection("Notes").doc("${university_filter.split(" ")[0]} ${college_filter.split(" ")[0]} ${course_filter.split(" ")[0]} ${branch_filter.split(" ")[0]} $year_filter $section_filter $subject_filter")
-        .get().then((value) {
-      checkAndRequestPermissions();
-      docExists=true;
-
-    });
-  }
-
-  Future<void> countStudents()
-  async {
-    await FirebaseFirestore.instance.collection("Students")
-        .where("University",isEqualTo: university_filter)
-        .where("College",isEqualTo: college_filter)
-        .where("Branch",isEqualTo: branch_filter)
-        .where("Course",isEqualTo: course_filter)
-        .where("Year",isEqualTo: year_filter)
-        .where("Section",isEqualTo: section_filter)
-        .where("Subject",arrayContains: subject_filter)
-        .get().then((value) {
-       totalStudents=value.docs.length;
-    });
-  }
-
 }
 
 

@@ -44,7 +44,7 @@ class _QuizState extends State<Quiz> {
     Size size = MediaQuery.of(context).size;
 
     return Container(
-       height: size.height,
+       height: size.height*0.6,
         padding: EdgeInsets.all(size.height * 0.01),
         decoration: BoxDecoration(
           color: Colors.black26.withOpacity(0.9),
@@ -57,7 +57,9 @@ class _QuizState extends State<Quiz> {
           scrollDirection: Axis.vertical,
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
+                IconButton(onPressed: (){}, icon: const Icon(Icons.clear,color: Colors.white,),),
                 SizedBox(
                   height: size.height * 0.08,
                 ),

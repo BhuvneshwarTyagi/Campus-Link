@@ -29,7 +29,7 @@ class Nevi extends StatefulWidget {
   State<Nevi> createState() => _NeviState();
 }
 
-class _NeviState extends State<Nevi> {
+class _NeviState extends State<Nevi>  {
   int index = 0;
   late var mtoken;
   final screens = [
@@ -89,6 +89,7 @@ class _NeviState extends State<Nevi> {
         ),
       ),
       child: Scaffold(
+        extendBody: true,
         backgroundColor: Colors.transparent,
         drawerEnableOpenDragGesture: true,
         drawer: Drawer(
@@ -358,7 +359,7 @@ class _NeviState extends State<Nevi> {
           title: SizedBox(
             width: size.width*0.9,
             height: size.height*0.055,
-            child: Text('Campus Link',style: GoogleFonts.tiltNeon(
+            child: AutoSizeText('Campus Link',style: GoogleFonts.tiltNeon(
                 color: Colors.black,
                 //const Color.fromRGBO(150, 150, 150, 1),
                 fontWeight: FontWeight.w500,
@@ -378,7 +379,7 @@ class _NeviState extends State<Nevi> {
               Container(
                 height: size.height * 0.055,
                 decoration: const BoxDecoration(
-                    color: Colors.black38,
+                    color: Colors.black54,
                     borderRadius: BorderRadius.all(Radius.circular(15))),
                 child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
