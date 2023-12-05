@@ -126,7 +126,7 @@ class _NotesTileState extends State<NotesTile> {
                   ),
                   AnimatedContainer(
                     height: isExpanded
-                        ? size.height * 0.22
+                        ? widget.quizCreated ? size.height * 0.32 : size.height * 0.2
                         : size.height * 0.1,
                     duration: const Duration(milliseconds: 200),
                     decoration: BoxDecoration(
@@ -256,134 +256,99 @@ class _NotesTileState extends State<NotesTile> {
                                     ],
                                   ),
                                   SizedBox(height: size.width*0.028,),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Container(
-                                        height: size.height * 0.046,
-                                        width: size.width * 0.34,
-                                        decoration: BoxDecoration(
-                                            gradient: const LinearGradient(
-                                              begin: Alignment.topLeft,
-                                              end: Alignment.bottomRight,
-                                              colors: [
-                                                Colors.blue,
-                                                Colors.purpleAccent,
-                                              ],
-                                            ),
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(
-                                                    size.width * 0.035)),
-                                            border: Border.all(
-                                                color: Colors.black, width: 2)
-                                        ),
-                                        child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors
-                                                    .transparent,
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius
-                                                        .all(
-                                                        Radius.circular(size
-                                                            .width * 0.035)))
-                                            ),
-
-                                            onPressed: () {
-                                              Navigator.push(context,
-                                                  PageTransition(
-                                                      child: responseScreen(
-                                                        quizId: widget.index,),
-                                                      type: PageTransitionType
-                                                          .bottomToTopJoined,
-                                                      childCurrent: const Notes(),
-                                                      duration: const Duration(
-                                                          milliseconds: 300)
-                                                  )
-                                              );
-                                            },
-                                            child: AutoSizeText(
-                                              "See Response",
-                                              style: GoogleFonts.openSans(
-                                                  fontSize: size.height * 0.022,
-                                                  color: Colors.white
-                                              ),
-
-
-                                            )),
+                                      Divider(
+                                        color: Colors.white70,
+                                        indent: size.width*0.03,
+                                        endIndent: size.width*0.03,
+                                        thickness: 1,
                                       ),
-                                      Container(
-                                        height: size.height * 0.046,
-                                        width: size.width * 0.34,
-                                        decoration: BoxDecoration(
-                                            gradient: const LinearGradient(
-                                              begin: Alignment.topLeft,
-                                              end: Alignment.bottomRight,
-                                              colors: [
-                                                Colors.blue,
-                                                Colors.purpleAccent,
-                                              ],
-                                            ),
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(
-                                                    size.width * 0.035)),
-                                            border: Border.all(
-                                                color: Colors.black, width: 2)
+                                      ListTile(
+                                        enabled: true,
+                                        focusColor: Colors.white38,
+                                        tileColor: Colors.transparent,
+                                        splashColor: Colors.black87,
+                                        onTap: () {
+                                          Navigator.push(context,
+                                              PageTransition(
+                                                  child: responseScreen(
+                                                    quizId: widget.index,),
+                                                  type: PageTransitionType
+                                                      .bottomToTopJoined,
+                                                  childCurrent: const Notes(),
+                                                  duration: const Duration(
+                                                      milliseconds: 300)
+                                              )
+                                          );
+                                        },
+                                        leading: Image.asset("assets/images/response.png"),
+                                        title: AutoSizeText(
+                                          "See Response",
+                                          style: GoogleFonts.tiltNeon(
+                                              fontSize: size.height * 0.022,
+                                              color: Colors.white
+                                          ),
                                         ),
-                                        child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors
-                                                    .transparent,
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius
-                                                        .all(
-                                                        Radius.circular(size
-                                                            .width * 0.035)))
-                                            ),
+                                        trailing: const Icon(Icons.arrow_forward_ios_rounded,color: Colors.white70,),
+                                      ),
+                                      Divider(
+                                        color: Colors.white70,
+                                        indent: size.width*0.03,
+                                        endIndent: size.width*0.03,
+                                        thickness: 1,
+                                      ),
+                                      ListTile(
+                                          enabled: true,
+                                          focusColor: Colors.transparent,
+                                          tileColor: Colors.transparent,
+                                          splashColor: Colors.transparent,
+                                        leading: Image.asset("assets/images/leaderboard.png"),
+                                          trailing: const Icon(Icons.arrow_forward_ios_rounded,color: Colors.white70,),
+                                          onTap: () {
+                                          if(widget.submission.length>3)
+                                          {
+                                            Navigator.push(context,
+                                                PageTransition(
+                                                    child: Quizscore(
+                                                      quizId: widget.index,),
+                                                    type: PageTransitionType
+                                                        .bottomToTopJoined,
+                                                    childCurrent: const Notes(),
+                                                    duration: const Duration(
+                                                        milliseconds: 300)
+                                                )
+                                            );
+                                          }
+                                          else{
+                                            InAppNotifications.instance
+                                              ..titleFontSize = 25.0
+                                              ..descriptionFontSize = 15.0
+                                              ..textColor = Colors.black
+                                              ..backgroundColor = const Color.fromRGBO(150, 150, 150, 1)
+                                              ..shadow = true
+                                              ..animationStyle = InAppNotificationsAnimationStyle.scale;
+                                            InAppNotifications.show(
+                                                title: 'Error',
+                                                duration: const Duration(seconds: 2),
+                                                description: "Submissions are less than three",
+                                                leading: const Icon(
+                                                  Icons.error_outline,
+                                                  color: Colors.red,
+                                                  size: 30,
+                                                ),
+                                            );
+                                          }
 
-                                            onPressed: () {
-                                              if(widget.submission.length>3)
-                                              {
-                                                Navigator.push(context,
-                                                    PageTransition(
-                                                        child: Quizscore(
-                                                          quizId: widget.index,),
-                                                        type: PageTransitionType
-                                                            .bottomToTopJoined,
-                                                        childCurrent: const Notes(),
-                                                        duration: const Duration(
-                                                            milliseconds: 300)
-                                                    )
-                                                );
-                                              }
-                                              else{
-                                                InAppNotifications.instance
-                                                  ..titleFontSize = 25.0
-                                                  ..descriptionFontSize = 15.0
-                                                  ..textColor = Colors.black
-                                                  ..backgroundColor = const Color.fromRGBO(150, 150, 150, 1)
-                                                  ..shadow = true
-                                                  ..animationStyle = InAppNotificationsAnimationStyle.scale;
-                                                InAppNotifications.show(
-                                                    title: 'Error',
-                                                    duration: const Duration(seconds: 2),
-                                                    description: "Submissions are less than three",
-                                                    leading: const Icon(
-                                                      Icons.error_outline,
-                                                      color: Colors.red,
-                                                      size: 40,
-                                                    ));
-                                              }
-
-                                            },
-                                            child: AutoSizeText(
+                                        },
+                                          title: AutoSizeText(
                                               "Leaderboard",
-                                              style: GoogleFonts.openSans(
-                                                  fontSize: size.height * 0.022,
-                                                  color: Colors.white
+                                              style: GoogleFonts.tiltNeon(
+                                                 fontSize: size.height * 0.022,
+                                                 color: Colors.white
                                               ),
-
-
-                                            )),
+                                          ),
                                       ),
                                     ],
                                   ),
@@ -392,58 +357,34 @@ class _NotesTileState extends State<NotesTile> {
                                 ],
                               )
                                   :
-                              Container(
-                                height: size.height * 0.05,
-                                width: size.width * 0.45,
-                                decoration: BoxDecoration(
-                                    gradient: const LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: [
-                                        Colors.blue,
-                                        Colors.purpleAccent,
-                                      ],
-                                    ),
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(
-                                            size.width * 0.035)),
-                                    border: Border.all(
-                                        color: Colors.black, width: 2)
-                                ),
-                                child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors
-                                            .transparent,
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius
-                                                .all(
-                                                Radius.circular(size
-                                                    .width * 0.035)))
-                                    ),
-
-                                    onPressed: () {
-                                      Navigator.push(context,
-                                          PageTransition(
-                                              child: QuizQustion(
-                                                quizNumber: widget.index,),
-                                              type: PageTransitionType
-                                                  .bottomToTopJoined,
-                                              childCurrent: const Notes(),
-                                              duration: const Duration(
-                                                  milliseconds: 300)
-                                          )
-                                      );
-                                    },
-                                    child: AutoSizeText(
-                                      "Create Quiz",
-                                      style: GoogleFonts.openSans(
-                                          fontSize: size.height * 0.022,
-                                          color: Colors.white
-                                      ),
-
-
-                                    )),
-                              )
+                            ListTile(
+                            enabled: true,
+                            focusColor: Colors.white38,
+                            tileColor: Colors.transparent,
+                            splashColor: Colors.black87,
+                            onTap: () {
+                              Navigator.push(context,
+                                  PageTransition(
+                                      child: QuizQustion(
+                                        quizNumber: widget.index,),
+                                      type: PageTransitionType
+                                          .bottomToTopJoined,
+                                      childCurrent: const Notes(),
+                                      duration: const Duration(
+                                          milliseconds: 300)
+                                  )
+                              );
+                            },
+                            leading: Image.asset("assets/images/response.png"),
+                            title: AutoSizeText(
+                              "Create Quiz",
+                              style: GoogleFonts.tiltNeon(
+                                  fontSize: size.height * 0.022,
+                                  color: Colors.white
+                              ),
+                            ),
+                            trailing: const Icon(Icons.arrow_forward_ios_rounded,color: Colors.white70,),
+                          ),
                           ) :
                           const SizedBox(),
                         ],
