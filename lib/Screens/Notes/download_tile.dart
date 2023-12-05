@@ -1,5 +1,8 @@
+import 'dart:html' as html;
+
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inapp_notifications/flutter_inapp_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -75,51 +78,59 @@ class _DownloadButtonState extends State<DownloadButton> {
           :
       InkWell(
           onTap: () async {
-            if(await checkPermissions()){
-              File file=File("$systempath${widget.path}/${widget.pdfName}");
-              await file.exists().then((value) async {
-                if(!value)
-                {
-                  print(".Start");
-                  setState(() {
-                    isDownloading=true;
-                  });
-                  await dio.download(widget.downloadUrl,file.path,onReceiveProgress: (count, total) {
-                    if(count==total){
-                      setState(() {
-                        isDownloaded=false;
-                      });
-                    }
-                    else{
-                      setState(() {
-                        percent = (count/total);
-                      });
-                    }
-                  },);
-                }
-                else{
-                  print("..Already Exsist");
-                }
-              });
-            }else{
-              InAppNotifications.instance
-                ..titleFontSize = 14.0
-                ..descriptionFontSize = 14.0
-                ..textColor = Colors.black
-                ..backgroundColor = const Color.fromRGBO(150, 150, 150, 1)
-                ..shadow = true
-                ..animationStyle = InAppNotificationsAnimationStyle.scale;
-              InAppNotifications.show(
-                // title: '',
-                duration: const Duration(seconds: 2),
-                description: "Please grant storage permission first to download documents",
-                // leading: const Icon(
-                //   Icons.error_outline_outlined,
-                //   color: Colors.red,
-                //   size: 55,
-                // )
-              );
-            }
+           if(kIsWeb){
+             html.AnchorElement anchorElement =  html.AnchorElement(href: widget.downloadUrl);
+             anchorElement.download = widget.downloadUrl;
+             anchorElement.click();
+           }
+           else{
+             if(await checkPermissions()){
+               File file=File("$systempath${widget.path}/${widget.pdfName}");
+               await file.exists().then((value) async {
+                 if(!value)
+                 {
+                   print(".Start");
+                   setState(() {
+                     isDownloading=true;
+                   });
+                   await dio.download(widget.downloadUrl,file.path,onReceiveProgress: (count, total) {
+                     if(count==total){
+                       setState(() {
+                         isDownloaded=false;
+                       });
+                     }
+                     else{
+                       setState(() {
+                         percent = (count/total);
+                       });
+                     }
+                   },);
+                 }
+                 else{
+                   print("..Already Exsist");
+                 }
+               });
+             }
+             else{
+               InAppNotifications.instance
+                 ..titleFontSize = 14.0
+                 ..descriptionFontSize = 14.0
+                 ..textColor = Colors.black
+                 ..backgroundColor = const Color.fromRGBO(150, 150, 150, 1)
+                 ..shadow = true
+                 ..animationStyle = InAppNotificationsAnimationStyle.scale;
+               InAppNotifications.show(
+                 // title: '',
+                 duration: const Duration(seconds: 2),
+                 description: "Please grant storage permission first to download documents",
+                 // leading: const Icon(
+                 //   Icons.error_outline_outlined,
+                 //   color: Colors.red,
+                 //   size: 55,
+                 // )
+               );
+             }
+           }
           },
           child: SizedBox(
             width: size.height*0.045,
