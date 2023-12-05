@@ -4,21 +4,10 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:campus_link_teachers/Screens/Notes/Notes_Tile.dart';
 import 'package:campus_link_teachers/Screens/Notes/Upload_Bottom_Sheet.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dotted_border/dotted_border.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_inapp_notifications/flutter_inapp_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:page_transition/page_transition.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:pdfx/pdfx.dart';
 import '../../Constraints.dart';
-import '../../Database/database.dart';
 import '../../push_notification/Storage_permission.dart';
-import '../loadingscreen.dart';
-import '../quiz.dart';
-import '../quizquestion.dart';
 
 class NotesSection extends StatefulWidget {
   const NotesSection({super.key});
@@ -50,57 +39,49 @@ class _NotesSectionState extends State<NotesSection> {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Container(
-            decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Colors.blue, Colors.purpleAccent],
-                ),
-                borderRadius: const BorderRadius.all(Radius.circular(20)),
-                border: Border.all(color: Colors.black, width: 1)
+      floatingActionButton: Container(
+        decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Colors.blue, Colors.purpleAccent],
             ),
-            width: size.width * 0.4,
-            height: size.height * 0.05,
-            child: FloatingActionButton(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              child:  Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Image.asset("assets/images/upload-icon.png",),
-                  SizedBox(width: size.width*0.02,),
-                  AutoSizeText("Upload Notes",style: GoogleFonts.tiltNeon(
-                      color: Colors.black,
-                      //const Color.fromRGBO(150, 150, 150, 1),
-                      fontWeight: FontWeight.w500,
-                      fontSize: size.width*0.035),
-                  ),
-                ],
+            borderRadius: const BorderRadius.all(Radius.circular(20)),
+            border: Border.all(color: Colors.black, width: 1)
+        ),
+        width: size.width * 0.4,
+        height: size.height * 0.05,
+        child: FloatingActionButton(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child:  Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Image.asset("assets/images/upload-icon.png",),
+              SizedBox(width: size.width*0.02,),
+              AutoSizeText("Upload Notes",style: GoogleFonts.tiltNeon(
+                  color: Colors.black,
+                  //const Color.fromRGBO(150, 150, 150, 1),
+                  fontWeight: FontWeight.w500,
+                  fontSize: size.width*0.035),
               ),
-              onPressed: () async {
-                await showModalBottomSheet(
-                  backgroundColor: Colors.black,
-                  shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(35),
-                        topRight: Radius.circular(35),
-                      )
-                  ),
-                  context: context,
-                  builder: (context) {
-                    return const UploadBottomSheet();
-                  },);
-              },
-            ),
+            ],
           ),
-          SizedBox(
-            height: size.height*0.06,
-          )
-        ],
+          onPressed: () async {
+            await showModalBottomSheet(
+              backgroundColor: Colors.black,
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(35),
+                    topRight: Radius.circular(35),
+                  )
+              ),
+              context: context,
+              builder: (context) {
+                return const UploadBottomSheet();
+              },);
+          },
+        ),
       ),
       body: docExists
           ?

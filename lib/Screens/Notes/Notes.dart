@@ -35,7 +35,7 @@ class _NotesState extends State<Notes> with TickerProviderStateMixin{
 
 
 
-  List<Widget> tab=[const NotesSection(),subjectQuizScore(subject: subject_filter,)];
+  List<Widget> tab=[const NotesSection(),SubjectQuizScore(subject: subject_filter,)];
 
   late TabController _tabController;
   int currTab=0;

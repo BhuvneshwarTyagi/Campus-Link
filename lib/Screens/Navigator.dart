@@ -13,7 +13,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 import '../Database/database.dart';
 import '../Registration/Basic.dart';
-import 'Assignments.dart';
+import 'Assignment/Assignments.dart';
 import 'Attendance.dart';
 import 'Filters.dart';
 import 'Notes/Notes.dart';
@@ -33,7 +33,7 @@ class _NeviState extends State<Nevi>  {
   int index = 0;
   late var mtoken;
   final screens = [
-    const Assignments_upload(),
+    const AssignmentsUpload(),
     const Notes(),
     const Attendance(),
     const Performance(),
@@ -89,7 +89,6 @@ class _NeviState extends State<Nevi>  {
         ),
       ),
       child: Scaffold(
-        extendBody: true,
         backgroundColor: Colors.transparent,
         drawerEnableOpenDragGesture: true,
         drawer: Drawer(
