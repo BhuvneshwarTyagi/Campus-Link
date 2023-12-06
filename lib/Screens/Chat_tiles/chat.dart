@@ -234,10 +234,10 @@ class _ChatPageState extends State<ChatPage> {
                         SizedBox(width: size.width*0.02,),
                         InkWell(
                           onTap: () async {
-                            Navigator.pushReplacement(
+                            Navigator.push(
                                 context,
                                 MaterialPageRoute(builder: (context) {
-                                  return  Chat_Info(channel: widget.channel, membersCount: snapshot.data!.data()!["Members"].length, url: snapshot.data!.data()!["image_URL"], muted: snapshot.data!.data()![usermodel["Email"].toString().split("@")[0]]["Mute Notification"] ?? false,);
+                                  return  ChatInfo(channel: widget.channel, membersCount: snapshot.data!.data()!["Members"].length, url: snapshot.data!.data()!["image_URL"], muted: snapshot.data!.data()![usermodel["Email"].toString().split("@")[0]]["Mute Notification"] ?? false,);
                                       },
                                 ),
                             );

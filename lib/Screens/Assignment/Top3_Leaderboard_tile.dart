@@ -1,6 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -38,7 +37,9 @@ class TopThree extends StatelessWidget {
                             CircleAvatar(
                                 backgroundColor: Colors.green[600],
                                 radius: size.width * 0.1,
-                                backgroundImage: NetworkImage(snapshot.data!.data()?['Profile_URL'])
+                                backgroundImage: NetworkImage(
+                                    snapshot.data!.data()?['Profile_URL'],
+                                ),
                             )
                                 :
                             CircleAvatar(

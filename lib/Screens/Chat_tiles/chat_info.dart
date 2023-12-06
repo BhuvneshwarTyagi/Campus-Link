@@ -14,18 +14,18 @@ import 'Media_File.dart';
 
 
 
-class Chat_Info extends StatefulWidget {
-  const Chat_Info({super.key, required this.channel, required this.membersCount, required this.url, required this.muted});
+class ChatInfo extends StatefulWidget {
+  const ChatInfo({super.key, required this.channel, required this.membersCount, required this.url, required this.muted});
   final String channel;
   final int membersCount;
   final String url;
   final bool muted;
   @override
-  State<Chat_Info> createState() => _Chat_InfoState();
+  State<ChatInfo> createState() => _ChatInfoState();
 }
 
 
-class _Chat_InfoState extends State<Chat_Info> {
+class _ChatInfoState extends State<ChatInfo> {
    late bool _switched;
    Color color1=Colors.black;
    Color headingColor=Colors.black;
@@ -184,7 +184,7 @@ class _Chat_InfoState extends State<Chat_Info> {
                                 child: GroupDescription(channel: widget.channel),
                                 type: PageTransitionType.bottomToTopJoined,
                                 duration: const Duration(milliseconds: 200),
-                                childCurrent: Chat_Info(muted: widget.muted,channel: widget.channel,membersCount: widget.membersCount,url: widget.url,)
+                                childCurrent: ChatInfo(muted: widget.muted,channel: widget.channel,membersCount: widget.membersCount,url: widget.url,)
 
                             ),
                           );
@@ -319,7 +319,7 @@ class _Chat_InfoState extends State<Chat_Info> {
                       Navigator.push(
                         context,
                         PageTransition(
-                            childCurrent:Chat_Info(channel: widget.channel, membersCount: widget.membersCount, url: widget.url,muted: widget.muted),
+                            childCurrent:ChatInfo(channel: widget.channel, membersCount: widget.membersCount, url: widget.url,muted: widget.muted),
                             child:Media_files(channel: widget.channel,),
                             type: PageTransitionType
                                 .rightToLeftJoined,

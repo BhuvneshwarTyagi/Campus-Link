@@ -1,15 +1,11 @@
-import 'dart:html' as html;
-
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inapp_notifications/flutter_inapp_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'dart:io';
-
 import 'package:permission_handler/permission_handler.dart';
 
 class DownloadButton extends StatefulWidget {
@@ -78,12 +74,6 @@ class _DownloadButtonState extends State<DownloadButton> {
           :
       InkWell(
           onTap: () async {
-           if(kIsWeb){
-             html.AnchorElement anchorElement =  html.AnchorElement(href: widget.downloadUrl);
-             anchorElement.download = widget.downloadUrl;
-             anchorElement.click();
-           }
-           else{
              if(await checkPermissions()){
                File file=File("$systempath${widget.path}/${widget.pdfName}");
                await file.exists().then((value) async {
@@ -130,8 +120,7 @@ class _DownloadButtonState extends State<DownloadButton> {
                  // )
                );
              }
-           }
-          },
+           },
           child: SizedBox(
             width: size.height*0.045,
               height: size.height*0.045,

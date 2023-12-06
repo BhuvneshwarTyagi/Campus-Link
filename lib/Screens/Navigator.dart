@@ -1,8 +1,11 @@
 import 'dart:convert';
+import 'package:campus_link_teachers/Screens/Assignment/Leaderboard.dart';
 import 'package:campus_link_teachers/Screens/Feedback.dart';
+import 'package:campus_link_teachers/Screens/Leader_board/Leader_Board.dart';
 import 'package:campus_link_teachers/Screens/loadingscreen.dart';
 import 'package:campus_link_teachers/push_notification/helper_notification.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_ml_model_downloader/firebase_ml_model_downloader.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:auto_size_text/auto_size_text.dart';
@@ -21,6 +24,7 @@ import 'Performance.dart';
 import 'Sessional.dart';
 import 'Chat_tiles/chat_list.dart';
 import 'download_attendance.dart';
+import 'package:tflite_flutter/tflite_flutter.dart' as tfl;
 
 class Nevi extends StatefulWidget {
   const Nevi({Key? key}) : super(key: key);
@@ -36,7 +40,7 @@ class _NeviState extends State<Nevi>  {
     const AssignmentsUpload(),
     const Notes(),
     const Attendance(),
-    const Performance(),
+    const OverAllLeaderBoard(),
     const Sessional(),
   ];
   double leftpos = 26;
@@ -221,7 +225,20 @@ class _NeviState extends State<Nevi>  {
               ListTile(
                 leading: const Icon(Icons.settings,color: Colors.black),
                 title: const Text("Settings"),
-                onTap: () {},
+                onTap: () async {
+                    await FirebaseModelDownloader
+                        .instance
+                        .getModel("FaceDetection", FirebaseModelDownloadType.localModel)
+                        .then((value) async {
+                          print(value.file.uri);
+                      String modelPath=value.file.path;
+                      print(modelPath);
+                          final interpreter = await tfl.Interpreter.fromAsset('assets/images/model.tflite');
+                      print(interpreter);
+                      //print(res);
+                    });
+
+                },
               ),
               ListTile(
                 leading: const Icon(Icons.logout_outlined,color: Colors.black,),

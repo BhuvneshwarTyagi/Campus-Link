@@ -1,7 +1,5 @@
 import 'dart:async';
-
 import 'package:campus_link_teachers/push_notification/helper_notification.dart';
-// import 'dart:ui_web' as ui;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
