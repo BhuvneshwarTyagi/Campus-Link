@@ -292,6 +292,9 @@ class _AssigmentQuestionState extends State<AssigmentQuestion> {
                               "${university_filter.split(" ")[0]} ${college_filter.split(" ")[0]} ${course_filter.split(" ")[0]} ${branch_filter.split(" ")[0]} $year_filter $section_filter $subject_filter")
                               .set({
                             "Total_Assignment": assignmentCount+1,
+                            "Total_Submitted_Assignment":{
+
+                            },
 
                             "Assignment-${assignmentCount+1}": {
                               "Assignment": pdfURL,
@@ -351,10 +354,10 @@ class _AssigmentQuestionState extends State<AssigmentQuestion> {
                           });
                         }
                       }).whenComplete(
-                           () {
-                             Navigator.pop(context);
-                             Navigator.pop(context);
-                           },
+                            () {
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                        },
                       );
                     });
                   }
