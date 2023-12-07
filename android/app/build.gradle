@@ -26,6 +26,10 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
+    aaptOptions {
+        noCompress 'tflite'
+        noCompress 'lite'
+    }
     compileSdkVersion 33
     ndkVersion "25.1.8937393"
     compileOptions {
@@ -67,6 +71,7 @@ flutter {
 }
 
 dependencies {
+    //compile 'org.tensorflow:tensorflow-android:+'
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation platform('com.google.firebase:firebase-bom:31.3.0')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
