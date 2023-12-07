@@ -1,23 +1,8 @@
-import 'dart:io';
-import 'dart:typed_data';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:campus_link_teachers/Screens/Notes/Notes_Section.dart';
-import 'package:campus_link_teachers/Screens/Notes/quiz.dart';
-import 'package:campus_link_teachers/Screens/Notes/quizquestion.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dio/dio.dart';
-import 'package:dotted_border/dotted_border.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_inapp_notifications/flutter_inapp_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:page_transition/page_transition.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:pdfx/pdfx.dart';
 import '../../Constraints.dart';
-import '../../Database/database.dart';
-import '../loadingscreen.dart';
 import 'SubjectQuizScore.dart';
 
 class Notes extends StatefulWidget {

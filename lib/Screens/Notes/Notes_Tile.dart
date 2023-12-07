@@ -233,7 +233,7 @@ class _NotesTileState extends State<NotesTile> {
                             color: Colors.white70,
                             fontSize: size.height*0.012
                         ),),
-                        AutoSizeText("Submission : ${widget.submission != null
+                        AutoSizeText("Submission : ${widget.submission !=  null
                             ?
                         widget.submission.length
                             :

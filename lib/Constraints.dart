@@ -16,5 +16,3 @@ String subject_filter = '';
 int all=0;
 Position tecloc= Position.fromMap({'latitude': 0.0, 'longitude': 0.0});
 Map<String,dynamic> usermodel={};
-
-bool upload_marks=true;

@@ -21,7 +21,7 @@ import 'Attendance.dart';
 import 'Filters.dart';
 import 'Notes/Notes.dart';
 import 'Performance.dart';
-import 'Sessional.dart';
+import 'Sessional/Sessional.dart';
 import 'Chat_tiles/chat_list.dart';
 import 'download_attendance.dart';
 import 'package:tflite_flutter/tflite_flutter.dart' as tfl;
@@ -382,7 +382,7 @@ class _NeviState extends State<Nevi>  {
                 fontSize: MediaQuery.of(context).size.height * 0.04),),
           )
         ),
-        body: screens[index],
+        body: screens[4],
         bottomNavigationBar: Container(
           height: size.height * 0.055,
           margin: EdgeInsets.fromLTRB(size.width*0.04,5,size.width*0.04,size.height*0.01),
@@ -624,141 +624,10 @@ class _NeviState extends State<Nevi>  {
                     highlightColor: Colors.transparent,
                     onTap: () {
 
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return Center(
-                            child: Container(
-                              width: size.width*0.7,
-                              height: subject_filter.isEmpty?
-                              size.height*0.2
-                                  :
-                              size.height*0.63,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(30),
-                                  color: Colors.black,
-                                  border: Border.all(color: Colors.white,width: 2)
-                              ),
-                              padding: const EdgeInsets.all(12),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    height: size.height*0.02,
-                                  ),
-                                  AutoSizeText(
-                                    "What Do You Want To Do?",
-                                    style: GoogleFonts.exo(color: Colors.white),
-                                  ),
-                                  SizedBox(
-                                    height: size.height*0.01,
-                                  ),
-
-                                  subject_filter.isEmpty?
-                                  SizedBox(
-                                    height: size.height*0,
-                                  ):
-                                  Column(
-                                    children: [
-                                      AutoSizeText(
-                                        "Please check your filter",
-                                        style: GoogleFonts.exo(color: Colors.white),
-                                      ),
-                                      SizedBox(
-                                        height: size.height*0.01,
-                                      ),
-                                      AutoSizeText(
-                                        university_filter,
-                                        style: GoogleFonts.exo(color: Colors.white),
-                                      ),
-                                      const Icon(Icons.arrow_drop_down_outlined,color: Colors.white),
-                                      AutoSizeText(
-                                        college_filter,
-                                        style: GoogleFonts.exo(color: Colors.white),
-                                      ),
-                                      const Icon(Icons.arrow_drop_down_outlined,color: Colors.white),
-                                      AutoSizeText(
-                                        course_filter,
-                                        style: GoogleFonts.exo(color: Colors.white),
-                                      ),
-                                      const Icon(Icons.arrow_drop_down_outlined,color: Colors.white),
-                                      AutoSizeText(
-                                        branch_filter,
-                                        style: GoogleFonts.exo(color: Colors.white),
-                                      ),
-                                      const Icon(Icons.arrow_drop_down_outlined,color: Colors.white),
-                                      AutoSizeText(
-                                        "Year: $year_filter",
-                                        style: GoogleFonts.exo(color: Colors.white),
-                                      ),
-                                      const Icon(Icons.arrow_drop_down_outlined,color: Colors.white),
-                                      AutoSizeText(
-                                        "Section: $section_filter",
-                                        style: GoogleFonts.exo(color: Colors.white),
-                                      ),
-                                      const Icon(Icons.arrow_drop_down_outlined,color: Colors.white),
-                                      AutoSizeText(
-                                        subject_filter,
-                                        style: GoogleFonts.exo(color: Colors.white),
-                                      ),],
-                                  ),
-                                  SizedBox(
-                                    height: size.height*0.02,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                BorderRadius.circular(15)),
-                                            elevation: 20,
-                                            backgroundColor: Colors.white10),
-                                        onPressed: () {
-
-                                          setState(() {
-                                            upload_marks=false;
-                                            index=4;
-                                            slider= size.width*0.565;
-
-                                          });
-                                          Navigator.pop(context);
-                                        },
-                                        child: AutoSizeText(
-                                          "View Marks",
-                                          style: GoogleFonts.exo(color: Colors.white),
-                                        ),
-                                      ),
-                                      ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                BorderRadius.circular(15)),
-                                            elevation: 20,
-                                            backgroundColor: Colors.white10),
-                                        onPressed: () async {
-                                          setState(() {
-                                            index = 4;
-                                            upload_marks=true;
-                                            slider= size.width*0.565;
-                                          });
-                                          Navigator.pop(context);
-
-                                        },
-                                        child: Text(
-                                          "Upload Marks",
-                                          style: GoogleFonts.exo(color: Colors.white),
-                                        ),
-                                      )
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      );
+                      setState(() {
+                        index=4;
+                        slider= size.width*0.565;
+                      });
 
 
                     },
