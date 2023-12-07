@@ -91,7 +91,7 @@ class TopThree extends StatelessWidget {
                 ),
               ),
               AutoSizeText(
-                "${data[1]["Submitted"]} / ${data[1]["outOf"]}",
+                "${(data[1]["Submitted"]*100).toStringAsFixed(2)} %",
                 style: const TextStyle(
                   color: Color.fromARGB(255, 10, 52, 84),
                   fontWeight: FontWeight.w500,
@@ -180,7 +180,7 @@ class TopThree extends StatelessWidget {
                     ),
                   ),
                 ),
-                AutoSizeText( "${data[0]["Submitted"]} / ${data[0]["outOf"]}",
+                AutoSizeText( "${(data[0]["Submitted"]*100).toStringAsFixed(2)} %",
                   style: const TextStyle(
                     color: Color.fromARGB(255, 10, 52, 84),
                     fontWeight: FontWeight.w500,
@@ -270,7 +270,7 @@ class TopThree extends StatelessWidget {
                   ),
                 ),
                 AutoSizeText(
-                  "${data[2]["Submitted"]} / ${data[2]["outOf"]}",
+    "${(data[2]["Submitted"]*100).toStringAsFixed(2)} %",
                     style: const TextStyle(
                         color: Color.fromARGB(255, 10, 52, 84),
                         fontWeight: FontWeight.w500,

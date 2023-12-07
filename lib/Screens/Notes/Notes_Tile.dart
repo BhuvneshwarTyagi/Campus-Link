@@ -57,21 +57,40 @@ class _NotesTileState extends State<NotesTile> {
                 childCurrent: const Notes(),
               ),
             );
+          }else{
+            InAppNotifications.instance
+              ..titleFontSize = 14.0
+              ..descriptionFontSize = 14.0
+              ..textColor = Colors.black
+              ..backgroundColor = const Color.fromRGBO(150, 150, 150, 1)
+              ..shadow = true
+              ..animationStyle = InAppNotificationsAnimationStyle.scale;
+            InAppNotifications.show(
+              // title: '',
+              duration: const Duration(seconds: 2),
+              description: "Please download notes first before opening.",
+              // leading: const Icon(
+              //   Icons.error_outline_outlined,
+              //   color: Colors.red,
+              //   size: 55,
+              // )
+            );
           }
         },
       child: Padding(
         padding: EdgeInsets.all(size.width * 0.032),
         child: Container(
-          width: size.width * 0.85,
+          width: size.width * 0.95,
           decoration: BoxDecoration(
             //color: const Color.fromRGBO(56, 33, 101,1),
-              color: Colors.white70,
+              color: Colors.white,
               borderRadius: radiusGeomentry,
               border: Border.all(color:const Color.fromRGBO(56, 33, 101,1),width: 3)
           ),
           child: Stack(
 
             children: [
+
               Column(
                 children: [
                   SizedBox(
@@ -89,275 +108,154 @@ class _NotesTileState extends State<NotesTile> {
                                     size.width * 0.05),
                                 topRight: Radius.circular(
                                     size.width * 0.05)),
-                            /*image: DecorationImage(
-                                              image: NetworkImage(
-                                                "${snapshot.data["Notes-${index +
-                                                    1}"]["thumbnailURL"]}",
-                                              ), fit: BoxFit.cover,
-                                            )*/
                           ),
-                          child: Center(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  height: size.height*0.01,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                height: size.height*0.01,
+                              ),
+                              AutoSizeText(
+                                subject_filter,
+                                style: GoogleFonts.tiltNeon(
+                                    color: Colors.black,
+                                    fontSize: size.height*0.03,
+                                    fontWeight: FontWeight.w400
                                 ),
-                                AutoSizeText(
-                                  subject_filter,
-                                  style: GoogleFonts.tiltNeon(
-                                      color: Colors.black,
-                                      fontSize: size.height*0.03,
-                                      fontWeight: FontWeight.w400
-                                  ),
+                              ),
+                              AutoSizeText(
+                                "Notes : ${widget.index}",
+                                style: GoogleFonts.tiltNeon(
+                                    color: Colors.black,
+                                    fontSize: size.height*0.03,
+                                    fontWeight: FontWeight.w400
                                 ),
-                                AutoSizeText(
-                                  "Notes : ${widget.index}",
-                                  style: GoogleFonts.tiltNeon(
-                                      color: Colors.black,
-                                      fontSize: size.height*0.03,
-                                      fontWeight: FontWeight.w400
-                                  ),
-                                )
-                              ],
-                            ),
+                              )
+                            ],
                           ),)
                     ),
                   ),
-                  AnimatedContainer(
-                    height: isExpanded
-                        ? widget.quizCreated ? size.height * 0.32 : size.height * 0.2
-                        : size.height * 0.1,
-                    duration: const Duration(milliseconds: 200),
-                    decoration: BoxDecoration(
-                        color: const Color.fromRGBO(56, 33, 101,1),
-                        borderRadius: BorderRadius.only(
-                          bottomLeft:  Radius.circular(size.width*0.05),
-                                bottomRight:  Radius.circular(size.width*0.05)
-                        )
-
+                  ExpansionTile(
+                    collapsedBackgroundColor: const Color.fromRGBO(60, 99, 100, 1),
+                    collapsedShape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(size.width*0.05),
+                        bottomRight: Radius.circular(size.width*0.05),
+                      )
                     ),
-                    child: SingleChildScrollView(
-                      physics: const NeverScrollableScrollPhysics(),
-                      child: Column(
+                    backgroundColor: const Color.fromRGBO(60, 99, 100, 1),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(
+                                size.width * 0.05),
+                            bottomRight: Radius.circular(
+                                size.width * 0.05)),),
+                      title: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AutoSizeText(
+                            widget.pdfName != ""
+                                ?
+                            widget.pdfName
+                                :
+                            "",
+                            style: GoogleFonts.tiltNeon(
+                                fontSize: 18,
+                                color: Colors.black,
+                                fontWeight: FontWeight
+                                    .w500),
+                            maxLines: 1,
+
+                          ),
+                          SizedBox(
+                            height: size.height * 0.005,
+                          ),
+                          AutoSizeText(
+                            "Size: ${(int.parse(widget.pdfSize
+                                .toString()) / 1048576)
+                                .toStringAsFixed(2)} MB",
+                            style: GoogleFonts.tiltNeon(
+                                fontSize: 14,
+                                color: Colors.black,
+                                fontWeight: FontWeight
+                                    .w500),),
+                          SizedBox(
+                            width: size.width * 0.005,
+                          ),
+                          AutoSizeText(
+                            "Date: ${widget.stamp.toString().split(" ")[0]}"
+                            ,
+                            style: GoogleFonts.tiltNeon(
+                                fontSize: 14,
+                                color: Colors.black,
+                                fontWeight: FontWeight
+                                    .w500),)
+                        ],
+                      ),
+                      leading: Container(
+                          height: size.width * 0.1,
+                          width: size.width * 0.1,
+                          decoration: const BoxDecoration(
+                            color: Colors.transparent,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Image.asset("assets/icon/pdf.png")
+
+                      ),
+                      trailing: SizedBox(
+                        height: size.width * 0.12,
+                        width: size.width * 0.12,
+                        child: FloatingActionButton(
+                            backgroundColor:Colors.lightBlueAccent,
+                            elevation: 0,
+                            onPressed: () {
+                              setState(() {
+                                isExpanded=!isExpanded;
+
+                              });
+                            },
+                            child:
+                            Image.asset(
+                              "assets/icon/speech-bubble.png",
+                              width: size.height * 0.045,
+                              height: size.height * 0.045,)
+                        ),
+                      ),
+                    children: widget.quizCreated ?
+                    [
+                      Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        //SizedBox(width: size.width*0.065,),
+                        AutoSizeText("Deadline : ${widget.deadLine.toDate().toString().substring(0,16)}",style: GoogleFonts.poppins(
+                            color: Colors.white70,
+                            fontSize: size.height*0.012
+                        ),),
+                        AutoSizeText("Submission : ${widget.submission != null
+                            ?
+                        widget.submission.length
+                            :
+                        0
+                        } / ${widget.totalStudents}",
+                          style: GoogleFonts.poppins(
+                              color: Colors.white70,
+                              fontSize: size.height*0.012
+                          ),),
+                      ],
+                    ),
+                      SizedBox(height: size.width*0.028,),
+                      Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          SizedBox(
-                            height: size.height*0.01,
+                          Divider(
+                            color: Colors.white70,
+                            indent: size.width*0.03,
+                            endIndent: size.width*0.03,
+                            thickness: 1,
                           ),
                           ListTile(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(
-                                      size.width * 0.05),
-                                  bottomRight: Radius.circular(
-                                      size.width * 0.05)),),
-                            title: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                AutoSizeText(
-                                  widget.pdfName != ""
-                                      ?
-                                  widget.pdfName
-                                      :
-                                  "",
-                                  style: GoogleFonts.tiltNeon(
-                                      fontSize: 18,
-                                      color: Colors.white70,
-                                      fontWeight: FontWeight
-                                          .w500),
-                                  maxLines: 1,
-
-                                ),
-                                SizedBox(
-                                  height: size.height * 0.005,
-                                ),
-                                AutoSizeText(
-                                  "Size: ${(int.parse(widget.pdfSize
-                                      .toString()) / 1048576)
-                                      .toStringAsFixed(2)} MB",
-                                  style: GoogleFonts.tiltNeon(
-                                      fontSize: 14,
-                                      color: Colors.white70,
-                                      fontWeight: FontWeight
-                                          .w500),),
-                                SizedBox(
-                                  width: size.width * 0.005,
-                                ),
-                                AutoSizeText(
-                                  "Date: ${widget.stamp.toString().split(" ")[0]}"
-                                      ,
-                                  style: GoogleFonts.tiltNeon(
-                                      fontSize: 14,
-                                      color: Colors.white70,
-                                      fontWeight: FontWeight
-                                          .w500),)
-                              ],
-                            ),
-                            leading: Container(
-                                height: size.width * 0.1,
-                                width: size.width * 0.1,
-                                decoration: const BoxDecoration(
-                                  color: Colors.transparent,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Image.asset("assets/icon/pdf.png")
-
-                            ),
-                            trailing: SizedBox(
-                              height: size.width * 0.12,
-                              width: size.width * 0.12,
-                              child: FloatingActionButton(
-                                  backgroundColor:Colors.lightBlueAccent,
-                                  elevation: 0,
-                                  onPressed: () {
-                                    setState(() {
-                                      isExpanded=!isExpanded;
-
-                                    });
-                                  },
-                                  child:
-                                  Image.asset(
-                                    "assets/icon/speech-bubble.png",
-                                    width: size.height * 0.045,
-                                    height: size.height * 0.045,)
-                              ),
-                            ),
-
-                          ),
-                          isExpanded
-                              ?
-                          Padding(
-                              padding: EdgeInsets.only(
-                                  top: size.height * 0.022),
-                              child: widget.quizCreated
-                                  ?
-                              Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      //SizedBox(width: size.width*0.065,),
-                                      AutoSizeText("Deadline : ${widget.deadLine.toDate().toString().substring(0,16)}",style: GoogleFonts.poppins(
-                                          color: Colors.white70,
-                                          fontSize: size.height*0.012
-                                      ),),
-                                      AutoSizeText("Submission : ${widget.submission !=null
-                                          ?
-                                      widget.submission.length
-                                          :
-                                      0
-                                      } / ${widget.totalStudents}",
-                                        style: GoogleFonts.poppins(
-                                          color: Colors.white70,
-                                          fontSize: size.height*0.012
-                                      ),),
-                                    ],
-                                  ),
-                                  SizedBox(height: size.width*0.028,),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Divider(
-                                        color: Colors.white70,
-                                        indent: size.width*0.03,
-                                        endIndent: size.width*0.03,
-                                        thickness: 1,
-                                      ),
-                                      ListTile(
-                                        enabled: true,
-                                        focusColor: Colors.white38,
-                                        tileColor: Colors.transparent,
-                                        splashColor: Colors.black87,
-                                        onTap: () {
-                                          Navigator.push(context,
-                                              PageTransition(
-                                                  child: responseScreen(
-                                                    quizId: widget.index,),
-                                                  type: PageTransitionType
-                                                      .bottomToTopJoined,
-                                                  childCurrent: const Notes(),
-                                                  duration: const Duration(
-                                                      milliseconds: 300)
-                                              )
-                                          );
-                                        },
-                                        leading: Image.asset("assets/images/response.png"),
-                                        title: AutoSizeText(
-                                          "See Response",
-                                          style: GoogleFonts.tiltNeon(
-                                              fontSize: size.height * 0.022,
-                                              color: Colors.white
-                                          ),
-                                        ),
-                                        trailing: const Icon(Icons.arrow_forward_ios_rounded,color: Colors.white70,),
-                                      ),
-                                      Divider(
-                                        color: Colors.white70,
-                                        indent: size.width*0.03,
-                                        endIndent: size.width*0.03,
-                                        thickness: 1,
-                                      ),
-                                      ListTile(
-                                          enabled: true,
-                                          focusColor: Colors.transparent,
-                                          tileColor: Colors.transparent,
-                                          splashColor: Colors.transparent,
-                                        leading: Image.asset("assets/images/leaderboard.png"),
-                                          trailing: const Icon(Icons.arrow_forward_ios_rounded,color: Colors.white70,),
-                                          onTap: () {
-                                          if(widget.submission.length>3)
-                                          {
-                                            Navigator.push(context,
-                                                PageTransition(
-                                                    child: Quizscore(
-                                                      quizId: widget.index,),
-                                                    type: PageTransitionType
-                                                        .bottomToTopJoined,
-                                                    childCurrent: const Notes(),
-                                                    duration: const Duration(
-                                                        milliseconds: 300)
-                                                )
-                                            );
-                                          }
-                                          else{
-                                            InAppNotifications.instance
-                                              ..titleFontSize = 25.0
-                                              ..descriptionFontSize = 15.0
-                                              ..textColor = Colors.black
-                                              ..backgroundColor = const Color.fromRGBO(150, 150, 150, 1)
-                                              ..shadow = true
-                                              ..animationStyle = InAppNotificationsAnimationStyle.scale;
-                                            InAppNotifications.show(
-                                                title: 'Error',
-                                                duration: const Duration(seconds: 2),
-                                                description: "Submissions are less than three",
-                                                leading: const Icon(
-                                                  Icons.error_outline,
-                                                  color: Colors.red,
-                                                  size: 30,
-                                                ),
-                                            );
-                                          }
-
-                                        },
-                                          title: AutoSizeText(
-                                              "Leaderboard",
-                                              style: GoogleFonts.tiltNeon(
-                                                 fontSize: size.height * 0.022,
-                                                 color: Colors.white
-                                              ),
-                                          ),
-                                      ),
-                                    ],
-                                  ),
-
-
-                                ],
-                              )
-                                  :
-                            ListTile(
                             enabled: true,
                             focusColor: Colors.white38,
                             tileColor: Colors.transparent,
@@ -365,8 +263,8 @@ class _NotesTileState extends State<NotesTile> {
                             onTap: () {
                               Navigator.push(context,
                                   PageTransition(
-                                      child: QuizQustion(
-                                        quizNumber: widget.index,),
+                                      child: responseScreen(
+                                        quizId: widget.index,),
                                       type: PageTransitionType
                                           .bottomToTopJoined,
                                       childCurrent: const Notes(),
@@ -377,7 +275,7 @@ class _NotesTileState extends State<NotesTile> {
                             },
                             leading: Image.asset("assets/images/response.png"),
                             title: AutoSizeText(
-                              "Create Quiz",
+                              "See Response",
                               style: GoogleFonts.tiltNeon(
                                   fontSize: size.height * 0.022,
                                   color: Colors.white
@@ -385,27 +283,120 @@ class _NotesTileState extends State<NotesTile> {
                             ),
                             trailing: const Icon(Icons.arrow_forward_ios_rounded,color: Colors.white70,),
                           ),
-                          ) :
-                          const SizedBox(),
+                          Divider(
+                            color: Colors.white70,
+                            indent: size.width*0.03,
+                            endIndent: size.width*0.03,
+                            thickness: 1,
+                          ),
+                          ListTile(
+                            enabled: true,
+                            focusColor: Colors.transparent,
+                            tileColor: Colors.transparent,
+                            splashColor: Colors.transparent,
+                            leading: Image.asset("assets/images/leaderboard.png"),
+                            trailing: const Icon(Icons.arrow_forward_ios_rounded,color: Colors.white70,),
+                            onTap: () {
+                              if(widget.submission.length>3)
+                              {
+                                Navigator.push(context,
+                                    PageTransition(
+                                        child: Quizscore(
+                                          quizId: widget.index,),
+                                        type: PageTransitionType
+                                            .bottomToTopJoined,
+                                        childCurrent: const Notes(),
+                                        duration: const Duration(
+                                            milliseconds: 300)
+                                    )
+                                );
+                              }
+                              else{
+                                InAppNotifications.instance
+                                  ..titleFontSize = 25.0
+                                  ..descriptionFontSize = 15.0
+                                  ..textColor = Colors.black
+                                  ..backgroundColor = const Color.fromRGBO(150, 150, 150, 1)
+                                  ..shadow = true
+                                  ..animationStyle = InAppNotificationsAnimationStyle.scale;
+                                InAppNotifications.show(
+                                  title: 'Error',
+                                  duration: const Duration(seconds: 2),
+                                  description: "Submissions are less than three",
+                                  leading: const Icon(
+                                    Icons.error_outline,
+                                    color: Colors.red,
+                                    size: 30,
+                                  ),
+                                );
+                              }
+
+                            },
+                            title: AutoSizeText(
+                              "Leaderboard",
+                              style: GoogleFonts.tiltNeon(
+                                  fontSize: size.height * 0.022,
+                                  color: Colors.white
+                              ),
+                            ),
+                          ),
                         ],
                       ),
-                    ),
+                      SizedBox(
+                        height: size.height*0.01,
+                      )
+                    ]
+                        :
+                    [
+                      ListTile(
+                                enabled: true,
+                                focusColor: Colors.white38,
+                                tileColor: Colors.transparent,
+                                splashColor: Colors.black87,
+                                onTap: () {
+                                  Navigator.push(context,
+                                      PageTransition(
+                                          child: QuizQustion(
+                                            quizNumber: widget.index,),
+                                          type: PageTransitionType
+                                              .bottomToTopJoined,
+                                          childCurrent: const Notes(),
+                                          duration: const Duration(
+                                              milliseconds: 300)
+                                      )
+                                  );
+                                },
+                                leading: Image.asset("assets/images/response.png"),
+                                title: AutoSizeText(
+                                  "Create Quiz",
+                                  style: GoogleFonts.tiltNeon(
+                                      fontSize: size.height * 0.022,
+                                      color: Colors.white
+                                  ),
+                                ),
+                                trailing: const Icon(Icons.arrow_forward_ios_rounded,color: Colors.white70,),
+                              ),
+                      SizedBox(
+                        height: size.height*0.01,
+                      )
+                    ],
+                        ),
+
+                    ]
                   ),
+              Positioned(
+                top: 10,
+                right: size.width*0.055,
+                child: DownloadButton(
+                  downloadUrl: widget.pdfUrl,
+                  pdfName: widget.pdfName,
+                  path: widget.pdfLocalPath,
+                ),
+              ),
                 ],
               ),
-              Positioned(
-                  top: 10,
-                  right: size.width*0.055,
-                  child: DownloadButton(
-                      downloadUrl: widget.pdfUrl,
-                      pdfName: widget.pdfName,
-                      path: widget.pdfLocalPath,
-                  ),
-              )
-            ],
           ),
         ),
-      ),
-    );
+      );
   }
 }

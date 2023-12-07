@@ -45,22 +45,16 @@ class _LeaderBoardState extends State<LeaderBoard> {
                     "Name" : result[0]['Name'],
                     "Email" : result[0]['Email'],
                     "Submitted" : result[0]['Score'],
-                    "outOf" : snapshot.data!.data()?['Total_Assignment'],
-
                   },
                   {
                     "Name" : result[1]['Name'],
                     "Email" : result[1]['Email'],
                     "Submitted" : result[1]['Score'],
-                    "outOf" : snapshot.data!.data()?['Total_Assignment'],
-
                   },
                   {
                     "Name" : result[2]['Name'],
                     "Email" : result[2]['Email'],
                     "Submitted" : result[2]['Score'],
-                    "outOf" : snapshot.data!.data()?['Total_Assignment'],
-
                   }
                 ],
               ),
