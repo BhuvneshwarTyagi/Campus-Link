@@ -17,9 +17,11 @@ class _UploadMarksState extends State<UploadMarks> {
   List<String> uploadedName = [""];
   List<TextEditingController> controllers = [];
   List<String> emails = [];
-  List<FocusNode> nodes =[];
   int currIndex=0;
-
+  int lastIndex=0;
+  TextEditingController total = TextEditingController();
+  int sessional=0;
+  bool remove=false;
   @override
   Widget build(BuildContext context) {
     Size size= MediaQuery.of(context).size;
@@ -39,36 +41,92 @@ class _UploadMarksState extends State<UploadMarks> {
               .where("Name",  whereNotIn: uploadedName)
               .snapshots(),
           builder: (context, snapshot) {
-            int sessional=0;
             if(snapshot.hasData){
-              controllers.clear();
-              emails.clear();
               if(snapshot.data!.docs.isNotEmpty && snapshot.data?.docs[currIndex].data()["Marks"]!= null && snapshot.data?.docs[currIndex].data()["Marks"][subject_filter] != null){
-                sessional = snapshot.data?.docs[currIndex].data()["Marks"][subject_filter]["Total"] ?? 1;
+                if(sessional != snapshot.data?.docs[currIndex].data()["Marks"][subject_filter]["Total"] ){
+                  sessional = snapshot.data?.docs[currIndex].data()["Marks"][subject_filter]["Total"] ?? 0;
+                  total.clear();
+
+                }
               }
-              for(var doc in snapshot.data!.docs){
-                controllers.add(TextEditingController());
-                emails.add(doc.data()["Email"]);
-                nodes.add(FocusNode());
+              else{
+                if(snapshot.data!.docs.isNotEmpty && snapshot.data?.docs[lastIndex].data()["Marks"]!= null && snapshot.data?.docs[lastIndex].data()["Marks"][subject_filter] != null){
+                  if(0 != snapshot.data?.docs[lastIndex].data()["Marks"][subject_filter]["Total"] ){
+                    total.clear();
+
+                  }
+                }
+                sessional=0;
+              }
+              if(controllers.isEmpty){
+                for (var doc in snapshot.data!.docs) {
+                  controllers.add(TextEditingController());
+                  emails.add(doc.data()["Email"]);
+
+                }
               }
             }
+
             return snapshot.hasData
                 ?
             ListView.builder(
               itemCount: snapshot.data?.docs.length,
               itemBuilder: (context, index) {
+
                 return Column(
                   children: [
                     index==0
                         ?
                     Container(
                       margin: const EdgeInsets.only(bottom: 8),
-                      child: AutoSizeText(
-                        "Upload Marks from sessional ${sessional+1}",
-                        style: GoogleFonts.tiltNeon(
-                            fontSize: size.width*0.05,
-                            color: Colors.red[900]
-                        ),
+                      child: Column(
+                        children: [
+                          AutoSizeText(
+                            "Upload Marks from sessional ${sessional+1}",
+                            style: GoogleFonts.tiltNeon(
+                                fontSize: size.width*0.05,
+                                color: Colors.red[900]
+                            ),
+                          ),
+                          Card(
+                            elevation: 30,
+                            child: ListTile(
+                              title: AutoSizeText(
+                                "Total marks",
+                                style: GoogleFonts.tiltNeon(
+                                    fontSize: size.width*0.05,
+                                    color: Colors.black
+                                ),
+                              ),
+                              trailing: Container(
+                                width: size.width*0.14,
+                                margin: const EdgeInsets.all(4),
+                                child: TextField(
+                                  controller: total,
+                                  maxLength: 3,
+                                  maxLines: 1,
+                                  cursorColor: Colors.green,
+                                  keyboardType: TextInputType.number,
+                                  decoration: InputDecoration(
+                                      focusedBorder: const OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: Colors.green,
+                                              width: 1.5
+                                          )
+                                      ),
+                                      border: OutlineInputBorder(
+
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(size.width*0.01),
+                                          ),
+
+                                      )
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     )
                         :
@@ -114,11 +172,11 @@ class _UploadMarksState extends State<UploadMarks> {
                                 child: TextField(
                                   onTap: (){
                                     setState(() {
+                                      lastIndex=currIndex;
                                       currIndex=index;
                                     });
                                   },
                                   controller: controllers[index],
-                                  focusNode: nodes[index],
                                   maxLength: 3,
                                   maxLines: 1,
                                   cursorColor: Colors.green,
@@ -138,22 +196,31 @@ class _UploadMarksState extends State<UploadMarks> {
                               ),
                               IconButton(
                                   onPressed: () async {
-                                    if(controllers[index].text.isNotEmpty){
+                                    if(controllers[index].text.isNotEmpty && total.text.isNotEmpty){
+                                      setState(() {
+                                        uploadedName.add(snapshot.data?.docs[index].data()["Name"]);
+                                        emails.removeAt(index);
+
+                                        controllers.removeAt(currIndex);
+
+                                        if(currIndex == snapshot.data!.docs.length-1){
+                                          lastIndex=lastIndex--;
+                                          currIndex--;
+                                        }
+                                      });
                                       await FirebaseFirestore
                                           .instance
                                           .collection("Students")
                                           .doc(snapshot.data?.docs[index].data()["Email"]).update({
                                         "Marks.$subject_filter.Sessional_${sessional+1}" : int.parse(controllers[index].text.toString()),
+                                        "Marks.$subject_filter.Sessional_${sessional+1}_total" : int.parse(total.text.toString()),
                                         "Marks.$subject_filter.Total" : sessional+1,
                                       }).whenComplete((){
-                                        uploadedName.add(snapshot.data?.docs[index].data()["Name"]);
-                                      });
-                                      controllers.removeAt(index);
-                                      emails.removeAt(index);
-                                      nodes.removeAt(index);
-                                      setState(() {
+
 
                                       });
+
+
                                     }
                                     else{
                                       InAppNotifications.instance
@@ -166,7 +233,7 @@ class _UploadMarksState extends State<UploadMarks> {
                                       InAppNotifications.show(
                                         title: 'Error',
                                         duration: const Duration(seconds: 2),
-                                        description: "Marks cannot be empty",
+                                        description: total.text.isNotEmpty ? "Marks cannot be empty" : "Total marks cannot be empty",
                                         leading: const Icon(
                                           Icons.error_outline,
                                           color: Colors.red,

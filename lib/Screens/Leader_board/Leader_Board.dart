@@ -32,59 +32,73 @@ class _OverAllLeaderBoardState extends State<OverAllLeaderBoard> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: load ?
-      Column(
-        children: [
-          TopThree(
-            data: [
-              {
-                "Name" : result[0]['Name'],
-                "Email" : result[0]['Email'],
-                "Submitted" : result[0]['Score']/100,
-              },
-              {
-                "Name" : result[1]['Name'],
-                "Email" : result[1]['Email'],
-                "Submitted" : result[1]['Score']/100,
-              },
-              {
-                "Name" : result[2]['Name'],
-                "Email" : result[2]['Email'],
-                "Submitted" : result[2]['Score']/100,
-              }
-            ],
-          ),
-          SizedBox(
-            height: size.height * 0.02,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+      ListView.builder(
+        shrinkWrap: true,
+        itemCount: result.length,
+        itemBuilder: (context, index) {
+          return  Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  AutoSizeText("Average Performance: ",
-                    style: GoogleFonts.tiltNeon(
-                        color: Colors.black,
-                        fontSize: size.width*0.05
-                    ),),
-                  AutoSizeText("${(averagePerformance).toStringAsFixed(2)}%",
-                    style: GoogleFonts.tiltNeon(
-                        color: Colors.green[900],
-                        fontSize: size.width*0.06
-                    ),),
-                ],
-              ),
-            ],
-          ),
-          SizedBox(
-            height: size.height * 0.022,
-          ),
-          Expanded(
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: result.length,
-              itemBuilder: (context, index) {
-                return  ExpansionTile(
+              index==0 ?
+                  Column(
+                    children: [
+                      TopThree(
+                        data: [
+                          {
+                            "Name" : result[0]['Name'],
+                            "Email" : result[0]['Email'],
+                            "Submitted" : result[0]['Score']/100,
+                          },
+                          {
+                            "Name" : result[1]['Name'],
+                            "Email" : result[1]['Email'],
+                            "Submitted" : result[1]['Score']/100,
+                          },
+                          {
+                            "Name" : result[2]['Name'],
+                            "Email" : result[2]['Email'],
+                            "Submitted" : result[2]['Score']/100,
+                          }
+                        ],
+                      ),
+                      SizedBox(
+                        height: size.height * 0.02,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              AutoSizeText("Average Performance: ",
+                                style: GoogleFonts.tiltNeon(
+                                    color: Colors.black,
+                                    fontSize: size.width*0.05
+                                ),),
+                              AutoSizeText("${(averagePerformance).toStringAsFixed(2)}%",
+                                style: GoogleFonts.tiltNeon(
+                                    color: Colors.green[900],
+                                    fontSize: size.width*0.06
+                                ),),
+                            ],
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: size.height * 0.022,
+                      ),
+                    ],
+                  )
+              :
+                  const SizedBox(),
+              Card(
+                elevation: 25,
+                shape: const OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.black,
+                    width: 1.5,
+                  )
+                ),
+                child: ExpansionTile(
                   title: AutoSizeText("${result[index]["Name"]}",style: GoogleFonts.tiltNeon(
                     color: Colors.black,
                     fontSize: size.width*0.045,
@@ -152,7 +166,7 @@ class _OverAllLeaderBoardState extends State<OverAllLeaderBoard> {
                   children: [
                     ListTile(
                       title: AutoSizeText("Attendance",style: GoogleFonts.tiltNeon(
-                        color: Colors.black45,
+                        color: Colors.black54,
                         fontSize: size.width*0.045,
 
                       ),),
@@ -174,7 +188,7 @@ class _OverAllLeaderBoardState extends State<OverAllLeaderBoard> {
                     ListTile(
 
                       title: AutoSizeText("Assignment",style: GoogleFonts.tiltNeon(
-                        color: Colors.black45,
+                        color: Colors.black54,
                         fontSize: size.width*0.045,
 
                       ),),
@@ -192,16 +206,71 @@ class _OverAllLeaderBoardState extends State<OverAllLeaderBoard> {
                         fontSize: size.width*0.045,
 
                       ),),
+                    ),
+                    ExpansionTile(
+
+                      title: AutoSizeText("Sessional Marks",style: GoogleFonts.tiltNeon(
+                        color: Colors.black54,
+                        fontSize: size.width*0.045,
+
+                      ),),
+                      trailing: AutoSizeText("${result[index]["MarksScore"].toStringAsFixed(2)}%",style: GoogleFonts.tiltNeon(
+                        color: result[index]["MarksScore"] < 50
+                            ?
+                        Colors.red[600]
+                            :
+                        result[index]["MarksScore"] < 75
+                            ?
+                        Colors.orangeAccent[300]
+                            :
+                        Colors.green[900]
+                        ,
+                        fontSize: size.width*0.045,
+
+                      ),),
+                      children: [
+                        SizedBox(
+                          height: size.height*0.15,
+                          child: ListView.builder(
+                            itemCount: result[index]["Sessional_record"].length,
+                              itemBuilder: (context, index1) {
+                                return ListTile(
+
+                                  title: AutoSizeText(
+                                    "Sessional ${index1+1} marks",
+                                    style: GoogleFonts.tiltNeon(
+                                      color: Colors.black54,
+                                      fontSize: size.width*0.045,
+                                    ),
+                                  ),
+                                  trailing: AutoSizeText("${result[index]["Sessional_record"][index1]["obtainedMarks"]}/${result[index]["Sessional_record"][index1]["totalMarks"]}",style: GoogleFonts.tiltNeon(
+                                    color: result[index]["AssignmentScore"] < 50
+                                        ?
+                                    Colors.red[600]
+                                        :
+                                    result[index]["AssignmentScore"] < 75
+                                        ?
+                                    Colors.orangeAccent[300]
+                                        :
+                                    Colors.green[900]
+                                    ,
+                                    fontSize: size.width*0.045,
+
+                                  ),),
+                                );
+                              },),
+                        )
+                      ],
                     )
                   ],
-                );
-                },
-            ),
-          )
-        ],
+                ),
+              ),
+            ],
+          );
+          },
       )
           :
-          const loading(text: "Fetching"),
+      const loading(text: "Fetching"),
     );
   }
 
@@ -242,10 +311,13 @@ class _OverAllLeaderBoardState extends State<OverAllLeaderBoard> {
 
         await calculateAssignment(email, data,snap).then((data1) async {
           print("Data from Assignement ////////////////////////: $data1");
-          await calculateAttendance(email, data1).then((value) {
-            print("Data from attendance ////////////////////////: $value");
-            result.add(value);
-            allStudentsPerformancesum += value['Score'];
+          await calculateAttendance(email, data1).then((data2) async {
+            print("Data from attendance ////////////////////////: $data2");
+            await calculateMarks(email, data2).then((value){
+              result.add(value);
+              allStudentsPerformancesum += value['Score'];
+            });
+
         });
       });
     }
@@ -282,7 +354,32 @@ class _OverAllLeaderBoardState extends State<OverAllLeaderBoard> {
       data["Attendance"]=totalPresent;
       data["TotalLecture"] = totalLecture;
       data['Score']+=(totalPresent/totalLecture)*100;
-      data['Score']/=2;
+    });
+    return data;
+  }
+  Future<Map<String, dynamic>> calculateMarks(QueryDocumentSnapshot<Map<String, dynamic>> email,Map<String,dynamic> data) async {
+    int obtainedMarks=0;
+    int totalMarks=0;
+    data["Sessional_record"] = [];
+    await FirebaseFirestore.instance.collection("Students").doc(email.data()["Email"]).get().then((doc) {
+      print(doc.data());
+      if(doc.data()?["Marks"] != null && doc.data()?["Marks"][subject_filter] != null){
+        for(int i=1;i<=doc.data()!["Marks"][subject_filter]["Total"];i++){
+          obtainedMarks = doc.data()?["Marks"][subject_filter]["Sessional_$i"];
+          totalMarks = doc.data()?["Marks"][subject_filter]["Sessional_${i}_total"];
+          data["Sessional_record"].add({
+            "obtainedMarks" : doc.data()?["Marks"][subject_filter]["Sessional_$i"],
+            "totalMarks" : doc.data()?["Marks"][subject_filter]["Sessional_${i}_total"],
+          });
+        }
+      }
+    }).whenComplete(() {
+
+      data["MarksScore"] = (obtainedMarks/totalMarks)*100;
+      data["TotalMarks"]=obtainedMarks;
+      data["ObtainedMarks"] = totalMarks;
+      data['Score']+=(obtainedMarks/totalMarks)*100;
+      data['Score']/=3;
     });
     return data;
   }

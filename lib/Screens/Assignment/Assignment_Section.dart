@@ -131,171 +131,157 @@ class _AssignmentSectionState extends State<AssignmentSection> {
                             "$sysPath$path/Assignment-${index + 1}.${snapshot
                             .data!["Assignment-${index + 1}"]["Document-type"]}";
 
-                        return Padding(
-                            padding: EdgeInsets.all(size.height*0.021),
-                            child: InkWell(
-                              onTap: (){
-                                print("presseddddddddddddd");
-                                if( File(newpath).existsSync()) {
-                                  if (snapshot.data!["Assignment-${index + 1}"]["Document-type"] == "pdf") {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder:
-                                              (context) =>
-                                              PdfViewer(
-                                                document:
-                                                newpath,
-                                                name:
-                                                "Assignment-${index + 1}",
-                                              ),
-                                        ));
-                                  }
-                                  else {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder:
-                                              (context) =>
-                                              Image_viewer(path: File(
-                                                  '${path}Assignment-${index +
-                                                      1}.${snapshot
-                                                      .data!["Assignment-${index +
-                                                      1}"]["Document-type"]}'),
+                        return InkWell(
+                          onTap: (){
+                            print("presseddddddddddddd");
+                            if( File(newpath).existsSync()) {
+                              if (snapshot.data!["Assignment-${index + 1}"]["Document-type"] == "pdf") {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) =>
+                                          PdfViewer(
+                                            document:
+                                            newpath,
+                                            name:
+                                            "Assignment-${index + 1}",
+                                          ),
+                                    ));
+                              }
+                              else {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) =>
+                                          Image_viewer(path: File(
+                                              '${path}Assignment-${index +
+                                                  1}.${snapshot
+                                                  .data!["Assignment-${index +
+                                                  1}"]["Document-type"]}'),
 
-                                              ),
-                                        ));
-                                  }
-                                }
-                              },
+                                          ),
+                                    ));
+                              }
+                            }
+                          },
 
-                              child: Container(
-
-                                height: size.height*0.21,
-                                width: size.width,
-                                decoration: BoxDecoration(
-                                    color: Colors.transparent,
-                                    borderRadius: const BorderRadius.all(Radius.circular(15)),
-                                    border: Border.all(color: Colors.black,width: 2)
-                                ),
-                                child: Stack(
+                          child: Card(
+                            borderOnForeground: true,
+                            shape: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Colors.black,
+                                  width: 1.5,
+                              )
+                            ),
+                            child: Stack(
+                              children: [
+                                Column(
                                   children: [
-                                    Column(
-                                      children: [
-                                        Container(
-                                          height: size.height*0.1,
-                                          width: size.width,
-                                          decoration: const BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius: BorderRadius.only(topRight: Radius.circular(15),topLeft: Radius.circular(15))
-
+                                    SizedBox(
+                                      height: size.height*0.1,
+                                      width: size.width,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          SizedBox(
+                                            height: size.height*0.01,
                                           ),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.center,
-                                            children: [
-                                              SizedBox(
-                                                height: size.height*0.01,
-                                              ),
-                                              AutoSizeText(
-                                                subject_filter,
-                                                style: GoogleFonts.tiltNeon(
-                                                    color: Colors.black,
-                                                    fontSize: size.height*0.03,
-                                                    fontWeight: FontWeight.w400
-                                                ),
-                                              ),
-                                              AutoSizeText(
-                                                "Assignment: ${index + 1}",
-                                                style: GoogleFonts.tiltNeon(
-                                                    color: Colors.black,
-                                                    fontSize: size.height*0.024,
-                                                    fontWeight: FontWeight.w400
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                        Container(
-                                            padding: EdgeInsets.all( size.height*0.008),
-                                            height: size.height*0.104,
-                                            width: size.width,
-                                            decoration: const BoxDecoration(
-                                              color:  Color.fromRGBO(60, 99, 100, 1),
-                                              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(15),bottomRight: Radius.circular(15)),
-
+                                          AutoSizeText(
+                                            subject_filter,
+                                            style: GoogleFonts.tiltNeon(
+                                                color: Colors.black,
+                                                fontSize: size.height*0.03,
+                                                fontWeight: FontWeight.w400
                                             ),
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  children: [
-                                                    AutoSizeText(
-                                                      "Assignment: ${index + 1} (${(int.parse(snapshot.data!["Assignment-${index + 1}"]["Size"].toString())/1048576).toStringAsFixed(2)}MB)",
-                                                      style: GoogleFonts.tiltNeon(
-                                                          color: Colors.black,
-                                                          fontSize: size.height*0.019,
-                                                          fontWeight: FontWeight.w400
-                                                      ),
-                                                    ),
-                                                    AutoSizeText(
-                                                      "Deadline: ${snapshot
-                                                          .data!["Assignment-${index +
-                                                          1}"]["Last Date"]}",
-                                                      style: GoogleFonts.tiltNeon(
-                                                          color: Colors.black,
-                                                          fontSize: size.height*0.019,
-                                                          fontWeight: FontWeight.w400
-                                                      ),
-                                                    ),
-                                                    AutoSizeText(
-                                                      "Assign: ${(snapshot
-                                                          .data!["Assignment-${index +
-                                                          1}"]["Assign-Date"].toDate()).toString().split(" ")[0]}",
-                                                      style: GoogleFonts.tiltNeon(
-                                                          color: Colors.black,
-                                                          fontSize: size.height*0.02,
-                                                          fontWeight: FontWeight.w400
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                Container(
-                                                  height: size.height * 0.045,
-                                                  width: size.width * 0.27,
-                                                  decoration: BoxDecoration(
-                                                      color: Colors.transparent,
-                                                      borderRadius: const BorderRadius.all(
-                                                          Radius.circular(20)),
-                                                      border: Border.all(
-                                                          color: Colors.black, width: 1)
-                                                  ),
-                                                  child: SubmitButton(index: index,snapshot: snapshot),
-                                                )
-
-
-                                              ],
-                                            )
-                                        )
-                                      ],
-                                    ),
-
-                                    Positioned(
-                                      top: 8,
-                                      right: size.width*0.04,
-                                      child: DownloadButton(
-                                          downloadUrl: snapshot.data!.data()?["Assignment-${index + 1}"]["Assignment"],
-                                          pdfName: "Assignment-${index + 1}.${snapshot.data?.data()?["Assignment-${index + 1}"]["Document-type"]}",
-                                          path: path
+                                          ),
+                                          AutoSizeText(
+                                            "Assignment: ${index + 1}",
+                                            style: GoogleFonts.tiltNeon(
+                                                color: Colors.black,
+                                                fontSize: size.height*0.024,
+                                                fontWeight: FontWeight.w400
+                                            ),
+                                          )
+                                        ],
                                       ),
+                                    ),
+                                    Container(
+                                        height: size.height*0.104,
+                                        width: size.width,
+                                        color:  const Color.fromRGBO(60, 99, 100, 1),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                AutoSizeText(
+                                                  "Assignment: ${index + 1} (${(int.parse(snapshot.data!["Assignment-${index + 1}"]["Size"].toString())/1048576).toStringAsFixed(2)}MB)",
+                                                  style: GoogleFonts.tiltNeon(
+                                                      color: Colors.black,
+                                                      fontSize: size.height*0.019,
+                                                      fontWeight: FontWeight.w400
+                                                  ),
+                                                ),
+                                                AutoSizeText(
+                                                  "Deadline: ${snapshot
+                                                      .data!["Assignment-${index +
+                                                      1}"]["Last Date"]}",
+                                                  style: GoogleFonts.tiltNeon(
+                                                      color: Colors.black,
+                                                      fontSize: size.height*0.019,
+                                                      fontWeight: FontWeight.w400
+                                                  ),
+                                                ),
+                                                AutoSizeText(
+                                                  "Assign: ${(snapshot
+                                                      .data!["Assignment-${index +
+                                                      1}"]["Assign-Date"].toDate()).toString().split(" ")[0]}",
+                                                  style: GoogleFonts.tiltNeon(
+                                                      color: Colors.black,
+                                                      fontSize: size.height*0.02,
+                                                      fontWeight: FontWeight.w400
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            Container(
+                                              height: size.height * 0.045,
+                                              width: size.width * 0.27,
+                                              decoration: BoxDecoration(
+                                                  color: Colors.transparent,
+                                                  borderRadius: const BorderRadius.all(
+                                                      Radius.circular(20)),
+                                                  border: Border.all(
+                                                      color: Colors.black, width: 1)
+                                              ),
+                                              child: SubmitButton(index: index,snapshot: snapshot),
+                                            )
+
+
+                                          ],
+                                        )
                                     )
-
-
                                   ],
                                 ),
-                              ),
-                            )
+
+                                Positioned(
+                                  top: 8,
+                                  right: size.width*0.04,
+                                  child: DownloadButton(
+                                      downloadUrl: snapshot.data!.data()?["Assignment-${index + 1}"]["Assignment"],
+                                      pdfName: "Assignment-${index + 1}.${snapshot.data?.data()?["Assignment-${index + 1}"]["Document-type"]}",
+                                      path: path
+                                  ),
+                                )
+
+
+                              ],
+                            ),
+                          ),
                         );
                       },),
                   )

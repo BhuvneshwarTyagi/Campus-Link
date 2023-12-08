@@ -400,7 +400,7 @@ class _NeviState extends State<Nevi>  {
                 fontSize: MediaQuery.of(context).size.height * 0.04),),
           )
         ),
-        body: screens[4],
+        body: screens[index],
         bottomNavigationBar: Container(
           height: size.height * 0.055,
           margin: EdgeInsets.fromLTRB(size.width*0.04,5,size.width*0.04,size.height*0.01),
