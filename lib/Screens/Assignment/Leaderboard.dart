@@ -5,14 +5,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class LeaderBoard extends StatefulWidget {
-  const LeaderBoard({super.key});
-
+class AssignmentsOverAllLeaderBoard extends StatefulWidget {
+  const AssignmentsOverAllLeaderBoard({super.key, required this.university, required this.college, required this.course, required this.branch, required this.year, required this.section, required this.subject});
+  final String university;
+  final String college;
+  final String course;
+  final String branch;
+  final String year;
+  final String section;
+  final String subject;
   @override
-  State<LeaderBoard> createState() => _LeaderBoardState();
+  State<AssignmentsOverAllLeaderBoard> createState() => _AssignmentsOverAllLeaderBoardState();
 }
 
-class _LeaderBoardState extends State<LeaderBoard> {
+class _AssignmentsOverAllLeaderBoardState extends State<AssignmentsOverAllLeaderBoard> {
   List<Map<String,dynamic>>result=[];
   int averageSubmission=0;
   bool load = false;
@@ -24,7 +30,7 @@ class _LeaderBoardState extends State<LeaderBoard> {
           .instance
           .collection("Assignment")
           .doc(
-        "${university_filter.split(" ")[0]} ${college_filter.split(" ")[0]} ${course_filter.split(" ")[0]} ${branch_filter.split(" ")[0]} ${year_filter.split(" ")[0]} ${section_filter.split(" ")[0]} ${subject_filter.split(" ")[0]}"
+          "${widget.university.split(" ")[0]} ${widget.college.split(" ")[0]} ${widget.course.split(" ")[0]} ${widget.branch.split(" ")[0]} ${widget.year} ${widget.section} ${widget.subject}"
       )
           .snapshots(),
       builder: (context, snapshot) {
@@ -203,7 +209,7 @@ class _LeaderBoardState extends State<LeaderBoard> {
           width: size.width,
           child: Center(
             child: AutoSizeText(
-              "You did not uploaded a single quiz till now.\nPlease upload the quiz.",
+              "You did not uploaded a single assignment till now.\nPlease upload the assignment.",
               style: GoogleFonts.tiltNeon(
                   fontSize: 20,
                   color: Colors.black

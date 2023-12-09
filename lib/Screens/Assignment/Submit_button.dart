@@ -7,23 +7,17 @@ import 'package:google_fonts/google_fonts.dart';
 import '../view_assignment.dart';
 
 class SubmitButton extends StatelessWidget {
-  const SubmitButton({super.key, required this.snapshot, required this.index});
+  const SubmitButton({super.key, required this.snapshot, required this.index, required this.count});
   final AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot;
   final int index;
+  final count;
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
+    return ListTile(
 
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius
-                  .all(
-                  Radius.circular(20))),
-          backgroundColor: Colors
-              .transparent
-      ),
-      onPressed: () {
+      onTap: () {
         if (snapshot.data!
             .data()?["Assignment-${index +
             1}"]["Submitted-by"] != null) {
@@ -54,14 +48,22 @@ class SubmitButton extends StatelessWidget {
           );
         }
       },
-      child: FittedBox(
-      fit: BoxFit.cover,
-      child: AutoSizeText("Submission",
+      title: AutoSizeText("Submission",
         style:GoogleFonts.tiltNeon(
-            fontSize: size.height * 0.02,
+            fontSize: size.width * 0.045,
             fontWeight: FontWeight.w500,
-            color: Colors.white
+            color: Colors.black
         ),
+      ),
+      leading: SizedBox(
+        width: size.width*0.08,
+        child: Image.asset("assets/images/response.png"),
+      ),
+      trailing: AutoSizeText(count == null ? "0" :"${count.length}",
+      style:GoogleFonts.tiltNeon(
+          fontSize: size.width * 0.045,
+          fontWeight: FontWeight.w500,
+          color: Colors.black
       ),
     ),
     );

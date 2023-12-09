@@ -1,25 +1,23 @@
-import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter_inapp_notifications/flutter_inapp_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:page_transition/page_transition.dart';
 import '../Constraints.dart';
-import 'Login.dart';
+import '../Screens/Main_page.dart';
 
-class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({Key? key}) : super(key: key);
+class Details extends StatefulWidget {
+  const Details({super.key});
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  State<Details> createState() => _DetailsState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
-  String errorString="";
-  bool hide =true;
-  final TextEditingController email = TextEditingController();
-  final TextEditingController password = TextEditingController();
+class _DetailsState extends State<Details> {
+  TextEditingController nameController = TextEditingController();
 
+  TextEditingController exployeeIDController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -66,8 +64,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           blurStyle: BlurStyle.outer,
                           color: Colors.black54,
                           offset: Offset(1, 1)
-                        )
-                      ],
+                      )
+                    ],
                     image: const DecorationImage(
                         image: AssetImage("assets/icon/icon.png")),
                   ),
@@ -87,17 +85,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                     WavyAnimatedText('Welcome To Campus Link',
 
-                        textStyle: GoogleFonts.libreBaskerville(
-                          fontSize: size.width*0.06,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.white54,
-                          shadows: <Shadow>[
-                            const Shadow(
-                              offset: Offset(1, 1),
-                              color: Colors.black,
-                            ),
-                          ],
-                        ),
+                      textStyle: GoogleFonts.libreBaskerville(
+                        fontSize: size.width*0.06,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white54,
+                        shadows: <Shadow>[
+                          const Shadow(
+                            offset: Offset(1, 1),
+                            color: Colors.black,
+                          ),
+                        ],
+                      ),
                     ),
 
                   ],
@@ -126,7 +124,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ],
                       ),
                       child: TextField(
-                          controller: email,
+                          controller: nameController,
                           obscureText: false,
                           enableSuggestions: true,
                           autocorrect: true,
@@ -136,7 +134,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               suffixIcon: IconButton(
                                 onPressed: (){
                                   setState(() {
-                                    email.clear();
+                                    nameController.clear();
                                   });
                                 },
                                 icon: const Icon(
@@ -145,12 +143,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 ),
                               ),
                               prefixIcon: const Icon(
-                                Icons.mail_outline_outlined,
+                                Icons.person_outline,
                                 color: Colors.white,
                               ),
-                              label: const Text("Enter Email"),
-                              labelStyle: TextStyle(
-                                  color: Colors.white.withOpacity(0.9)),
+                              label: const Text("Your Name"),
+                              labelStyle: TextStyle(color: Colors.white.withOpacity(0.9)),
                               filled: true,
                               floatingLabelBehavior: FloatingLabelBehavior.never,
                               fillColor: Colors.black26.withOpacity(0.7),
@@ -168,7 +165,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           .size
                           .height * 0.03,
                     ),
-
                     Container(
                       decoration: BoxDecoration(
                         borderRadius: const BorderRadius.all(Radius.circular(30)),
@@ -183,38 +179,29 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ],
                       ),
                       child: TextField(
-                          controller: password,
-                          obscureText: hide,
-                          enableSuggestions: false,
-                          autocorrect: false,
+                          controller: exployeeIDController,
+                          obscureText: false,
+                          enableSuggestions: true,
+                          autocorrect: true,
                           cursorColor: Colors.white,
                           style: TextStyle(color: Colors.white.withOpacity(0.9)),
                           decoration: InputDecoration(
-                              suffixIcon: hide
-                                  ?
-                              IconButton(onPressed: (){
-                                setState(() {
-                                  hide=!hide;
-                                });
-                              }, icon: const Icon(
-                                Icons.visibility_off_outlined,
-                                color: Colors.white,
-                              ))
-                                  :
-                              IconButton(onPressed: (){
-                                setState(() {
-                                  hide=!hide;
-                                });
-                              }, icon: const Icon(
-                                Icons.visibility_outlined,
-                                color: Colors.white,
-                              )),
-
+                              suffixIcon: IconButton(
+                                onPressed: (){
+                                  setState(() {
+                                    exployeeIDController.clear();
+                                  });
+                                },
+                                icon: const Icon(
+                                  Icons.clear_outlined,
+                                  color: Colors.white,
+                                ),
+                              ),
                               prefixIcon: const Icon(
-                                Icons.lock_outline,
+                                Icons.person_outline,
                                 color: Colors.white,
                               ),
-                              label: const Text("Enter Password"),
+                              label: const Text("Your Employee Id"),
                               labelStyle: TextStyle(
                                   color: Colors.white.withOpacity(0.9)),
                               filled: true,
@@ -226,8 +213,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       width: 0, style: BorderStyle.none)
                               )
                           ),
-                          keyboardType: TextInputType.visiblePassword),
+                          keyboardType: TextInputType.emailAddress),
                     ),
+
                     SizedBox(
                         height: MediaQuery
                             .of(context)
@@ -247,78 +235,37 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           border: Border.all(color: Colors.black54,width: 2)
                       ),
                       child: ElevatedButton(
-                        onPressed: () async{
-                            if(email.text.trim().isNotEmpty){
-                              String temp = await signIn(email.text.trim(), password.text.trim());
-                              await FirebaseAuth.instance.currentUser!.sendEmailVerification();
-                              if(temp=='1'){
-                                InAppNotifications.instance
-                                  ..titleFontSize = 14.0
-                                  ..descriptionFontSize = 14.0
-                                  ..textColor = Colors.black
-                                  ..backgroundColor = const Color.fromRGBO(150, 150, 150, 1)
-                                  ..shadow = true
-                                  ..animationStyle = InAppNotificationsAnimationStyle.scale;
-                                InAppNotifications.show(
-                                    title: 'Successfully',
-                                    duration: const Duration(seconds: 2),
-                                    description: 'Your account is created successfully. Please verify your email',
-                                    leading: const Icon(
-                                      Icons.error_outline_outlined,
-                                      color: Colors.red,
-                                      size: 55,
-                                    )
-                                );
-                              }
-
-
-                              else{
-                                InAppNotifications.instance
-                                  ..titleFontSize = 14.0
-                                  ..descriptionFontSize = 14.0
-                                  ..textColor = Colors.black
-                                  ..backgroundColor = const Color.fromRGBO(150, 150, 150, 1)
-                                  ..shadow = true
-                                  ..animationStyle = InAppNotificationsAnimationStyle.scale;
-                                InAppNotifications.show(
-                                    title: 'Failed',
-                                    duration: const Duration(seconds: 2),
-                                    description: temp,
-                                    leading: const Icon(
-                                      Icons.error_outline_outlined,
-                                      color: Colors.red,
-                                      size: 55,
-                                    )
-                                );
-                              }
-                            }
-                            else{
-                              InAppNotifications.instance
-                                ..titleFontSize = 14.0
-                                ..descriptionFontSize = 14.0
-                                ..textColor = Colors.black
-                                ..backgroundColor =
-                                const Color.fromRGBO(150, 150, 150, 1)
-                                ..shadow = true
-                                ..animationStyle =
-                                    InAppNotificationsAnimationStyle.scale;
-                              InAppNotifications.show(
-                                  title: 'Failed',
-                                  duration: const Duration(seconds: 2),
-                                  description: "Email id can not be empty",
-                                  leading: const Icon(
-                                    Icons.error_outline_outlined,
-                                    color: Colors.red,
-                                    size: 55,
-                                  ));
-                            }
-
+                        onPressed: () async {
+                          final email = await FirebaseAuth.instance.currentUser?.email;
+                          await FirebaseFirestore.instance.collection("Teachers").doc(email).set({
+                            "Email" : email,
+                            "Name" : nameController.text.trim(),
+                            "Employee Id" : exployeeIDController.text.trim(),
+                            "bg" : "bg-1.jpg"
+                          });
+                          final record = await FirebaseFirestore.instance.collection("Teacher_record").doc("Email").get();
+                          record.exists
+                          ?
+                          await FirebaseFirestore.instance.collection("Teacher_record").doc("Email").update({
+                            "Email": FieldValue.arrayUnion([FirebaseAuth.instance.currentUser?.email])
+                          })
+                          :
+                          await FirebaseFirestore.instance.collection("Teacher_record").doc("Email").set({
+                          "Email": FieldValue.arrayUnion([FirebaseAuth.instance.currentUser?.email])
+                          })
+                          ;
+                          await FirebaseFirestore.instance.collection("Teachers").doc(email).collection("Teachings").doc("Teachings").set({}).whenComplete(
+                          () {
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+                          return const MainPage();
+                          },));
+                          } );
                         },
                         style: ElevatedButton.styleFrom(
-                          shape: const StadiumBorder(),
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.black54,
-                          elevation: 30
+                            shape: const StadiumBorder(),
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.black54,
+                            elevation: 30
 
                         ),
                         child: const Text("Sign Up", style: TextStyle(
@@ -330,59 +277,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ],
                 ),
-                signInOption(),
-
               ],
             ),
           ),
         )
     );
-  }
-  Row signInOption() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text("Already have an account?", style: TextStyle(
-          fontWeight: FontWeight.w400,
-          color: Colors.black,)
-          ,),
-        TextButton(
-
-          onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              PageTransition(
-                child: const SignInScreen(),
-                type: PageTransitionType.leftToRightJoined,
-                duration: const Duration(milliseconds: 350),
-                childCurrent: const SignUpScreen(),
-              ),
-            );
-          },
-          child: const Text("Sign In", style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-            shadows: [
-              Shadow(
-                blurRadius: 30,
-                offset: Offset(3, 3),
-                color: Colors.black54
-              )
-            ]
-          )
-
-          ),
-        )
-      ],
-    );
-  }
-  Future<String> signIn(String email, String password) async {
-    try {
-      await  FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
-      return "1";
-    } on FirebaseAuthException catch (e) {
-      print(e.code);
-      return e.toString().split(']')[1].trim();
-    }
   }
 }

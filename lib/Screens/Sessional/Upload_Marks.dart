@@ -6,8 +6,14 @@ import 'package:flutter_inapp_notifications/flutter_inapp_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class UploadMarks extends StatefulWidget {
-  const UploadMarks({super.key});
-
+  const UploadMarks({super.key, required this.university, required this.college, required this.course, required this.branch, required this.year, required this.section, required this.subject});
+  final String university;
+  final String college;
+  final String course;
+  final String branch;
+  final String year;
+  final String section;
+  final String subject;
   @override
   State<UploadMarks> createState() => _UploadMarksState();
 }
@@ -31,13 +37,13 @@ class _UploadMarksState extends State<UploadMarks> {
           stream: FirebaseFirestore
               .instance
               .collection("Students")
-              .where("University",isEqualTo: university_filter)
-              .where("College",isEqualTo: college_filter)
-              .where("Course",isEqualTo: course_filter)
-              .where("Branch",isEqualTo: branch_filter)
-              .where("Year",isEqualTo: year_filter)
-              .where("Section",isEqualTo: section_filter)
-              .where("Subject",arrayContains: subject_filter)
+              .where("University",isEqualTo: widget.university)
+              .where("College",isEqualTo: widget.college)
+              .where("Course",isEqualTo: widget.course)
+              .where("Branch",isEqualTo: widget.branch)
+              .where("Year",isEqualTo: widget.year)
+              .where("Section",isEqualTo: widget.section)
+              .where("Subject",arrayContains: widget.subject)
               .where("Name",  whereNotIn: uploadedName)
               .snapshots(),
           builder: (context, snapshot) {

@@ -1,12 +1,10 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:campus_link_teachers/Screens/Feedback.dart';
 import 'package:campus_link_teachers/Screens/Leader_board/Leader_Board.dart';
 import 'package:campus_link_teachers/Screens/loadingscreen.dart';
 import 'package:campus_link_teachers/push_notification/helper_notification.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:campus_link_teachers/Constraints.dart';
@@ -14,7 +12,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:path_provider/path_provider.dart';
 import '../Database/database.dart';
 import '../Registration/Basic.dart';
 import 'Assignment/Assignments.dart';
@@ -24,7 +21,6 @@ import 'Notes/Notes.dart';
 import 'Sessional/Sessional.dart';
 import 'Chat_tiles/chat_list.dart';
 import 'download_attendance.dart';
-import 'package:tflite_v2/tflite_v2.dart';
 
 class Nevi extends StatefulWidget {
   const Nevi({Key? key}) : super(key: key);
@@ -226,35 +222,39 @@ class _NeviState extends State<Nevi>  {
                 leading: const Icon(Icons.settings,color: Colors.black),
                 title: const Text("Settings"),
                 onTap: () async {
-                  String? res = await Tflite.loadModel(
-                      model: "assets/images/model.tflite",
-                      labels: "assets/images/labels.txt",
-                      numThreads: 1, // defaults to 1
-                      isAsset: true, // defaults to true, set to false to load resources outside assets
-                      useGpuDelegate: false // defaults to false, set to true to use GPU delegate
-                  );
-                  print("result $res");
-                  final byteData = await rootBundle.load('assets/images/3face3.jpg');
 
-                  Directory appDocDir = await getApplicationDocumentsDirectory();
-                  String imagesAppDirectory = appDocDir.path;
-                  final file = await File('$imagesAppDirectory/image.jpg').create(recursive: true);
-
-                  await file.writeAsBytes(byteData.buffer
-                      .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes)).whenComplete(() async {
-                    var recognitions = await Tflite.runModelOnImage(
-                      path: file.path,   // required
-                      imageMean: 0.0,   // defaults to 117.0
-                      imageStd: 255.0, // defaults to 1.0
-                      numResults: 2,    // defaults to 5
-                      threshold: 0.2,   // defaults to 0.1
-                      asynch: true,
-                    );
-                    print("Reult $recognitions");
-                    await Tflite.close();
+                  await http.get(Uri.parse("http://127.0.0.1:8000/hello")).then((value) {
+                    print(value);
                   });
 
-
+                  // await availableCameras().then((value){
+                  //   Navigator.push(context, MaterialPageRoute(builder: (context) => CameraPage(
+                  //     cameras: value,
+                  //   ),));
+                  // });
+                  // //
+                  // // print("result $res");
+                  // // final byteData = await rootBundle.load('assets/images/3face3.jpg');
+                  // //
+                  // // Directory appDocDir = await getApplicationDocumentsDirectory();
+                  // // String imagesAppDirectory = appDocDir.path;
+                  // // final file = await File('$imagesAppDirectory/image.jpg').create(recursive: true);
+                  // //
+                  // // await file.writeAsBytes(byteData.buffer
+                  // //     .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes)).whenComplete(() async {
+                  // //   var recognitions = await Tflite.runModelOnImage(
+                  // //     path: file.path,   // required
+                  // //     imageMean: 0.0,   // defaults to 117.0
+                  // //     imageStd: 255.0, // defaults to 1.0
+                  // //     numResults: 2,    // defaults to 5
+                  // //     threshold: 0.2,   // defaults to 0.1
+                  // //     asynch: true,
+                  // //   );
+                  // //   print("Reult $recognitions");
+                  // //   await Tflite.close();
+                  // // });
+                  //
+                  //
 
                 },
               ),
