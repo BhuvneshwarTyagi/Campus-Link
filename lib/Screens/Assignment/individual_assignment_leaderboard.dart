@@ -239,13 +239,13 @@ class _IndividualAssignmentLeaderboardState extends State<IndividualAssignmentLe
       data["Rollnumber"]=email.data()["Rollnumber"];
       data["Email"]=email.data()["Email"];
       data["Score"]=0;
-      data["Quiz-Time"]= 0 ;
+      data["Quiz-Time"]= Timestamp.fromMicrosecondsSinceEpoch(10000000) ;
+      Timestamp x = Timestamp(10, 10);
       print("...............;;;;;;;;;;;;;; ${widget.index}");
-      if(snap.data!.data()?["Assignment-${widget.index+1}"]["Submitted-by"].contains(email.data()['Email']) && snap.data!.data()?["Assignment-${widget.index+1}"]["submitted-Assignment"][][email.data()['Email'].toString().split('@')[0]]['Status'] == "Accepted"){
+      if(snap.data!.data()?["Assignment-${widget.index+1}"]["Submitted-by"].contains(email.data()['Email']) && snap.data!.data()?["Assignment-${widget.index+1}"]["submitted-Assignment"][email.data()['Email'].toString().split('@')[0]]['Status'] == "Accepted"){
         data["Score"]=1;
-        data["Quiz-Time"]= snap.data!.data()?["Assignment-${widget.index+1}"]["Submitted-Assignment"][email.data()['Email'].toString().split('@')[0]]['Time'];
+        data["Quiz-Time"]= snap.data!.data()?["Assignment-${widget.index+1}"]["submitted-Assignment"][email.data()['Email'].toString().split('@')[0]]['Time'];
       }
-
       result.add(data);
     }
     sortResult();
@@ -267,7 +267,7 @@ class _IndividualAssignmentLeaderboardState extends State<IndividualAssignmentLe
     result.sort((a,b) {
       if(a["Score"]==b["Score"])
       {
-        return int.parse(a["Quiz-Time"]).compareTo(int.parse(b["Quiz-Time"]));
+        return a["Quiz-Time"].millisecondsSinceEpoch.compareTo(b["Quiz-Time"].millisecondsSinceEpoch);
       }
       else{
         return 0;
