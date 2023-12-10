@@ -4,15 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../Constraints.dart';
+
 class AssignmentsOverAllLeaderBoard extends StatefulWidget {
-  const AssignmentsOverAllLeaderBoard({super.key, required this.university, required this.college, required this.course, required this.branch, required this.year, required this.section, required this.subject});
-  final String university;
-  final String college;
-  final String course;
-  final String branch;
-  final String year;
-  final String section;
-  final String subject;
+  const AssignmentsOverAllLeaderBoard({super.key,});
+
   @override
   State<AssignmentsOverAllLeaderBoard> createState() => _AssignmentsOverAllLeaderBoardState();
 }
@@ -35,14 +31,12 @@ class _AssignmentsOverAllLeaderBoardState extends State<AssignmentsOverAllLeader
           .instance
           .collection("Assignment")
           .doc(
-          "${widget.university.split(" ")[0]} ${widget.college.split(" ")[0]} ${widget.course.split(" ")[0]} ${widget.branch.split(" ")[0]} ${widget.year} ${widget.section} ${widget.subject}"
+          "${university_filter.split(" ")[0]} ${college_filter.split(" ")[0]} ${course_filter.split(" ")[0]} ${branch_filter.split(" ")[0]} $year_filter $section_filter $subject_filter"
       )
           .snapshots(),
       builder: (context, snapshot) {
-        if(!load){
-          calculateResult();
-        }
-        return snapshot.hasData && load
+
+        return snapshot.hasData && load && result.isNotEmpty
             ?
         SingleChildScrollView(
           scrollDirection: Axis.vertical,
@@ -241,19 +235,19 @@ class _AssignmentsOverAllLeaderBoardState extends State<AssignmentsOverAllLeader
         .instance
         .collection("Assignment")
         .doc(
-        "${widget.university.split(" ")[0]} ${widget.college.split(" ")[0]} ${widget.course.split(" ")[0]} ${widget.branch.split(" ")[0]} ${widget.year} ${widget.section} ${widget.subject}"
+        "${university_filter.split(" ")[0]} ${college_filter.split(" ")[0]} ${course_filter.split(" ")[0]} ${branch_filter.split(" ")[0]} $year_filter $section_filter $subject_filter"
     )
         .get();
     final allStudentsdata = await FirebaseFirestore.
     instance.
     collection("Students").
-    where("Subject", arrayContains: widget.subject).
-    where("University",isEqualTo: widget.university).
-    where("Year",isEqualTo: widget.year).
-    where("Branch",isEqualTo: widget.branch).
-    where("College",isEqualTo: widget.college).
-    where("Section",isEqualTo: widget.section).
-    where("Course",isEqualTo: widget.course).
+    where("Subject", arrayContains: subject_filter).
+    where("University",isEqualTo: university_filter).
+    where("Year",isEqualTo: year_filter).
+    where("Branch",isEqualTo: branch_filter).
+    where("College",isEqualTo: college_filter).
+    where("Section",isEqualTo: section_filter).
+    where("Course",isEqualTo: course_filter).
     get();
     int lop=1;
     for(var email in  allStudentsdata.docs)
@@ -286,7 +280,7 @@ class _AssignmentsOverAllLeaderBoardState extends State<AssignmentsOverAllLeader
         return a["Score"].compareTo(b["Score"]);
       },
     );
-
+    result = result.reversed.toList();
     result.sort((a,b) {
       if(a["Score"]==b["Score"])
       {

@@ -1,4 +1,5 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inapp_notifications/flutter_inapp_notifications.dart';
@@ -251,6 +252,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             if(email.text.trim().isNotEmpty){
                               String temp = await signIn(email.text.trim(), password.text.trim());
                               await FirebaseAuth.instance.currentUser!.sendEmailVerification();
+                              final record = await FirebaseFirestore.instance.collection("Teacher_record").doc("Email").get();
+                              record.exists
+                                  ?
+                              await FirebaseFirestore.instance.collection("Teacher_record").doc("Email").update({
+                                "Email": FieldValue.arrayUnion([FirebaseAuth.instance.currentUser?.email])
+                              })
+                                  :
+                              await FirebaseFirestore.instance.collection("Teacher_record").doc("Email").set({
+                                "Email": FieldValue.arrayUnion([FirebaseAuth.instance.currentUser?.email])
+                              })
+                              ;
                               if(temp=='1'){
                                 InAppNotifications.instance
                                   ..titleFontSize = 14.0

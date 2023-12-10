@@ -243,17 +243,6 @@ class _DetailsState extends State<Details> {
                             "Employee Id" : exployeeIDController.text.trim(),
                             "bg" : "bg-1.jpg"
                           });
-                          final record = await FirebaseFirestore.instance.collection("Teacher_record").doc("Email").get();
-                          record.exists
-                          ?
-                          await FirebaseFirestore.instance.collection("Teacher_record").doc("Email").update({
-                            "Email": FieldValue.arrayUnion([FirebaseAuth.instance.currentUser?.email])
-                          })
-                          :
-                          await FirebaseFirestore.instance.collection("Teacher_record").doc("Email").set({
-                          "Email": FieldValue.arrayUnion([FirebaseAuth.instance.currentUser?.email])
-                          })
-                          ;
                           await FirebaseFirestore.instance.collection("Teachers").doc(email).collection("Teachings").doc("Teachings").set({}).whenComplete(
                           () {
                           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {

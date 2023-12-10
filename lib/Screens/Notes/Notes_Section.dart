@@ -91,28 +91,28 @@ class _NotesSectionState extends State<NotesSection> {
         child: StreamBuilder
           (
           stream: FirebaseFirestore.instance.collection("Notes").doc("${university_filter.split(" ")[0]} ${college_filter.split(" ")[0]} ${course_filter.split(" ")[0]} ${branch_filter.split(" ")[0]} $year_filter $section_filter $subject_filter").snapshots(),
-          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot)
+          builder: ( context, snapshot)
           {
-            return  snapshot.hasData
+            return  snapshot.hasData && snapshot.data!.exists
                 ?
             ListView.builder(
-                itemCount: snapshot.data["Total_Notes"],
+                itemCount: snapshot.data!.data()?["Total_Notes"],
                 itemBuilder: (context, index) {
-                  Timestamp deadline=snapshot.data["Notes-${index+1}"]["Deadline"] ?? Timestamp(0, 0);
-                  bool quizCreated = snapshot.data["Notes-${index+1}"]["Quiz_Created"];
+                  Timestamp deadline=snapshot.data!.data()?["Notes-${index+1}"]["Deadline"] ?? Timestamp(0, 0);
+                  bool quizCreated = snapshot.data!.data()?["Notes-${index+1}"]["Quiz_Created"];
                   String path = "/Campus Link/$university_filter $college_filter $course_filter $branch_filter $year_filter $section_filter $subject_filter/Notes/";
-                  File filePath = File("$path${snapshot.data["Notes-${index + 1}"]["File_Name"]}");
+                  File filePath = File("$path${snapshot.data!.data()?["Notes-${index + 1}"]["File_Name"]}");
 
                   return NotesTile(
-                    pdfUrl: snapshot.data["Notes-${index+1}"]["Pdf_URL"],
-                    pdfName: snapshot.data["Notes-${index+1}"]["File_Name"],
+                    pdfUrl: snapshot.data!.data()?["Notes-${index+1}"]["Pdf_URL"],
+                    pdfName: snapshot.data!.data()?["Notes-${index+1}"]["File_Name"],
                     pdfLocalPath: path,
                     index: index+1,
-                    pdfSize: snapshot.data["Notes-${index + 1}"]["File_Size"],
-                    stamp: snapshot.data["Notes-${index + 1}"]["Stamp"].toDate(),
+                    pdfSize: snapshot.data!.data()?["Notes-${index + 1}"]["File_Size"],
+                    stamp: snapshot.data!.data()?["Notes-${index + 1}"]["Stamp"].toDate(),
                     totalStudents: totalStudents,
                     deadLine: deadline,
-                    submission: snapshot.data["Notes-${index+1}"]["Submitted by"]??[],
+                    submission: snapshot.data!.data()?["Notes-${index+1}"]["Submitted by"]??[],
                     quizCreated: quizCreated,
                     filePath: filePath,
                   );

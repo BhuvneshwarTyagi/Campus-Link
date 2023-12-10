@@ -121,6 +121,8 @@ class _SessionalState extends State<Sessional> with TickerProviderStateMixin{
             stream: FirebaseFirestore.instance.collection("Teachers").doc(usermodel["Email"]).collection("Teachings").doc("Teachings").snapshots(),
             builder: (context, snapshot) {
             return snapshot.hasData ?
+                snapshot.data!.data()!.isNotEmpty
+                    ?
             Stack(
               children: [
                 Column(
@@ -516,6 +518,8 @@ class _SessionalState extends State<Sessional> with TickerProviderStateMixin{
                 )
               ],
             )
+                :
+                    const SizedBox()
                 :
             const SizedBox();
           }

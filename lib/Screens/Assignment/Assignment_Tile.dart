@@ -14,14 +14,7 @@ import 'Assignments.dart';
 import 'Submit_button.dart';
 
 class AssignmentTile extends StatefulWidget {
-  const AssignmentTile({super.key, required this.university, required this.college, required this.course, required this.branch, required this.year, required this.section, required this.subject});
-  final String university;
-  final String college;
-  final String course;
-  final String branch;
-  final String year;
-  final String section;
-  final String subject;
+  const AssignmentTile({super.key, });
   @override
   State<AssignmentTile> createState() => _AssignmentTileState();
 }
@@ -120,7 +113,7 @@ class _AssignmentTileState extends State<AssignmentTile> {
                   .instance
                   .collection("Assignment")
                   .doc(
-                  "${widget.university.split(" ")[0]} ${widget.college.split(" ")[0]} ${widget.course.split(" ")[0]} ${widget.branch.split(" ")[0]} ${widget.year} ${widget.section} ${widget.subject}")
+                  "${university_filter.split(" ")[0]} ${college_filter.split(" ")[0]} ${course_filter.split(" ")[0]} ${branch_filter.split(" ")[0]} $year_filter $section_filter $subject_filter")
                   .snapshots(),
               builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
                 return snapshot.hasData
