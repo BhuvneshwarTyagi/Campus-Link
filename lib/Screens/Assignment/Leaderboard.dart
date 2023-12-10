@@ -1,5 +1,4 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:campus_link_teachers/Constraints.dart';
 import 'package:campus_link_teachers/Screens/Assignment/Top3_Leaderboard_tile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +22,12 @@ class _AssignmentsOverAllLeaderBoardState extends State<AssignmentsOverAllLeader
   int averageSubmission=0;
   bool load = false;
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    call();
+  }
+  @override
   Widget build(BuildContext context) {
     Size size=MediaQuery.of(context).size;
     return StreamBuilder(
@@ -34,11 +39,9 @@ class _AssignmentsOverAllLeaderBoardState extends State<AssignmentsOverAllLeader
       )
           .snapshots(),
       builder: (context, snapshot) {
-       if(snapshot.hasData && !load){
-           calculateResult(snapshot);
-           load=false;
-       }
-
+        if(!load){
+          calculateResult();
+        }
         return snapshot.hasData && load
             ?
         SingleChildScrollView(
@@ -222,54 +225,68 @@ class _AssignmentsOverAllLeaderBoardState extends State<AssignmentsOverAllLeader
       }
       );
   }
-  calculateResult(AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snap) async {
-    result.clear();
+
+
+  call() async {
+    await calculateResult().whenComplete((){
+      setState(() {
+        load=true;
+      });
+    });
+  }
+  Future<void> calculateResult() async {
+    result=[];
     int submitted=0;
+    final snap = await FirebaseFirestore
+        .instance
+        .collection("Assignment")
+        .doc(
+        "${widget.university.split(" ")[0]} ${widget.college.split(" ")[0]} ${widget.course.split(" ")[0]} ${widget.branch.split(" ")[0]} ${widget.year} ${widget.section} ${widget.subject}"
+    )
+        .get();
     final allStudentsdata = await FirebaseFirestore.
     instance.
     collection("Students").
-    where("Subject", arrayContains: subject_filter).
-    where("University",isEqualTo: university_filter).
-    where("Year",isEqualTo: year_filter).
-    where("Branch",isEqualTo: branch_filter).
-    where("College",isEqualTo: college_filter).
-    where("Section",isEqualTo: section_filter).
-    where("Course",isEqualTo: course_filter).
+    where("Subject", arrayContains: widget.subject).
+    where("University",isEqualTo: widget.university).
+    where("Year",isEqualTo: widget.year).
+    where("Branch",isEqualTo: widget.branch).
+    where("College",isEqualTo: widget.college).
+    where("Section",isEqualTo: widget.section).
+    where("Course",isEqualTo: widget.course).
     get();
+    int lop=1;
     for(var email in  allStudentsdata.docs)
     {
+      print(lop++);
         Map<String,dynamic>data={};
         data["Name"]=email.data()["Name"];
         data["Rollnumber"]=email.data()["Rollnumber"];
         data["Score"]=0;
-        int stop= snap.data!.data()?["Total_Assignment"] ?? 0;
+        data["Quiz-Time"]= Timestamp(0,0);
+        data["Email"]=email.data()["Email"];
+        int stop= snap.data()?["Total_Assignment"] ?? 0;
         for(int i=1;i<= stop;i++){
-          if(snap.data!.data()?["Assignment-$i"]['Submitted-by']!=null && snap.data!.data()?["Assignment-$i"]['Submitted-by'].contains(email.data()["Email"])){
-            data["Score"]++;
-            submitted++;
+          if(snap.data()?["Assignment-$i"]['Submitted-by']!=null && snap.data()?["Assignment-$i"]['Submitted-by'].contains(email.data()["Email"]) ){
+            if(snap.data()?["Assignment-$i"]['submitted-Assignment'][email.data()['Email'].toString().split('@')[0]]['Status']=="Accepted"){
+              data["Score"]++;
+              submitted++;
+              data["Quiz-Time"]=snap.data()?["Assignment-$i"]['submitted-Assignment'][email.data()['Email'].toString().split('@')[0]]['Time'];
+            }
           }
 
         }
-        data["Quiz-Time"]=
-        data["Email"]=email.data()["Email"];
         result.add(data);
     }
     sortResult();
-    setState(() {
-      load=true;
-      print(submitted/snap.data!.data()?["Total_Assignment"]);
-      averageSubmission = (submitted/snap.data!.data()?["Total_Assignment"]).round();
-    });
+      averageSubmission = (submitted/snap.data()?["Total_Assignment"]).round();
   }
   sortResult(){
-    print("before: $result");
     result.sort((a, b) {
-      print("a,b : $a $b");
-      print("Compared ${a["Score"].compareTo(b["Score"])}");
         return a["Score"].compareTo(b["Score"]);
       },
     );
-    result=result.reversed.toList();
+
     result.sort((a,b) {
       if(a["Score"]==b["Score"])
       {
@@ -279,7 +296,5 @@ class _AssignmentsOverAllLeaderBoardState extends State<AssignmentsOverAllLeader
         return 0;
       }
     });
-
-    print(result);
   }
 }
