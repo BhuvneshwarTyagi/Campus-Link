@@ -1,11 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:campus_link_teachers/Screens/Assignment/Assignment_Tile.dart';
 import 'package:campus_link_teachers/Screens/Assignment/Leaderboard.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import '../../Constraints.dart';
 
 class AssignmentsUpload extends StatefulWidget {
   const AssignmentsUpload({Key? key}) : super(key: key);
@@ -14,16 +11,10 @@ class AssignmentsUpload extends StatefulWidget {
   State<AssignmentsUpload> createState() => _AssignmentsUploadState();
 }
 
-
-
-
-
-
-
 class _AssignmentsUploadState extends State<AssignmentsUpload> with TickerProviderStateMixin{
   late TabController _tabController;
   int currTab=0;
-  List<Widget> tabs=[AssignmentTile(),AssignmentsOverAllLeaderBoard()];
+  List<Widget> tabs=[const AssignmentTile(),const AssignmentsOverAllLeaderBoard()];
 
   @override
   void initState() {

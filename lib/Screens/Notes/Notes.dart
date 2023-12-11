@@ -3,7 +3,7 @@ import 'package:campus_link_teachers/Screens/Notes/Notes_Section.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../Constraints.dart';
-import 'SubjectQuizScore.dart';
+import 'NotesLeaderboard.dart';
 
 class Notes extends StatefulWidget {
   const Notes({Key? key}) : super(key: key);
