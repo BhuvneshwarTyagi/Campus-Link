@@ -261,10 +261,6 @@ class _AssignmentTileState extends State<AssignmentTile> {
                                       indent: 5,
                                       thickness: 1.5,
                                     ),
-                                    snapshot.data!.data()?["Assignment-${index+1}"]["Submitted-by"] == null || snapshot.data!.data()?["Assignment-${index+1}"]["Submitted-by"].length <3
-                                        ?
-                                    const SizedBox()
-                                        :
                                     ListTile(
                                       title: AutoSizeText(
                                         "Leaderboard",
@@ -279,9 +275,12 @@ class _AssignmentTileState extends State<AssignmentTile> {
                                         child: Image.asset("assets/images/leaderboard.png"),
                                       ),
                                       onTap: (){
-                                        showBottomSheet(context: context, builder: (context) {
-                                          return IndividualAssignmentLeaderboard(index: index);
-                                        },);
+                                        Navigator.push(context, PageTransition(
+                                            child: IndividualAssignmentLeaderboard(index: index),
+                                            type: PageTransitionType.bottomToTopJoined,
+                                          childCurrent: AssignmentsUpload()
+                                        ),
+                                        );
                                       },
                                     )
                                   ],
