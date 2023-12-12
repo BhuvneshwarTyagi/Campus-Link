@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:camera/camera.dart';
 import 'package:campus_link_teachers/Screens/Feedback.dart';
 import 'package:campus_link_teachers/Screens/Leader_board/Leader_Board.dart';
 import 'package:campus_link_teachers/Screens/loadingscreen.dart';
+import 'package:campus_link_teachers/Teacher%20Attendance/Teacher%20Attendance/test.dart';
 import 'package:campus_link_teachers/push_notification/helper_notification.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -18,6 +20,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:path_provider/path_provider.dart';
 import '../Database/database.dart';
 import '../Registration/Basic.dart';
+import '../Teacher Attendance/Teacher Attendance/take_sample.dart';
 import 'Assignment/Assignments.dart';
 import 'Attendance.dart';
 import 'Filters.dart';
@@ -243,15 +246,9 @@ class _NeviState extends State<Nevi>  {
                 title: const Text("Train"),
                 onTap: () async {
 
-                  final dio = Dio();
-                  Directory appDocDir = await getApplicationDocumentsDirectory();
-                  String imagesAppDirectory = appDocDir.path;
-                  Directory dir = Directory("$imagesAppDirectory/campulink");
-                  final file = await File('${dir.path}/image1.jpg');
-                  dio.download("https://firebasestorage.googleapis.com/v0/b/campus-link-6f11f.appspot.com/o/User_profile%2Fbhanu68tyagi%40gmail.com?alt=media&token=a6d46855-e763-4452-a0ee-4cdbdd1cc7e6", file.path);
-
-                  await uploadImageTGitHub("BhuvneshwarTyagi", "FaceDetectionApi", file.path, "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");
-
+                  await availableCameras().then((value) {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) =>  detectFace(cameras: value,),));
+                  });
 
                 },
               ),
