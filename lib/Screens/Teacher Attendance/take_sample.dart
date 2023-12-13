@@ -113,17 +113,6 @@ class _TakeSampleImageState extends State<TakeSampleImage> {
                               bool faceDetected = true;
                               pictureFile =
                                   await _cameraController.takePicture();
-                              /* _cameraController.startImageStream((image) async {
-                  _cameraController.stopImageStream();
-                  if(faceDetected){
-                   List<Face> detectedFace= await MlKit().detectFacesFromImage(image).whenComplete(() {
-                      setState(() {
-                        faceDetected=false;
-
-                      });
-                    });
-                   print("Face are :${detectedFace}");
-                  }*/
                               print("Image Path is: ${pictureFile?.path}");
                               if (pictureFile?.path != null) {
                                 setState(() {

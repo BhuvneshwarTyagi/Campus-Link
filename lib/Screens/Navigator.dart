@@ -1,14 +1,10 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:campus_link_teachers/Screens/Feedback.dart';
 import 'package:campus_link_teachers/Screens/Leader_board/Leader_Board.dart';
 import 'package:campus_link_teachers/Screens/loadingscreen.dart';
-import 'package:campus_link_teachers/Teacher%20Attendance/Teacher%20Attendance/test.dart';
 import 'package:campus_link_teachers/push_notification/helper_notification.dart';
-import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:auto_size_text/auto_size_text.dart';
@@ -17,16 +13,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:path_provider/path_provider.dart';
 import '../Database/database.dart';
 import '../Registration/Basic.dart';
-import '../Teacher Attendance/Teacher Attendance/take_sample.dart';
 import 'Assignment/Assignments.dart';
 import 'Attendance.dart';
 import 'Filters.dart';
 import 'Notes/Notes.dart';
 import 'Sessional/Sessional.dart';
 import 'Chat_tiles/chat_list.dart';
+import 'Teacher Attendance/take_attendance.dart';
+import 'Teacher Attendance/take_sample.dart';
 import 'download_attendance.dart';
 
 class Nevi extends StatefulWidget {
@@ -226,28 +222,21 @@ class _NeviState extends State<Nevi>  {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.settings,color: Colors.black),
-                title: const Text("Settings"),
+                leading: const Icon(Icons.task,color: Colors.black),
+                title: const Text("Take Teacher Attendance"),
                 onTap: () async {
-
-                  final dio = Dio();
-                  Directory appDocDir = await getApplicationDocumentsDirectory();
-                  String imagesAppDirectory = appDocDir.path;
-                  final file = await File('$imagesAppDirectory/image.jpg').create(recursive: true);
-                  await dio.download("https://firebasestorage.googleapis.com/v0/b/campus-link-6f11f.appspot.com/o/Machine%20Learning%2F1face7.jpg?alt=media&token=a87eea7b-0fe1-4fa7-8031-d7761b374d8c", file.path).whenComplete((){
-                    uploadImage(file.path);
+                  await availableCameras().then((value) {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) =>  TeacherAttendance(cameras: value,),));
                   });
-
-
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.settings,color: Colors.black),
-                title: const Text("Train"),
+                leading: const Icon(Icons.camera_enhance,color: Colors.black),
+                title: const Text("Testing Sample"),
                 onTap: () async {
 
                   await availableCameras().then((value) {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) =>  detectFace(cameras: value,),));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) =>  TakeSampleImage(cameras: value,),));
                   });
 
                 },
@@ -758,7 +747,7 @@ class _NeviState extends State<Nevi>  {
       );
     } catch (e) {}
   }
-  Future<void> uploadImage(String imageFilePath) async {
+ /* Future<void> uploadImage(String imageFilePath) async {
     var url = Uri.parse('https://facerecognizeapi.onrender.com/predict');
 
     var request = http.MultipartRequest('POST', url)..files.add(await http.MultipartFile.fromPath('file', imageFilePath));
@@ -803,7 +792,7 @@ class _NeviState extends State<Nevi>  {
       print('Failed to upload image to GitHub: ${response.statusCode}');
     }
   }
-
+*/
 // Future<void> downloadAndSaveImage(String owner, String repo, String filePath, String localPath, String accessToken) async {
 //   try {
 //     final url = Uri.parse('https://raw.githubusercontent.com/$owner/$repo/main/train/bhanu/image.jpg');

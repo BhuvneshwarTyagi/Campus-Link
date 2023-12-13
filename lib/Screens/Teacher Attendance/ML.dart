@@ -17,53 +17,6 @@ import '../../Screens/loadingscreen.dart';
 
 class MlKit {
 
-
-Future<List<Face>> detectFacesFromImage(CameraImage image) async {
- final faceDetector = GoogleMlKit.vision.faceDetector(
-       const FaceDetectorOptions(
-        mode: FaceDetectorMode.accurate,
-        enableLandmarks: true,
-      ),
-    );
-    final WriteBuffer allBytes = WriteBuffer();
-    for (final Plane plane in image.planes) {
-      allBytes.putUint8List(plane.bytes);
-    }
-    final bytes = allBytes.done().buffer.asUint8List();
-
-    final Size imageSize = Size(image.width.toDouble(), image.height.toDouble());
-    final inputImageFormat = InputImageFormatMethods.fromRawValue(image.format.raw) ?? InputImageFormat.NV21;
-    final planeData = image.planes.map(
-          (Plane plane) {
-        return InputImagePlaneMetadata(
-          bytesPerRow: plane.bytesPerRow,
-          height: plane.height,
-          width: plane.width,
-        );
-      },
-    ).toList();
-
-    final inputImageData = InputImageData(
-      size: imageSize,
-      imageRotation: InputImageRotation.Rotation_0deg,
-      inputImageFormat: inputImageFormat,
-      planeData: planeData,
-    );
-    print(await faceDetector.processImage(
-    InputImage.fromBytes(
-    bytes: bytes,
-        inputImageData:inputImageData
-    ),
-  ));
-    return  faceDetector.processImage(
-      InputImage.fromBytes(
-          bytes: bytes,
-          inputImageData:inputImageData
-      ),
-    );
-}
-
-
 Future<void> uploadSampleImage(List<String> imageList,BuildContext context)
 async {
   Navigator.push(context, MaterialPageRoute(builder: (context) {
@@ -134,28 +87,62 @@ bool checkTime()
   Future<String>faceRecognize(String imagePath)
   async {
       String result;
-      const String apiUrl = 'YOUR_API_ENDPOINT';
-      const String imagePath = 'YOUR_IMAGE_PATH';
-      final File imageFile = File(imagePath);
-      var request = http.MultipartRequest('POST', Uri.parse(apiUrl));
-      request.files.add(await http.MultipartFile.fromPath('image', imageFile.path));
+      var prediction;
+      var url = Uri.parse('https://facerecognizeapi.onrender.com/predict');
+
+      var request = http.MultipartRequest('POST', url)..files.add(await http.MultipartFile.fromPath('file', imagePath ?? ""));
 
       try {
-        final response = await request.send();
+        var response = await request.send();
+
         if (response.statusCode == 200) {
-          final String responseData = await response.stream.bytesToString();
-          final Map<String, dynamic> decodedResponse = json.decode(responseData);
-          result=decodedResponse.toString();
-          print('API Response: $decodedResponse');
-        } else {
-          // Request failed
-          result=response.reasonPhrase.toString();
-          print('Error: ${response.reasonPhrase}');
+          var responseBody = await response.stream.bytesToString();
+          var jsonResponse = json.decode(responseBody);
+
+          // Assuming the response has a key named 'prediction'
+           prediction = jsonResponse['predictions'];
+
+          print('Prediction: $prediction');        } else {
+
+          print('HTTP Error: ${response.statusCode}');
         }
       } catch (error) {
-        result=error.toString();
-        print('Error sending request: $error');
+
+        print('Error: $error');
       }
-      return result;
+      print("return false...");
+
+      return prediction;
   }
+Future<bool?> sendImage(String? imageFilePath) async {
+  bool? result;
+  var url = Uri.parse('https://train-7w8l.onrender.com/detect_faces');
+
+  var request = http.MultipartRequest('POST', url)..files.add(await http.MultipartFile.fromPath('file', imageFilePath ?? ""));
+
+  try {
+    var response = await request.send();
+
+    if (response.statusCode == 200) {
+      File outputFile = File(imageFilePath!);
+      print("successful");
+      await response.stream.toBytes().then((value) async {
+        print(" response is :${value.toString()}");
+        await outputFile.writeAsBytes(value.toList()).whenComplete(() {
+          print("return true...");
+          result =true;
+        });
+      });
+
+    } else {
+      result=false;
+      print('HTTP Error: ${response.statusCode}');
+    }
+  } catch (error) {
+    result=false;
+    print('Error: $error');
+  }
+  print("return false...");
+  return result;
+}
 }
