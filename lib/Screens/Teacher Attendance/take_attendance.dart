@@ -189,7 +189,7 @@ class _TeacherAttendanceState extends State<TeacherAttendance> {
                                     .faceRecognize(pictureFile!.path)
                                     .then((value) async {
                                   print("Predicted value is:${value}");
-                                  if (value == "face17") {
+                                  if (value == usermodel["Email"].toString().split("@")[0]) {
                                     await FirebaseFirestore.instance
                                         .collection("Teachers")
                                         .doc("${usermodel["Email"]}")

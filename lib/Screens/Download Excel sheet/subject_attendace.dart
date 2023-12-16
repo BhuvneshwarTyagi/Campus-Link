@@ -10,7 +10,7 @@ import 'package:open_file/open_file.dart';
 import 'package:path/path.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../push_notification/Storage_permission.dart';
+import '../../push_notification/Storage_permission.dart';
 
 class Subject extends StatefulWidget {
   const Subject({super.key, required this.uni, required this.clg, required this.course, required this.branch, required this.year, required this.section, required this.subject});

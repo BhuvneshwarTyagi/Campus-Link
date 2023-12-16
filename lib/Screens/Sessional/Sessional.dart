@@ -42,9 +42,9 @@ class _SessionalState extends State<Sessional> with TickerProviderStateMixin{
         .of(context)
         .size;
     return Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.blue,
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.blue,
           elevation: 0,
           toolbarHeight: size.height*0.07,
           flexibleSpace: SizedBox(

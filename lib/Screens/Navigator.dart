@@ -13,17 +13,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
+import '../Achievements/achievement_page.dart';
 import '../Database/database.dart';
 import '../Registration/Basic.dart';
 import 'Assignment/Assignments.dart';
 import 'Attendance.dart';
+import 'Download Excel sheet/excel_sheet_fliter.dart';
 import 'Filters.dart';
 import 'Notes/Notes.dart';
 import 'Sessional/Sessional.dart';
 import 'Chat_tiles/chat_list.dart';
 import 'Teacher Attendance/take_attendance.dart';
 import 'Teacher Attendance/take_sample.dart';
-import 'download_attendance.dart';
+
 
 class Nevi extends StatefulWidget {
   const Nevi({Key? key}) : super(key: key);
@@ -40,7 +42,7 @@ class _NeviState extends State<Nevi>  {
     const Notes(),
     const Attendance(),
     const OverAllLeaderBoard(),
-    const Sessional(),
+    const NewPost(),
   ];
   double leftpos = 26;
   double assigmentSize = 35;
@@ -188,6 +190,21 @@ class _NeviState extends State<Nevi>  {
                     context,
                     PageTransition(
                       child: const basicDetails(),
+                      type: PageTransitionType.rightToLeftJoined,
+                      duration: const Duration(milliseconds: 350),
+                      childCurrent: const Nevi(),
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.upload_file,color: Colors.black,),
+                title: const Text('Sessional Marks'),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    PageTransition(
+                      child: const Sessional(),
                       type: PageTransitionType.rightToLeftJoined,
                       duration: const Duration(milliseconds: 350),
                       childCurrent: const Nevi(),
