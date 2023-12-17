@@ -16,56 +16,26 @@ class SubjectQuizScore extends StatefulWidget {
 class _SubjectQuizScoreState extends State<SubjectQuizScore> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-        // appBar: AppBar(
-        //   centerTitle: true,
-        //   elevation: 0,
-        //   title:   Center(
-        //     child: AutoSizeText(
-        //       ' Leaderboard Quiz',
-        //       style: GoogleFonts.poppins(
-        //           color: Colors.black,
-        //           fontSize: 25,
-        //           fontWeight: FontWeight.bold),
-        //     ),
-        //   ),
-        //   leadingWidth: MediaQuery.of(context).size.width*0.08,
-        //   leading: IconButton(
-        //     onPressed: () {
-        //       Navigator.pop(context);
-        //     },
-        //     icon:  Icon(Icons.arrow_back,color: Colors.black,size: MediaQuery.of(context).size.width*0.08,),
-        //   ),
-        // ),
-        body: Container(
-          color: Colors.transparent,
-            // decoration:  const BoxDecoration(
-            //   gradient: LinearGradient(
-            //     begin: Alignment.topLeft,
-            //     end: Alignment.bottomRight,
-            //     colors: [
-            //       Colors.blue,
-            //       Colors.purpleAccent,
-            //     ],
-            //   ),
-            // ),
-            child: StreamBuilder(
-                  stream: FirebaseFirestore.instance.collection("Notes").doc("${university_filter.split(" ")[0]} ${college_filter.split(" ")[0]} ${course_filter.split(" ")[0]} ${branch_filter.split(" ")[0]} $year_filter $section_filter $subject_filter").snapshots(),
-                  builder: (context, snapshot) {
-                    print("${snapshot.data?.data()?["${usermodel["Email"]}"]}");
-                    return  snapshot.hasData
-                       ?
-                       NotesLeaderBoard(snap: snapshot, subject: widget.subject,)
-                        :
-                        const SizedBox(
-                          child: Center(child: Text("No Data Found")),
-                        );
-                  },
-                ),
-
-
-            ));
+    return Container(
+      decoration: const BoxDecoration(
+          image: DecorationImage(image: AssetImage("assets/images/celebration.gif"),fit: BoxFit.fill)
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+          body: StreamBuilder(
+                stream: FirebaseFirestore.instance.collection("Notes").doc("${university_filter.split(" ")[0]} ${college_filter.split(" ")[0]} ${course_filter.split(" ")[0]} ${branch_filter.split(" ")[0]} $year_filter $section_filter $subject_filter").snapshots(),
+                builder: (context, snapshot) {
+                  print("${snapshot.data?.data()?["${usermodel["Email"]}"]}");
+                  return  snapshot.hasData
+                     ?
+                     NotesLeaderBoard(snap: snapshot, subject: widget.subject,)
+                      :
+                      const SizedBox(
+                        child: Center(child: Text("No Data Found")),
+                      );
+                },
+              )),
+    );
   }
 }
 

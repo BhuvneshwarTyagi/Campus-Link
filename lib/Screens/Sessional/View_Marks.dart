@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:campus_link_teachers/Screens/Sessional/view_marks_sessional_tile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -85,21 +86,12 @@ class _ViewMarksState extends State<ViewMarks> {
                       child: ListView.builder(
                         itemCount: snapshot.data?.docs[index].data()["Marks"][subject_filter]["Total"],
                         itemBuilder: (context, index2) {
-                          return ListTile(
-                            title: AutoSizeText(
-                              "Sessional ${index2+1}",
-                              style: GoogleFonts.tiltNeon(
-                                  fontSize: size.width*0.05,
-                                  color: Colors.black
-                              ),
-                            ),
-                            trailing: AutoSizeText(
-                             "${ snapshot.data?.docs[index].data()["Marks"][subject_filter]["Sessional_${index2+1}"]}/${snapshot.data?.docs[index].data()["Marks"][subject_filter]["Sessional_${index2+1}_total"]}",
-                              style: GoogleFonts.tiltNeon(
-                                  fontSize: size.width*0.05,
-                                  color: Colors.black
-                              ),
-                            ),
+                          return SessionalEditTile(
+                            email: snapshot.data!.docs[index].data()["Email"],
+                            subject: widget.subject,
+                            sessionalindex: index2+1,
+                            sessionalmarks: snapshot.data?.docs[index].data()["Marks"][subject_filter]["Sessional_${index2+1}"],
+                            sessionaltotal: snapshot.data?.docs[index].data()["Marks"][subject_filter]["Sessional_${index2+1}_total"],
                           );
                       },),
                     )

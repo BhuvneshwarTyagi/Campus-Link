@@ -32,20 +32,6 @@ class _basicDetailsState extends State<basicDetails> {
   List<dynamic> course = [];
   final FocusNode coursef = FocusNode();
 
-  late TextEditingController branchController = TextEditingController();
-  List<dynamic> branch = [];
-  final FocusNode branchf = FocusNode();
-
-  late TextEditingController yearController = TextEditingController();
-  List<dynamic> year = ['1', '2', '3', '4', '5'];
-  final FocusNode yearf = FocusNode();
-
-  late TextEditingController secController = TextEditingController();
-  List<dynamic> sec = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-  final FocusNode secf = FocusNode();
-
-  late TextEditingController subjectController = TextEditingController();
-  List<dynamic> subject = [];
   final FocusNode subjectf = FocusNode();
 
   final FocusNode buttonf = FocusNode();
@@ -309,10 +295,10 @@ class _basicDetailsState extends State<basicDetails> {
                     ),
                   ),
                   onSuggestionTap: (value) {
-                    setState(() {
-                      fetchBranch(value.searchKey);
-                    });
-                    FocusScope.of(context).requestFocus(branchf);
+                    // setState(() {
+                    //   fetchBranch(value.searchKey);
+                    // });
+                    FocusScope.of(context).requestFocus(buttonf);
                   },
                   enabled: true,
                   itemHeight: 50,
@@ -321,264 +307,7 @@ class _basicDetailsState extends State<basicDetails> {
                   course.map((e) => SearchFieldListItem(e)).toList(),
                 ),
               ), //Course
-
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SearchField(
-                  suggestionItemDecoration: SuggestionDecoration(),
-                  key: const Key('searchfield'),
-                  focusNode: branchf,
-                  controller: branchController,
-                  searchStyle: GoogleFonts.openSans(
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w800),
-                  suggestionStyle: GoogleFonts.openSans(
-                      color:Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w800),
-                  suggestionsDecoration: SuggestionDecoration(
-                      color: const Color.fromRGBO(40, 130, 146, 1),
-                      //shape: BoxShape.rectangle,
-                      padding: const EdgeInsets.all(10),
-                      border: Border.all(width: 2, color: Colors.black),
-                      borderRadius: BorderRadius.circular(0)),
-                  searchInputDecoration: InputDecoration(
-                    fillColor: Colors.black26.withOpacity(0.7),
-                      filled: true,
-                      hintText: "Branch",
-                      hintStyle: GoogleFonts.openSans(
-                          color: Colors.white38,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        width: 3,
-                        color: Colors.black,
-                      ),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    focusColor: Colors.black,
-                    border: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        width: 3,
-                        color: Colors.black,
-                      ),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        width: 3,
-                        color: Colors.black,
-                      ),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                  ),
-                  onSuggestionTap: (value) {
-                    setState(() {
-                      fetchSubject(value.searchKey);
-                    });
-                    FocusScope.of(context).requestFocus(yearf);
-                  },
-                  enabled: true,
-                  itemHeight: 50,
-                  maxSuggestionsInViewPort: 3,
-                  suggestions:
-                  branch.map((e) => SearchFieldListItem(e)).toList(),
-                ),
-              ), //Branch
-
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SearchField(
-                  suggestionItemDecoration: SuggestionDecoration(),
-                  key: const Key('searchfield'),
-                  focusNode: yearf,
-                  controller: yearController,
-                  searchStyle: GoogleFonts.openSans(
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w800),
-                  suggestionStyle: GoogleFonts.openSans(
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w800),
-                  suggestionsDecoration: SuggestionDecoration(
-                      color: const Color.fromRGBO(40, 130, 146, 1),
-                      //shape: BoxShape.rectangle,
-                      padding: const EdgeInsets.all(10),
-                      border: Border.all(width: 2, color: Colors.black),
-                      borderRadius: BorderRadius.circular(0)),
-                  searchInputDecoration: InputDecoration(
-                    fillColor: Colors.black26.withOpacity(0.7),
-                    filled: true,
-                      hintText: "Year",
-                      hintStyle: GoogleFonts.openSans(
-                          color: Colors.white38,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        width: 3,
-                        color: Colors.black,
-                      ),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    focusColor: Colors.black,
-                    border: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        width: 3,
-                        color: Colors.black,
-                      ),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        width: 3,
-                        color: Colors.black,
-                      ),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                  ),
-                  onSuggestionTap: (value) {
-                    setState(() {});
-                    FocusScope.of(context).requestFocus(secf);
-                  },
-                  enabled: true,
-                  itemHeight: 50,
-                  maxSuggestionsInViewPort: 3,
-                  suggestions: year.map((e) => SearchFieldListItem(e)).toList(),
-                ),
-              ), //Year
-
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SearchField(
-                  suggestionItemDecoration: SuggestionDecoration(),
-                  key: const Key('searchfield'),
-                  focusNode: secf,
-                  controller: secController,
-                  searchStyle: GoogleFonts.openSans(
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w800),
-                  suggestionStyle: GoogleFonts.openSans(
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w800),
-                  suggestionsDecoration: SuggestionDecoration(
-
-                      color: const Color.fromRGBO(40, 130, 146, 1),
-
-                      //shape: BoxShape.rectangle,
-                      padding: const EdgeInsets.all(10),
-                      border: Border.all(width: 3, color: Colors.black),
-                      borderRadius: BorderRadius.circular(0)),
-                  searchInputDecoration: InputDecoration(
-                    fillColor: Colors.black26.withOpacity(0.7),
-                    filled: true,
-                      hintText: "Section",
-                      hintStyle: GoogleFonts.openSans(
-                          color: Colors.white38,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        width: 3,
-                        color: Colors.black,
-                      ),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    focusColor: Colors.black,
-                    border: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        width: 3,
-                        color: Colors.black,
-                      ),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        width: 3,
-                        color: Colors.black,
-                      ),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                  ),
-                  onSuggestionTap: (value) {
-                    setState(() {});
-                    FocusScope.of(context).requestFocus(subjectf);
-                  },
-                  enabled: true,
-                  itemHeight: 50,
-                  maxSuggestionsInViewPort: 3,
-                  suggestions: sec.map((e) => SearchFieldListItem(e)).toList(),
-                ),
-              ), // section
-
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SearchField(
-                  suggestionItemDecoration: SuggestionDecoration(),
-                  key: const Key('searchfield'),
-                  focusNode: subjectf,
-                  controller: subjectController,
-                  searchStyle: GoogleFonts.openSans(
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w800),
-                  suggestionStyle: GoogleFonts.openSans(
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w800),
-                  suggestionsDecoration: SuggestionDecoration(
-                      color: const Color.fromRGBO(40, 130, 146, 1),
-                      //shape: BoxShape.rectangle,
-                      padding: const EdgeInsets.all(10),
-                      border: Border.all(width: 2, color: Colors.black),
-                      borderRadius: BorderRadius.circular(0)),
-                  searchInputDecoration: InputDecoration(
-                    fillColor: Colors.black26.withOpacity(0.7),
-                    filled: true,
-                      hintText: "Subject",
-                      hintStyle: GoogleFonts.openSans(
-                          color: Colors.white38,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        width: 3,
-                        color: Colors.black,
-                      ),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    focusColor: Colors.black,
-                    border: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        width: 3,
-                        color: Colors.black,
-                      ),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        width: 3,
-                        color: Colors.black,
-                      ),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                  ),
-                  onSuggestionTap: (value) {
-                    setState(() {});
-                    FocusScope.of(context).requestFocus(buttonf);
-                  },
-                  enabled: true,
-                  itemHeight: 50,
-                  maxSuggestionsInViewPort: 3,
-                  suggestions:
-                  subject.map((e) => SearchFieldListItem(e)).toList(),
-                ),
-              ), //Subject
+              //Subject
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.04,
               ),
@@ -587,11 +316,7 @@ class _basicDetailsState extends State<basicDetails> {
                     gradient:(
                     universityController.text.isNotEmpty &&
                         clgController.text.isNotEmpty &&
-                        courseController.text.isNotEmpty &&
-                        branchController.text.isNotEmpty &&
-                        yearController.text.isNotEmpty &&
-                        secController.text.isNotEmpty &&
-                        subjectController.text.isNotEmpty)
+                        courseController.text.isNotEmpty )
                         ?
                     const LinearGradient(
                       begin: Alignment.centerLeft,
@@ -626,132 +351,117 @@ class _basicDetailsState extends State<basicDetails> {
 
                     if (universityController.text.isNotEmpty &&
                         clgController.text.isNotEmpty &&
-                        courseController.text.isNotEmpty &&
-                        branchController.text.isNotEmpty &&
-                        yearController.text.isNotEmpty &&
-                        secController.text.isNotEmpty &&
-                        subjectController.text.isNotEmpty) {
+                        courseController.text.isNotEmpty ) {
                        try{
                         Navigator.push(context, PageTransition(
                           duration: const Duration(milliseconds: 400),
                           childCurrent: const basicDetails(),
                             child: const loading(text: "Adding subject please wait"),
                             type: PageTransitionType.bottomToTopJoined));
-                        Map<String,dynamic> map1 = {
-                          "Active": false,
-                          "Read_Count": 0,
-                          "Last_Active" : DateTime.now(),
-                          "Token": FieldValue.arrayUnion([usermodel["Token"]]),
-                          "Profile_URL" : usermodel["Profile_URL"],
-                          "Name" : usermodel["Name"],
-                          "Post" : "Teachers",
-                          "Muted" : false,
-                          "Type" : "Group"
-                        };
-                        DateTime stamp=DateTime.now();
-                        var data=await FirebaseFirestore.instance.collection("Chat_Channels").doc("Channels").get();
-                        data.data()==null
-                            ?
-                        await FirebaseFirestore.instance.collection("Chat_Channels").doc("Channels").set({
-                          "Channels" : FieldValue.arrayUnion([])
-                        })
-                            :
-                            null;
+                        // Map<String,dynamic> map1 = {
+                        //   "Active": false,
+                        //   "Read_Count": 0,
+                        //   "Last_Active" : DateTime.now(),
+                        //   "Token": FieldValue.arrayUnion([usermodel["Token"]]),
+                        //   "Profile_URL" : usermodel["Profile_URL"],
+                        //   "Name" : usermodel["Name"],
+                        //   "Post" : "Teachers",
+                        //   "Muted" : false,
+                        //   "Type" : "Group"
+                        // };
+                        // DateTime stamp=DateTime.now();
+                        // var data=await FirebaseFirestore.instance.collection("Chat_Channels").doc("Channels").get();
+                        // data.data()==null
+                        //     ?
+                        // await FirebaseFirestore.instance.collection("Chat_Channels").doc("Channels").set({
+                        //   "Channels" : FieldValue.arrayUnion([])
+                        // })
+                        //     :
+                        //     null;
 
-                        await FirebaseFirestore.instance.collection("Chat_Channels").doc("Channels").get().then((value) async {
-                          List<dynamic> channel=value.data()!["Channels"];
-                          channel.contains(
-                              "${universityController.text.trim().split(" ")[0]} "
-                              "${clgController.text.trim().split(" ")[0]} "
-                              "${courseController.text.trim().split(" ")[0]} "
-                              "${branchController.text.trim().split(" ")[0]} "
-                              "${yearController.text.trim().split(" ")[0]} "
-                              "${secController.text.trim().split(" ")[0]} "
-                              "${subjectController.text.trim().split(" ")[0]}"
-                          )
-                              ?
-                          await FirebaseFirestore.instance.collection("Messages").doc(
-                              "${universityController.text.trim().split(" ")[0]} "
-                                  "${clgController.text.trim().split(" ")[0]} "
-                                  "${courseController.text.trim().split(" ")[0]} "
-                                  "${branchController.text.trim().split(" ")[0]} "
-                                  "${yearController.text.trim().split(" ")[0]} "
-                                  "${secController.text.trim().split(" ")[0]} "
-                                  "${subjectController.text.trim().split(" ")[0]}"
-                          ).update({
-                            "Admins" : FieldValue.arrayUnion(["${usermodel["Email"]}"]),
-                            "Members" : FieldValue.arrayUnion([
-                              usermodel["Email"]
-                                  ]),
-                            usermodel["Email"].toString().split("@")[0] : map1,
-                          })
-                              :
-                          await FirebaseFirestore.instance.collection("Messages").doc(
-                              "${universityController.text.trim().split(" ")[0]} "
-                                  "${clgController.text.trim().split(" ")[0]} "
-                                  "${courseController.text.trim().split(" ")[0]} "
-                                  "${branchController.text.trim().split(" ")[0]} "
-                                  "${yearController.text.trim().split(" ")[0]} "
-                                  "${secController.text.trim().split(" ")[0]} "
-                                  "${subjectController.text.trim().split(" ")[0]}"
-                          ).set({
-                            "Messages" : [],
-                            "Admins" : FieldValue.arrayUnion(["${usermodel["Email"]}"]),
-                            "Members" : FieldValue.arrayUnion(["${usermodel["Email"]}",]),
-                            usermodel["Email"].toString().split("@")[0] : map1,
-                            "image_URL" : "null",
-                            "CreatedOn": {"Date" : stamp, "Name": usermodel["Name"]}});
-                        });
+                        // await FirebaseFirestore.instance.collection("Chat_Channels").doc("Channels").get().then((value) async {
+                        //   List<dynamic> channel=value.data()!["Channels"];
+                        //   channel.contains(
+                        //       "${universityController.text.trim().split(" ")[0]} "
+                        //       "${clgController.text.trim().split(" ")[0]} "
+                        //       "${courseController.text.trim().split(" ")[0]} "
+                        //       "${branchController.text.trim().split(" ")[0]} "
+                        //       "${yearController.text.trim().split(" ")[0]} "
+                        //       "${secController.text.trim().split(" ")[0]} "
+                        //       "${subjectController.text.trim().split(" ")[0]}"
+                        //   )
+                        //       ?
+                        //   await FirebaseFirestore.instance.collection("Messages").doc(
+                        //       "${universityController.text.trim().split(" ")[0]} "
+                        //           "${clgController.text.trim().split(" ")[0]} "
+                        //           "${courseController.text.trim().split(" ")[0]} "
+                        //           "${branchController.text.trim().split(" ")[0]} "
+                        //           "${yearController.text.trim().split(" ")[0]} "
+                        //           "${secController.text.trim().split(" ")[0]} "
+                        //           "${subjectController.text.trim().split(" ")[0]}"
+                        //   ).update({
+                        //     "Admins" : FieldValue.arrayUnion(["${usermodel["Email"]}"]),
+                        //     "Members" : FieldValue.arrayUnion([
+                        //       usermodel["Email"]
+                        //           ]),
+                        //     usermodel["Email"].toString().split("@")[0] : map1,
+                        //   })
+                        //       :
+                        //   await FirebaseFirestore.instance.collection("Messages").doc(
+                        //       "${universityController.text.trim().split(" ")[0]} "
+                        //           "${clgController.text.trim().split(" ")[0]} "
+                        //           "${courseController.text.trim().split(" ")[0]} "
+                        //           "${branchController.text.trim().split(" ")[0]} "
+                        //           "${yearController.text.trim().split(" ")[0]} "
+                        //           "${secController.text.trim().split(" ")[0]} "
+                        //           "${subjectController.text.trim().split(" ")[0]}"
+                        //   ).set({
+                        //     "Messages" : [],
+                        //     "Admins" : FieldValue.arrayUnion(["${usermodel["Email"]}"]),
+                        //     "Members" : FieldValue.arrayUnion(["${usermodel["Email"]}",]),
+                        //     usermodel["Email"].toString().split("@")[0] : map1,
+                        //     "image_URL" : "null",
+                        //     "CreatedOn": {"Date" : stamp, "Name": usermodel["Name"]}});
+                        // });
+                        //
+                        //
+                        // await FirebaseFirestore.instance.collection("Chat_Channels").doc("Channels").update({
+                        //   "Channels": FieldValue.arrayUnion([
+                        //     "${universityController.text.trim().split(" ")[0]} "
+                        //         "${clgController.text.trim().split(" ")[0]} "
+                        //         "${courseController.text.trim().split(" ")[0]} "
+                        //         "${branchController.text.trim().split(" ")[0]} "
+                        //         "${yearController.text.trim().split(" ")[0]} "
+                        //         "${secController.text.trim().split(" ")[0]} "
+                        //         "${subjectController.text.trim().split(" ")[0]}"
+                        //   ])
+                        // });
+                        // await FirebaseFirestore.instance.collection("Teachers").doc(usermodel["Email"]).update({
+                        //   "Message_channels" : FieldValue.arrayUnion(["${universityController.text.trim().split(" ")[0]} "
+                        //       "${clgController.text.trim().split(" ")[0]} "
+                        //       "${courseController.text.trim().split(" ")[0]} "
+                        //       "${branchController.text.trim().split(" ")[0]} "
+                        //       "${yearController.text.trim().split(" ")[0]} "
+                        //       "${secController.text.trim().split(" ")[0]} "
+                        //       "${subjectController.text.trim().split(" ")[0]}"
+                        //   ]),
+                        // });
 
-
-                        await FirebaseFirestore.instance.collection("Chat_Channels").doc("Channels").update({
-                          "Channels": FieldValue.arrayUnion([
-                            "${universityController.text.trim().split(" ")[0]} "
-                                "${clgController.text.trim().split(" ")[0]} "
-                                "${courseController.text.trim().split(" ")[0]} "
-                                "${branchController.text.trim().split(" ")[0]} "
-                                "${yearController.text.trim().split(" ")[0]} "
-                                "${secController.text.trim().split(" ")[0]} "
-                                "${subjectController.text.trim().split(" ")[0]}"
-                          ])
-                        });
-                        await FirebaseFirestore.instance.collection("Teachers").doc(usermodel["Email"]).update({
-                          "Message_channels" : FieldValue.arrayUnion(["${universityController.text.trim().split(" ")[0]} "
-                              "${clgController.text.trim().split(" ")[0]} "
-                              "${courseController.text.trim().split(" ")[0]} "
-                              "${branchController.text.trim().split(" ")[0]} "
-                              "${yearController.text.trim().split(" ")[0]} "
-                              "${secController.text.trim().split(" ")[0]} "
-                              "${subjectController.text.trim().split(" ")[0]}"
-                          ]),
-                        });
-
-                        data = await FirebaseFirestore.instance.collection("Teachers Id").doc("${universityController.text.trim().split(" ")[0]} "
+                        var data = await FirebaseFirestore.instance.collection("Teachers Id").doc("${universityController.text.trim().split(" ")[0]} "
                             "${clgController.text.trim().split(" ")[0]} "
-                            "${courseController.text.trim().split(" ")[0]} "
-                            "${branchController.text.trim().split(" ")[0]} "
-                            "${yearController.text.trim().split(" ")[0]} "
-                            "${secController.text.trim().split(" ")[0]} "
-                            "${subjectController.text.trim().split(" ")[0]}").get();
+                            "${courseController.text.trim().split(" ")[0]} ${usermodel["Email"]} ${DateTime.now()}").get();
 
                         data.data()==null ?
                         await FirebaseFirestore.instance.collection("Teachers Id").doc(
                             "${universityController.text.trim().split(" ")[0]} "
                             "${clgController.text.trim().split(" ")[0]} "
-                            "${courseController.text.trim().split(" ")[0]} "
-                            "${branchController.text.trim().split(" ")[0]} "
-                            "${yearController.text.trim().split(" ")[0]} "
-                            "${secController.text.trim().split(" ")[0]} "
-                            "${subjectController.text.trim().split(" ")[0]}").set(
+                            "${courseController.text.trim().split(" ")[0]} ").set(
                           {
                             "University" : universityController.text.trim().split(" ")[0],
                             "College" : clgController.text.trim().split(" ")[0],
                             "Course" : courseController.text.trim().split(" ")[0],
-                            "Branch" : branchController.text.trim().split(" ")[0],
-                            "Year" : yearController.text.trim().split(" ")[0],
-                            "Section" :  secController.text.trim().split(" ")[0],
-                            "Subject" : subjectController.text.trim().split(" ")[0],
                             "Employee Id" : usermodel["Employee Id"],
+                            "Name" : usermodel["Name"],
                             "Email" : usermodel['Email'],
                             "Post" : 'Teachers'
                           }
@@ -760,20 +470,13 @@ class _basicDetailsState extends State<basicDetails> {
                         await FirebaseFirestore.instance.collection("Teachers Id").doc(
                             "${universityController.text.trim().split(" ")[0]} "
                                 "${clgController.text.trim().split(" ")[0]} "
-                                "${courseController.text.trim().split(" ")[0]} "
-                                "${branchController.text.trim().split(" ")[0]} "
-                                "${yearController.text.trim().split(" ")[0]} "
-                                "${secController.text.trim().split(" ")[0]} "
-                                "${subjectController.text.trim().split(" ")[0]}").update(
+                                "${courseController.text.trim().split(" ")[0]} ").update(
                             {
                               "University" : universityController.text.trim().split(" ")[0],
                               "College" : clgController.text.trim().split(" ")[0],
                               "Course" : courseController.text.trim().split(" ")[0],
-                              "Branch" : branchController.text.trim().split(" ")[0],
-                              "Year" : yearController.text.trim().split(" ")[0],
-                              "Section" :  secController.text.trim().split(" ")[0],
-                              "Subject" : subjectController.text.trim().split(" ")[0],
                               "Employee Id" : usermodel["Employee Id"],
+                              "Name" : usermodel["Name"],
                               "Email" : usermodel['Email'],
                               "Post" : 'Teachers'
                             }
@@ -815,27 +518,27 @@ class _basicDetailsState extends State<basicDetails> {
                           "Course": FieldValue.arrayUnion([courseController.text.trim()])
                         });
 
-                        data=await FirebaseFirestore.instance.collection("Branch").doc(courseController.text.trim()).get();
-                        data.data()==null
-                            ?
-                        await FirebaseFirestore.instance.collection("Branch").doc(courseController.text.trim()).set({
-                          "Branch":[branchController.text.trim()]
-                        })
-                            :
-                        await FirebaseFirestore.instance.collection("Branch").doc(courseController.text.trim()).update({
-                          "Branch": FieldValue.arrayUnion([branchController.text.trim()])
-                        });
-
-                        data=await FirebaseFirestore.instance.collection("Subject").doc(branchController.text.trim()).get();
-                        data.data()==null
-                            ?
-                        await FirebaseFirestore.instance.collection("Subject").doc(branchController.text.trim()).set({
-                          "Subject":[subjectController.text.trim()]
-                        })
-                            :
-                        await FirebaseFirestore.instance.collection("Subject").doc(branchController.text.trim()).update({
-                          "Subject": FieldValue.arrayUnion([subjectController.text.trim()])
-                        });
+                        // data=await FirebaseFirestore.instance.collection("Branch").doc(courseController.text.trim()).get();
+                        // data.data()==null
+                        //     ?
+                        // await FirebaseFirestore.instance.collection("Branch").doc(courseController.text.trim()).set({
+                        //   "Branch":[branchController.text.trim()]
+                        // })
+                        //     :
+                        // await FirebaseFirestore.instance.collection("Branch").doc(courseController.text.trim()).update({
+                        //   "Branch": FieldValue.arrayUnion([branchController.text.trim()])
+                        // });
+                        //
+                        // data=await FirebaseFirestore.instance.collection("Subject").doc(branchController.text.trim()).get();
+                        // data.data()==null
+                        //     ?
+                        // await FirebaseFirestore.instance.collection("Subject").doc(branchController.text.trim()).set({
+                        //   "Subject":[subjectController.text.trim()]
+                        // })
+                        //     :
+                        // await FirebaseFirestore.instance.collection("Subject").doc(branchController.text.trim()).update({
+                        //   "Subject": FieldValue.arrayUnion([subjectController.text.trim()])
+                        // });
 
                         final ref= FirebaseFirestore
                             .instance
@@ -869,42 +572,6 @@ class _basicDetailsState extends State<basicDetails> {
                           {
                             "Course-$uni_index$clg_index": FieldValue.arrayUnion([courseController.text.trim()]),
                           },
-                        );
-                        data= await ref.get();
-                        List<dynamic> course_list=data.data()!["Course-$uni_index$clg_index"];
-                        int course_index =course_list.indexOf(courseController.text.trim());
-                        await ref
-                            .update(
-                          {
-                            "Branch-$uni_index$clg_index$course_index": FieldValue.arrayUnion([branchController.text.trim()]),
-                          },
-                        );
-                        data= await ref.get();
-                        List<dynamic> branch_list=data.data()!["Branch-$uni_index$clg_index$course_index"];
-                        int branch_index =branch_list.indexOf(branchController.text.trim());
-                        await ref
-                            .update(
-                          {
-                            "Year-$uni_index$clg_index$course_index$branch_index": FieldValue.arrayUnion([yearController.text.trim()]),
-                          },
-                        );
-                        data= await ref.get();
-                        List<dynamic> year_list=data.data()!["Year-$uni_index$clg_index$course_index$branch_index"];
-                        int year_index =year_list.indexOf(yearController.text.trim());
-                        await ref
-                            .update(
-                          {
-                            "Section-$uni_index$clg_index$course_index$branch_index$year_index": FieldValue.arrayUnion([secController.text.trim()]),
-                          },
-                        );
-                        data= await ref.get();
-                        List<dynamic> section_list=data.data()!["Section-$uni_index$clg_index$course_index$branch_index$year_index"];
-                        int section_index =section_list.indexOf(secController.text.trim());
-                        await ref
-                            .update(
-                          {
-                            "Subject-$uni_index$clg_index$course_index$branch_index$year_index$section_index": FieldValue.arrayUnion([subjectController.text.trim()]),
-                          },
                         ).whenComplete((){
                           InAppNotifications.instance
                             ..titleFontSize = 35.0
@@ -916,11 +583,11 @@ class _basicDetailsState extends State<basicDetails> {
                           InAppNotifications.show(
                               title: 'Successful',
                               duration: const Duration(seconds: 2),
-                              description: "Subject added",
+                              description: "Course added",
                               leading: const Icon(
                                 Icons.check,
                                 color: Colors.green,
-                                size: 55,
+                                size: 30,
                               ));
                           database().fetchuser().whenComplete((){
                              Navigator.pop(context);
@@ -1064,39 +731,39 @@ class _basicDetailsState extends State<basicDetails> {
     }
   }
 
-  fetchBranch(String course) async {
-    try {
-      final feed = await FirebaseFirestore.instance
-          .collection('Branch')
-          .doc(course)
-          .get();
+  // fetchBranch(String course) async {
+  //   try {
+  //     final feed = await FirebaseFirestore.instance
+  //         .collection('Branch')
+  //         .doc(course)
+  //         .get();
+  //
+  //     setState(() {
+  //       branch=feed.data()!["Branch"];
+  //     });
+  //
+  //     return true;
+  //   } on FirebaseAuthException catch (e) {
+  //     print("\n\n\n\n $e \n\n\n\n");
+  //   }
+  // }
 
-      setState(() {
-        branch=feed.data()!["Branch"];
-      });
-
-      return true;
-    } on FirebaseAuthException catch (e) {
-      print("\n\n\n\n $e \n\n\n\n");
-    }
-  }
-
-  fetchSubject(String Branch) async {
-    try {
-      final feed = await FirebaseFirestore.instance
-          .collection('Subject')
-          .doc(Branch)
-          .get();
-
-      setState(() {
-        subject=feed.data()!["Subject"];
-      });
-
-      return true;
-    } on FirebaseAuthException catch (e) {
-      print("\n\n\n\n $e \n\n\n\n");
-    }
-  }
+  // fetchSubject(String Branch) async {
+  //   try {
+  //     final feed = await FirebaseFirestore.instance
+  //         .collection('Subject')
+  //         .doc(Branch)
+  //         .get();
+  //
+  //     setState(() {
+  //       subject=feed.data()!["Subject"];
+  //     });
+  //
+  //     return true;
+  //   } on FirebaseAuthException catch (e) {
+  //     print("\n\n\n\n $e \n\n\n\n");
+  //   }
+  // }
 
 
 }

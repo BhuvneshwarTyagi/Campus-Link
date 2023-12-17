@@ -3,9 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../Constraints.dart';
-import 'Chat_tiles/PdfViewer.dart';
-import 'onlinepdfviwer.dart';
+import '../../Constraints.dart';
+import '../Chat_tiles/PdfViewer.dart';
+import '../onlinepdfviwer.dart';
 
 class ViewAssignment extends StatefulWidget {
   ViewAssignment({super.key, required this.selectedindex});

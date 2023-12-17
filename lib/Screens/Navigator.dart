@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:camera/camera.dart';
+import 'package:campus_link_teachers/Hod%20Panel/HOD%20Panel.dart';
 import 'package:campus_link_teachers/Screens/Feedback.dart';
 import 'package:campus_link_teachers/Screens/Leader_board/Leader_Board.dart';
+import 'package:campus_link_teachers/Screens/QueriesDrawer/QueryDrawer.dart';
 import 'package:campus_link_teachers/Screens/loadingscreen.dart';
 import 'package:campus_link_teachers/push_notification/helper_notification.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -160,6 +162,16 @@ class _NeviState extends State<Nevi>  {
                   )
               ),
               ListTile(
+                title: Text("HOD Panel"),
+                onTap: (){
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+                    return const HODPanel();
+                    },
+                  ),
+                  );
+                }
+              ),
+              ListTile(
                 leading: const Icon(Icons.home,color: Colors.black,),
                 title: const Text("Home"),
                 onTap: () {
@@ -184,7 +196,7 @@ class _NeviState extends State<Nevi>  {
               ),
               ListTile(
                 leading: const Icon(Icons.add,color: Colors.black,),
-                title: const Text('Add Subject'),
+                title: const Text('Add course'),
                 onTap: () {
                   Navigator.push(
                     context,
@@ -269,6 +281,38 @@ class _NeviState extends State<Nevi>  {
 
             ],
           ),
+        ),
+        endDrawer: Drawer(
+          elevation: 30,
+          backgroundColor: Colors.grey,
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: usermodel["Querys"] != null ? usermodel["Querys"].length : 0,
+            itemBuilder: (context, index) {
+              return Column(
+                children: [
+                  index==0
+                      ?
+                      AutoSizeText("Pending Queries",style: GoogleFonts.tiltNeon(
+                        color: Colors.red.shade800,
+                        fontSize: size.width*0.05,
+                        fontWeight: FontWeight.w500
+                      ),
+                      )
+                      :
+                  const SizedBox(),
+                  QueriesDrawer(
+                    email: usermodel["Querys"][index]["by"],
+                    index: index,
+                    description: usermodel["Querys"][index]["description"],
+                    type: usermodel["Querys"][index]["Type"],
+                    sessional: usermodel["Querys"][index]["Sessional"],
+                    from: usermodel["Querys"][index]["from"],
+                    subject: usermodel["Querys"][index]["Subject"],
+                  ),
+                ],
+              );
+          },),
         ),
         appBar: AppBar(
             elevation: 0,
@@ -386,7 +430,13 @@ class _NeviState extends State<Nevi>  {
                   );
                 },
                 icon: const Icon(Icons.filter_list_alt),
-              )
+              ),
+              Builder(
+                builder: (context) => IconButton(
+                  icon: const Icon(Icons.add_alert_sharp),
+                  onPressed: () => Scaffold.of(context).openEndDrawer(),
+                ),
+              ),
             ],
             iconTheme: const IconThemeData(color: Colors.black),
             backgroundColor: Colors.black38,

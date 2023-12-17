@@ -104,6 +104,7 @@ class _NotesSectionState extends State<NotesSection> {
                   File filePath = File("$path${snapshot.data!.data()?["Notes-${index + 1}"]["File_Name"]}");
 
                   return NotesTile(
+                    queries: snapshot.data!.data()?["Notes-${index+1}"]["Query"] != null ? true : false,
                     pdfUrl: snapshot.data!.data()?["Notes-${index+1}"]["Pdf_URL"],
                     pdfName: snapshot.data!.data()?["Notes-${index+1}"]["File_Name"],
                     pdfLocalPath: path,

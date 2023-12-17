@@ -74,13 +74,8 @@ class _MainPageState extends State<MainPage> {
               ..animationStyle =
                   InAppNotificationsAnimationStyle.scale;
             InAppNotifications.show(
-                duration: const Duration(seconds: 2),
-                description: "Please verify your email.",
-                leading: const Icon(
-                  Icons.error_outline_outlined,
-                  color: Colors.red,
-                  size: 55,
-                ));
+                duration: const Duration(seconds: 4),
+                description: "Please verify your email.",);
             FirebaseAuth.instance.signOut();
             return const SignInScreen();
           }

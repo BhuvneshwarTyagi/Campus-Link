@@ -14,12 +14,16 @@ class AssignmentsUpload extends StatefulWidget {
 class _AssignmentsUploadState extends State<AssignmentsUpload> with TickerProviderStateMixin{
   late TabController _tabController;
   int currTab=0;
-  List<Widget> tabs=[const AssignmentTile(),const AssignmentsOverAllLeaderBoard()];
+  int pending=0;
+  int notsubmitted=0;
+  List<Widget> tabs=[];
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    tabs.add(AssignmentTile(notsubmitted: notsubmitted,pending: pending));
+    tabs.add(const AssignmentsOverAllLeaderBoard());
     _tabController=TabController(length: 2, vsync: this);
   }
 

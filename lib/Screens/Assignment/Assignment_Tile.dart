@@ -5,16 +5,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:pie_chart/pie_chart.dart';
 import '../../Constraints.dart';
 import '../Chat_tiles/Image_viewer.dart';
 import '../Chat_tiles/PdfViewer.dart';
 import '../Notes/download_tile.dart';
-import '../upload_assignmentQuestion.dart';
+import 'upload_assignmentQuestion.dart';
 import 'Assignments.dart';
 import 'Submit_button.dart';
 
 class AssignmentTile extends StatefulWidget {
-  const AssignmentTile({super.key, });
+  const AssignmentTile({super.key, required this.pending, required this.notsubmitted, });
+  final int pending;
+  final int notsubmitted;
   @override
   State<AssignmentTile> createState() => _AssignmentTileState();
 }
@@ -22,7 +25,11 @@ class AssignmentTile extends StatefulWidget {
 class _AssignmentTileState extends State<AssignmentTile> {
 
   bool docExists = false;
-
+  List<Color> SmallPieChartcolorList=[
+    const Color(0xffD95AF3),
+    const Color(0xff3EE094),
+    const Color(0xff3398F6),
+  ];
   @override
   void initState() {
     // TODO: implement initState
@@ -278,7 +285,7 @@ class _AssignmentTileState extends State<AssignmentTile> {
                                         Navigator.push(context, PageTransition(
                                             child: IndividualAssignmentLeaderboard(index: index),
                                             type: PageTransitionType.bottomToTopJoined,
-                                          childCurrent: AssignmentsUpload()
+                                          childCurrent: const AssignmentsUpload()
                                         ),
                                         );
                                       },

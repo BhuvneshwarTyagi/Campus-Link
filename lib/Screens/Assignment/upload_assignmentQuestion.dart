@@ -14,7 +14,7 @@ import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../Constraints.dart';
+import '../../Constraints.dart';
 
 class AssigmentQuestion extends StatefulWidget {
   const AssigmentQuestion({super.key});

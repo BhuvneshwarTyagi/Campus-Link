@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inapp_notifications/flutter_inapp_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../view_assignment.dart';
+import 'view_assignment.dart';
 
 class SubmitButton extends StatelessWidget {
   const SubmitButton({super.key, required this.snapshot, required this.index, required this.count});
