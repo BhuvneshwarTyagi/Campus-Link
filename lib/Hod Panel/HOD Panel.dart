@@ -16,14 +16,13 @@ class HODPanel extends StatefulWidget {
 class _HODPanelState extends State<HODPanel> with TickerProviderStateMixin{
   late TabController _tabController;
   int currTab=0;
-  List<Widget> tabs=[];
-
+  List<Widget> tabs=[const TeachersList(),const StudentsList()];
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    tabs.add(const TeachersList());
-    tabs.add(const StudentsList());
+    /*tabs.add(const TeachersList());
+    tabs.add(const StudentsList());*/
     _tabController=TabController(length: 2, vsync: this);
   }
   @override
@@ -49,10 +48,10 @@ class _HODPanelState extends State<HODPanel> with TickerProviderStateMixin{
           backgroundColor: Colors.transparent,
           elevation: 0,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios_new_outlined,color: Colors.black,),
+            icon: const Icon(Icons.arrow_back_ios_new_outlined,color: Colors.black,),
             onPressed: (){
               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-                return Nevi();
+                return const Nevi();
               },));
             },
           ),
@@ -134,7 +133,9 @@ class _HODPanelState extends State<HODPanel> with TickerProviderStateMixin{
                 ],
               ),
             ),
-            tabs[currTab]
+            SizedBox(
+              child: tabs[currTab],
+            )
           ],
         ),
       ),

@@ -30,221 +30,222 @@ class _StudentsListState extends State<StudentsList> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Column(
-      children: [
-        Stack(
-          children: [
-            SizedBox(
-              width: size.width,
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: size.height*0.08,
-                  ),
-                  StreamBuilder(
-                    stream: FirebaseFirestore.instance.collection("Students")
-                        .where("University",isEqualTo: selectedUniversity)
-                        .where("College",isEqualTo: selectedCollege)
-                        .where("Course",isEqualTo: selectedCourse)
-                        .where("Branch",isEqualTo: selectedBranch)
-                        .where("Year",isEqualTo: selectedYear)
-                        .where("Section",isEqualTo: selectedSection)
-                        .where("Subject", arrayContains: selectedSubject)
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      print("$selectedUniversity $selectedCollege $selectedCourse $selectedBranch $selectedYear $selectedSection $selectedSubject");
-                      return snapshot.hasData
-                          ?
-                      ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: snapshot.data?.docs.length,
-                        itemBuilder: (context, index) {
-                          print(index);
-                        return Card(
-                          child: ListTile(
-                            title: AutoSizeText(snapshot.data?.docs[index].data()["Name"]),
-                          ),
-                        );
-                      },)
-                      :
-                      const SizedBox();
-                      },
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-              width: size.width,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  StreamBuilder(
-                      stream: FirebaseFirestore.instance.collection("Subject").doc(selectedBranch).snapshots(),
-                      builder: (context, snapshot) {
-                        print("here");
-                        return snapshot.hasData ?
-                        SizedBox(
-                          width: size.width*0.3,
+    return SizedBox(
+      width: size.width,
+      height: size.height*0.5,
+      child: Stack(
+        children: [
+          SizedBox(
+            width: size.width,
+            child: Column(
+              children: [
+                SizedBox(
+                  height: size.height*0.08,
+                ),
+                StreamBuilder(
+                  stream: FirebaseFirestore.instance.collection("Students")
+                      .where("University",isEqualTo: selectedUniversity)
+                      .where("College",isEqualTo: selectedCollege)
+                      .where("Course",isEqualTo: selectedCourse)
+                      .where("Branch",isEqualTo: selectedBranch)
+                      .where("Year",isEqualTo: selectedYear.toString())
+                      .where("Subject", arrayContains: selectedSubject)
+                      .where("Section",isEqualTo: selectedSection)
+                      .snapshots(),
+                  builder: (context, snapshot) {
 
-                          child: Card(
-                            color: Colors.white,
-                            child: ExpansionTile(
-                              controller: subjectController,
-                              title: AutoSizeText(
-                                selectedSubject,
-                                style: GoogleFonts.tiltNeon(
-                                    color: Colors.black,
-                                    fontSize: size.width*0.03,
-                                    fontWeight: FontWeight.w500
+                    print("$selectedUniversity $selectedCollege $selectedCourse $selectedBranch $selectedYear $selectedSection $selectedSubject");
+                    return snapshot.hasData
+                        ?
+                    ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: snapshot.data?.docs.length,
+                      itemBuilder: (context, index) {
+                        print(index);
+                      return Card(
+                        child: ListTile(
+                          title: AutoSizeText(snapshot.data?.docs[index].data()["Name"]),
+                        ),
+                      );
+                    },)
+                    :
+                    const SizedBox();
+                    },
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            width: size.width,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                StreamBuilder(
+                    stream: FirebaseFirestore.instance.collection("Subject").doc(selectedBranch).snapshots(),
+                    builder: (context, snapshot) {
+                      print("here");
+                      return snapshot.hasData ?
+                      SizedBox(
+                        width: size.width*0.3,
+
+                        child: Card(
+                          color: Colors.white,
+                          child: ExpansionTile(
+                            controller: subjectController,
+                            title: AutoSizeText(
+                              selectedSubject,
+                              style: GoogleFonts.tiltNeon(
+                                  color: Colors.black,
+                                  fontSize: size.width*0.03,
+                                  fontWeight: FontWeight.w500
+                              ),
+                              maxLines: 1,
+                            ),
+
+                            children: [
+                              SizedBox(
+                                width: size.width*0.3,
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: snapshot.data!.data()?["Subject"].length,
+                                  itemBuilder: (context, index) {
+                                    return ListTile(
+                                      title: AutoSizeText(
+                                        snapshot.data!.data()?["Subject"][index],
+                                        style: GoogleFonts.tiltNeon(
+                                            color: Colors.black,
+                                            fontSize: size.width*0.03,
+                                            fontWeight: FontWeight.w500
+                                        ),
+                                        maxLines: 1,
+                                      ),
+                                      onTap: (){
+                                        setState(() {
+                                          subjectController.collapse();
+                                          selectedSubject = snapshot.data!.data()?["Subject"][index];
+
+                                        });
+                                      },
+                                    );
+                                  },
                                 ),
-                                maxLines: 1,
                               ),
 
-                              children: [
-                                SizedBox(
-                                  width: size.width*0.3,
-                                  child: ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: snapshot.data!.data()?["Subject"].length,
-                                    itemBuilder: (context, index) {
-                                      return ListTile(
-                                        title: AutoSizeText(
-                                          snapshot.data!.data()?["Subject"][index],
-                                          style: GoogleFonts.tiltNeon(
-                                              color: Colors.black,
-                                              fontSize: size.width*0.03,
-                                              fontWeight: FontWeight.w500
-                                          ),
-                                          maxLines: 1,
-                                        ),
-                                        onTap: (){
-                                          setState(() {
-                                            subjectController.collapse();
-                                            selectedSubject = snapshot.data!.data()?["Subject"][index];
+                            ],
+                          ),
+                        ),
+                      )
+                          :
+                      SizedBox();
+                    }
+                ),
+                SizedBox(
+                  width: size.width*0.2,
 
-                                          });
-                                        },
-                                      );
-                                    },
+                  child: Card(
+                    color: Colors.white,
+                    child: ExpansionTile(
+                      controller: sectionController,
+                      title: AutoSizeText(
+                        selectedSection,
+                        style: GoogleFonts.tiltNeon(
+                            color: Colors.black,
+                            fontSize: size.width*0.03,
+                            fontWeight: FontWeight.w500
+                        ),
+                        maxLines: 1,
+                      ),
+
+                      children: [
+                        SizedBox(
+                          width: size.width*0.15,
+                          height: size.height*0.2,
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: alphabet.length,
+                            itemBuilder: (context, index) {
+                              return ListTile(
+                                title: AutoSizeText(
+                                  alphabet[index],
+                                  style: GoogleFonts.tiltNeon(
+                                      color: Colors.black,
+                                      fontSize: size.width*0.03,
+                                      fontWeight: FontWeight.w500
                                   ),
+                                  maxLines: 1,
                                 ),
+                                onTap: (){
+                                  setState(() {
+                                    sectionController.collapse();
+                                    selectedSection = alphabet[index];
 
-                              ],
-                            ),
+                                  });
+                                },
+                              );
+                            },
                           ),
-                        )
-                            :
-                        SizedBox();
-                      }
-                  ),
-                  SizedBox(
-                    width: size.width*0.2,
-
-                    child: Card(
-                      color: Colors.white,
-                      child: ExpansionTile(
-                        controller: sectionController,
-                        title: AutoSizeText(
-                          selectedSection,
-                          style: GoogleFonts.tiltNeon(
-                              color: Colors.black,
-                              fontSize: size.width*0.03,
-                              fontWeight: FontWeight.w500
-                          ),
-                          maxLines: 1,
                         ),
 
-                        children: [
-                          SizedBox(
-                            width: size.width*0.15,
-                            height: size.height*0.2,
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: alphabet.length,
-                              itemBuilder: (context, index) {
-                                return ListTile(
-                                  title: AutoSizeText(
-                                    alphabet[index],
-                                    style: GoogleFonts.tiltNeon(
-                                        color: Colors.black,
-                                        fontSize: size.width*0.03,
-                                        fontWeight: FontWeight.w500
-                                    ),
-                                    maxLines: 1,
-                                  ),
-                                  onTap: (){
-                                    setState(() {
-                                      sectionController.collapse();
-                                      selectedSection = alphabet[index];
-
-                                    });
-                                  },
-                                );
-                              },
-                            ),
-                          ),
-
-                        ],
-                      ),
+                      ],
                     ),
                   ),
-                  SizedBox(
-                    width: size.width*0.2,
+                ),
+                SizedBox(
+                  width: size.width*0.2,
 
-                    child: Card(
-                      color: Colors.white,
-                      child: ExpansionTile(
-                        controller: yearController,
-                        title: AutoSizeText(
-                          "$selectedYear",
-                          style: GoogleFonts.tiltNeon(
-                              color: Colors.black,
-                              fontSize: size.width*0.03,
-                              fontWeight: FontWeight.w500
+                  child: Card(
+                    color: Colors.white,
+                    child: ExpansionTile(
+                      controller: yearController,
+                      title: AutoSizeText(
+                        "$selectedYear",
+                        style: GoogleFonts.tiltNeon(
+                            color: Colors.black,
+                            fontSize: size.width*0.03,
+                            fontWeight: FontWeight.w500
+                        ),
+                        maxLines: 1,
+                      ),
+
+                      children: [
+                        SizedBox(
+                          width: size.width*0.15,
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: 5,
+                            itemBuilder: (context, index) {
+                              return ListTile(
+                                title: AutoSizeText(
+                                  "${index+1}",
+                                  style: GoogleFonts.tiltNeon(
+                                      color: Colors.black,
+                                      fontSize: size.width*0.03,
+                                      fontWeight: FontWeight.w500
+                                  ),
+                                  maxLines: 1,
+                                ),
+                                onTap: (){
+                                  setState(() {
+                                    yearController.collapse();
+                                    selectedYear = index+1;
+
+                                  });
+                                },
+                              );
+                            },
                           ),
-                          maxLines: 1,
                         ),
 
-                        children: [
-                          SizedBox(
-                            width: size.width*0.15,
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: 5,
-                              itemBuilder: (context, index) {
-                                return ListTile(
-                                  title: AutoSizeText(
-                                    "${index+1}",
-                                    style: GoogleFonts.tiltNeon(
-                                        color: Colors.black,
-                                        fontSize: size.width*0.03,
-                                        fontWeight: FontWeight.w500
-                                    ),
-                                    maxLines: 1,
-                                  ),
-                                  onTap: (){
-                                    setState(() {
-                                      yearController.collapse();
-                                      selectedYear = index+1;
-
-                                    });
-                                  },
-                                );
-                              },
-                            ),
-                          ),
-
-                        ],
-                      ),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ],
+          ),
+        ],
+      ),
     );
   }
 }

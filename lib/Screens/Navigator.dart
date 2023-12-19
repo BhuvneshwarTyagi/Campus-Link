@@ -20,6 +20,7 @@ import '../Database/database.dart';
 import '../Registration/Basic.dart';
 import 'Assignment/Assignments.dart';
 import 'Attendance.dart';
+import 'Download Excel sheet/download_excel.dart';
 import 'Download Excel sheet/excel_sheet_fliter.dart';
 import 'Filters.dart';
 import 'Notes/Notes.dart';
@@ -196,7 +197,7 @@ class _NeviState extends State<Nevi>  {
               ),
               ListTile(
                 leading: const Icon(Icons.add,color: Colors.black,),
-                title: const Text('Add course'),
+                title: const Text('Add Details'),
                 onTap: () {
                   Navigator.push(
                     context,

@@ -224,6 +224,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       .doc("Email")
                       .get()
                       .then((value) async {
+                        print("Email is : ${value.data().toString()}");
                     List temp = value.data()!["Email"];
                     if (temp.contains(_email.text.trim())) {
                       await signin(_email.text.trim(), _password.text.trim())

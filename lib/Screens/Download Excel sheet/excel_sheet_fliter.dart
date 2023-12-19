@@ -1,13 +1,14 @@
 import 'dart:io';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:campus_link_teachers/Constraints.dart';
-import 'package:campus_link_teachers/Screens/Download%20Excel%20sheet/subject_attendace.dart';
 import 'package:campus_link_teachers/push_notification/Storage_permission.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:path_provider/path_provider.dart';
+
+import 'download_excel.dart';
 
 class Download_attendance extends StatefulWidget {
   const Download_attendance({Key? key}) : super(key: key);
@@ -680,7 +681,7 @@ class _Download_attendanceState extends State<Download_attendance> {
                         context,
                         PageTransition(
                             childCurrent: const Download_attendance(),
-                            child: Subject(
+                            child: DownloadExcelSheet(
                               uni: currentuni,
                               clg: currentclg,
                               course: currentcourse,
