@@ -84,7 +84,8 @@ class _ViewMarksState extends State<ViewMarks> {
                       height: size.height*0.2,
                       color: Colors.black26,
                       child: ListView.builder(
-                        itemCount: snapshot.data?.docs[index].data()["Marks"][subject_filter]["Total"],
+                        itemCount: snapshot.data!.docs[index].data()["Marks"]==null ? 0: snapshot.data!.docs[index].data()["Marks"][subject_filter]==null ?0:
+                        snapshot.data!.docs[index].data()["Marks"][subject_filter]["Total"],
                         itemBuilder: (context, index2) {
                           return SessionalEditTile(
                             email: snapshot.data!.docs[index].data()["Email"],

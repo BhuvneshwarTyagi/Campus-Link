@@ -88,24 +88,35 @@ class _MainPageState extends State<MainPage> {
   }
   Future<void> fetchuser() async {
   if(!loaded){
-    try{
-      await FirebaseFirestore.instance.collection("Teachers").doc(FirebaseAuth.instance.currentUser?.email).collection("Teachings").doc('Teachings')
-          .get().then((value) async {
-        if(value.data()!.isNotEmpty){
-          university_filter = value.data()?['University'][0];
-          college_filter = value.data()?['College-0'][0];
-          course_filter = value.data()?['Course-00'][0];
-          branch_filter = value.data()?['Branch-000'][0];
-          year_filter = value.data()?['Year-0000'][0];
-          section_filter = value.data()?['Section-00000'][0];
-          subject_filter = value.data()?['Subject-000000'][0];
-        }
-        await FirebaseFirestore.instance.collection("Teachers").doc(FirebaseAuth.instance.currentUser!.email).get()
-            .then((value){
-          setState(() {
-            usermodel=value.data()!;
-          });
-        }).whenComplete(() async {
+       print("Before Entering.........");
+      await FirebaseFirestore.instance.collection("Teachers").doc(FirebaseAuth.instance.currentUser?.email).get().then((value) async {
+       print("Inside query..........");
+       print("....${value.data()!=null}");
+
+
+        if(value.data() !=null){
+          usermodel = value.data()!;
+          print("Data is not Empty.......");
+
+         /* await FirebaseFirestore.instance.collection("Teachers").doc(FirebaseAuth.instance.currentUser?.email).collection("Teachings").doc('Teachings')
+              .get().then((value1) async {
+                print(" Data is : ${value1.data().toString()}");
+            if(value1.data() != null ){
+              university_filter = value1.data()?['University'][0];
+              college_filter = value1.data()?['College-0'][0];
+              course_filter = value1.data()?['Course-00'][0];
+              branch_filter = value1.data()?['Branch-000'][0];
+            }
+            setState(() {
+              if (kDebugMode) {
+                print(usermodel);
+              }
+              docExist=true;
+              loaded=true;
+            });
+
+
+          });*/
           setState(() {
             if (kDebugMode) {
               print(usermodel);
@@ -113,20 +124,14 @@ class _MainPageState extends State<MainPage> {
             docExist=true;
             loaded=true;
           });
-          await FirebaseMessaging.instance.getToken().then((token) async {
-            await FirebaseFirestore.instance.collection("Teachers").doc(FirebaseAuth.instance.currentUser!.email).update({
-              'Token' : token,
-            });
+        }
+        else{
+          setState(() {
+            loaded=true;
           });
         }
-        );
-      });
-    } catch(e) {
-      setState(() {
-        loaded=true;
       });
     }
 
   }
   }
-}

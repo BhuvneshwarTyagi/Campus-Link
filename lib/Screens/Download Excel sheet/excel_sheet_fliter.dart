@@ -713,7 +713,7 @@ class _Download_attendanceState extends State<Download_attendance> {
   Future<void> fetch_university() async {
     final ref = await FirebaseFirestore.instance
         .collection("Teachers")
-        .doc("arunsaini892307@gmail.com")
+        .doc("${usermodel["Email"]}")
         .collection("Teachings")
         .doc("Teachings")
         .get();

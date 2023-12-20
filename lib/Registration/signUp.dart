@@ -261,8 +261,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   :
                               await FirebaseFirestore.instance.collection("Teacher_record").doc("Email").set({
                                 "Email": FieldValue.arrayUnion([FirebaseAuth.instance.currentUser?.email])
-                              })
-                              ;
+                              });
+
                               if(temp=='1'){
                                 InAppNotifications.instance
                                   ..titleFontSize = 14.0

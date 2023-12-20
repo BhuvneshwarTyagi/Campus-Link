@@ -26,7 +26,8 @@ class _AchievementPageState extends State<AchievementPage> {
             .orderBy("Likes", descending: true)
             .snapshots(),
         builder: (context, snapshot) {
-          return snapshot.data!=null
+          print(snapshot.data?.docs[0].data());
+          return snapshot.hasData
               ?
           ListView.builder(
                   itemCount: snapshot.data!.docs.length,
@@ -34,10 +35,10 @@ class _AchievementPageState extends State<AchievementPage> {
                   scrollDirection: Axis.vertical,
 
                   itemBuilder: (context, index) {
-                    return snapshot.data!.docs[index].data()["Liked by"]!=null
-                        &&
-                        !snapshot.data!.docs[index].data()["Liked by"].contains(usermodel["Email"])
-                        &&
+                    return (snapshot.data!.docs[index].data()["Liked by"]!=null
+                        ||
+                        (snapshot.data!.docs[index].data()["Liked by"] != null && !snapshot.data!.docs[index].data()["Liked by"].contains(usermodel["Email"])))
+                        ||
                         (snapshot.data!.docs[index].data()["Disliked by"]==null ||  !snapshot.data!.docs[index].data()["Disliked by"].contains(usermodel["Email"]))
                     ?
                     PostTile(

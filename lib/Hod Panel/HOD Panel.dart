@@ -60,6 +60,7 @@ class _HODPanelState extends State<HODPanel> with TickerProviderStateMixin{
             fontSize: size.width*0.055,
             color: Colors.black
           ),),
+          centerTitle: true,
         ),
         body: Column(
           children: [
@@ -117,7 +118,7 @@ class _HODPanelState extends State<HODPanel> with TickerProviderStateMixin{
                             FittedBox(
                               fit: BoxFit.cover,
                               child: AutoSizeText(
-                                "Students",
+                                "Assigned",
                                 style: GoogleFonts.tiltNeon(
                                     fontSize: size.height * 0.025,
                                     fontWeight: FontWeight.w500,

@@ -30,7 +30,202 @@ class _StudentsListState extends State<StudentsList> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return SizedBox(
+    return Container(
+     decoration: BoxDecoration(
+       gradient: LinearGradient(
+         begin: Alignment.topLeft,
+         end: Alignment.bottomRight,
+         colors: [
+           const Color.fromRGBO(86, 149, 178, 1),
+
+           const Color.fromRGBO(68, 174, 218, 1),
+           Colors.deepPurple.shade300
+         ],
+       ),
+     ),
+      child: StreamBuilder(
+        stream: FirebaseFirestore.instance.collection("Teachers Id")
+            .doc("$selectedUniversity $selectedCollege $selectedCourse $selectedBranch")
+            .snapshots(),
+        builder: (context, snapshot) {
+          return snapshot.data!=null && snapshot.hasData
+              ?
+          ListView.builder(
+            shrinkWrap: true,
+            itemCount: snapshot.data!.data()?["Assigned subject"].length,
+            itemBuilder: (context, index) {
+              print(index);
+              return  Card(
+                shape: Border.all(
+                    color: Colors.black,
+                    width: 1
+                ),
+                child: ExpansionTile(
+                  backgroundColor: Colors.white12,
+                  collapsedBackgroundColor: Colors.white12,
+                  leading: Column(
+                    children: [
+                      SizedBox(
+                        height: size.height*0.013,
+                      ),
+                      AutoSizeText("${snapshot.data!.data()?["Assigned subject"][index]["Name"]}",style: GoogleFonts.openSans(
+                          color: Colors.black,
+                          fontSize: size.height*0.02,
+                          fontWeight: FontWeight.w500
+                      ),),
+                      AutoSizeText("${snapshot.data!.data()?["Assigned subject"][index]["Employee Id"]}"),
+                    ],
+                  ),
+                  trailing: Icon(Icons.arrow_drop_down,color: Colors.black,size: size.height*0.041),
+                  title: AutoSizeText(""),
+                  children: [
+                    ListTile(
+                      leading: AutoSizeText("Year",
+                        style:GoogleFonts.openSans(
+                            fontSize: size.height*0.02,
+                            color: Colors.black54,
+                            fontWeight: FontWeight.w400
+                        ) ,
+                      ),
+                      trailing: Container(
+                        height: size.height*0.045,
+                        width: size.width*0.17,
+                        decoration:BoxDecoration(
+                            color: Colors.transparent,
+                            borderRadius: BorderRadius.all(Radius.circular(size.height*0.012)),
+                            border: Border.all(
+                                color: Colors.black,
+                                width: 2
+                            )
+                        ),
+                        child:Center(
+                          child: AutoSizeText(
+                              "${snapshot.data!.data()?["Assigned subject"][index]["Year"]}"
+                          ),
+                        ),
+                      ),
+                    ),
+                    ListTile(
+                      leading: AutoSizeText("Section",
+                        style:GoogleFonts.openSans(
+                            fontSize: size.height*0.02,
+                            color: Colors.black54,
+                            fontWeight: FontWeight.w400
+                        ) ,
+                      ),
+                      trailing: Container(
+                        height: size.height*0.045,
+                        width: size.width*0.17,
+                        decoration:BoxDecoration(
+                            color: Colors.transparent,
+                            borderRadius: BorderRadius.all(Radius.circular(size.height*0.012)),
+                            border: Border.all(
+                                color: Colors.black,
+                                width: 2
+                            )
+                        ),
+                        child:Center(
+                          child: AutoSizeText(
+                              "${snapshot.data!.data()?["Assigned subject"][index]["Section"]}"
+                          ),
+                        ) ,
+                      ),
+                    ),
+                    ListTile(
+                      leading: AutoSizeText(
+                        "Subject",
+                        style:GoogleFonts.openSans(
+                            fontSize: size.height*0.02,
+                            color: Colors.black54,
+                            fontWeight: FontWeight.w400
+                        ) ,
+                      ),
+                      trailing: Container(
+                        height: size.height*0.045,
+                        width: size.width*0.4,
+                        decoration:BoxDecoration(
+                            color: Colors.transparent,
+                            borderRadius: BorderRadius.all(Radius.circular(size.height*0.012)),
+                            border: Border.all(
+                                color: Colors.black,
+                                width: 2
+                            )
+                        ),
+                        child:Center(
+                          child: AutoSizeText(
+                              "${snapshot.data!.data()?["Assigned subject"][index]["Subject"]}"
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: size.height*0.01,
+                    ),
+                    InkWell(
+                      onTap: () async {
+                        /* await FirebaseFirestore.instance.collection("Subject").doc("${usermodel["HOD Branch"]}").get().then((value) async {
+                        value.data()!=null
+                        ?
+                        await FirebaseFirestore.instance.collection("Subject").doc("${usermodel["HOD Branch"]}").set(
+                            {
+                              "Subject": FieldValue.arrayUnion([subjectController.text.trim()])
+                            })
+                        :
+                        await FirebaseFirestore.instance.collection("Subject").doc("${usermodel["HOD Branch"]}").update(
+                        {
+                        "Subject": FieldValue.arrayUnion([subjectController.text.trim()])
+                        });
+                      });
+                    */
+
+                        //......................................
+
+                          await FirebaseFirestore.instance.collection("Teachers Id")
+                              .doc("$selectedUniversity $selectedCollege $selectedCourse $selectedBranch")
+                              .update({
+                            "Teachers":FieldValue.arrayUnion([{
+                              "Email":snapshot.data!.data()?["Assigned subject"][index]["Email"],
+                              "Name":snapshot.data!.data()?["Assigned subject"][index]["Name"],
+                              "Employee Id":snapshot.data!.data()?["Assigned subject"][index]["Employee Id"]
+                            }])
+                          });
+
+                      },
+                      child: Container(
+                        height: size.height*0.043,
+                        width: size.width*0.22,
+                        decoration: BoxDecoration(
+                            color: Colors.transparent,
+                            border: Border.all(
+                              color: Colors.red,
+                              width: 2,
+                            ),
+                            borderRadius: BorderRadius.all(Radius.circular(size.height*0.012))
+                        ),
+                        child: Center(
+                          child: AutoSizeText(
+                            "Edit",style: GoogleFonts.openSans(
+                              color: Colors.red,
+                              fontSize: size.height*0.022
+                          ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: size.height*0.01,
+                    ),
+                  ],
+                ),
+              );
+            },)
+              :
+          const SizedBox();
+        },
+      ),
+    );
+
+    /*SizedBox(
       width: size.width,
       height: size.height*0.5,
       child: Stack(
@@ -246,6 +441,6 @@ class _StudentsListState extends State<StudentsList> {
           ),
         ],
       ),
-    );
+    );*/
   }
 }

@@ -49,19 +49,19 @@ class _AssignmentsOverAllLeaderBoardState extends State<AssignmentsOverAllLeader
                 TopThree(
                   data: [
                     {
-                      "Name" : result[0]['Name'],
-                      "Email" : result[0]['Email'],
-                      "Submitted" : result[0]['Score'],
+                      "Name" : result.length >0 ? result[0]['Name'] : "Unknown",
+                      "Email" : result.length >0 ? result[0]['Email'] :"Unknown",
+                      "Submitted" : result.length >0  ? result[0]['Score'] : 0,
                     },
                     {
-                      "Name" : result[1]['Name'],
-                      "Email" : result[1]['Email'],
-                      "Submitted" : result[1]['Score'],
+                      "Name" : result.length >1 ? result[1]['Name'] : "Unknown",
+                      "Email" : result.length >1 ? result[1]['Email'] :"Unknown",
+                      "Submitted" : result.length >1  ? result[1]['Score'] : 0,
                     },
                     {
-                      "Name" : result[2]['Name'],
-                      "Email" : result[2]['Email'],
-                      "Submitted" : result[2]['Score'],
+                      "Name" : result.length >2 ? result[2]['Name'] : "Unknown",
+                      "Email" : result.length >2 ? result[2]['Email'] :"Unknown",
+                      "Submitted" : result.length >2  ? result[2]['Score'] : 0,
                     }
                   ],
                 ),

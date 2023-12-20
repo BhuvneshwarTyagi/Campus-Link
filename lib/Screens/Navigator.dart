@@ -3,6 +3,7 @@ import 'package:camera/camera.dart';
 import 'package:campus_link_teachers/Hod%20Panel/HOD%20Panel.dart';
 import 'package:campus_link_teachers/Screens/Feedback.dart';
 import 'package:campus_link_teachers/Screens/Leader_board/Leader_Board.dart';
+import 'package:campus_link_teachers/Screens/Main_page.dart';
 import 'package:campus_link_teachers/Screens/QueriesDrawer/QueryDrawer.dart';
 import 'package:campus_link_teachers/Screens/loadingscreen.dart';
 import 'package:campus_link_teachers/push_notification/helper_notification.dart';
@@ -17,16 +18,18 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 import '../Achievements/achievement_page.dart';
 import '../Database/database.dart';
+import '../Hod Panel/Dean_panel.dart';
 import '../Registration/Basic.dart';
+import '../Teacher Eco System/teacher_eco.dart';
+import '../Teacher Learning/Skills screen.dart';
+import '../Teacher Learning/Skillsculpt.dart';
 import 'Assignment/Assignments.dart';
 import 'Attendance.dart';
-import 'Download Excel sheet/download_excel.dart';
 import 'Download Excel sheet/excel_sheet_fliter.dart';
 import 'Filters.dart';
 import 'Notes/Notes.dart';
 import 'Sessional/Sessional.dart';
 import 'Chat_tiles/chat_list.dart';
-import 'Teacher Attendance/take_attendance.dart';
 import 'Teacher Attendance/take_sample.dart';
 
 
@@ -163,7 +166,7 @@ class _NeviState extends State<Nevi>  {
                   )
               ),
               ListTile(
-                title: Text("HOD Panel"),
+                title: const Text("HOD Panel"),
                 onTap: (){
                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
                     return const HODPanel();
@@ -171,6 +174,16 @@ class _NeviState extends State<Nevi>  {
                   ),
                   );
                 }
+              ),
+              ListTile(
+                  title: const Text("Dean Panel"),
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context) {
+                      return const DeanPanel();
+                    },
+                    ),
+                    );
+                  }
               ),
               ListTile(
                 leading: const Icon(Icons.home,color: Colors.black,),
@@ -253,20 +266,20 @@ class _NeviState extends State<Nevi>  {
               ),
               ListTile(
                 leading: const Icon(Icons.task,color: Colors.black),
-                title: const Text("Take Teacher Attendance"),
+                title: const Text("Teacher Eco System"),
                 onTap: () async {
                   await availableCameras().then((value) {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) =>  TeacherAttendance(cameras: value,),));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) =>  const teacherEcoSystem(),));
                   });
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.camera_enhance,color: Colors.black),
-                title: const Text("Testing Sample"),
+                leading: const Icon(Icons.leaderboard_sharp,color: Colors.black),
+                title: const Text("Teacher Learning"),
                 onTap: () async {
 
                   await availableCameras().then((value) {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) =>  TakeSampleImage(cameras: value,),));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) =>  const SkillsScreen(),));
                   });
 
                 },
@@ -276,7 +289,9 @@ class _NeviState extends State<Nevi>  {
                 title: const Text('Logout'),
                 onTap: () {
                   database().signOut();
-                  Navigator.pop(context);
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+                    return MainPage();
+                  },));
                 },
               ),
 

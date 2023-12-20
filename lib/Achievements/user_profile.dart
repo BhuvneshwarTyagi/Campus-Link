@@ -88,8 +88,6 @@ class _UserProfilePageState extends State<UserProfilePage>  with TickerProviderS
                           .snapshots(),
                       builder: (context, snapshot) {
                        if(snapshot.hasData) {
-                         likedPost = 0;
-                         myPostCount = 0;
                          for (int i = 0; i < snapshot.data!.docs.length; i++) {
                            if (snapshot.data!.docs[1].data()["Email"]==usermodel["Email"]) {
                              myPostCount++;

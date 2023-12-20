@@ -230,6 +230,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       await signin(_email.text.trim(), _password.text.trim())
                           .then((value) {
                         if (value == "1") {
+
                           Navigator.pushReplacement(
                             context,
                             PageTransition(
