@@ -219,6 +219,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   border: Border.all(color: Colors.black54, width: 2)),
               child: ElevatedButton(
                 onPressed: () async {
+                  print("Cliked...");
                   await FirebaseFirestore.instance
                       .collection("Teacher_record")
                       .doc("Email")

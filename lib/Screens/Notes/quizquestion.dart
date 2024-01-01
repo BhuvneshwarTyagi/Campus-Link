@@ -391,6 +391,9 @@ class _QuizQustionState extends State<QuizQustion> {
                                                                           print(
                                                                               ".......this index is $index_1");
                                                                         },
+                                                                            decoration: InputDecoration(
+                                                                              border: InputBorder.none
+                                                                            ),
                                                                         textAlign:
                                                                             TextAlign.center,
                                                                         style: GoogleFonts
@@ -531,7 +534,7 @@ class _QuizQustionState extends State<QuizQustion> {
                                                                             .white,
                                                                         fontSize:
                                                                             size.height *
-                                                                                0.035),
+                                                                                0.022),
                                                                     suffixIcon:
                                                                         Icon(
                                                                       Icons
@@ -544,6 +547,7 @@ class _QuizQustionState extends State<QuizQustion> {
                                                                     ),
                                                                     focusedBorder:
                                                                         OutlineInputBorder(
+                                                                          borderSide: BorderSide.none,
                                                                       /*borderSide: const BorderSide(
                                                                     width: 3,
                                                                     color: Colors.black,
@@ -557,6 +561,7 @@ class _QuizQustionState extends State<QuizQustion> {
                                                                             .transparent,
                                                                     disabledBorder:
                                                                         OutlineInputBorder(
+                                                                          borderSide: BorderSide.none,
                                                                       /*borderSide: const BorderSide(
                                                                     width: 3,
                                                                     color: Colors.black,
@@ -567,6 +572,7 @@ class _QuizQustionState extends State<QuizQustion> {
                                                                     ),
                                                                     enabledBorder:
                                                                         OutlineInputBorder(
+                                                                          borderSide: BorderSide.none,
                                                                       /*borderSide: const BorderSide(
                                                                     width: 3,
                                                                     color: Colors.black,

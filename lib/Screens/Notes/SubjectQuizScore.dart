@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../Constraints.dart';
+import '../../Constraints.dart';
 
 class subjectQuizScore extends StatefulWidget {
    subjectQuizScore({Key? key,required this.subject}) : super(key: key);

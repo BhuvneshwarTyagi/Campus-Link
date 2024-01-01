@@ -98,14 +98,20 @@ class _MainPageState extends State<MainPage> {
           usermodel = value.data()!;
           print("Data is not Empty.......");
 
-         /* await FirebaseFirestore.instance.collection("Teachers").doc(FirebaseAuth.instance.currentUser?.email).collection("Teachings").doc('Teachings')
+          await FirebaseFirestore.instance.collection("Teachers").doc(FirebaseAuth.instance.currentUser?.email).collection("Teachings").doc('Teachings')
               .get().then((value1) async {
-                print(" Data is : ${value1.data().toString()}");
+                print(" Teaching Data is  : ${value1.data().toString()}");
+                print("${FirebaseAuth.instance.currentUser?.email.toString()}");
             if(value1.data() != null ){
-              university_filter = value1.data()?['University'][0];
-              college_filter = value1.data()?['College-0'][0];
-              course_filter = value1.data()?['Course-00'][0];
-              branch_filter = value1.data()?['Branch-000'][0];
+             setState(() {
+               university_filter = value1.data()?['University'][0];
+               college_filter = value1.data()?['College-0'][0];
+               course_filter = value1.data()?['Course-00'][0];
+               branch_filter = value1.data()?['Branch-000'][0];
+               year_filter = value1.data()?['Year-0000'][0];
+               section_filter = value1.data()?['Section-00000'][0];
+               subject_filter= value1.data()?['Subject-000000'][0];
+             });
             }
             setState(() {
               if (kDebugMode) {
@@ -116,7 +122,7 @@ class _MainPageState extends State<MainPage> {
             });
 
 
-          });*/
+          });
           setState(() {
             if (kDebugMode) {
               print(usermodel);

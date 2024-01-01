@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:campus_link_teachers/Hod%20Panel/HOD%20Panel.dart';
 import 'package:campus_link_teachers/Screens/Feedback.dart';
@@ -6,8 +7,8 @@ import 'package:campus_link_teachers/Screens/Leader_board/Leader_Board.dart';
 import 'package:campus_link_teachers/Screens/Main_page.dart';
 import 'package:campus_link_teachers/Screens/QueriesDrawer/QueryDrawer.dart';
 import 'package:campus_link_teachers/Screens/loadingscreen.dart';
-import 'package:campus_link_teachers/push_notification/helper_notification.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:auto_size_text/auto_size_text.dart';
@@ -15,6 +16,7 @@ import 'package:campus_link_teachers/Constraints.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:page_transition/page_transition.dart';
 import '../Achievements/achievement_page.dart';
 import '../Database/database.dart';
@@ -22,7 +24,6 @@ import '../Hod Panel/Dean_panel.dart';
 import '../Registration/Basic.dart';
 import '../Teacher Eco System/teacher_eco.dart';
 import '../Teacher Learning/Skills screen.dart';
-import '../Teacher Learning/Skillsculpt.dart';
 import 'Assignment/Assignments.dart';
 import 'Attendance.dart';
 import 'Download Excel sheet/excel_sheet_fliter.dart';
@@ -30,7 +31,6 @@ import 'Filters.dart';
 import 'Notes/Notes.dart';
 import 'Sessional/Sessional.dart';
 import 'Chat_tiles/chat_list.dart';
-import 'Teacher Attendance/take_sample.dart';
 
 
 class Nevi extends StatefulWidget {
@@ -50,6 +50,7 @@ class _NeviState extends State<Nevi>  {
     const OverAllLeaderBoard(),
     const NewPost(),
   ];
+  bool profile_update = false;
   double leftpos = 26;
   double assigmentSize = 35;
   double noteSize = 25;
@@ -159,7 +160,68 @@ class _NeviState extends State<Nevi>  {
                         left: 35,
                         child: IconButton(
                           icon: Icon(Icons.camera_enhance,size:size.height*0.03 ,color: Colors.black,),
-                          onPressed: (){} ,
+                          onPressed: () async {
+
+                              ImagePicker imagePicker = ImagePicker();
+                              print(imagePicker);
+                              XFile? file = await imagePicker.pickImage(
+                                  source: ImageSource.gallery);
+                              print(file?.path);
+
+                              if (file!.path.isNotEmpty) {
+                                setState(() {
+                                  profile_update = true;
+                                });
+                                // Create reference of Firebase Storage
+
+                                Reference reference =
+                                FirebaseStorage.instance.ref();
+
+                                // Create Directory into Firebase Storage
+
+                                Reference image_directory =
+                                reference.child("User_profile");
+
+                                Reference image_folder = image_directory
+                                    .child("${usermodel["Email"]}");
+
+                                await image_folder
+                                    .putFile(File(file!.path))
+                                    .whenComplete(
+                                      () async {
+                                    String download_url =
+                                    await image_folder.getDownloadURL();
+                                    print("uploaded");
+                                    print(download_url);
+                                    await FirebaseFirestore.instance
+                                        .collection("Teachers")
+                                        .doc(FirebaseAuth
+                                        .instance.currentUser?.email)
+                                        .update({
+                                      "Profile_URL": download_url,
+                                    }).whenComplete(() async {
+                                      await FirebaseFirestore.instance
+                                          .collection("Teachers")
+                                          .doc(FirebaseAuth
+                                          .instance.currentUser!.email)
+                                          .get()
+                                          .then((value) {
+                                        setState(() {
+                                          usermodel = value.data()!;
+                                        });
+                                      }).whenComplete(() {
+                                        setState(() {
+                                          profile_update = false;
+                                        });
+                                      });
+                                    });
+                                    setState(() {
+                                      profile_update = false;
+                                    });
+                                  },
+                                );
+                              }
+                          } ,
                         ),
                       )
                     ],
@@ -185,7 +247,7 @@ class _NeviState extends State<Nevi>  {
                     );
                   }
               ),
-              ListTile(
+             /* ListTile(
                 leading: const Icon(Icons.home,color: Colors.black,),
                 title: const Text("Home"),
                 onTap: () {
@@ -207,7 +269,7 @@ class _NeviState extends State<Nevi>  {
                       '404'
                   );
                 },
-              ),
+              ),*/
               ListTile(
                 leading: const Icon(Icons.add,color: Colors.black,),
                 title: const Text('Add Details'),

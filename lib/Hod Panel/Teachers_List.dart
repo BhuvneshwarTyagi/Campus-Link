@@ -2,6 +2,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inapp_notifications/flutter_inapp_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../Constraints.dart';
@@ -105,13 +106,16 @@ class _TeachersListState extends State<TeachersList> {
                                    width: 2
                                )
                            ),
-                           child: TextField(
-                             maxLines: 1,
-                             controller: yearController,
-                             decoration: const InputDecoration(
-                                 focusedBorder: OutlineInputBorder(
-                                     borderSide: BorderSide.none
-                                 )
+                           child: Center(
+                             child: TextField(
+                               maxLines: 1,
+                               controller: yearController,
+                               textAlign: TextAlign.center,
+                               decoration: const InputDecoration(
+                                   focusedBorder: OutlineInputBorder(
+                                       borderSide: BorderSide.none
+                                   )
+                               ),
                              ),
                            ),
                          ),
@@ -137,6 +141,7 @@ class _TeachersListState extends State<TeachersList> {
                            ),
                            child: TextField(
                              maxLines: 1,
+                             textAlign: TextAlign.center,
                              controller: sectionController,
                              decoration: const InputDecoration(
                                  focusedBorder: OutlineInputBorder(
@@ -168,6 +173,7 @@ class _TeachersListState extends State<TeachersList> {
                            ),
                            child: TextField(
                              maxLines: 1,
+                             textAlign: TextAlign.center,
                              controller: subjectController,
                              decoration: const InputDecoration(
                                  focusedBorder: OutlineInputBorder(
@@ -199,97 +205,121 @@ class _TeachersListState extends State<TeachersList> {
 
 
                            //......................................
-                           final ref= FirebaseFirestore
-                               .instance
-                               .collection("Teachers")
-                               .doc("${snapshot.data!.data()?["Teachers"][index]["Email"]}")
-                               .collection("Teachings")
-                               .doc("Teachings");
-                           await ref.update(
-                             {
-                               "University": FieldValue.arrayUnion([selectedUniversity]),
-                             },
-                           );
+                                if(sectionController.text.isNotEmpty && yearController.text.isNotEmpty && subjectController.text.isNotEmpty)
+                                  {
+                                    final ref= FirebaseFirestore
+                                        .instance
+                                        .collection("Teachers")
+                                        .doc("${snapshot.data!.data()?["Teachers"][index]["Email"]}")
+                                        .collection("Teachings")
+                                        .doc("Teachings");
+                                    await ref.update(
+                                      {
+                                        "University": FieldValue.arrayUnion([selectedUniversity]),
+                                      },
+                                    );
 
-                           var data= await ref.get();
+                                    var data= await ref.get();
 
-                           List<dynamic> universityList= data.data()!["University"];
-                           int uniIndex =universityList.indexOf(selectedUniversity);
+                                    List<dynamic> universityList= data.data()!["University"];
+                                    int uniIndex =universityList.indexOf(selectedUniversity);
 
-                           await ref
-                               .update(
-                             {
-                               "College-$uniIndex": FieldValue.arrayUnion([selectedCollege]),
-                             },
-                           );
-                           data= await ref.get();
-                           List<dynamic> clgList=data.data()!["College-$uniIndex"];
-                           int clgIndex =clgList.indexOf(selectedCollege);
-                           await ref
-                               .update(
-                             {
-                               "Course-$uniIndex$clgIndex": FieldValue.arrayUnion([selectedCourse]),
-                             },
+                                    await ref
+                                        .update(
+                                      {
+                                        "College-$uniIndex": FieldValue.arrayUnion([selectedCollege]),
+                                      },
+                                    );
+                                    data= await ref.get();
+                                    List<dynamic> clgList=data.data()!["College-$uniIndex"];
+                                    int clgIndex =clgList.indexOf(selectedCollege);
+                                    await ref
+                                        .update(
+                                      {
+                                        "Course-$uniIndex$clgIndex": FieldValue.arrayUnion([selectedCourse]),
+                                      },
 
-                           );
-                           data= await ref.get();
-                           List<dynamic> courseList=data.data()!["Course-$uniIndex$clgIndex"];
-                           int courseIndex =courseList.indexOf(selectedCourse);
-                           await ref
-                               .update(
-                             {
-                               "Branch-$uniIndex$clgIndex$courseIndex": FieldValue.arrayUnion([selectedBranch]),
-                             },
+                                    );
+                                    data= await ref.get();
+                                    List<dynamic> courseList=data.data()!["Course-$uniIndex$clgIndex"];
+                                    int courseIndex =courseList.indexOf(selectedCourse);
+                                    await ref
+                                        .update(
+                                      {
+                                        "Branch-$uniIndex$clgIndex$courseIndex": FieldValue.arrayUnion([selectedBranch]),
+                                      },
 
-                           );
-                           data= await ref.get();
-                           List<dynamic> branchList=data.data()!["Branch-$uniIndex$clgIndex$courseIndex"];
-                           int branchIndex =branchList.indexOf(selectedBranch);
+                                    );
+                                    data= await ref.get();
+                                    List<dynamic> branchList=data.data()!["Branch-$uniIndex$clgIndex$courseIndex"];
+                                    int branchIndex =branchList.indexOf(selectedBranch);
 
-                           await ref
-                               .update(
-                             {
-                               "Year-$uniIndex$clgIndex$courseIndex$branchIndex": FieldValue.arrayUnion([yearController.text.toString()]),
-                             },
-                           );
-                           data= await ref.get();
-                           List<dynamic> yearList=data.data()!["Year-$uniIndex$clgIndex$courseIndex$branchIndex"];
-                           int yearIndex =yearList.indexOf(yearController.text.toString());
+                                    await ref
+                                        .update(
+                                      {
+                                        "Year-$uniIndex$clgIndex$courseIndex$branchIndex": FieldValue.arrayUnion([yearController.text.toString()]),
+                                      },
+                                    );
+                                    data= await ref.get();
+                                    List<dynamic> yearList=data.data()!["Year-$uniIndex$clgIndex$courseIndex$branchIndex"];
+                                    int yearIndex =yearList.indexOf(yearController.text.toString());
 
-                           await ref
-                               .update(
-                             {
-                               "Section-$uniIndex$clgIndex$courseIndex$branchIndex$yearIndex": FieldValue.arrayUnion([sectionController.text.toString()]),
-                             },);
-                           data= await ref.get();
-                           List<dynamic> sectionList=data.data()!["Section-$uniIndex$clgIndex$courseIndex$branchIndex$yearIndex"];
-                           int sectionIndex =sectionList.indexOf(sectionController.text.toString());
+                                    await ref
+                                        .update(
+                                      {
+                                        "Section-$uniIndex$clgIndex$courseIndex$branchIndex$yearIndex": FieldValue.arrayUnion([sectionController.text.toString()]),
+                                      },);
+                                    data= await ref.get();
+                                    List<dynamic> sectionList=data.data()!["Section-$uniIndex$clgIndex$courseIndex$branchIndex$yearIndex"];
+                                    int sectionIndex =sectionList.indexOf(sectionController.text.toString());
 
-                           await ref
-                               .update(
-                             {
-                               "Subject-$uniIndex$clgIndex$courseIndex$branchIndex$yearIndex$sectionIndex": FieldValue.arrayUnion([subjectController.text.toString()]),
-                             },).whenComplete(() async {
-                             await FirebaseFirestore.instance.collection("Teachers Id")
-                                 .doc("$selectedUniversity $selectedCollege $selectedCourse $selectedBranch")
-                                 .update({
-                               "Teachers":FieldValue.arrayRemove([{
-                                 "Email":snapshot.data!.data()?["Teachers"][index]["Email"],
-                                 "Name":snapshot.data!.data()?["Teachers"][index]["Name"],
-                                 "Employee Id":snapshot.data!.data()?["Teachers"][index]["Employee Id"] }]),
-                               "Assigned subject":FieldValue.arrayUnion([{
-                                 "Section":sectionController.text.toString(),
-                                 "Year":yearController.text.toString(),
-                                 "Subject":subjectController.text.toString(),
-                                 "Name":snapshot.data!.data()?["Teachers"][index]["Name"],
-                                 "Email":snapshot.data!.data()?["Teachers"][index]["Email"],
-                                 "Employee Id":snapshot.data!.data()?["Teachers"][index]["Employee Id"]
-                               }])
+                                    await ref
+                                        .update(
+                                      {
+                                        "Subject-$uniIndex$clgIndex$courseIndex$branchIndex$yearIndex$sectionIndex": FieldValue.arrayUnion([subjectController.text.toString()]),
+                                      },).whenComplete(() async {
+                                      await FirebaseFirestore.instance.collection("Teachers Id")
+                                          .doc("$selectedUniversity $selectedCollege $selectedCourse $selectedBranch")
+                                          .update({
+                                        "Assigned subject":FieldValue.arrayUnion([{
+                                          "Section":sectionController.text.toString(),
+                                          "Year":yearController.text.toString(),
+                                          "Subject":subjectController.text.toString(),
+                                          "Name":snapshot.data!.data()?["Teachers"][index]["Name"],
+                                          "Email":snapshot.data!.data()?["Teachers"][index]["Email"],
+                                          "Employee Id":snapshot.data!.data()?["Teachers"][index]["Employee Id"]
+                                        }])
 
-                             });
-                           }).whenComplete(() {
-                             print("Data is deleted.....");
-                           });
+                                      });
+                                    }).whenComplete(() {
+
+                                      setState(() {
+                                        yearController.clear();
+                                        sectionController.clear();
+                                        subjectController.clear();
+                                      });
+                                    });
+                                  }
+                                else{
+                                  InAppNotifications.instance
+                                    ..titleFontSize = 14.0
+                                    ..descriptionFontSize = 14.0
+                                    ..textColor = Colors.black
+                                    ..backgroundColor =
+                                    const Color.fromRGBO(150, 150, 150, 1)
+                                    ..shadow = true
+                                    ..animationStyle =
+                                        InAppNotificationsAnimationStyle.scale;
+                                  InAppNotifications.show(
+                                      title: 'Failed',
+                                      duration: const Duration(seconds: 2),
+                                      description: "Please Provide All Details",
+                                      leading: const Icon(
+                                        Icons.error_outline_outlined,
+                                        color: Colors.red,
+                                        size: 55,
+                                      ));
+                                }
 
                          },
                          child: Container(
@@ -318,6 +348,69 @@ class _TeachersListState extends State<TeachersList> {
                        ),
                      ],
                  ),
+                  ExpansionTile(
+                    title: const Text("Already Assigned"),
+                    children: [
+                      SizedBox(
+                        height: size.height*0.05,
+                        child: ListView.builder(
+                          scrollDirection: Axis.vertical,
+                          itemCount: snapshot.data!.data()?["Assigned subject"].length??0,
+                          itemBuilder: (context, index1) {
+                            return snapshot.data!.data()?["Assigned subject"][index1]["Email"]==snapshot.data!.data()?["Teachers"][index]["Email"]
+                                ?
+                            Container(
+                              height: size.height*0.042*snapshot.data!.data()?["Assigned subject"].length,
+                              color: Colors.transparent,
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      AutoSizeText("Section : ${snapshot.data!.data()?["Assigned subject"][index1]["Section"]}  | ",
+                                        style: GoogleFonts.openSans(
+                                            color: Colors.black,
+                                            fontSize: size.height*0.018,
+                                            fontWeight: FontWeight.w500
+                                        ),),
+                                      AutoSizeText("Year : ${snapshot.data!.data()?["Assigned subject"][index1]["Year"]}  | ",
+                                        style: GoogleFonts.openSans(
+                                            color: Colors.black,
+                                            fontSize: size.height*0.018,
+                                            fontWeight: FontWeight.w500
+                                        ),),
+                                      AutoSizeText("Subject : ${snapshot.data!.data()?["Assigned subject"][index1]["Subject"]}",
+                                        style: GoogleFonts.openSans(
+                                            color: Colors.black,
+                                            fontSize: size.height*0.018,
+                                            fontWeight: FontWeight.w500
+                                        ),),
+
+                                    ],
+                                  ),
+                                  /*Divider(
+                                    height: size.height*0.013,
+                                    color: Colors.black54,
+                                    endIndent:size.width*0.15,
+                                    thickness: 1,
+                                    indent: size.width*0.15,
+                                  )*/
+                                ],
+                              ),
+                            )
+                                :
+                                 SizedBox(
+                                  child: index1==0
+                                    ?
+                                  const Center(child: AutoSizeText("Not Assigned"))
+                                  :
+                                  const SizedBox(),
+                                );
+
+                        },),
+                      )
+                    ],
+                  ),
                 ],
               ),
             );

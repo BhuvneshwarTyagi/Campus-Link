@@ -45,6 +45,13 @@ class _FiltersState extends State<Filters> {
   int yearIndex = -1;
   int sectionIndex = -1;
   int subjectIndex = -1;
+  bool filterExists=false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    checkFilter();
+  }
   @override
   Widget build(BuildContext context) {
     Color headingcolor=Colors.black;
@@ -90,7 +97,9 @@ class _FiltersState extends State<Filters> {
             style: GoogleFonts.gfsDidot(fontSize: size.height*0.05, color: Colors.black),
           ),
         ),
-        floatingActionButton: Container(
+        floatingActionButton:filterExists
+        ?
+        Container(
           color: Colors.transparent,
           width: MediaQuery.of(context).size.width,
           height: size.height * 0.05,
@@ -147,8 +156,12 @@ class _FiltersState extends State<Filters> {
               )
             ],
           ),
-        ),
-        body: SingleChildScrollView(
+        )
+        :
+        const SizedBox(),
+        body: filterExists
+        ?
+        SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Container(
             padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
@@ -707,9 +720,31 @@ class _FiltersState extends State<Filters> {
               ],
             ),
           ),
+        )
+        :
+        Center(
+          child: AutoSizeText(
+            "No Subjects Assigned You Yet",
+            style: GoogleFonts.gfsDidot(fontSize: size.height*0.02, color: Colors.black),
+          ),
         ),
       ),
     );
+  }
+  void checkFilter()async {
+    await FirebaseFirestore.instance
+        .collection("Teachers")
+        .doc(FirebaseAuth.instance.currentUser!.email)
+        .collection("Teachings")
+        .doc("Teachings")
+        .get().then((value) {
+          if(value.data()!=null)
+            {
+              setState(() {
+                filterExists=true;
+              });
+            }
+    });
   }
 
 }

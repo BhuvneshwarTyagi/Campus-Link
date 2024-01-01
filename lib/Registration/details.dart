@@ -257,7 +257,7 @@ class _DetailsState extends State<Details> {
                             elevation: 30
 
                         ),
-                        child: const Text("Sign Up", style: TextStyle(
+                        child: const Text("Next", style: TextStyle(
                             color: Colors.black87,
                             fontWeight: FontWeight.bold,
                             fontSize: 16
